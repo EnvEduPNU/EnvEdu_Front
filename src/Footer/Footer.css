@@ -1,0 +1,37 @@
+footer {
+  padding: 10px;
+  border-top: black solid 0.05em;
+}
+
+#bottomMenu {
+  height: 2em;
+  margin-bottom: 1em;
+}
+
+#bottomMenu ul {
+  padding-left: 0;
+}
+
+#bottomMenu ul li {
+  float: left; /* 가로로 배치 */
+  padding: 5px 20px;
+  border-right: 1px solid #ddd;
+  list-style: none;
+}
+
+#bottomMenu ul li:last-child {
+  border: none; /* 마지막 항목에는 오른쪽 테두리 없음 */
+}
+#bottomMenu ul li a,
+#bottomMenu ul li a:visited {
+  font-size: 15px; /* 글자 크기 */
+  color: #666; /* 글자 색 */
+}
+
+#company {
+  padding-left: 1em;
+}
+
+#right {
+  padding-left: 1em;
+}

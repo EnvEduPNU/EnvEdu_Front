@@ -1,0 +1,7 @@
+export const RESPONSE_OK = 200;
+export const RESPONSE_BAD_REQ = 400;
+export const RESPONSE_UNAUTHORIZED = 401;
+export const RESPONSE_FORBIDDEN = 403;
+export const RESPONSE_NOT_FOUND = 404;
+export const RESPONSE_CONFLICT = 409;
+export const RESPONSE_SERV_UNAVAILABLE = 503;

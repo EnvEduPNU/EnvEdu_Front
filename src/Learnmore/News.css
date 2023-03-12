@@ -1,0 +1,31 @@
+#con1{
+    height:16em;
+    background-color: aliceblue;
+    text-align: center;
+    padding:5em 0;
+    margin-bottom:3em;
+}
+
+#photo{
+    text-align:center;
+   
+    background-color: rgb(232, 232, 232);
+}
+
+.photo>img{
+    margin-right:3em;
+   
+}
+
+iframe{
+    width:100%;
+}
+.photo{
+    height:50%;
+    
+
+}
+
+.lead2>li{
+    font-size:1em;
+}

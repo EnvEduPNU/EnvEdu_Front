@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic+Coding&display=swap');
+
+.btn-primary {
+  padding: 0.3em;
+  font-size: 1.2em;
+  margin: 0.5em;
+  background-color: rgb(52, 130, 182);
+  border-color: rgb(52, 130, 182);
+  width: 6em;
+  font-family: 'Nanum Gothic Coding', monospace;
+}
+
+#buttonset {
+  margin: auto;
+}
+
+#Button-3 {
+  text-align: center;
+  background-color: aliceblue;
+  height: 20em;
+  display: flex;
+  align-items: center;
+}

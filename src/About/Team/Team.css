@@ -1,0 +1,17 @@
+#con1{
+    height:16em;
+    background-color: aliceblue;
+    text-align: center;
+    padding:5em 0;
+    margin-bottom:3em;
+}
+
+.text-muted{
+    font-size:0.65em;
+    line-height: 1.8em;
+   
+}
+
+ul{
+    line-height:1.3em;
+}
