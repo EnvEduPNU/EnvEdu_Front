@@ -31,7 +31,7 @@ jobs:
           echo "${{ secrets.ENV }}" > .env
 
       - name: Install Dependencies    
-        run: npm install
+        run: npm install --force
 
       - name: Build                   # React Build
         run: npm run build
