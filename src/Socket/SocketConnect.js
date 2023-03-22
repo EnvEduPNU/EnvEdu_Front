@@ -34,7 +34,7 @@ function SocketConnect(props) {
     }, 5000);
 
     function register() {
-        const sock = new SockJS("http://13.124.156.11:8080/client/socket");
+        const sock = new SockJS(`${process.env.REACT_APP_API_URL}/client/socket`);
         stompClient = stomp.over(sock);
         stompClient.connect({authorization: localStorage.getItem("refresh")}, onConnected, onError)
     }

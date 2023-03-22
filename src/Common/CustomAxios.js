@@ -3,8 +3,7 @@ import {RESPONSE_FORBIDDEN, RESPONSE_UNAUTHORIZED} from "./Response";
 import {isExpired} from "react-jwt";
 
 export const customAxios = axios.create({
-    baseURL: "http://13.124.156.11:8080"
-    //baseURL: "http://localhost:8080"
+    baseURL: `${process.env.REACT_APP_API_URL}`
 })
 
 customAxios.interceptors.request.use(
