@@ -18,7 +18,6 @@ thumb
 sketch
 
 .env
-build/
 
 ### VisualStudioCode ###
 .vscode/*
