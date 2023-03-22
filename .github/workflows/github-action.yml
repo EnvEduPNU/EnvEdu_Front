@@ -34,7 +34,7 @@ jobs:
         run: npm install --force
 
       - name: Build                   # React Build
-        run: npm run build
+        run: CI='' npm run build
       
       - name: Deploy                  # Upload build file to S3
         env:
