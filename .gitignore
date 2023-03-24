@@ -18,6 +18,7 @@ thumb
 sketch
 
 .env
+.idea/
 
 ### VisualStudioCode ###
 .vscode/*
