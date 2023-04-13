@@ -6,58 +6,41 @@ import {
     RESPONSE_SERV_UNAVAILABLE,
 } from '../../Common/Response';
 import { customAxios } from '../../Common/CustomAxios';
-import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import { ROLE } from '../../Common/Role';
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import './RegisterForm.css';
 
 function RegisterForm() {
+    const { state } = useLocation();
     const {
         register,
         handleSubmit,
         formState: { errors },
     } = useForm();
-
     const navigate = useNavigate();
-
     const [passwordCheck, setPasswordCheck] = useState('');
 
-    function onSubmit(data) {
-        if (data.password === passwordCheck) {
-            data.role = "ROLE_STUDENT";
-            console.log(data)
-            customAxios
-                .post('/user', { ...data })
-                .then((response) => {
-                    /*if (response.data.code === RESPONSE_OK) {
-                        alert(
-                            '입력하신 메일 주소로 인증번호를 전송했습니다. 가입 완료를 위해 인증번호를 입력해주세요'
-                        );
-                        navigate('/register/authentication', {
-                            state: {
-                                username: data.username,
-                                email: data.email,
-                                userRole: ROLE[0],
-                            },
-                        });
-                    }*/
-                })
-                .catch((error) => {
-                    if (error.response.request.status === RESPONSE_BAD_REQ) {
-                        alert('형식에 맞게 입력해주세요');
-                    } else if (error.response.request.status === RESPONSE_CONFLICT) {
-                        alert('이미 사용된 아이디 또는 이메일입니다');
-                    } else if (
-                        error.response.request.status === RESPONSE_SERV_UNAVAILABLE
-                    ) {
-                        alert('메일 전송에 실패했습니다');
-                    } else {
-                        alert(error.response.request.status);
-                    }
-                });
-        } else {
-            alert('비밀번호를 확인해주세요');
+    useEffect(() => {
+        if (state === null || state === undefined) {
+            alert("잘못된 접근입니다");
+            navigate("/");
         }
+    }, []);
+
+    function onSubmit(data) {
+        if (data.password !== passwordCheck) {
+            alert('비밀번호가 일치하는지 확인해주세요');
+            return;
+        }
+        data.role = state.role;
+        data.email = state.email;
+        console.log(data)
+        customAxios
+            .post('/user', { ...data })
+            .then(() => {
+                alert("가입되었습니다");
+                navigate("/");
+            })
     }
 
     return (
@@ -108,15 +91,9 @@ function RegisterForm() {
                         className="registerInput"
                         placeholder="이메일"
                         type="email"
-                        {...register('email', {
-                            required: { value: true, message: '이메일을 입력하세요' },
-                        })}
+                        disabled={true}
+                        value={state.email}
                     />
-                    {errors.email && (
-                        <span style={{ color: 'red', fontSize: '13px' }}>
-                            {errors.email.message}
-                        </span>
-                    )}
                 </div>
                 <div className="input-box">
                     <input
