@@ -2,7 +2,6 @@ import './App.css';
 import { Routes, Route } from 'react-router-dom';
 import RegisterForm from './User/Register/RegisterForm';
 import HomePage from './HomePage';
-import EducatorRegisterForm from './User/Register/EducatorRegisterForm';
 import UserAuthentication from './User/Register/UserAuthentication';
 import AddMACForm from './Device/Manager/AddMACForm';
 import LoginForm from './User/Login/LoginForm';
@@ -37,11 +36,6 @@ function App() {
             path="/register/authentication"
             exact={true}
             element={<UserAuthentication />}
-          />
-          <Route
-            path="/register/educator"
-            exact={true}
-            element={<EducatorRegisterForm />}
           />
           {/*device*/}
           <Route
