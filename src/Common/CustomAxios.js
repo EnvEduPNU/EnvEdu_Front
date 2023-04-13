@@ -45,6 +45,9 @@ customAxios.interceptors.response.use(
         {
             alert("권한이 없습니다");
         }
+        else {
+            alert(error.response.data);
+        }
         return Promise.reject(error);
     }
 );
