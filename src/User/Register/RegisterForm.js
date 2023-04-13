@@ -1,10 +1,4 @@
 import { useForm } from 'react-hook-form';
-import {
-    RESPONSE_BAD_REQ,
-    RESPONSE_CONFLICT,
-    RESPONSE_OK,
-    RESPONSE_SERV_UNAVAILABLE,
-} from '../../Common/Response';
 import { customAxios } from '../../Common/CustomAxios';
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
