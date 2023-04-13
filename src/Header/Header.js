@@ -39,8 +39,11 @@ function Header() {
                   <NavLink className={'nav-link'} to="/login">
                     LOGIN
                   </NavLink>
-                  <NavLink className={'nav-link'} to="/register">
-                    JOIN US
+                  <NavLink className={'nav-link'} to="/auth" state={{role: "ROLE_STUDENT"}}>
+                    JOIN US(student)
+                  </NavLink>
+                  <NavLink className={'nav-link'} to="/auth" state={{role: "ROLE_EDUCATOR"}}>
+                    JOIN US(educator)
                   </NavLink>
                 </>
               ) : (
