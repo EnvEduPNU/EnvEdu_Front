@@ -2,7 +2,6 @@ import './App.css';
 import { Routes, Route } from 'react-router-dom';
 import RegisterForm from './User/Register/RegisterForm';
 import HomePage from './HomePage';
-import UserAuthentication from './User/Register/UserAuthentication';
 import AddMACForm from './Device/Manager/AddMACForm';
 import LoginForm from './User/Login/LoginForm';
 import ConnectPage from './Socket/ConnectPage';
@@ -32,11 +31,6 @@ function App() {
           {/*user*/}
           <Route path="/auth" exact={true} element={<EmailAuth/>}/>
           <Route path="/register" exact={true} element={<RegisterForm />}/>
-          <Route
-            path="/register/authentication"
-            exact={true}
-            element={<UserAuthentication />}
-          />
           {/*device*/}
           <Route
             path="/manager/add/device"
