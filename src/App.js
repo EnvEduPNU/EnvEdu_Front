@@ -20,6 +20,7 @@ import Team from './About/Team/Team';
 import What from './About/What/What';
 import Training from './Learnmore/Training';
 import News from './Learnmore/News';
+import EmailAuth from './User/Register/EmailAuth';
 
 function App() {
   return (
@@ -30,7 +31,8 @@ function App() {
           {/*home*/}
           <Route index element={<HomePage />} />
           {/*user*/}
-          <Route path="/register" exact={true} element={<RegisterForm />} />
+          <Route path="/auth" exact={true} element={<EmailAuth/>}/>
+          <Route path="/register" exact={true} element={<RegisterForm />}/>
           <Route
             path="/register/authentication"
             exact={true}
