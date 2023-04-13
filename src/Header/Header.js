@@ -73,7 +73,7 @@ function Header() {
           >
             <Nav>
               <NavLink className="nav-link" to="/" style={{ color: 'black' }}>
-                <h4>test</h4>
+                <h4>SEEd</h4>
               </NavLink>
             </Nav>
             <Nav>
