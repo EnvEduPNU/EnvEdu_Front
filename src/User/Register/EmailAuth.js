@@ -36,7 +36,7 @@ function EmailAuth() {
 
     return (
         <div>
-            <h2>이메일 인증</h2>
+            <h2>이메일 인증({state.role.replace(/^ROLE_/, "")})</h2>
             {
                 spinner === true ? (<LoadingSpinner/>) : (<></>)
             }
