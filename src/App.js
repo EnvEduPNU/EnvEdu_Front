@@ -19,6 +19,7 @@ import What from './About/What/What';
 import Training from './Learnmore/Training';
 import News from './Learnmore/News';
 import EmailAuth from './User/Register/EmailAuth';
+import AdminLogin from './Admin/Login/AdminLogin';
 
 function App() {
   return (
@@ -67,6 +68,9 @@ function App() {
           {/*Learnmore*/}
           <Route path="/training" exact={true} element={<Training/>} />
           <Route path="/news_reserch" exact={true} element={<News/>} />
+
+          {/*Admin*/}
+          <Route path="/admin/login" exact={true} element={<AdminLogin/>}/>
 
         </Routes>
       </div>
