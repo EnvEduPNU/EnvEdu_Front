@@ -15,7 +15,7 @@ function AdminLogin()
         customAxios.post("/login/admin", {username: username, password: password})
         .then((res)=>{
             console.log(res)
-            navigate("/")
+            //navigate("/")
         });
     }
 
