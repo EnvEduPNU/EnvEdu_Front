@@ -1,30 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import './Header.css';
 import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
-import { decodeToken, isExpired } from 'react-jwt';
 import { customAxios } from '../Common/CustomAxios';
-import { RESPONSE_BAD_REQ, RESPONSE_OK } from '../Common/Response';
 
 function Header() {
-  const [username, setUsername] = useState('');
-  useEffect(() => {
-    if (isExpired(localStorage.getItem('refresh')) === true) {
-      localStorage.clear();
-      setUsername('');
-    } else {
-      setUsername(decodeToken(localStorage.getItem('refresh')).username);
-    }
-  }, [isExpired(localStorage.getItem('refresh'))]);
+  const [username] = useState(localStorage.getItem('username'));
 
   function logout() {
-    customAxios.post('/logout').then((response) => {
-      if (response.data.code === RESPONSE_OK) {
-        localStorage.clear();
-        alert('로그아웃 성공');
-      } else if (response.data.code === RESPONSE_BAD_REQ) {
-        alert('로그아웃 실패');
-      }
+    customAxios.post('/logout').then(() => {
+      localStorage.clear();
+      window.location.reload();
     });
   }
 
@@ -34,7 +20,9 @@ function Header() {
         <Navbar style={{ height: '2em', fontSize: '0.8em' }} bg="light">
           <Container className="justify-content-end">
             <Nav>
-              {isExpired(localStorage.getItem('refresh')) === true ? (
+              {username === null ||
+               username === undefined
+              ? (
                 <>
                   <NavLink className={'nav-link'} to="/login">
                     LOGIN
