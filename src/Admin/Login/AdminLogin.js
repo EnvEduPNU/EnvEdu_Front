@@ -13,6 +13,7 @@ function AdminLogin()
         customAxios.post("/login/admin", {username: username, password: password})
         .then(()=>{
             navigate("/");
+            window.location.reload();
         });
     }
 

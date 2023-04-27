@@ -1,7 +1,6 @@
 import {useForm} from "react-hook-form";
 import {useNavigate} from "react-router-dom";
 import {customAxios} from "../../Common/CustomAxios";
-import {RESPONSE_UNAUTHORIZED} from "../../Common/Response";
 import './LoginForm.css'
 
 function LoginForm()
@@ -12,18 +11,9 @@ function LoginForm()
     function onSubmit(data)
     {
         customAxios.post("/login",{...data})
-            .then((response)=> {
+            .then(()=> {
                 navigate("/");
-            })
-            .catch((error)=>{
-                if(error.response.request.status === RESPONSE_UNAUTHORIZED)
-                {
-                    alert("아이디 또는 비밀번호가 일치하지 않습니다");
-                }
-                else
-                {
-                    alert(error.response.request.status);
-                }
+                window.location.reload();
             })
     }
 
