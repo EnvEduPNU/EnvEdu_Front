@@ -1,29 +1,21 @@
 import {useEffect, useState} from "react";
-import {decodeToken} from "react-jwt";
 import {customAxios} from "../Common/CustomAxios";
-import {RESPONSE_CONFLICT, RESPONSE_UNAUTHORIZED} from "../Common/Response";
 import UserMacList from "./UserMacList";
 
-function ConnectPage()
-{
-    const username = localStorage.getItem("refresh") === null ? null : decodeToken(localStorage.getItem("refresh")).username;
+function ConnectPage() {
     const [connectableSocket, setConnectableSocket] = useState([]);
 
+    const style = {
+        border: '1px solid black',
+        margin: "2em", 
+        paddingLeft: "5em", 
+        paddingRight: "5em"
+    }
+
     useEffect(()=>{
-        if(username === null)
-        {
-            alert("로그인이 필요합니다");
-            return;
-        }
-        customAxios.get(`/user/device/${username}`)
+        customAxios.get(`/user/device`)
             .then((response)=>{
-                setConnectableSocket(response.data.data);
-            })
-            .catch((error)=>{
-                if(error.response.request.status === RESPONSE_CONFLICT)
-                {
-                    alert("기기를 추가해주세요");
-                }
+                setConnectableSocket(response.data.relatedUserDeviceList);
             })
     },[]);
 
@@ -34,8 +26,11 @@ function ConnectPage()
             </div>
             {
                 connectableSocket.map((elem,idx)=>
-                    (<div style={{margin: "2em", paddingLeft: "5em", paddingRight: "5em"}} key={idx}>
-                        <UserMacList mac={elem}/>
+                    (<div key={idx}>
+                        {elem.username}
+                        <div style={style} key={idx}>
+                            <UserMacList key={idx} elem={elem}/>
+                        </div>
                     </div>)
                 )
             }
