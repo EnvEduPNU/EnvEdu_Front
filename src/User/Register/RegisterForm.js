@@ -1,65 +1,43 @@
-import {useForm} from 'react-hook-form';
-import {
-    RESPONSE_BAD_REQ,
-    RESPONSE_CONFLICT,
-    RESPONSE_OK,
-    RESPONSE_SERV_UNAVAILABLE,
-} from '../../Common/Response';
-import {customAxios} from '../../Common/CustomAxios';
-import {useNavigate} from 'react-router-dom';
-import {useState} from 'react';
-import {ROLE} from '../../Common/Role';
+import { useForm } from 'react-hook-form';
+import { customAxios } from '../../Common/CustomAxios';
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import './RegisterForm.css';
 
 function RegisterForm() {
+    const { state } = useLocation();
     const {
         register,
         handleSubmit,
-        formState: {errors},
+        formState: { errors },
     } = useForm();
-
     const navigate = useNavigate();
-
     const [passwordCheck, setPasswordCheck] = useState('');
 
-    function onSubmit(data) {
-        if (data.password === passwordCheck) {
-            customAxios
-                .post('/register', {...data})
-                .then((response) => {
-                    if (response.data.code === RESPONSE_OK) {
-                        alert(
-                            '입력하신 메일 주소로 인증번호를 전송했습니다. 가입 완료를 위해 인증번호를 입력해주세요'
-                        );
-                        navigate('/register/authentication', {
-                            state: {
-                                username: data.username,
-                                email: data.email,
-                                userRole: ROLE[0],
-                            },
-                        });
-                    }
-                })
-                .catch((error) => {
-                    if (error.response.request.status === RESPONSE_BAD_REQ) {
-                        alert('형식에 맞게 입력해주세요');
-                    } else if (error.response.request.status === RESPONSE_CONFLICT) {
-                        alert('이미 사용된 아이디 또는 이메일입니다');
-                    } else if (
-                        error.response.request.status === RESPONSE_SERV_UNAVAILABLE
-                    ) {
-                        alert('메일 전송에 실패했습니다');
-                    } else {
-                        alert(error.response.request.status);
-                    }
-                });
-        } else {
-            alert('비밀번호를 확인해주세요');
+    useEffect(() => {
+        if (state === null || state === undefined) {
+            alert("잘못된 접근입니다");
+            navigate("/");
         }
+    }, []);
+
+    function onSubmit(data) {
+        if (data.password !== passwordCheck) {
+            alert('비밀번호가 일치하는지 확인해주세요');
+            return;
+        }
+        data.role = state.role;
+        data.email = state.email;
+        console.log(data)
+        customAxios
+            .post('/user', { ...data })
+            .then(() => {
+                alert("가입되었습니다");
+                navigate("/");
+            })
     }
 
     return (
-
         <form onSubmit={handleSubmit(onSubmit)}>
             <div className="formBody">
                 <h1>회원가입</h1>
@@ -68,13 +46,13 @@ function RegisterForm() {
                         className="registerInput"
                         placeholder="아이디: 5~20자"
                         {...register('username', {
-                            required: {value: true, message: '아이디를 입력하세요'},
+                            required: { value: true, message: '아이디를 입력하세요' },
                         })}
                     />
                     {errors.username && (
-                        <span style={{color: 'red', fontSize: '13px'}}>
-            {errors.username.message}
-          </span>
+                        <span style={{ color: 'red', fontSize: '13px' }}>
+                            {errors.username.message}
+                        </span>
                     )}
                 </div>
                 <div className="input-box">
@@ -83,13 +61,13 @@ function RegisterForm() {
                         placeholder="비밀번호: 8~20자"
                         type="password"
                         {...register('password', {
-                            required: {value: true, message: '비밀번호를 입력하세요'},
+                            required: { value: true, message: '비밀번호를 입력하세요' },
                         })}
                     />
                     {errors.password && (
-                        <span style={{color: 'red', fontSize: '13px'}}>
-            {errors.password.message}
-          </span>
+                        <span style={{ color: 'red', fontSize: '13px' }}>
+                            {errors.password.message}
+                        </span>
                     )}
                 </div>
                 <div className="input-box">
@@ -107,14 +85,38 @@ function RegisterForm() {
                         className="registerInput"
                         placeholder="이메일"
                         type="email"
-                        {...register('email', {
-                            required: {value: true, message: '이메일을 입력하세요'},
+                        disabled={true}
+                        value={state.email}
+                    />
+                </div>
+                <div className="input-box">
+                    <input
+                        className="registerInput"
+                        placeholder="성별"
+                        type="text"
+                        {...register('gender', {
+                            required: { value: true, message: '성별을 입력하세요' },
                         })}
                     />
-                    {errors.email && (
-                        <span style={{color: 'red', fontSize: '13px'}}>
-            {errors.email.message}
-          </span>
+                    {errors.gender && (
+                        <span style={{ color: 'red', fontSize: '13px' }}>
+                            {errors.gender.message}
+                        </span>
+                    )}
+                </div>
+                <div className="input-box">
+                    <input
+                        className="registerInput"
+                        placeholder="생년월일"
+                        type="date"
+                        {...register('birthday', {
+                            required: { value: true, message: '생년월일을 입력하세요' },
+                        })}
+                    />
+                    {errors.birthday && (
+                        <span style={{ color: 'red', fontSize: '13px' }}>
+                            {errors.birthday.message}
+                        </span>
                     )}
                 </div>
                 <button type="submit" className="btn btn-secondary">

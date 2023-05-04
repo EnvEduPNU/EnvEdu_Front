@@ -1,15 +1,14 @@
+import { useEffect } from "react";
 import SocketConnect from "./SocketConnect";
 
-function UserMacList(props)
-{
+function UserMacList(props) {
     return(
         <div>
             {
-                props.mac.macList.map((elem, idx)=>
-                    (<div key={idx}>
-                        <SocketConnect mac={elem} username={props.mac.username}/>
-                    </div>)
-                )
+                props.elem.elements.map((info, idx)=>
+                (<div key={idx}>
+                    <SocketConnect mac={info.mac} name={info.deviceName} username={props.elem.username}/>
+                </div>))
             }
         </div>
     );

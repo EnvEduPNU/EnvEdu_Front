@@ -2,8 +2,6 @@ import './App.css';
 import { Routes, Route } from 'react-router-dom';
 import RegisterForm from './User/Register/RegisterForm';
 import HomePage from './HomePage';
-import EducatorRegisterForm from './User/Register/EducatorRegisterForm';
-import UserAuthentication from './User/Register/UserAuthentication';
 import AddMACForm from './Device/Manager/AddMACForm';
 import LoginForm from './User/Login/LoginForm';
 import ConnectPage from './Socket/ConnectPage';
@@ -11,7 +9,7 @@ import RegisterDeviceForm from './Device/User/RegisterDeviceForm';
 import Header from './Header/Header';
 import TestSocket from './Test/SocketTest';
 import TestFetch from './Test/TestFetch';
-import RegisterStudent from './User/Educator/RegisterStudent';
+import RegisterStudents from './User/Educator/RegisterStudents';
 import Footer from './Footer/Footer';
 import Find from './User/Find/Find';
 import Board from './Board/Board';
@@ -20,8 +18,15 @@ import Team from './About/Team/Team';
 import What from './About/What/What';
 import Training from './Learnmore/Training';
 import News from './Learnmore/News';
+import EmailAuth from './User/Register/EmailAuth';
+import AdminLogin from './Admin/Login/AdminLogin';
+import { useEffect } from 'react';
+import DeviceList from './Admin/Device/DeviceList';
 
 function App() {
+  useEffect(()=>{
+    //check validity of refresh token(cookie)
+  },[]);
   return (
     <>
       <Header />
@@ -30,27 +35,17 @@ function App() {
           {/*home*/}
           <Route index element={<HomePage />} />
           {/*user*/}
-          <Route path="/register" exact={true} element={<RegisterForm />} />
-          <Route
-            path="/register/authentication"
-            exact={true}
-            element={<UserAuthentication />}
-          />
-          <Route
-            path="/register/educator"
-            exact={true}
-            element={<EducatorRegisterForm />}
-          />
-          {/*device*/}
-          <Route
-            path="/manager/add/device"
-            exact={true}
-            element={<AddMACForm />}
-          />
+          <Route path="/auth" exact={true} element={<EmailAuth/>}/>
+          <Route path="/register" exact={true} element={<RegisterForm />}/>
           <Route
             path="/user/add/device"
             exact={true}
             element={<RegisterDeviceForm />}
+          />
+          <Route
+            path="/educator/student/add"
+            exact={true}
+            element={<RegisterStudents />}
           />
           {/*login*/}
           <Route path="/login" exact={true} element={<LoginForm />} />
@@ -59,11 +54,6 @@ function App() {
           {/*test*/}
           <Route path="/test/socket" exact={true} element={<TestSocket />} />
           <Route path="/test/fetch" exact={true} element={<TestFetch />} />
-          <Route
-            path="/test/student/add"
-            exact={true}
-            element={<RegisterStudent />}
-          />
           {/*id_password_find*/}
           <Route path="/find" exact={true} element={<Find/>} />
           {/*board*/}
@@ -78,6 +68,14 @@ function App() {
           <Route path="/training" exact={true} element={<Training/>} />
           <Route path="/news_reserch" exact={true} element={<News/>} />
 
+          {/*Admin*/}
+          <Route path="/admin/login" exact={true} element={<AdminLogin/>}/>
+          <Route path="/admin/devices" exact={true} element={<DeviceList/>}/>
+          <Route
+            path="/admin/add/device"
+            exact={true}
+            element={<AddMACForm />}
+          />
         </Routes>
       </div>
       <Footer />

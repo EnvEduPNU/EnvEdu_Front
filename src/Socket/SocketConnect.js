@@ -96,7 +96,7 @@ function SocketConnect(props) {
                             backgroundColor: `${connected === false ? "rgb(192,192,192)" : "rgb(102,255,102)"}`
                         }} onClick={() => {
                             if (connected === false) {
-                                if (props.username === decodeToken(localStorage.getItem("refresh")).username) {
+                                if (props.username === decodeToken(localStorage.getItem("access_token"))) {
                                     location = prompt("위치 정보를 입력하세요(optional)");
                                 }
                                 register();
@@ -105,7 +105,7 @@ function SocketConnect(props) {
                             }
                         }}>{props.mac}</span>
                         {
-                            props.username === decodeToken(localStorage.getItem("refresh")).username ? (
+                            props.username === decodeToken(localStorage.getItem("access_token")).username ? (
                                 <span className="p-2" style={{fontSize: "0.7em"}}><input type="checkbox"
                                                                                          checked={checked}
                                                                                          onChange={() => {
@@ -138,8 +138,8 @@ function SocketConnect(props) {
                                                                                      sendFunction={sendCalibrationMsg}/>) : (<></>)
                     }
                 </div>
-                <button onClick={()=>{setIndex(index-1)}} disabled={index == 0 ? true : false}>prev</button>
-                <button onClick={()=>{setIndex(index+1)}} disabled={index == 2 ? true : false}>next</button>
+                {/* <button onClick={()=>{setIndex(index-1)}} disabled={index == 0 ? true : false}>prev</button>
+                <button onClick={()=>{setIndex(index+1)}} disabled={index == 2 ? true : false}>next</button> */}
             </div>
         );
 }
