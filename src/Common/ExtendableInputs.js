@@ -28,6 +28,7 @@ function ExtendableInputs(props) {
           <input
             value={input}
             onChange={(event) => handleInputChange(index, event)}
+            placeholder={props.placeholder === null ? "" : props.placeholder}
           />
           <Button onClick={() => removeInput(index)}>X</Button>
         </div>
