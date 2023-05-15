@@ -1,0 +1,84 @@
+tbody, td, tfoot, th, thead, tr{
+    border-style : inherit;
+    border-width: 1px;
+    font-size: 12px;
+}
+
+th{
+    background: grey;
+    color:white;
+}
+
+button{
+    border: 1px solid grey;
+}
+
+thead{
+    height: 1.8rem;
+}
+
+#wrap-air-div{
+    width:70%;
+    margin: auto auto;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    gap: 15px;
+}
+
+#selected-location{
+    width:20%;
+    border-bottom: solid 1px grey;
+    text-align: start;
+}
+
+.air-buttons{
+    width: 20%;
+    text-align: start;
+    border:solid 1px grey;
+    border-radius: 5px;
+}
+
+.air-div-full{
+    width: 100%;
+}
+
+.modal-full{
+    position: fixed;
+    top:0;
+    left:0;
+
+    width:100vw;
+    height:100%;
+
+    opacity: 40%;
+    background: black;
+}
+
+.modal-table{
+    position: fixed;
+    background: white;
+    top:50%;
+    left:50%;
+    transform: translate(-50%, -50%);
+}
+
+.wrap-select-type{
+    width:100%;
+    height: 40px;
+
+    border-bottom: 1px solid black;
+
+    display: flex;
+    gap: 7px;
+    flex-direction: row;
+    justify-content: end;
+}
+.select-type{
+    display: flex;
+    align-items: center;
+
+    padding: 0 20px;
+    height: 100%;
+    background: lightgrey;
+}

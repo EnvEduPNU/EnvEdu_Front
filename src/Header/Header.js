@@ -83,6 +83,9 @@ function Header() {
                 <NavLink className={'nav-link'} to="/">
                   My data
                 </NavLink>
+                <NavLink className={'nav-link'} to="/openapi">
+                  Open Api Data
+                </NavLink>
               </NavDropdown>
               <NavDropdown
                 title="ABOUT"
