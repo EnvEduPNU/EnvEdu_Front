@@ -76,6 +76,17 @@ function OpenApi() {
         label: station.stationName,
     }));
 
+    function handleThClick(header){
+        const values = selectedItems.reduce((arr, user) => { // create a new array that contains only the values of the specified key for all objects in the array
+            if (user.hasOwnProperty(header)) { // check if the key exists in the current object
+                arr.push(user[header]); // add the value of the key to the array
+            }
+            return arr;
+        }, []);
+        redirectToExternalUrl("http://localhost:8080/chart", values)
+        return values;
+    }
+
     function handleClick(item) {
         // Do something with the id parameter
         const items = Object.values(item)
