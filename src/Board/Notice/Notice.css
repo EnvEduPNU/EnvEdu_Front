@@ -1,0 +1,22 @@
+.inputs{
+    width: 100%;
+}
+
+#wrap-form{
+    width: 60%;
+    margin: auto auto;
+}
+
+#title-input{
+
+}
+
+input, textarea{
+    width:100%;
+}
+
+form{
+    display: flex;
+    flex-direction: column;
+    gap:10px;
+}

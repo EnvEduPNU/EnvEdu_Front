@@ -173,6 +173,9 @@ function Header() {
                 <NavLink className={'nav-link'} to="/board">
                   Board
                 </NavLink>
+                <NavLink className={'nav-link'} to="/notice">
+                  공지
+                </NavLink>
               </NavDropdown>
             </Nav>
           </Container>
