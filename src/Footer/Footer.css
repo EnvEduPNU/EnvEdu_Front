@@ -1,6 +1,5 @@
 footer {
   padding: 10px;
-  border-top: black solid 0.05em;
 }
 
 #bottomMenu {
@@ -10,6 +9,7 @@ footer {
 
 #bottomMenu ul {
   padding-left: 0;
+  width:100%;
 }
 
 #bottomMenu ul li {
