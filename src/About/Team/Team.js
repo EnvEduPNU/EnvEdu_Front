@@ -3,6 +3,8 @@ import './Team.css';
 import About1 from './Image/About1.png';
 import About2 from './Image/About2.jpg';
 import About3 from './Image/About3.jpg';
+import About4 from './Image/About4.jpeg';
+
 
 function Team(){
     return(
@@ -76,30 +78,28 @@ function Team(){
       <div className="row featurette" style={{ padding: '2em' }}>
         <div className="col-md-9 order-md-2">
           <h3 className="featurette-heading fw-normal lh-1">
-            Content Box-Click Here <span className="text-muted">Sub-Title</span>
+          외부참여 연구원 | 이동영<span className="text-muted"></span>
           </h3>
-          <p className="lead">You can put some information here</p>
+          <ul className="lead">
+            <li>해원초등학교</li>
+            <li>부산교육대학교 강의교수
+            </li>
+            <li>이학박사수료(지구과학), 교육학석사(영재교육)</li>
+            <li>과학교육, 융합교육, STEM, Maker, 공학교육</li>
+            <li>shainare00@hanmail.net</li>
+            <li>051)510.1642</li>
+          </ul>
         </div>
         <div className="col-md-3 order-md-1">
-          <svg
-            className="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto"
-            width="270"
-            height="270"
-            xmlns="http://www.w3.org/2700/svg"
-            role="img"
-            aria-label="Placeholder:"
-            preserveAspectRatio="xMidYMid slice"
-            focusable="false"
-          >
-            <title>Placeholder</title>
-            <rect width="100%" height="100%" fill="#eee"></rect>
-            
-          </svg>
+        <img src={About4} width="100%"/>
         </div>
       </div>
+
+      
      
       </div>
         </>
     );
 }
 export default Team;
+
