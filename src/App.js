@@ -34,6 +34,7 @@ function App() {
         <Routes>
           {/*home*/}
           <Route index element={<HomePage />} />
+          
           {/*user*/}
           <Route path="/auth" exact={true} element={<EmailAuth/>}/>
           <Route path="/register" exact={true} element={<RegisterForm />}/>
@@ -47,26 +48,33 @@ function App() {
             exact={true}
             element={<RegisterStudents />}
           />
+          
           {/*login*/}
           <Route path="/login" exact={true} element={<LoginForm />} />
+          
           {/*socket*/}
           <Route path="/socket" exact={true} element={<ConnectPage />} />
+          
           {/*test*/}
           <Route path="/test/socket" exact={true} element={<TestSocket />} />
           <Route path="/test/fetch" exact={true} element={<TestFetch />} />
+          
           {/*id_password_find*/}
           <Route path="/find" exact={true} element={<Find/>} />
+          
           {/*board*/}
           <Route path="/board" exact={true} element={<Board/>} />
           <Route path="/boardcontent" exact={true} element={<Board_content/>} />
+          
           {/*About*/}
           <Route path="/team" exact={true} element={<Team/>} />
-
           <Route path="/what" exact={true} element={<What/>} />
 
           {/*Learnmore*/}
           <Route path="/training" exact={true} element={<Training/>} />
           <Route path="/news_reserch" exact={true} element={<News/>} />
+          <Route path="/resource" exact={true} element={<Resource/>} />
+          <Route path="/tboard" exact={true} element={<Tboard/>} />
 
           {/*Admin*/}
           <Route path="/admin/login" exact={true} element={<AdminLogin/>}/>
@@ -76,6 +84,10 @@ function App() {
             exact={true}
             element={<AddMACForm />}
           />
+
+        {/*ContactUs*/}
+        <Route path="/contactus" exact={true} element={<ContactUs/>} />
+       
         </Routes>
       </div>
       <Footer />
