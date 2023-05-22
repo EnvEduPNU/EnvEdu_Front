@@ -21,37 +21,37 @@ function Header() {
           <Container className="justify-content-end">
             <Nav>
               {username === null ||
-               username === undefined
-              ? (
-                <>
-                  <NavLink className={'nav-link'} to="/login">
-                    LOGIN
-                  </NavLink>
-                  <NavLink className={'nav-link'} to="/auth" state={{role: "ROLE_STUDENT"}}>
-                    JOIN US(student)
-                  </NavLink>
-                  <NavLink className={'nav-link'} to="/auth" state={{role: "ROLE_EDUCATOR"}}>
-                    JOIN US(educator)
-                  </NavLink>
-                </>
-              ) : (
-                <>
-                  <NavLink
-                    className={'nav-link'}
-                    to="/"
-                    style={{ color: 'black' }}
-                  >
-                    {username}
-                  </NavLink>
-                  <span
-                    className={'nav-link'}
-                    style={{ color: 'black', cursor: 'pointer' }}
-                    onClick={logout}
-                  >
-                    LOGOUT
-                  </span>
-                </>
-              )}
+                username === undefined
+                ? (
+                  <>
+                    <NavLink className={'nav-link'} to="/login">
+                      LOGIN
+                    </NavLink>
+                    <NavLink className={'nav-link'} to="/auth" state={{ role: "ROLE_STUDENT" }}>
+                      JOIN US(student)
+                    </NavLink>
+                    <NavLink className={'nav-link'} to="/auth" state={{ role: "ROLE_EDUCATOR" }}>
+                      JOIN US(educator)
+                    </NavLink>
+                  </>
+                ) : (
+                  <>
+                    <NavLink
+                      className={'nav-link'}
+                      to="/"
+                      style={{ color: 'black' }}
+                    >
+                      {username}
+                    </NavLink>
+                    <span
+                      className={'nav-link'}
+                      style={{ color: 'black', cursor: 'pointer' }}
+                      onClick={logout}
+                    >
+                      LOGOUT
+                    </span>
+                  </>
+                )}
             </Nav>
           </Container>
         </Navbar>
@@ -115,7 +115,6 @@ function Header() {
                 <NavLink className={'nav-link'} to="/">
                   SEEd Device manual
                 </NavLink>
-
                 <NavLink className={'nav-link'} to="/">
                   Data manual
                 </NavLink>
