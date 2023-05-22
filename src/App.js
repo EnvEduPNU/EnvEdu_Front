@@ -1,5 +1,6 @@
 import './App.css';
 import { Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
 import RegisterForm from './User/Register/RegisterForm';
 import HomePage from './HomePage';
 import AddMACForm from './Device/Manager/AddMACForm';
@@ -16,12 +17,14 @@ import Board from './Board/Board';
 import Board_content from './Board/Board_content';
 import Team from './About/Team/Team';
 import What from './About/What/What';
-import Training from './Learnmore/Training';
-import News from './Learnmore/News';
+import Training from './Learnmore/Train/Training';
+import News from './Learnmore/News/News';
 import EmailAuth from './User/Register/EmailAuth';
 import AdminLogin from './Admin/Login/AdminLogin';
-import { useEffect } from 'react';
 import DeviceList from './Admin/Device/DeviceList';
+import ContactUs from './Contact/ContactUs';
+import Resource from './Learnmore/Resource/Resource';
+import Tboard from './Learnmore/Train/Tborad';
 
 function App() {
   useEffect(()=>{
