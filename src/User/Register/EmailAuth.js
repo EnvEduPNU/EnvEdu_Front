@@ -11,6 +11,10 @@ function EmailAuth() {
     const [email, setEmail] = useState("");
     const [authNum, setAuthNum] = useState("");
 
+    /**
+     * header에서 넘겨주는 state 값이 존재하지 않는 경우, 비정상적 접근으로 간주
+     * url 입력으로 넘어오는 경우
+     */
     useEffect(()=>{
         if(state === null || state === undefined) {
             alert("잘못된 접근입니다");
@@ -26,6 +30,9 @@ function EmailAuth() {
         }).finally(()=>setSpinner(false));
     }
 
+    /**
+     * 인증 완료 시, 정보 입력 컴포넌트로 이동
+     */
     function confirmAuthNum() {
         setSpinner(true);
         customAxios.get("/auth", {params: {email: email, authNum: authNum}}).then(()=>{

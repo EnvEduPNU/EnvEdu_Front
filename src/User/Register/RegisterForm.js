@@ -90,6 +90,10 @@ function RegisterForm() {
                     />
                 </div>
                 <div className="input-box">
+                    {/**
+                     * MALE, FEMALE 중 하나
+                     * todo: <select> 방식으로 수정
+                     */}
                     <input
                         className="registerInput"
                         placeholder="성별"
@@ -105,6 +109,9 @@ function RegisterForm() {
                     )}
                 </div>
                 <div className="input-box">
+                    {/**
+                     * yyyy-mm-dd 형식 준수
+                     */}
                     <input
                         className="registerInput"
                         placeholder="생년월일"
