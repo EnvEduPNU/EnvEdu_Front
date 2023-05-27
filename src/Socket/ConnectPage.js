@@ -13,6 +13,11 @@ function ConnectPage() {
     }
 
     useEffect(()=>{
+        /**
+         * 자신과 연관된 기기의 정보를 가져옴
+         * 학생의 경우, 자신에게 등록된 기기
+         * 교사의 경우, 자신에게 등록된 기기 + 자신이 지도하는 모든 학생에게 등록된 기기
+         */
         customAxios.get(`/user/device`)
             .then((response)=>{
                 setConnectableSocket(response.data.relatedUserDeviceList);

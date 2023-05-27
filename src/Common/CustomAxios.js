@@ -2,6 +2,10 @@ import axios from "axios";
 import {RESPONSE_BAD_REQ, RESPONSE_FORBIDDEN, RESPONSE_UNAUTHORIZED} from "./Response";
 import {decodeToken} from "react-jwt";
 
+/**
+ * 프로젝트 전체에서 사용되고 있는 axios
+ */
+
 export const customAxios = axios.create({
     baseURL: `${process.env.REACT_APP_API_URL}`,
     withCredentials: true
