@@ -96,6 +96,9 @@ function Header() {
                 <NavLink className={'nav-link'} to="/">
                   My data
                 </NavLink>
+                <NavLink className={'nav-link'} to="/openapi">
+                  Open Api Data
+                </NavLink>
               </NavDropdown>
               <NavDropdown
                 title="ABOUT"
@@ -184,6 +187,9 @@ function Header() {
                 </NavLink>
                 <NavLink className={'nav-link'} to="/board">
                   Board
+                </NavLink>
+                <NavLink className={'nav-link'} to="/notice">
+                  공지
                 </NavLink>
               </NavDropdown>
             </Nav>
