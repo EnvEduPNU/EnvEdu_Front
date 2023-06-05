@@ -12,6 +12,7 @@ import TestFetch from './Test/TestFetch';
 import RegisterStudents from './User/Educator/RegisterStudents';
 import Footer from './Footer/Footer';
 import Find from './User/Find/Find';
+import Notice from './Board/Notice/Notice';
 import Board from './Board/Board';
 import Board_content from './Board/Board_content';
 import Team from './About/Team/Team';
@@ -21,9 +22,14 @@ import News from './Learnmore/News/News';
 import EmailAuth from './User/Register/EmailAuth';
 import AdminLogin from './Admin/Login/AdminLogin';
 import DeviceList from './Admin/Device/DeviceList';
+<<<<<<< HEAD
 import ContactUs from './Contact/ContactUs';
 import Resource from './Learnmore/Resource/Resource';
 import Tboard from './Learnmore/Train/Tborad';
+=======
+import OpenApi from './OpenApi/OpenApi';
+import MyData from "./OpenApi/MyData";
+>>>>>>> f79ea19 (#23-feat/My Data 기능 추가)
 
 function App() {
   /**
@@ -49,7 +55,12 @@ function App() {
             exact={true}
             element={<RegisterStudents />}
           />
+<<<<<<< HEAD
           
+=======
+          <Route path="/openapi" exact={true} element={<OpenApi />} />
+          <Route path="/myData" exact={true} element={<MyData />} />
+>>>>>>> f79ea19 (#23-feat/My Data 기능 추가)
           {/*login*/}
           <Route path="/login" exact={true} element={<LoginForm />} />
           
@@ -65,6 +76,7 @@ function App() {
           
           {/*board*/}
           <Route path="/board" exact={true} element={<Board/>} />
+          <Route path="/notice" exact={true} element={<Notice/>} />
           <Route path="/boardcontent" exact={true} element={<Board_content/>} />
           
           {/*About*/}

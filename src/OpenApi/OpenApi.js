@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef  } from 'react';
+import React, { useState } from 'react';
 import './OpenApi.css';
+import {customAxios} from "../Common/CustomAxios";
 
 
 function OpenApi() {
@@ -13,16 +14,19 @@ function OpenApi() {
     const [selectedItems, setSelectedItems] = useState([]);
     const [isFull, setIsFull] = useState([]);
     const [isShow, setIsShow] = useState(false);
+    const [category, setCategory] = useState(false);
 
     const handleButtonClickOcean = () => {
-        fetch('http://localhost:8080/ocean-quality?location=부산')
-            .then((response) => response.json())
+        customAxios.get('/ocean-quality?location=부산')
             .then((jsonData) => {
+                jsonData = jsonData.data;
                 setData(jsonData);
                 setFilteredData(jsonData);
                 setSelectedOption(jsonData[0]);
                 setIsFull(false);
                 setIsShow(true);
+                setSelectedItems([])
+                setCategory("OCEAN")
 
                 // Set the table headers dynamically
                 const headers = Object.keys(jsonData[0]).filter((key) => key !== 'id');
@@ -32,14 +36,16 @@ function OpenApi() {
             });
     };
     const handleButtonClickAir = () => {
-        fetch('http://localhost:8080/air-quality?location=부산')
-            .then((response) => response.json())
+        customAxios.get('/air-quality?location=부산')
             .then((jsonData) => {
+                jsonData = jsonData.data;
                 setData(jsonData);
                 setFilteredData(jsonData);
                 setSelectedOption(jsonData[0]);
                 setIsFull(false);
                 setIsShow(true);
+                setSelectedItems([])
+                setCategory("AIR")
 
                 // Set the table headers dynamically
                 const headers = Object.keys(jsonData[0]).filter((key) => key !== 'id');
@@ -86,13 +92,23 @@ function OpenApi() {
         redirectToExternalUrl("http://localhost:8080/chart", values)
         return values;
     }
+    const handleSaveMyData = async (event) => {
+        event.preventDefault();
 
-    function handleClick(item) {
-        // Do something with the id parameter
-        const items = Object.values(item)
-        setSelectedItem(items)
-        setShowModal(!showModal);
-    }
+        let path = ''
+        if (category === 'AIR')
+            path = '/air-quality';
+        else if (category === 'OCEAN')
+            path = '/ocean-quality';
+
+
+        customAxios.post(path,selectedItems).then( (response) => {
+            alert("데이터 저장을 성공했습니다!");
+        })
+        .catch(function (error) {
+            alert("데이터 저장을 실패했습니다.");
+        });
+    };
 
     function modalClick(){
         setShowModal(!showModal);
@@ -177,32 +193,45 @@ function OpenApi() {
             </div>
             <h3 className="air-div-full">부산 환경 상태</h3>
 
-            <select
-                value={selectedOption ? selectedOption.stationName : ''}
-                onChange={handleSelectChange}
-                className="air-buttons"
-            >
-                {options.map((option) => (
-                    <option key={option.id} value={option.value}>
-                        {option.label}
-                    </option>
-                ))}
-            </select>
-            <button
-                onClick={handleFullLookup}
-                id="full-lookup-button"
-                className="air-buttons"
-            >
-                전체 조회
-            </button>
-            <div id="selected-location">
-                {selectedOption ? selectedOption.stationName : '전체 조회'}
-            </div>
-            <div id="search-checked"
-                onClick={handleFiltering}>
-                filtering
-            </div>
-
+            {isShow &&
+                <select
+                    value={selectedOption ? selectedOption.stationName : ''}
+                    onChange={handleSelectChange}
+                    className="air-buttons"
+                >
+                    {options.map((option) => (
+                        <option key={option.id} value={option.value}>
+                            {option.label}
+                        </option>
+                    ))}
+                </select>
+            }
+            {isShow &&
+                <button
+                    onClick={handleFullLookup}
+                    id="full-lookup-button"
+                    className="air-buttons"
+                >
+                    전체 조회
+                </button>
+            }
+            {isShow &&
+                <div id="selected-location">
+                    {selectedOption ? selectedOption.stationName : '전체 조회'}
+                </div>
+            }
+            {isShow &&
+                <div id="search-checked"
+                    onClick={handleFiltering}>
+                    filtering
+                </div>
+            }
+            {isShow &&
+                <div id="save-my-data"
+                     onClick={handleSaveMyData}>
+                    Save My Data
+                </div>
+            }
             <div id="div-headers">
                 {checkedHeaders.map((header) => (
                     <label key={header}>
@@ -229,6 +258,7 @@ function OpenApi() {
                                 <input
                                     type="checkbox"
                                     onChange={() => handleFullCheck()}
+                                    checked={isFull}
                                 ></input>
                             </th>
                         }
@@ -256,6 +286,4 @@ function OpenApi() {
         </div>
     );
 }
-
-// <tr key={item.id} onClick={() => handleClick(item)}>
 export default OpenApi;
