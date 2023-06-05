@@ -6,7 +6,6 @@ import HomePage from './HomePage';
 import AddMACForm from './Device/Manager/AddMACForm';
 import LoginForm from './User/Login/LoginForm';
 import ConnectPage from './Socket/ConnectPage';
-import RegisterDeviceForm from './Device/User/RegisterDeviceForm';
 import Header from './Header/Header';
 import TestSocket from './Test/SocketTest';
 import TestFetch from './Test/TestFetch';
@@ -33,8 +32,11 @@ import MyData from "./OpenApi/MyData";
 >>>>>>> f79ea19 (#23-feat/My Data 기능 추가)
 
 function App() {
+  /**
+   * 처음에 반드시 .env 파일 생성 후 REACT_APP_API_URL = ${서버 도메인} 작성
+   */
   useEffect(()=>{
-    //check validity of refresh token(cookie)
+    //todo: check validity of refresh token(cookie)
   },[]);
   return (
     <>
@@ -47,11 +49,7 @@ function App() {
           {/*user*/}
           <Route path="/auth" exact={true} element={<EmailAuth/>}/>
           <Route path="/register" exact={true} element={<RegisterForm />}/>
-          <Route
-            path="/user/add/device"
-            exact={true}
-            element={<RegisterDeviceForm />}
-          />
+  
           <Route
             path="/educator/student/add"
             exact={true}

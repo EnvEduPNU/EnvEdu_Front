@@ -34,7 +34,6 @@ function OpenApi() {
                 const checkedHeaders = Object.keys(jsonData[0]).filter((key) => key !== 'id');
                 setCheckedHeaders(checkedHeaders);
             });
-
     };
     const handleButtonClickAir = () => {
         customAxios.get('/air-quality?location=부산')
@@ -54,7 +53,6 @@ function OpenApi() {
                 const checkedHeaders = Object.keys(jsonData[0]).filter((key) => key !== 'id');
                 setCheckedHeaders(checkedHeaders);
             });
-
     };
 
     function redirectToExternalUrl(url, values) {
@@ -288,5 +286,4 @@ function OpenApi() {
         </div>
     );
 }
-
 export default OpenApi;

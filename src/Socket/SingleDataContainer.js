@@ -39,11 +39,31 @@ const labels = ['', '', '', '', '', '', '', '', '', ''];
 
 
 function SingleDataContainer(props) {
+    /**
+     * 데이터의 각 종류별로 존재하는 컴포넌트
+     */
+
+    /**
+     * 제일 마지막으로 받은 데이터의 값
+     * 만약 값이 -99999인 경우, 유효하지 않은 값으로 판단해 처리하지 않음
+     */
     const [value, setValue] = useState(-99999);
+
+    /**
+     * 그래프를 렌더링하기 위한 데이터
+     */
     const [graphData] = useState([]);
+
+    /**
+     * 그래프 생성 여부
+     */
     const [seeGraph, setSeeGraph] = useState(false);
 
     useEffect(() => {
+        /**
+         * 유효하지 않은 데이터를 제외한 값을 이용해 그래프 생성
+         * 컴포넌트가 처음 생성될 때 받았던 데이터 중 유효한 값을 graphData에 추가
+         */
         if (props.type === "temp") {
             props.data.forEach((elem) => {
                 if (elem.temp !== -99999) graphData.push(elem.temp)
@@ -88,6 +108,10 @@ function SingleDataContainer(props) {
     }, [])
 
     useEffect(() => {
+        /**
+         * 데이터를 받았을 때, 유효한 값이면 마지막으로 받은 값 갱신
+         * graphData에도 추가
+         */
         if (props.current !== null && props.current !== undefined) {
             if (props.type === "temp") {
                 setValue(props.data[props.data.length - 1].temp);
@@ -141,7 +165,9 @@ function SingleDataContainer(props) {
                 }
             }
 
-
+            /**
+             * receivedData와 마찬가지로 graphData도 10개로 유지
+             */
             if (graphData.length > 10) {
                 graphData.splice(0, 1);
             }
@@ -172,6 +198,9 @@ function SingleDataContainer(props) {
                 }}>{props.type}</span>
                     &nbsp;&nbsp;
                     {
+                        /**
+                         * 유효하지 않은 값의 처리
+                         */
                         <span>{value === -99999 ? "N/A" : value}</span>
                     }
                 </div>
@@ -184,6 +213,12 @@ function SingleDataContainer(props) {
                             <Popover id="popover-positioned-left">
                                 <Popover.Header as="h3">{props.type}센서 보정하기</Popover.Header>
                                 <Popover.Body>
+                                    {
+                                        /** 
+                                         * 보정 메세지 형식 준수
+                                         * 보정시 시작 -> 보정 -> 종료 순서 준수
+                                         */
+                                    }
                                     <Button
                                         onClick={() => props.sendFunction("{ENTER" + (props.type === "pH" ? "PH" : props.type === "tur" ? "TUR" : "DO") + "}")}>시작</Button>
                                     <br/>
@@ -196,8 +231,15 @@ function SingleDataContainer(props) {
                             </Popover>
                         }
                     >
-                        {(props.type === "pH" || props.type === "tur" || props.type === "dox") && value !== -99999 ?
-                            <span className="border" style={{fontSize: "0.8em"}}>보정하기</span> : <></>}
+                        {
+                            /**
+                             * 보정 가능한 센서 - ph, tur, dox
+                             * 위 센서 값이 유효하지 않은 경우, 보정 기능 비활성화
+                             */
+                            (props.type === "pH" || props.type === "tur" || props.type === "dox") && value !== -99999 
+                                ? <span className="border" style={{fontSize: "0.8em"}}>보정하기</span> 
+                                : <></>
+                        }
                     </OverlayTrigger>
 
                     <div style={{cursor: "pointer", display: "inline-block"}} onClick={() => {

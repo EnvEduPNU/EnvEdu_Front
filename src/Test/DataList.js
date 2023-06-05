@@ -1,5 +1,9 @@
 function DataList(props)
 {
+    /**
+     * src/Test에 있는 모든 컴포넌트는 테스트에 사용됐던 컴포턴트
+     * 삭제해도 무관
+     */
     return(
         <tr>
             <td>{props.data.mac}</td>

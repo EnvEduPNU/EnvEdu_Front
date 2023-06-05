@@ -3,6 +3,9 @@ import React from "react";
 import {FadeLoader} from "react-spinners";
 
 function LoadingSpinner(){
+    /**
+     * 서버로 요청을 보낼 때, 버튼 중복 클릭을 방지하기 위한 로딩 스피너
+     */
     return(
         <div className="contentWrap">
             <div
