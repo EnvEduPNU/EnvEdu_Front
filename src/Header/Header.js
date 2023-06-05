@@ -5,8 +5,15 @@ import { NavLink } from 'react-router-dom';
 import { customAxios } from '../Common/CustomAxios';
 
 function Header() {
+  /**
+   * 로그인 성공 시, UI에 변화룰 주기 위한 state
+   */
   const [username] = useState(localStorage.getItem('username'));
 
+
+  /**
+   * 로그아웃 성공 시, 단순히 한 번 새로고침해 UI에 변경 반영
+   */
   function logout() {
     customAxios.post('/logout').then(() => {
       localStorage.clear();
@@ -27,6 +34,12 @@ function Header() {
                     <NavLink className={'nav-link'} to="/login">
                       LOGIN
                     </NavLink>
+                    {
+                      /**
+                       * 오직 header를 통해 회원가입을 할 수 있도록 설정
+                       * 이 부분에서 state를 회원가입을 위한 컴포넌트로 넘겨줬을 때만 정상 동작
+                       */
+                    }
                     <NavLink className={'nav-link'} to="/auth" state={{ role: "ROLE_STUDENT" }}>
                       JOIN US(student)
                     </NavLink>
@@ -80,8 +93,11 @@ function Header() {
                 <NavLink className={'nav-link'} to="/">
                   Data portal
                 </NavLink>
-                <NavLink className={'nav-link'} to="/">
+                <NavLink className={'nav-link'} to="/myData">
                   My data
+                </NavLink>
+                <NavLink className={'nav-link'} to="/openapi">
+                  Open Api Data
                 </NavLink>
               </NavDropdown>
               <NavDropdown
@@ -171,6 +187,9 @@ function Header() {
                 </NavLink>
                 <NavLink className={'nav-link'} to="/board">
                   Board
+                </NavLink>
+                <NavLink className={'nav-link'} to="/notice">
+                  공지
                 </NavLink>
               </NavDropdown>
             </Nav>

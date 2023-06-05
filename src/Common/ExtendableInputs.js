@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import { Button } from 'react-bootstrap';
 
 function ExtendableInputs(props) {
-    // const [inputs, setInputs] = useState([]);
-
+  /**
+   * 서버로 여러 개의 데이터를 전송하기 위한 확장 가능한 input
+   * 제출을 위한 submit function, input 관리를 위한 input state 및 setState function을 필수적으로 prop으로 전달해야 함 + input에 사용할 placeholder(optional)
+   * src/User/Educator/RegisterStudent.js, src/Device/Manager/AddMACForm.js에서 사용 예시 참고
+   */
   function addInput() {
     props.setInputs([...props.inputs, '']);
   }
