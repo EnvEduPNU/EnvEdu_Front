@@ -1,5 +1,6 @@
 import './App.css';
 import { Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
 import RegisterForm from './User/Register/RegisterForm';
 import HomePage from './HomePage';
 import AddMACForm from './Device/Manager/AddMACForm';
@@ -16,12 +17,14 @@ import Board from './Board/Board';
 import Board_content from './Board/Board_content';
 import Team from './About/Team/Team';
 import What from './About/What/What';
-import Training from './Learnmore/Training';
-import News from './Learnmore/News';
+import Training from './Learnmore/Train/Training';
+import News from './Learnmore/News/News';
 import EmailAuth from './User/Register/EmailAuth';
 import AdminLogin from './Admin/Login/AdminLogin';
-import { useEffect } from 'react';
 import DeviceList from './Admin/Device/DeviceList';
+import ContactUs from './Contact/ContactUs';
+import Resource from './Learnmore/Resource/Resource';
+import Tboard from './Learnmore/Train/Tborad';
 
 function App() {
   useEffect(()=>{
@@ -34,6 +37,7 @@ function App() {
         <Routes>
           {/*home*/}
           <Route index element={<HomePage />} />
+          
           {/*user*/}
           <Route path="/auth" exact={true} element={<EmailAuth/>}/>
           <Route path="/register" exact={true} element={<RegisterForm />}/>
@@ -47,26 +51,33 @@ function App() {
             exact={true}
             element={<RegisterStudents />}
           />
+          
           {/*login*/}
           <Route path="/login" exact={true} element={<LoginForm />} />
+          
           {/*socket*/}
           <Route path="/socket" exact={true} element={<ConnectPage />} />
+          
           {/*test*/}
           <Route path="/test/socket" exact={true} element={<TestSocket />} />
           <Route path="/test/fetch" exact={true} element={<TestFetch />} />
+          
           {/*id_password_find*/}
           <Route path="/find" exact={true} element={<Find/>} />
+          
           {/*board*/}
           <Route path="/board" exact={true} element={<Board/>} />
           <Route path="/boardcontent" exact={true} element={<Board_content/>} />
+          
           {/*About*/}
           <Route path="/team" exact={true} element={<Team/>} />
-
           <Route path="/what" exact={true} element={<What/>} />
 
           {/*Learnmore*/}
           <Route path="/training" exact={true} element={<Training/>} />
           <Route path="/news_reserch" exact={true} element={<News/>} />
+          <Route path="/resource" exact={true} element={<Resource/>} />
+          <Route path="/tboard" exact={true} element={<Tboard/>} />
 
           {/*Admin*/}
           <Route path="/admin/login" exact={true} element={<AdminLogin/>}/>
@@ -76,6 +87,10 @@ function App() {
             exact={true}
             element={<AddMACForm />}
           />
+
+        {/*ContactUs*/}
+        <Route path="/contactus" exact={true} element={<ContactUs/>} />
+       
         </Routes>
       </div>
       <Footer />
