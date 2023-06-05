@@ -80,7 +80,7 @@ function Header() {
                 <NavLink className={'nav-link'} to="/">
                   Data portal
                 </NavLink>
-                <NavLink className={'nav-link'} to="/">
+                <NavLink className={'nav-link'} to="/myData">
                   My data
                 </NavLink>
                 <NavLink className={'nav-link'} to="/openapi">

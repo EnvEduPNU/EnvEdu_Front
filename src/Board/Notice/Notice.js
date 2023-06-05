@@ -16,7 +16,7 @@ function Notice(){
 
     return (
         <div id="wrap-form">
-            <form action="http://localhost:8080/board" method="POST">
+            <form action="/board" method="POST">
                 <label htmlFor="title">제목:</label>
                 <input type="text" id="title" name="title" required/><br/><br/>
 
