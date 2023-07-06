@@ -6,7 +6,7 @@
         "coValue": 0.4,
         "o3Value": 0.062,
         "no2Value": 0.020,
-        "pm10Value": 40,
+        "pm10Value": 37,
         "pm25Value": 29
     },
     {
@@ -16,7 +16,7 @@
         "coValue": 0.4,
         "o3Value": 0.062,
         "no2Value": 0.020,
-        "pm10Value": 40,
+        "pm10Value": 46,
         "pm25Value": 29
     },
     {
@@ -26,7 +26,7 @@
         "coValue": 0.4,
         "o3Value": 0.062,
         "no2Value": 0.020,
-        "pm10Value": 40,
+        "pm10Value": 25,
         "pm25Value": 29
     },
     {
@@ -36,7 +36,7 @@
         "coValue": 0.4,
         "o3Value": 0.062,
         "no2Value": 0.020,
-        "pm10Value": 40,
+        "pm10Value": 30,
         "pm25Value": 29
     },
     {
@@ -46,7 +46,7 @@
         "coValue": 0.4,
         "o3Value": 0.062,
         "no2Value": 0.020,
-        "pm10Value": 40,
+        "pm10Value": 38,
         "pm25Value": 29
     }
 ]

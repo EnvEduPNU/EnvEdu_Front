@@ -38,8 +38,8 @@
     font-weight: 600;
 }
 
-/* 데이터 저장하기 버튼 */
-#wrap-openapi-div #save-my-data {
+/* 데이터 저장하기, 그래프 그리기 버튼 */
+#wrap-openapi-div #table-btn {
     background: white;
     border: 1px solid #027c2b;
     font-weight: bold;
