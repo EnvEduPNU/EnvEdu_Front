@@ -1,48 +1,54 @@
-tbody, td, tfoot, th, thead, tr{
-    border-style : inherit;
-    border-width: 1px;
-    font-size: 12px;
-}
-
-th{
-    background: grey;
-    color:white;
-}
-
-button{
-    border: 1px solid grey;
-}
-
-thead{
-    height: 1.8rem;
-}
-
-#wrap-air-div{
-    width:70%;
-    margin: auto auto;
-    display: flex;
-    flex-direction: column;
-    align-items: end;
-    gap: 15px;
-}
-
-#selected-location{
-    width:20%;
-    border-bottom: solid 1px grey;
-    text-align: start;
-}
-
-.air-buttons{
-    width: 20%;
-    text-align: start;
-    border:solid 1px grey;
-    border-radius: 5px;
-}
-
-.air-div-full{
+/* table */
+.openAPI-table {
     width: 100%;
+    border-collapse: collapse; 
+    margin-top: 0.625rem;
 }
 
+.openAPI-table thead {
+    background-color: #027c2b;
+    color: white;
+}
+
+.openAPI-table th,
+.openAPI-table td {
+    padding: 0.188rem 0;
+    text-align: center;
+    border: 1px solid gray;
+}
+
+.openAPI-table tbody tr:nth-child(even) {
+    background-color: rgb(228, 228, 228);
+}
+
+/* checkbox */
+#wrap-openapi-div input[type='checkbox'] {
+    accent-color: #000;
+}
+
+/* select box */
+#wrap-openapi-div .air-buttons {
+    border-radius: 0.625rem;
+    padding: 0 10px;
+    height: 2rem;
+}
+
+/* 조사 지점 필터링, 추가/삭제 label */
+#wrap-openapi-div .filter-label {
+    font-weight: 600;
+}
+
+/* 데이터 저장하기 버튼 */
+#wrap-openapi-div #save-my-data {
+    background: white;
+    border: 1px solid #027c2b;
+    font-weight: bold;
+    color: #027c2b;
+    border-radius: 1.25rem;
+    width: 9rem;
+}
+
+/*
 .modal-full{
     position: fixed;
     top:0;
@@ -62,23 +68,28 @@ thead{
     left:50%;
     transform: translate(-50%, -50%);
 }
+*/
 
-.wrap-select-type{
-    width:100%;
-    height: 40px;
-
-    border-bottom: 1px solid black;
-
+/* 수질 or 대기질 데이터 선택 */
+.wrap-select-type {
     display: flex;
-    gap: 7px;
-    flex-direction: row;
-    justify-content: end;
+    height: 2.5rem;
 }
-.select-type{
+
+.select-type {
     display: flex;
     align-items: center;
+    padding: 0.4rem 1.25rem;
+    background: #027c2b;
+    color: white;
+    border-radius: 1.25rem;
+    cursor: pointer;
+    font-weight: 600;
+    margin-right: 0.625rem;
+}
 
-    padding: 0 20px;
-    height: 100%;
-    background: lightgrey;
+.select-type:hover {
+    color: #027c2b;
+    background: #FFF;
+    border: 2px solid #027c2b;
 }
