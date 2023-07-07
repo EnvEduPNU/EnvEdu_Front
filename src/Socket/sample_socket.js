@@ -27,7 +27,8 @@ let save = false;
  */
 let lastReceivedDate = null;
 
-function SocketConnect(props) {
+function SampleSocket(props) {
+    console.log(props.clickedIndexes)
     /**
      * 센서 기기에서 전송하는 데이터 종류
      */
@@ -83,7 +84,6 @@ function SocketConnect(props) {
     function register() {
         const sock = new SockJS(`${process.env.REACT_APP_API_URL}/client/socket`);
         stompClient = stomp.over(sock);
-        stompClient.connect({authorization: localStorage.getItem("refresh")}, onConnected, onError)
     }
 
     function disconnect() {
@@ -158,11 +158,12 @@ function SocketConnect(props) {
         }
         setReceivedData([...receivedData]);
     }
+
     return (
             <div>
-                <br/>
-                <div className="d-flex justify-content-between">
+                <div>
                     <div>
+                        {/*
                         <span className="border p-2" style={{
                             cursor: "pointer",
                             backgroundColor: '#D9DCFF'//`${connected === false ? "rgb(192,192,192)" : "rgb(102,255,102)"}`
@@ -178,7 +179,10 @@ function SocketConnect(props) {
                                 disconnect();
                             }
                         }}>{props.mac}</span>
+                    */}
+
                         {
+                            /*
                             props.username === decodeToken(localStorage.getItem("access_token")).username ? (
                                 <span className="p-2" style={{fontSize: "0.7em"}}><input type="checkbox"
                                                                                          checked={checked}
@@ -190,30 +194,34 @@ function SocketConnect(props) {
                                                                                         ) : 
                                                                                          
                                                                                         (<div></div>)
+                            */
                         }
                     </div>
-                    <div>id: {props.username}</div>
                 </div>
-                &nbsp;&nbsp;&nbsp;&nbsp;
                 <div style={{
                     fontSize: "0.6em",
                     color: "red"
                 }}>{connected === true && isConnectionDropped === true ? "전송 중단됨" : ""}</div>
-                <div className={connected === true ? "border pt-2 ps-2 pe-2" : ""}>
+                {/*</div><div className={connected === true ? "border pt-2 ps-2 pe-2" : ""}>*/}
+                <div>
                     {
-                        connected === true
-                            ? dataTypes.map((elem) =>
-                                (<div key={elem}>
+                        //connected === true
+                            //? 
+                            
+                            dataTypes.map((elem) =>
+                                (//props.clickedIndexes.includes(index) &&
+                                
+                                <div key={elem} style={{}}>
                                     <SingleDataContainer type={elem} data={receivedData}
                                                          current={receivedData[receivedData.length - 1]} stomp={stompClient}
                                                          sendFunction={sendCalibrationMsg}/>
                                 </div>)
                             )
-                            : (<></>)
+                            //: (<></>)
                     }
                 </div>
             </div>
         );
 }
 
-export default SocketConnect;
+export default SampleSocket;

@@ -147,7 +147,7 @@ function Header() {
                 <NavLink className={'nav-link'} to="/">
                   Start E-Classes
                 </NavLink>
-                <NavLink className={'nav-link'} to="/">
+                <NavLink className={'nav-link'} to="/E-Classes">
                   E-Classes
                 </NavLink>
                 <NavLink className={'nav-link'} to="/">

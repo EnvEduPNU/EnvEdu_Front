@@ -187,16 +187,21 @@ function SingleDataContainer(props) {
     };
 
     return (
-        <div>
-            <div className="d-flex justify-content-between">
-                <div>
-                <span className="border pe-2 ps-2 mb-2" style={{
-                    display: "inline-block",
-                    fontSize: "0.9em",
-                    width: "8em",
-                    backgroundColor: `${value === -99999 ? "rgb(192,192,192)" : "rgb(102,255,102)"}`
-                }}>{props.type}</span>
-                    &nbsp;&nbsp;
+        <div style={{fontSize: '1.25rem'}}>
+            <div className="d-flex justify-content-between" style={{}}>
+                <div style={{}}>
+                    {/*여기 수정*/}
+                    <span style={{
+                        fontSize: "0.9em",
+                        padding: '0.1rem 1.5rem',
+                        background: '#fff',
+                        borderRadius: '1.25rem',
+                        fontSize: '1.25rem'
+                        //backgroundColor: `${value === -99999 ? "rgb(192,192,192)" : "rgb(102,255,102)"}`
+                    }}>
+                        {props.type}
+                    </span>
+
                     {
                         /**
                          * 유효하지 않은 값의 처리
@@ -204,6 +209,7 @@ function SingleDataContainer(props) {
                         <span>{value === -99999 ? "N/A" : value}</span>
                     }
                 </div>
+
                 <div>
                     <OverlayTrigger
                         trigger="click"
@@ -241,14 +247,17 @@ function SingleDataContainer(props) {
                                 : <></>
                         }
                     </OverlayTrigger>
-
+                    
+                    {/*
                     <div style={{cursor: "pointer", display: "inline-block"}} onClick={() => {
                         setSeeGraph(!seeGraph);
                     }}>
                         📈
                     </div>
+                    */}
                 </div>
             </div>
+
             <div>
                 {
                     seeGraph === true && props.data.length !== 0 ?
