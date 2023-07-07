@@ -1,3 +1,9 @@
+@import url(https://hangeul.pstatic.net/hangeul_static/css/nanum-square-round.css);
+
+* {
+  font-family: NanumSquareRound;
+}
+
 .wrap {
   margin: 4em
 }
