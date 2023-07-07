@@ -157,8 +157,6 @@ function SocketConnect(props) {
         }
         setReceivedData([...receivedData]);
     }
-
-
     return (
             <div>
                 <br/>
@@ -166,12 +164,14 @@ function SocketConnect(props) {
                     <div>
                         <span className="border p-2" style={{
                             cursor: "pointer",
-                            backgroundColor: `${connected === false ? "rgb(192,192,192)" : "rgb(102,255,102)"}`
+                            backgroundColor: '#D9DCFF'//`${connected === false ? "rgb(192,192,192)" : "rgb(102,255,102)"}`
                         }} onClick={() => {
                             if (connected === false) {
+                                
                                 if (props.username === decodeToken(localStorage.getItem("access_token"))) {
                                     location = prompt("위치 정보를 입력하세요(optional)");
                                 }
+                                
                                 register();
                             } else {
                                 disconnect();
@@ -184,8 +184,11 @@ function SocketConnect(props) {
                                                                                          onChange={() => {
                                                                                              save = !save;
                                                                                              setChecked(!checked)
-                                                                                         }}/>&nbsp;데이터 저장하기</span>) : (
-                                <div></div>)
+                                                                                         }}/>&nbsp;데이터 저장하기</span>
+
+                                                                                        ) : 
+                                                                                         
+                                                                                        (<div></div>)
                         }
                     </div>
                     <div>id: {props.username}</div>
