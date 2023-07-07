@@ -1,0 +1,72 @@
+.addContent {
+    width: 150px;
+    border: none;
+    border-bottom: 1px solid;
+    outline: none;
+    margin-left: 30px;
+    text-align: center;
+}
+
+
+.topicBtn {
+    background-color: #AEC0F0;
+    color: white;
+    border-radius: 40px;
+    width: 100px;
+    height: 30px;
+    margin-left: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.selected {
+    border: 2px solid #AEC0F0;
+    background: white;
+    color: black;
+}
+
+.plusBtn {
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    font-weight: bold;
+    border: none;
+    background-color: #AEC0F0;
+    color: white;
+    margin-left: 20px;
+    cursor: pointer;
+}
+
+.homework {
+    background-color: white;
+    border: 2px solid #142556;
+    border-radius: 10px;
+    width: 800px;
+    height: 100px;
+    padding: 10px 20px;
+    margin-bottom: 10px;
+}
+
+.registerBtn {
+    border: none;
+    color: white;
+    margin-left: 20px;
+    width: 100px;
+    height: 100px;
+    background-color: #142556;
+    border-radius: 10px;
+}
+
+.registerBtn2 {
+    border: none;
+    color: white;
+    margin-left: 20px;
+    background-color: #142556;
+    border-radius: 20px;
+    height: 35px;
+    margin-top: 50px;
+}
