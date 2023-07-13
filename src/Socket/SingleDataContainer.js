@@ -189,14 +189,16 @@ function SingleDataContainer(props) {
     return (
         <div style={{fontSize: '1.25rem'}}>
             <div className="d-flex justify-content-between" style={{}}>
-                <div style={{}}>
+                <div style={{marginBottom: '1rem'}}>
                     {/*여기 수정*/}
                     <span style={{
                         fontSize: "0.9em",
-                        padding: '0.1rem 1.5rem',
+                        padding: '0.4rem 1.5rem',
                         background: '#fff',
                         borderRadius: '1.25rem',
-                        fontSize: '1.25rem'
+                        fontSize: '1.25rem',
+                        marginRight: '1rem',
+                        cursor: 'pointer'
                         //backgroundColor: `${value === -99999 ? "rgb(192,192,192)" : "rgb(102,255,102)"}`
                     }}>
                         {props.type}
@@ -248,21 +250,29 @@ function SingleDataContainer(props) {
                         }
                     </OverlayTrigger>
                     
-                    {/*
-                    <div style={{cursor: "pointer", display: "inline-block"}} onClick={() => {
+                    
+                    <div style={{
+                        cursor: "pointer"
+                    }} onClick={() => {
                         setSeeGraph(!seeGraph);
                     }}>
                         📈
                     </div>
-                    */}
+                    
                 </div>
             </div>
-
+            
             <div>
                 {
                     seeGraph === true && props.data.length !== 0 ?
                         (
-                            <div>
+                            <div style={{
+                                width: '100%',
+                                height: '30rem',
+                                background: '#fff',
+                                borderRadius: '1.875rem',
+                                marginBottom: '1rem'
+                            }}>
                                 <Line options={option} data={dataElem} width="700" height="500"/>
                             </div>
                         )
@@ -270,6 +280,7 @@ function SingleDataContainer(props) {
 
                 }
             </div>
+            
         </div>
     );
 }

@@ -28,7 +28,7 @@ import Tboard from './Learnmore/Train/Tborad';
 import OpenApi from './OpenApi/OpenApi';
 import MyData from "./OpenApi/MyData";
 
-import Education from './Education/education';
+//import Education from './Education/education';
 import Sample from './Socket/sample';
 
 function App() {
@@ -81,7 +81,9 @@ function App() {
           <Route path="/what" exact={true} element={<What/>} />
 
           {/*Education */}
+          {/*
           <Route path="/E-Classes" exact={true} element={<Education/>} />
+          */}
 
           {/*Learnmore*/}
           <Route path="/training" exact={true} element={<Training/>} />

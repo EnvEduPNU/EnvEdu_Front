@@ -159,6 +159,29 @@ function SampleSocket(props) {
         setReceivedData([...receivedData]);
     }
 
+    /*데이터 저장하기*/
+    const [loc, setLoc] = useState('');
+
+    const handleSaveData = () => {
+        if (loc === '') {
+            alert("측정 위치를 입력해주세요.")
+        } else {
+            const myData = {
+                mac: props.mac,
+                ...receivedData,
+                location: loc
+            }
+            console.log(myData)
+            customAxios.post(`/seed/save`)
+            .then(()=> alert("데이터가 저장되었습니다.")
+            )
+            .catch(() => alert("데이터 저장을 실패했습니다."))
+            
+        }
+    }
+
+    console.log(loc)
+
     return (
             <div>
                 <div>
@@ -180,7 +203,7 @@ function SampleSocket(props) {
                             }
                         }}>{props.mac}</span>
                     */}
-
+                    
                         {
                             /*
                             props.username === decodeToken(localStorage.getItem("access_token")).username ? (
@@ -203,7 +226,7 @@ function SampleSocket(props) {
                     color: "red"
                 }}>{connected === true && isConnectionDropped === true ? "전송 중단됨" : ""}</div>
                 {/*</div><div className={connected === true ? "border pt-2 ps-2 pe-2" : ""}>*/}
-                <div>
+                <div style={{ padding: '2rem' }}>
                     {
                         //connected === true
                             //? 
@@ -211,7 +234,7 @@ function SampleSocket(props) {
                             dataTypes.map((elem) =>
                                 (//props.clickedIndexes.includes(index) &&
                                 
-                                <div key={elem} style={{}}>
+                                <div key={elem} style={{ }}>
                                     <SingleDataContainer type={elem} data={receivedData}
                                                          current={receivedData[receivedData.length - 1]} stomp={stompClient}
                                                          sendFunction={sendCalibrationMsg}/>
@@ -219,6 +242,57 @@ function SampleSocket(props) {
                             )
                             //: (<></>)
                     }
+                    
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        marginTop: '1rem'
+                    }}>
+                        <div style={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                fontSize: '1.25rem',
+                                width: '11rem',
+                                height:' 2rem',
+                                borderRadius: '1.25rem',
+                                background: '#fff',
+                                marginRight: '1.5rem'
+                            }}>
+                            측정 위치
+                        </div>
+
+                        <input style={{
+                            width: '30%',
+                            height: '2rem',
+                            borderRadius: '0.625rem',
+                            background: '#FFF',
+                            border: 'none',
+                            outline: 'none',
+                            fontSize: '1.25rem',
+                            padding: '0 1rem',
+                            marginRight: '1rem'
+                        }}
+                            onChange={(e) => setLoc(e.target.value)}/>
+
+                        <div style={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                padding: '0 1.5rem',
+                                width: '14rem',
+                                height: '2rem',
+                                borderRadius: '1.25rem',
+                                background: '#FAE4FF',
+                                fontSize: '1.25rem',
+                                cursor: 'pointer',
+                                
+                            }}
+                            onClick={handleSaveData}>
+                            데이터 저장하기
+                        </div>
+                    </div>
+                        
                 </div>
             </div>
         );
