@@ -187,16 +187,23 @@ function SingleDataContainer(props) {
     };
 
     return (
-        <div>
-            <div className="d-flex justify-content-between">
-                <div>
-                <span className="border pe-2 ps-2 mb-2" style={{
-                    display: "inline-block",
-                    fontSize: "0.9em",
-                    width: "8em",
-                    backgroundColor: `${value === -99999 ? "rgb(192,192,192)" : "rgb(102,255,102)"}`
-                }}>{props.type}</span>
-                    &nbsp;&nbsp;
+        <div style={{fontSize: '1.25rem'}}>
+            <div className="d-flex justify-content-between" style={{}}>
+                <div style={{marginBottom: '1rem'}}>
+                    {/*여기 수정*/}
+                    <span style={{
+                        fontSize: "0.9em",
+                        padding: '0.4rem 1.5rem',
+                        background: '#fff',
+                        borderRadius: '1.25rem',
+                        fontSize: '1.25rem',
+                        marginRight: '1rem',
+                        cursor: 'pointer'
+                        //backgroundColor: `${value === -99999 ? "rgb(192,192,192)" : "rgb(102,255,102)"}`
+                    }}>
+                        {props.type}
+                    </span>
+
                     {
                         /**
                          * 유효하지 않은 값의 처리
@@ -204,6 +211,7 @@ function SingleDataContainer(props) {
                         <span>{value === -99999 ? "N/A" : value}</span>
                     }
                 </div>
+
                 <div>
                     <OverlayTrigger
                         trigger="click"
@@ -220,40 +228,51 @@ function SingleDataContainer(props) {
                                          */
                                     }
                                     <Button
-                                        onClick={() => props.sendFunction("{ENTER" + (props.type === "pH" ? "PH" : props.type === "tur" ? "TUR" : props.type === "dox" ? "DO" : "C02") + "}")}>시작</Button>
+                                        onClick={() => props.sendFunction("{ENTER" + (props.type === "pH" ? "PH" : props.type === "tur" ? "TUR" : "DO") + "}")}>시작</Button>
                                     <br/>
                                     <Button
-                                        onClick={() => props.sendFunction("{CAL" + (props.type === "pH" ? "PH" : props.type === "tur" ? "TUR" : props.type === "dox" ? "DO" : "C02") + "}")}>보정</Button>
+                                        onClick={() => props.sendFunction("{CAL" + (props.type === "pH" ? "PH" : props.type === "tur" ? "TUR" : "DO") + "}")}>보정</Button>
                                     <br/>
                                     <Button
-                                        onClick={() => props.sendFunction("{EXIT" + (props.type === "pH" ? "PH" : props.type === "tur" ? "TUR" : props.type === "dox" ? "DO" : "C02") + "}")}>종료</Button>
+                                        onClick={() => props.sendFunction("{EXIT" + (props.type === "pH" ? "PH" : props.type === "tur" ? "TUR" : "DO") + "}")}>종료</Button>
                                 </Popover.Body>
                             </Popover>
                         }
                     >
                         {
                             /**
-                             * 보정 가능한 센서 - ph, tur, dox, co2
+                             * 보정 가능한 센서 - ph, tur, dox
                              * 위 센서 값이 유효하지 않은 경우, 보정 기능 비활성화
                              */
-                            (props.type === "pH" || props.type === "tur" || props.type === "dox" || props.type === "co2") && value !== -99999 
+                            (props.type === "pH" || props.type === "tur" || props.type === "dox") && value !== -99999 
                                 ? <span className="border" style={{fontSize: "0.8em"}}>보정하기</span> 
                                 : <></>
                         }
                     </OverlayTrigger>
-
-                    <div style={{cursor: "pointer", display: "inline-block"}} onClick={() => {
+                    
+                    
+                    <div style={{
+                        cursor: "pointer"
+                    }} onClick={() => {
                         setSeeGraph(!seeGraph);
                     }}>
                         📈
                     </div>
+                    
                 </div>
             </div>
+            
             <div>
                 {
                     seeGraph === true && props.data.length !== 0 ?
                         (
-                            <div>
+                            <div style={{
+                                width: '100%',
+                                height: '30rem',
+                                background: '#fff',
+                                borderRadius: '1.875rem',
+                                marginBottom: '1rem'
+                            }}>
                                 <Line options={option} data={dataElem} width="700" height="500"/>
                             </div>
                         )
@@ -261,8 +280,10 @@ function SingleDataContainer(props) {
 
                 }
             </div>
+            
         </div>
     );
 }
 
-export default SingleDataContainer;
+export default SingleDataContainer2;
+
