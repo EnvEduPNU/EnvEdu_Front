@@ -220,23 +220,23 @@ function SingleDataContainer(props) {
                                          */
                                     }
                                     <Button
-                                        onClick={() => props.sendFunction("{ENTER" + (props.type === "pH" ? "PH" : props.type === "tur" ? "TUR" : "DO") + "}")}>시작</Button>
+                                        onClick={() => props.sendFunction("{ENTER" + (props.type === "pH" ? "PH" : props.type === "tur" ? "TUR" : props.type === "dox" ? "DO" : "CO2") + "}")}>시작</Button>
                                     <br/>
                                     <Button
-                                        onClick={() => props.sendFunction("{CAL" + (props.type === "pH" ? "PH" : props.type === "tur" ? "TUR" : "DO") + "}")}>보정</Button>
+                                        onClick={() => props.sendFunction("{CAL" + (props.type === "pH" ? "PH" : props.type === "tur" ? "TUR" : props.type === "dox" ? "DO" : "CO2") + "}")}>보정</Button>
                                     <br/>
                                     <Button
-                                        onClick={() => props.sendFunction("{EXIT" + (props.type === "pH" ? "PH" : props.type === "tur" ? "TUR" : "DO") + "}")}>종료</Button>
+                                        onClick={() => props.sendFunction("{EXIT" + (props.type === "pH" ? "PH" : props.type === "tur" ? "TUR" : props.type === "dox" ? "DO" : "CO2") + "}")}>종료</Button>
                                 </Popover.Body>
                             </Popover>
                         }
                     >
                         {
                             /**
-                             * 보정 가능한 센서 - ph, tur, dox
+                             * 보정 가능한 센서 - ph, tur, dox, co2
                              * 위 센서 값이 유효하지 않은 경우, 보정 기능 비활성화
                              */
-                            (props.type === "pH" || props.type === "tur" || props.type === "dox") && value !== -99999 
+                            (props.type === "pH" || props.type === "tur" || props.type === "dox" || props.type === "co2") && value !== -99999 
                                 ? <span className="border" style={{fontSize: "0.8em"}}>보정하기</span> 
                                 : <></>
                         }
@@ -266,4 +266,3 @@ function SingleDataContainer(props) {
 }
 
 export default SingleDataContainer;
-
