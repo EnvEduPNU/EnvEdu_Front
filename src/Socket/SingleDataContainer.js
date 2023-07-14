@@ -220,13 +220,13 @@ function SingleDataContainer(props) {
                                          */
                                     }
                                     <Button
-                                        onClick={() => props.sendFunction("{ENTER" + (props.type === "pH" ? "PH" : props.type === "tur" ? "TUR" : props.type === "dox" ? "DO" : "C02") + "}")}>시작</Button>
+                                        onClick={() => props.sendFunction("{ENTER" + (props.type === "pH" ? "PH" : props.type === "tur" ? "TUR" : props.type === "dox" ? "DO" : "CO2") + "}")}>시작</Button>
                                     <br/>
                                     <Button
-                                        onClick={() => props.sendFunction("{CAL" + (props.type === "pH" ? "PH" : props.type === "tur" ? "TUR" : props.type === "dox" ? "DO" : "C02") + "}")}>보정</Button>
+                                        onClick={() => props.sendFunction("{CAL" + (props.type === "pH" ? "PH" : props.type === "tur" ? "TUR" : props.type === "dox" ? "DO" : "CO2") + "}")}>보정</Button>
                                     <br/>
                                     <Button
-                                        onClick={() => props.sendFunction("{EXIT" + (props.type === "pH" ? "PH" : props.type === "tur" ? "TUR" : props.type === "dox" ? "DO" : "C02") + "}")}>종료</Button>
+                                        onClick={() => props.sendFunction("{EXIT" + (props.type === "pH" ? "PH" : props.type === "tur" ? "TUR" : props.type === "dox" ? "DO" : "CO2") + "}")}>종료</Button>
                                 </Popover.Body>
                             </Popover>
                         }
