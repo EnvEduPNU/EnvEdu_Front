@@ -99,6 +99,9 @@ function Header() {
                 <NavLink className={'nav-link'} to="/openapi">
                   Open Api Data
                 </NavLink>
+                <NavLink className={'nav-link'} to="/socket">
+                  SEEd 측정 기기
+                </NavLink>
               </NavDropdown>
               <NavDropdown
                 title="ABOUT"
