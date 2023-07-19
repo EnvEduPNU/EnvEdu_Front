@@ -186,16 +186,28 @@ function SingleDataContainer(props) {
         ],
     };
 
+    /*센서 이름 css */
+    const style = {
+        display: "inline-block",
+        fontSize: "0.9em",
+        width: "8em",
+        backgroundColor: `${value === -99999 ? "rgb(192,192,192)" : "rgb(102,255,102)"}`
+    }
+
     return (
         <div>
             <div className="d-flex justify-content-between">
                 <div>
-                <span className="border pe-2 ps-2 mb-2" style={{
-                    display: "inline-block",
-                    fontSize: "0.9em",
-                    width: "8em",
-                    backgroundColor: `${value === -99999 ? "rgb(192,192,192)" : "rgb(102,255,102)"}`
-                }}>{props.type}</span>
+                    {props.type === 'temp' && <span className="border pe-2 ps-2 mb-2" style={style}>기온</span>}
+                    {props.type === 'pH' && <span className="border pe-2 ps-2 mb-2" style={style}>pH</span>}
+                    {props.type === 'hum' && <span className="border pe-2 ps-2 mb-2" style={style}>습도</span>}
+                    {props.type === 'hum_earth' && <span className="border pe-2 ps-2 mb-2" style={style}>토양 습도</span>}
+                    {props.type === 'tur' && <span className="border pe-2 ps-2 mb-2" style={style}>탁도</span>}
+                    {props.type === 'dust' && <span className="border pe-2 ps-2 mb-2" style={style}>미세먼지</span>}
+                    {props.type === 'dox' && <span className="border pe-2 ps-2 mb-2" style={style}>용존산소량</span>}
+                    {props.type === 'co2' && <span className="border pe-2 ps-2 mb-2" style={style}>이산화탄소</span>}
+                    {props.type === 'lux' && <span className="border pe-2 ps-2 mb-2" style={style}>조도</span>}
+                    {props.type === 'pre' && <span className="border pe-2 ps-2 mb-2" style={style}>기압</span>}
                     &nbsp;&nbsp;
                     {
                         /**
