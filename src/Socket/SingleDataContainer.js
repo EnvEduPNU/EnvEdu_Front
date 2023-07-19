@@ -186,16 +186,28 @@ function SingleDataContainer(props) {
         ],
     };
 
+    /*센서 이름 css */
+    const style = {
+        display: "inline-block",
+        fontSize: "0.9em",
+        width: "8em",
+        backgroundColor: `${value === -99999 ? "rgb(192,192,192)" : "rgb(102,255,102)"}`
+    }
+
     return (
         <div>
             <div className="d-flex justify-content-between">
                 <div>
-                <span className="border pe-2 ps-2 mb-2" style={{
-                    display: "inline-block",
-                    fontSize: "0.9em",
-                    width: "8em",
-                    backgroundColor: `${value === -99999 ? "rgb(192,192,192)" : "rgb(102,255,102)"}`
-                }}>{props.type}</span>
+                    {props.type === 'temp' && <span className="border pe-2 ps-2 mb-2" style={style}>기온</span>}
+                    {props.type === 'pH' && <span className="border pe-2 ps-2 mb-2" style={style}>pH</span>}
+                    {props.type === 'hum' && <span className="border pe-2 ps-2 mb-2" style={style}>습도</span>}
+                    {props.type === 'hum_earth' && <span className="border pe-2 ps-2 mb-2" style={style}>토양 습도</span>}
+                    {props.type === 'tur' && <span className="border pe-2 ps-2 mb-2" style={style}>탁도</span>}
+                    {props.type === 'dust' && <span className="border pe-2 ps-2 mb-2" style={style}>미세먼지</span>}
+                    {props.type === 'dox' && <span className="border pe-2 ps-2 mb-2" style={style}>용존산소량</span>}
+                    {props.type === 'co2' && <span className="border pe-2 ps-2 mb-2" style={style}>이산화탄소</span>}
+                    {props.type === 'lux' && <span className="border pe-2 ps-2 mb-2" style={style}>조도</span>}
+                    {props.type === 'pre' && <span className="border pe-2 ps-2 mb-2" style={style}>기압</span>}
                     &nbsp;&nbsp;
                     {
                         /**
@@ -220,23 +232,23 @@ function SingleDataContainer(props) {
                                          */
                                     }
                                     <Button
-                                        onClick={() => props.sendFunction("{ENTER" + (props.type === "pH" ? "PH" : props.type === "tur" ? "TUR" : "DO") + "}")}>시작</Button>
+                                        onClick={() => props.sendFunction("{ENTER" + (props.type === "pH" ? "PH" : props.type === "tur" ? "TUR" : props.type === "dox" ? "DO" : "CO2") + "}")}>시작</Button>
                                     <br/>
                                     <Button
-                                        onClick={() => props.sendFunction("{CAL" + (props.type === "pH" ? "PH" : props.type === "tur" ? "TUR" : "DO") + "}")}>보정</Button>
+                                        onClick={() => props.sendFunction("{CAL" + (props.type === "pH" ? "PH" : props.type === "tur" ? "TUR" : props.type === "dox" ? "DO" : "CO2") + "}")}>보정</Button>
                                     <br/>
                                     <Button
-                                        onClick={() => props.sendFunction("{EXIT" + (props.type === "pH" ? "PH" : props.type === "tur" ? "TUR" : "DO") + "}")}>종료</Button>
+                                        onClick={() => props.sendFunction("{EXIT" + (props.type === "pH" ? "PH" : props.type === "tur" ? "TUR" : props.type === "dox" ? "DO" : "CO2") + "}")}>종료</Button>
                                 </Popover.Body>
                             </Popover>
                         }
                     >
                         {
                             /**
-                             * 보정 가능한 센서 - ph, tur, dox
+                             * 보정 가능한 센서 - ph, tur, dox, co2
                              * 위 센서 값이 유효하지 않은 경우, 보정 기능 비활성화
                              */
-                            (props.type === "pH" || props.type === "tur" || props.type === "dox") && value !== -99999 
+                            (props.type === "pH" || props.type === "tur" || props.type === "dox" || props.type === "co2") && value !== -99999 
                                 ? <span className="border" style={{fontSize: "0.8em"}}>보정하기</span> 
                                 : <></>
                         }
@@ -266,4 +278,3 @@ function SingleDataContainer(props) {
 }
 
 export default SingleDataContainer;
-

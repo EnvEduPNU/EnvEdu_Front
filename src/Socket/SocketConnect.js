@@ -83,6 +83,7 @@ function SocketConnect(props) {
     function register() {
         const sock = new SockJS(`${process.env.REACT_APP_API_URL}/client/socket`);
         stompClient = stomp.over(sock);
+        stompClient.connect({authorization: localStorage.getItem("refresh")}, onConnected, onError)
     }
 
     function disconnect() {
