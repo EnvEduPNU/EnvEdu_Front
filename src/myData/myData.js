@@ -32,7 +32,7 @@ export default function MyData2() {
     const sensorName_ko = attribute_ko.slice(3, attribute_ko.length);
     //const sensorName = ['hum', 'temp', 'tur', 'ph', 'dust', 'dox', 'co2', 'lux', 'hum_EARTH', 'pre'];
     //const sensorName_ko = ['습도', '기온', '탁도', 'pH', '미세먼지', '용존산소량', '이산화탄소량', '조도', '토양 습도', '기압'];
-    const borderColors = ['red', 'blue', 'green', 'pink'];
+    const borderColors = ["#f9d1d1", "#ffa4b6", "#f765a3", "#f91e79", "#d9baee", "#a155b9", "#165baa", "#0b1354", "#5b5b60", "#dcdcde"]
 
     let datasets = sensorName.map((key, index) => ({
         type: 'line',

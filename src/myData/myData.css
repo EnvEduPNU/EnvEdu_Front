@@ -14,7 +14,8 @@
 */
 
 .myData table thead tr th {
-    background-color: #8f9cff;
+    background-color: #f9d1d1;
+    color: black;
 }
 
 .myData table th,
@@ -31,34 +32,38 @@
     text-align: center;
     width: 3rem;
     cursor: pointer;
-    background-color: #ffadad;
+    background-color: #f765a3;
+    color: #fff;
     margin-left: 1rem;
     margin-right: 0.5rem;
     border-radius: 10rem;
 }
 
 .myData .startBtn:hover {
-    background-color: red;
+    background-color: #f91e79;
 }
 
 .myData .endBtn {
     text-align: center;
     width: 3rem;
     cursor: pointer;
-    background-color: #e4f1ee;
+    background-color: #0b1354;
+    color: #fff;
     margin-right: 0.5rem;
     border-radius: 10rem;
 }
 
 .myData .endBtn:hover {
-    background-color: red;
+    background-color: #5b5b60;
 }
 
 .myData .drawGraph {
     margin-top: 0;
     width: 10rem;
-    background-color: rgb(254, 222, 135);
+    background-color: #ffa4b6;
+    color: #fff;
     border: none;
     border-radius: 10rem;
     margin-left: 3rem;
+    font-weight: 600;
 }
