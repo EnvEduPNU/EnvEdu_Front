@@ -64,6 +64,10 @@
     color: #fff;
     border: none;
     border-radius: 10rem;
-    margin-left: 3rem;
     font-weight: 600;
+    margin-left: 1rem;
+}
+
+.myData .select-var {
+    margin-left: 1rem;
 }

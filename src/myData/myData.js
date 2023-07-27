@@ -10,7 +10,8 @@ export default function MyData2() {
 
     const [start, setStart] = useState(null);
     const [end, setEnd] = useState(null);
-    const [show, setShow] = useState(false);
+    const [showIndividual, setShowIndividual] = useState(false);
+    const [showComparative, setShowComparative] = useState(false);
 
     const handleStart = (date) => {
         if ((end !== null) && (new Date(end) < new Date(date))) alert("시작을 올바른 값으로 선택해주세요.")
@@ -34,26 +35,91 @@ export default function MyData2() {
     //const sensorName_ko = ['습도', '기온', '탁도', 'pH', '미세먼지', '용존산소량', '이산화탄소량', '조도', '토양 습도', '기압'];
     const borderColors = ["#f9d1d1", "#ffa4b6", "#f765a3", "#f91e79", "#d9baee", "#a155b9", "#165baa", "#0b1354", "#5b5b60", "#dcdcde"]
 
+    /*
+    let graphData =  {
+        labels: filteredData.map((item) => item.measuredDate),
+        datasets: datasets
+    };
+    */
+
+    /*개별 그래프*/
+    const drawIndividualGraph = () => {
+        if (start === null || end === null) alert("그래프 시작과 끝을 선택해주세요.")
+        else {
+            setShowIndividual(true);
+            setShowComparative(false);
+        }
+    }
+
+    /*비교 그래프*/
+    const drawComparativeGraph = () => {
+        if (start === null || end === null) alert("그래프 시작과 끝을 선택해주세요.")
+        else if (var1 === var2) alert("서로 다른 변인을 선택해주세요.")
+        else {
+            setShowComparative(true);
+            setShowIndividual(false);
+        }
+    }
+    
+    /*개별 그래프와 비교 그래프 공통 datasets*/
     let datasets = sensorName.map((key, index) => ({
         type: 'line',
         label: sensorName_ko[index],
         backgroundColor: borderColors[index],
         borderColor: borderColors[index],
         data: filteredData.map((item) => item[key]),
-        borderWidth: 2
+        borderWidth: 2,
+        yAxisID: sensorName[index]
     }));
 
-    let graphData =  {
-        labels: filteredData.map((item) => item.measuredDate),
-        datasets: datasets
+    /*개별 그래프*/
+    const individualGraphs = sensorName.map((name, index) => (
+        <div key={name} style={{ display: 'flex', justifyContent: 'center', marginTop: '5rem', width: '50%' }}>
+          <Line type="line" data={{
+            labels: filteredData.map((item) => item.measuredDate),
+            datasets: [datasets[index]]
+          }} />
+        </div>
+    ));
+
+    /*비교 그래프 변인 2개 설정*/
+    const [var1, setVar1] = useState(0);
+    const [var2, setVar2] = useState(0);
+
+    /*비교 그래프 option*/
+    const options = {
+        scales: {
+            x: {
+                grid: {
+                display: true,
+                },
+            },
+            [sensorName[var1]]: {
+                type: 'linear',
+                position: 'left',
+                grid: {
+                    display: true,
+                },
+                title: {
+                    display: true,
+                    text: sensorName_ko[var1]
+                },
+            },
+            [sensorName[var2]]: {
+                type: 'linear',
+                position: 'right',
+                grid: {
+                    display: false,
+                },
+                title: {
+                    display: true,
+                    text: sensorName_ko[var2], 
+                },
+            },
+        },
     };
 
-    const drawGraph = () => {
-        if (start === null || end === null) alert("그래프 시작과 끝을 선택해주세요.")
-        else {
-            setShow(true);
-        }
-    }
+    console.log(var1)
 
     return(
         <div className='myData'>
@@ -66,8 +132,32 @@ export default function MyData2() {
                 <div>{start}</div>
                 <div className='endBtn' style={{marginLeft: '1rem'}}>끝</div>
                 <div>{end}</div>
-                <button className="drawGraph" onClick={drawGraph}>그래프 그리기</button>
             </div>
+
+            <div style={{display: 'flex'}}>
+                <label style={{fontWeight: 'bold', marginBottom: '0.5rem'}}>그래프 종류 선택하기</label>
+                <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    marginBottom: '1rem'
+                }}> 
+                    <button className="drawGraph" onClick={drawIndividualGraph}>개별 그래프</button>
+                    <div style={{display: 'flex', marginTop: '0.5rem'}}>
+                        <button className="drawGraph" onClick={drawComparativeGraph}>비교 그래프</button>
+                        <select className='select-var' onChange={(e) => setVar1(e.target.selectedIndex)}>
+                            {sensorName_ko.map((name) => (
+                                <option key={name}>{name}</option>
+                            ))}
+                        </select>
+                        <select className='select-var' onChange={(e) => setVar2(e.target.selectedIndex)}>
+                            {sensorName_ko.map((name) => (
+                                <option key={name}>{name}</option>
+                            ))}
+                        </select>
+                    </div>  
+                </div>
+            </div>
+
             <table>
                 <thead>
                     <tr>
@@ -101,13 +191,24 @@ export default function MyData2() {
                 </tbody>
             </table>
             
-            {show && 
-            <div style={{display: 'flex', justifyContent: 'center'}}>
-                <div style={{marginTop: '3rem', width: '90%'}}>
-                    <Line type="line" data={graphData}/>
+            {showIndividual && 
+                <div style={{display: 'flex', flexWrap: 'wrap', width: '100%', justifyContent: 'center'}}>
+                    {individualGraphs}
                 </div>
-            </div>
             }
+
+            {showComparative && 
+                <div style={{display: 'flex', justifyContent: 'center', width: '100%', marginTop: '5rem'}}>
+                    <div style={{width: '70%'}}>
+                        <Line 
+                            data={{
+                                labels: filteredData.map((item) => item.measuredDate),
+                                datasets: [datasets[var1], datasets[var2]]
+                            }} 
+                            options={options} />
+                    </div>
+                </div>
+            }  
         </div>
     )
 }
