@@ -170,7 +170,12 @@ export default function MyData2() {
                 {data.map((item) => (
                     <tr key={item.id}>
                         {attribute.map((name) => (
-                        <td key={name}>
+                        <td key={name}
+                            style={{ background: 
+                                (start === item['measuredDate'] && '#FFDDE4') ||
+                                (end === item['measuredDate'] && '#C7CDFF') ||
+                                'transparent'
+                            }}>
                             {name === "measuredDate" ? (
                             <div style={{display: 'flex', 
                                         justifyContent: 'center',
