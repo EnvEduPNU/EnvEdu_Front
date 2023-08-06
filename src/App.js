@@ -30,6 +30,7 @@ import MyData from "./OpenApi/MyData";
 
 import Education from './Education/education';
 import Sample from './Socket/sample';
+import Test from './Education/test';
 
 function App() {
   /**
@@ -43,6 +44,9 @@ function App() {
       <Header />
       <div className="wrap">
         <Routes>
+          {/*test*/}
+          <Route path="/test" exact={true} element={<Test/>}/>
+
           {/*home*/}
           <Route index element={<HomePage />} />
           
