@@ -101,7 +101,7 @@ export default function MeasureSub(props) {
     return(
         <div>
             <button onClick={handleRecord}>기록하기</button>
-            {value === -99999 ? "N/A" : value}
+            {!props.enter && (value === -99999 ? "N/A" : value)}
             
             {!props.enter &&
                 <table className="measure-table">
