@@ -178,7 +178,7 @@ export default function Measure() {
     }
 
     console.log(receivedData)
-
+    console.log(connected)
     return(
         <div>
             <input placeholder='제목을 입력해주세요' />
