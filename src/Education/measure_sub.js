@@ -166,12 +166,13 @@ export default function MeasureSub(props) {
                                     </select>
                                 </td>
                                 <td><input /></td>
+                                <td><input /></td>
                                 <td><input type="checkbox"/></td>
                             </tr>
                         ))}
 
                         <tr>
-                            <td colSpan="4">
+                            <td colSpan="5">
                                 <button onClick={addDiv}>+</button>
                             </td>
                         </tr>
