@@ -201,6 +201,12 @@ export default function Measure() {
         */
     };
 
+    /*항목 입력*/
+    const [item, setItem] = useState('');
+    const handleItem = (e) => {
+        setItem(e.target.value);
+    }
+
     return(
         <div>
             <input placeholder='제목을 입력해주세요' />
@@ -212,8 +218,8 @@ export default function Measure() {
                 <option key='직접 입력'>직접 입력</option>
             </select>
             <button onClick={() => { if (connected === false) { register(); setPaused(false); } }}>측정 시작</button>
-            <input placeholder='항목 이름을 입력해주세요 ex) 식초' />
-            {connected ? "connected" : "unconnected"}
+            <input onChange={handleItem} placeholder='항목 이름을 입력해주세요 ex) 식초' />
+            {connected ? (paused ? "일시 중지" : "connected") : "unconnected"}
             {/*<button onClick={handlePause}>{paused ? '다시 시작' : '일시 정지'}</button>*/}
             <button onClick={handlePause}>일시 정지</button>
 
@@ -222,7 +228,7 @@ export default function Measure() {
                 */}
             {"전송 중단됨"} {/*css만 수정하고 위의 코드 주석 해제하기*/}
 
-            <MeasureSub type={select} data={receivedData} current={receivedData[receivedData.length - 1]} enter={enter} /> {/*SingleDataContainer*/}
+            <MeasureSub type={select} data={receivedData} current={receivedData[receivedData.length - 1]} enter={enter} item={item} /> {/*SingleDataContainer*/}
         </div>
     )
 }
