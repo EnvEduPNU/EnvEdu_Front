@@ -175,8 +175,22 @@ export default function Measure() {
     const [select, setSelect] = useState('');
     const handleSensor = (e) => {
         const index = dataTypes_ko.indexOf(e.target.value);
-        setSelect(dataTypes[index]);
+        if (index !== -1) setSelect(dataTypes[index]);
     }
+
+    /*일시 정지*/
+    const [paused, setPaused] = useState(false);
+
+    const handlePause = () => {
+        if (stompClient && !paused) {
+            disconnect();
+            setPaused(true);
+        } else if (!stompClient && paused) {
+            register();
+            setPaused(false);
+            setConnected(true);
+        }
+    };
 
     return(
         <div>
@@ -190,11 +204,10 @@ export default function Measure() {
             <button onClick={() => {
                             if (connected === false) {
                                 register();
-                            } else {
-                                disconnect();
                             }
             }}>확인</button>
             <input placeholder='항목 이름을 입력해주세요' />
+            <button onClick={handlePause}>{paused ? '다시 시작' : '일시정지'}</button>
             <MeasureSub type={select} data={receivedData} current={receivedData[receivedData.length - 1]} /> {/*SingleDataContainer*/}
         </div>
     )

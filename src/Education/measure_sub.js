@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import './measure.css';
 
 export default function MeasureSub(props) {
     const dataTypes = ["temp", "ph", "hum", "hum_EARTH", "tur", "dust", "dox", "co2", "lux", "pre"];
@@ -46,25 +47,39 @@ export default function MeasureSub(props) {
         }
     }, [props.data, props.type, props.current]);
 
-    /*일시 정지*/
-    const handlePause = () => {
-
-    }
-
     /*기록하기*/
+    const [recordedData, setRecordedData] = useState([]);
     const handleRecord = () => {
-
+        if (value !== -99999) {
+            const currentTime = new Date().toLocaleTimeString();
+            const newRecord = { time: currentTime, value: value };
+            setRecordedData([...recordedData, newRecord]);
+        }
     }
-
     console.log(props.type)
     //console.log(graphData);
     console.log(value);
     
     return(
         <div>
-            <button onClick={handlePause}>일시정지</button>
             <button onClick={handleRecord}>기록하기</button>
             {value !==-99999 && value}
+            <table className="measure-table">
+                <thead>
+                        <tr>
+                            <th>측정 시간</th>
+                            <th>값 (단위 : ?)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {recordedData.map((record, index) => (
+                            <tr key={index}>
+                                <td>{record.time}</td>
+                                <td>{record.value}</td>
+                            </tr>
+                        ))}
+                </tbody>
+            </table>
         </div>
     )
 }
