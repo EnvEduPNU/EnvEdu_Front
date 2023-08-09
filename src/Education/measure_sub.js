@@ -58,6 +58,7 @@ export default function MeasureSub(props) {
             const newRecord = {
                 time: currentTime,
                 sensor: sensor,
+                item: props.item,
                 value: `${value}${getUnitForType(props.type)}`
             };
             setRecordedData([...recordedData, newRecord]);
@@ -102,13 +103,14 @@ export default function MeasureSub(props) {
         <div>
             <button onClick={handleRecord}>기록하기</button>
             {!props.enter && (value === -99999 ? "N/A" : value)}
-            
+
             {!props.enter &&
                 <table className="measure-table">
                     <thead>
                         <tr>
                             <th>측정 시간</th>
                             <th>센서명</th>
+                            <th>항목 이름</th>
                             <th>값</th>
                             <th>저장</th>
                         </tr>
@@ -118,6 +120,7 @@ export default function MeasureSub(props) {
                             <tr key={index}>
                                 <td>{record.time}</td>
                                 <td>{record.sensor}</td>
+                                <th>{record.item}</th>
                                 <td>{record.value}</td>
                                 <td><input type="checkbox"/></td>
                             </tr>
@@ -132,6 +135,7 @@ export default function MeasureSub(props) {
                         <tr>
                             <th>측정 시간</th>
                             <th>센서명</th>
+                            <th>항목 이름</th>
                             <th>값</th>
                             <th>저장</th>
                         </tr>
@@ -146,6 +150,7 @@ export default function MeasureSub(props) {
                                     ))}
                                 </select>
                             </td>
+                            <td><input /></td>
                             <td><input /></td>
                             <td><input type="checkbox"/></td>
                         </tr>
