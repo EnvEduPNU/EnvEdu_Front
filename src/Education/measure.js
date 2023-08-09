@@ -173,25 +173,29 @@ export default function Measure() {
     }
 
     const [select, setSelect] = useState('');
+    const [enter, setEnter] = useState(false); //'직접 입력'을 선택했는지 bool로 구분
     const handleSensor = (e) => {
-        const index = dataTypes_ko.indexOf(e.target.value);
-        if (index !== -1) setSelect(dataTypes[index]);
+        if (e.target.value === "직접 입력") {
+            setEnter(true);
+        } else { //센서명 한국어 -> 영어로 바꾸기
+            setEnter(false);
+            const index = dataTypes_ko.indexOf(e.target.value);
+            if (index !== -1) setSelect(dataTypes[index]);
+        }
     }
 
-    /*일시 정지*/
+    /*일시 정지 + 다시 시작*/
     const [paused, setPaused] = useState(false);
 
     const handlePause = () => {
         console.log(stompClient)
-        if (stompClient && !paused) {
+        if (stompClient && !paused) { //일시 정지
             disconnect();
             setPaused(true);
-        } 
-        //이 조건문에 안 걸리는 듯 (조건문 재작성 필요)
-        else if (stompClient === null && paused) {
+        } else if (paused) { //다시 시작
             register();
-            setPaused(false);
             setConnected(true);
+            setPaused(false); 
         }
     };
 
@@ -203,15 +207,19 @@ export default function Measure() {
                 {dataTypes_ko.map((dataType) => (
                     <option key={dataType}>{dataType}</option>
                 ))}
+                <option key='직접 입력'>직접 입력</option>
             </select>
-            <button onClick={() => {
-                            if (connected === false) {
-                                register();
-                            }
-            }}>확인</button>
+            <button onClick={() => { if (connected === false) register(); }}>측정 시작</button>
             <input placeholder='항목 이름을 입력해주세요' />
-            <button onClick={handlePause}>{paused ? '다시 시작' : '일시정지'}</button>
-            <MeasureSub type={select} data={receivedData} current={receivedData[receivedData.length - 1]} /> {/*SingleDataContainer*/}
+            {connected ? "connected" : "unconnected"}
+            <button onClick={handlePause}>{paused ? '다시 시작' : '일시 정지'}</button>
+            
+            {/*
+            {connected === true && isConnectionDropped === true ? "전송 중단됨" : ""}
+                */}
+            {"전송 중단됨"} {/*css만 수정하고 위의 코드 주석 해제하기*/}
+
+            <MeasureSub type={select} data={receivedData} current={receivedData[receivedData.length - 1]} enter={enter} /> {/*SingleDataContainer*/}
         </div>
     )
 }

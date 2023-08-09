@@ -3,6 +3,8 @@ import './measure.css';
 
 export default function MeasureSub(props) {
     const dataTypes = ["temp", "ph", "hum", "hum_EARTH", "tur", "dust", "dox", "co2", "lux", "pre"];
+    const dataTypes_ko = ["기온", "pH", "습도", "토양 습도", "탁도", "미세먼지", "용존산소량", "이산화탄소 농도", "조도", "기압"]
+
     const [value, setValue] = useState(-99999);
 
     /**
@@ -52,34 +54,121 @@ export default function MeasureSub(props) {
     const handleRecord = () => {
         if (value !== -99999) {
             const currentTime = new Date().toLocaleTimeString();
-            const newRecord = { time: currentTime, value: value };
+            const sensor = dataTypes_ko[dataTypes.indexOf(props.type)]
+            const newRecord = { time: currentTime, sensor: sensor, value: value };
             setRecordedData([...recordedData, newRecord]);
         }
     }
     console.log(props.type)
     //console.log(graphData);
     console.log(value);
+
+    /*센서별 단위 설정*/
+    function getUnitForType(type) {
+        if (type === "temp") {
+            return "°C";
+        } else if (type === "ph" || type === "hum_EARTH") {
+            return "";
+        } else if (type === "hum") {
+            return "%";
+        } else if (type === "tur") {
+            return "NTU";
+        } else if (type === "dust") {
+            return "μg/m³";
+        } else if (type === "dox") {
+            return "mg/L";
+        } else if (type === "co2") {
+            return "ppm";
+        } else if (type === "lux") {
+            return "lx";
+        } else if (type === "pre") {
+            return "hPa";
+        }
+        return "";
+    }    
+    
+    
+    const [divCount, setDivCount] = useState(0);
+
+    const addDiv = () => {
+        setDivCount(prevCount => prevCount + 1);
+    };
     
     return(
         <div>
             <button onClick={handleRecord}>기록하기</button>
-            {value !==-99999 && value}
-            <table className="measure-table">
-                <thead>
+            {value === -99999 ? "N/A" : value}
+            
+            {!props.enter &&
+                <table className="measure-table">
+                    <thead>
                         <tr>
                             <th>측정 시간</th>
-                            <th>값 (단위 : ?)</th>
+                            <th>센서명</th>
+                            <th>값</th>
+                            <th>저장</th>
                         </tr>
                     </thead>
                     <tbody>
                         {recordedData.map((record, index) => (
                             <tr key={index}>
                                 <td>{record.time}</td>
-                                <td>{record.value}</td>
+                                <td>{record.sensor}</td>
+                                <td>{record.value}{getUnitForType(props.type)}</td>
+                                <td><input type="checkbox"/></td>
                             </tr>
                         ))}
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            }
+
+            {props.enter && 
+                <table className="measure-table">
+                    <thead>
+                        <tr>
+                            <th>측정 시간</th>
+                            <th>센서명</th>
+                            <th>값</th>
+                            <th>저장</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="date" /> <input type="time" /></td>
+                            <td>
+                                <select>
+                                    {dataTypes_ko.map((dataType) => (
+                                        <option key={dataType}>{dataType}</option>
+                                    ))}
+                                </select>
+                            </td>
+                            <td><input /></td>
+                            <td><input type="checkbox"/></td>
+                        </tr>
+
+                        {Array.from({ length: divCount }, (_, index) => (
+                            <tr key={index}>
+                                <td><input type="date" /> <input type="time" /></td>
+                                <td>
+                                    <select>
+                                        {dataTypes_ko.map((dataType) => (
+                                            <option key={dataType}>{dataType}</option>
+                                        ))}
+                                    </select>
+                                </td>
+                                <td><input /></td>
+                                <td><input type="checkbox"/></td>
+                            </tr>
+                        ))}
+
+                        <tr>
+                            <td colSpan="4">
+                                <button onClick={addDiv}>+</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>}
+
         </div>
     )
 }
