@@ -87,28 +87,88 @@ export default function MeasureSub(props) {
         return "";
     }    
     
+    
+    const [divCount, setDivCount] = useState(0);
+
+    const addDiv = () => {
+        setDivCount(prevCount => prevCount + 1);
+    };
+    
     return(
         <div>
             <button onClick={handleRecord}>기록하기</button>
-            {value !==-99999 && value}
-            <table className="measure-table">
-                <thead>
-                    <tr>
-                        <th>측정 시간</th>
-                        <th>센서명</th>
-                        <th>값</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {recordedData.map((record, index) => (
-                        <tr key={index}>
-                            <td>{record.time}</td>
-                            <td>{record.sensor}</td>
-                            <td>{record.value}{getUnitForType(props.type)}</td>
+            {value === -99999 ? "N/A" : value}
+            
+            {!props.enter &&
+                <table className="measure-table">
+                    <thead>
+                        <tr>
+                            <th>측정 시간</th>
+                            <th>센서명</th>
+                            <th>값</th>
+                            <th>저장</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {recordedData.map((record, index) => (
+                            <tr key={index}>
+                                <td>{record.time}</td>
+                                <td>{record.sensor}</td>
+                                <td>{record.value}{getUnitForType(props.type)}</td>
+                                <td><input type="checkbox"/></td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            }
+
+            {props.enter && 
+                <table className="measure-table">
+                    <thead>
+                        <tr>
+                            <th>측정 시간</th>
+                            <th>센서명</th>
+                            <th>값</th>
+                            <th>저장</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="date" /> <input type="time" /></td>
+                            <td>
+                                <select>
+                                    {dataTypes_ko.map((dataType) => (
+                                        <option key={dataType}>{dataType}</option>
+                                    ))}
+                                </select>
+                            </td>
+                            <td><input /></td>
+                            <td><input type="checkbox"/></td>
+                        </tr>
+
+                        {Array.from({ length: divCount }, (_, index) => (
+                            <tr key={index}>
+                                <td><input type="date" /> <input type="time" /></td>
+                                <td>
+                                    <select>
+                                        {dataTypes_ko.map((dataType) => (
+                                            <option key={dataType}>{dataType}</option>
+                                        ))}
+                                    </select>
+                                </td>
+                                <td><input /></td>
+                                <td><input type="checkbox"/></td>
+                            </tr>
+                        ))}
+
+                        <tr>
+                            <td colSpan="4">
+                                <button onClick={addDiv}>+</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>}
+
         </div>
     )
 }
