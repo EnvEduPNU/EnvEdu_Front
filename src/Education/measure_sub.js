@@ -66,18 +66,18 @@ export default function MeasureSub(props) {
             {value !==-99999 && value}
             <table className="measure-table">
                 <thead>
-                        <tr>
-                            <th>측정 시간</th>
-                            <th>값 (단위 : ?)</th>
+                    <tr>
+                        <th>측정 시간</th>
+                        <th>값 (단위 : ?)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {recordedData.map((record, index) => (
+                        <tr key={index}>
+                            <td>{record.time}</td>
+                            <td>{record.value}</td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        {recordedData.map((record, index) => (
-                            <tr key={index}>
-                                <td>{record.time}</td>
-                                <td>{record.value}</td>
-                            </tr>
-                        ))}
+                    ))}
                 </tbody>
             </table>
         </div>
