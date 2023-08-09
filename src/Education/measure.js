@@ -182,10 +182,13 @@ export default function Measure() {
     const [paused, setPaused] = useState(false);
 
     const handlePause = () => {
+        console.log(stompClient)
         if (stompClient && !paused) {
             disconnect();
             setPaused(true);
-        } else if (!stompClient && paused) {
+        } 
+        //이 조건문에 안 걸리는 듯 (조건문 재작성 필요)
+        else if (stompClient === null && paused) {
             register();
             setPaused(false);
             setConnected(true);
