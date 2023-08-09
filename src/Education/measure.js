@@ -39,8 +39,6 @@ export default function Measure() {
                 console.log("/user/device 결과")
                 console.log(response.data)
             })
-        
-        register();
     },[]);
 
     /*
@@ -190,6 +188,13 @@ export default function Measure() {
                     <option key={dataType}>{dataType}</option>
                 ))}
             </select>
+            <button onClick={() => {
+                            if (connected === false) {
+                                register();
+                            } else {
+                                disconnect();
+                            }
+            }}>확인</button>
             <input placeholder='항목 이름을 입력해주세요' />
             <MeasureSub type={select} data={receivedData} current={receivedData[receivedData.length - 1]} /> {/*SingleDataContainer*/}
         </div>
