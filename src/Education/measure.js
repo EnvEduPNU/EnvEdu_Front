@@ -184,7 +184,7 @@ export default function Measure() {
         }
     }
 
-    /*일시 정지 + 다시 시작*/
+    /*일시 정지*/
     const [paused, setPaused] = useState(false);
 
     const handlePause = () => {
@@ -192,11 +192,13 @@ export default function Measure() {
         if (stompClient && !paused) { //일시 정지
             disconnect();
             setPaused(true);
-        } else if (paused) { //다시 시작
+            
+        } /*else if (paused) { //다시 시작
             register();
             setConnected(true);
             setPaused(false); 
         }
+        */
     };
 
     return(
@@ -212,8 +214,9 @@ export default function Measure() {
             <button onClick={() => { if (connected === false) register(); }}>측정 시작</button>
             <input placeholder='항목 이름을 입력해주세요' />
             {connected ? "connected" : "unconnected"}
-            <button onClick={handlePause}>{paused ? '다시 시작' : '일시 정지'}</button>
-            
+            {/*<button onClick={handlePause}>{paused ? '다시 시작' : '일시 정지'}</button>*/}
+            <button onClick={handlePause}>일시 정지</button>
+
             {/*
             {connected === true && isConnectionDropped === true ? "전송 중단됨" : ""}
                 */}
