@@ -36,8 +36,8 @@ export default function Measure() {
         customAxios.get(`/user/device`)
             .then((response)=>{
                 setConnectableSocket(response.data.relatedUserDeviceList);
-                console.log("/user/device 결과")
-                console.log(response.data)
+                //console.log("/user/device 결과")
+                //console.log(response.data)
             })
     },[]);
 
@@ -50,8 +50,8 @@ export default function Measure() {
     /**
      * 센서 기기에서 전송하는 데이터 종류
      */
-    const dataTypes = ["temp", "pH", "hum", "hum_earth", "tur", "dust", "dox", "co2", "lux", "pre"];
-
+    const dataTypes = ["temp", "ph", "hum", "hum_EARTH", "tur", "dust", "dox", "co2", "lux", "pre"];
+    const dataTypes_ko = ["기온", "pH", "습도", "토양 습도", "탁도", "미세먼지", "용존산소량", "이산화탄소 농도", "조도", "기압"]
 
     const [checked, setChecked] = useState(false);
 
@@ -174,17 +174,16 @@ export default function Measure() {
 
     const [select, setSelect] = useState('');
     const handleSensor = (e) => {
-        setSelect(e.target.value);
+        const index = dataTypes_ko.indexOf(e.target.value);
+        setSelect(dataTypes[index]);
     }
 
-    console.log(receivedData)
-    console.log(connected)
     return(
         <div>
             <input placeholder='제목을 입력해주세요' />
             <select onChange={handleSensor}>
                 <option value=''>센서 선택</option>
-                {dataTypes.map((dataType) => (
+                {dataTypes_ko.map((dataType) => (
                     <option key={dataType}>{dataType}</option>
                 ))}
             </select>

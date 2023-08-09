@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 export default function MeasureSub(props) {
-    const dataTypes = ["temp", "pH", "hum", "hum_earth", "tur", "dust", "dox", "co2", "lux", "pre"];
+    const dataTypes = ["temp", "ph", "hum", "hum_EARTH", "tur", "dust", "dox", "co2", "lux", "pre"];
     const [value, setValue] = useState(-99999);
 
     /**
@@ -57,7 +57,7 @@ export default function MeasureSub(props) {
     }
 
     console.log(props.type)
-    console.log(graphData);
+    //console.log(graphData);
     console.log(value);
     
     return(
