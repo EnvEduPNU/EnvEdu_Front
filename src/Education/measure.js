@@ -39,6 +39,8 @@ export default function Measure() {
                 console.log("/user/device 결과")
                 console.log(response.data)
             })
+        
+        register();
     },[]);
 
     /*
