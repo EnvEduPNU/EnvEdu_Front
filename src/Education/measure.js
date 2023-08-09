@@ -211,8 +211,8 @@ export default function Measure() {
                 ))}
                 <option key='직접 입력'>직접 입력</option>
             </select>
-            <button onClick={() => { if (connected === false) register(); }}>측정 시작</button>
-            <input placeholder='항목 이름을 입력해주세요' />
+            <button onClick={() => { if (connected === false) { register(); setPaused(false); } }}>측정 시작</button>
+            <input placeholder='항목 이름을 입력해주세요 ex) 식초' />
             {connected ? "connected" : "unconnected"}
             {/*<button onClick={handlePause}>{paused ? '다시 시작' : '일시 정지'}</button>*/}
             <button onClick={handlePause}>일시 정지</button>
