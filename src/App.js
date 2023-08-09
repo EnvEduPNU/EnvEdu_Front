@@ -28,6 +28,11 @@ import Tboard from './Learnmore/Train/Tborad';
 import OpenApi from './OpenApi/OpenApi';
 import MyData from "./OpenApi/MyData";
 
+import Education from './Education/education';
+import Measure from './Education/measure';
+import Sample from './Socket/sample';
+import Test from './Education/test';
+
 function App() {
   /**
    * 처음에 반드시 .env 파일 생성 후 REACT_APP_API_URL = ${서버 도메인} 작성
@@ -40,6 +45,9 @@ function App() {
       <Header />
       <div className="wrap">
         <Routes>
+          {/*test*/}
+          <Route path="/test" exact={true} element={<Test/>}/>
+
           {/*home*/}
           <Route index element={<HomePage />} />
           
@@ -59,6 +67,7 @@ function App() {
           
           {/*socket*/}
           <Route path="/socket" exact={true} element={<ConnectPage />} />
+          <Route path="/sample" exact={true} element={<Sample />}/>
           
           {/*test*/}
           <Route path="/test/socket" exact={true} element={<TestSocket />} />
@@ -75,6 +84,10 @@ function App() {
           {/*About*/}
           <Route path="/team" exact={true} element={<Team/>} />
           <Route path="/what" exact={true} element={<What/>} />
+
+          {/*Education */}
+          <Route path="/E-Classes" exact={true} element={<Education/>} />
+          <Route path="/measure" exact={true} element={<Measure/>} />
 
           {/*Learnmore*/}
           <Route path="/training" exact={true} element={<Training/>} />

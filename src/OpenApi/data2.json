@@ -1,0 +1,52 @@
+[
+    {
+        "dataTime": "2023-07-06 17:00",
+        "stationName": "광복동",
+        "so2Value": 0.002,
+        "coValue": 0.4,
+        "o3Value": 0.062,
+        "no2Value": 0.020,
+        "pm10Value": 37,
+        "pm25Value": 29
+    },
+    {
+        "dataTime": "2023-07-06 17:00",
+        "stationName": "부곡동",
+        "so2Value": 0.002,
+        "coValue": 0.4,
+        "o3Value": 0.062,
+        "no2Value": 0.020,
+        "pm10Value": 46,
+        "pm25Value": 29
+    },
+    {
+        "dataTime": "2023-07-06 17:00",
+        "stationName": "장전동",
+        "so2Value": 0.002,
+        "coValue": 0.4,
+        "o3Value": 0.062,
+        "no2Value": 0.020,
+        "pm10Value": 25,
+        "pm25Value": 29
+    },
+    {
+        "dataTime": "2023-07-06 17:00",
+        "stationName": "부전동",
+        "so2Value": 0.002,
+        "coValue": 0.4,
+        "o3Value": 0.062,
+        "no2Value": 0.020,
+        "pm10Value": 30,
+        "pm25Value": 29
+    },
+    {
+        "dataTime": "2023-07-06 17:00",
+        "stationName": "청학동",
+        "so2Value": 0.002,
+        "coValue": 0.4,
+        "o3Value": 0.062,
+        "no2Value": 0.020,
+        "pm10Value": 38,
+        "pm25Value": 29
+    }
+]
