@@ -1,10 +1,8 @@
+import { useState, useEffect } from 'react';
 import SockJS from 'sockjs-client';
-import {useState} from "react";
-import SingleDataContainer from "./SingleDataContainer";
 import {decodeToken} from "react-jwt";
 import {customAxios} from "../Common/CustomAxios";
-
-
+import MeasureSub from './measure_sub';
 
 const stomp = require('stompjs');
 /**
@@ -27,7 +25,28 @@ let save = false;
  */
 let lastReceivedDate = null;
 
-function SocketConnect(props) {
+export default function Measure() {
+    const [connectableSocket, setConnectableSocket] = useState([]);
+    useEffect(()=>{
+        /**
+         * 자신과 연관된 기기의 정보를 가져옴
+         * 학생의 경우, 자신에게 등록된 기기
+         * 교사의 경우, 자신에게 등록된 기기 + 자신이 지도하는 모든 학생에게 등록된 기기
+         */
+        customAxios.get(`/user/device`)
+            .then((response)=>{
+                setConnectableSocket(response.data.relatedUserDeviceList);
+                console.log("/user/device 결과")
+                console.log(response.data)
+            })
+    },[]);
+
+    /*
+    const [connectableSocket, setConnectableSocket] = useState([
+        { username: "user1", elements: [{ deviceName: 'device1', mac: 'AA:BB:CC:DD:EE:FF' }] }
+    ]);
+    */
+
     /**
      * 센서 기기에서 전송하는 데이터 종류
      */
@@ -96,18 +115,12 @@ function SocketConnect(props) {
      */
     function onConnected() {
         setConnected(true);
-        stompClient.subscribe("/topic/user/" + props.mac, onMessageReceived, onError);
+        //수정함
+        stompClient.subscribe("/topic/user/" + connectableSocket[0].elements[0].mac, onMessageReceived, onError);
     }
 
     function onError() {
         alert("연결 실패");
-    }
-
-    /** 
-     * 몇몇 센서의 보정 메세지 전송 함수
-     */
-    function sendCalibrationMsg(message) {
-        stompClient.send("/topic/" + props.mac, {}, message);
     }
 
     /** 
@@ -158,62 +171,25 @@ function SocketConnect(props) {
         }
         setReceivedData([...receivedData]);
     }
-    return (
-            <div>
-                <br/>
-                <div className="d-flex justify-content-between">
-                    <div>
-                        <span className="border p-2" style={{
-                            cursor: "pointer",
-                            backgroundColor: `${connected === false ? "rgb(192,192,192)" : "rgb(102,255,102)"}`
-                        }} onClick={() => {
-                            if (connected === false) {
-                                
-                                if (props.username === decodeToken(localStorage.getItem("access_token"))) {
-                                    location = prompt("위치 정보를 입력하세요(optional)");
-                                }
-                                
-                                register();
-                            } else {
-                                disconnect();
-                            }
-                        }}>{props.mac}</span>
-                        {
-                            props.username === decodeToken(localStorage.getItem("access_token")).username ? (
-                                <span className="p-2" style={{fontSize: "0.7em"}}><input type="checkbox"
-                                                                                         checked={checked}
-                                                                                         onChange={() => {
-                                                                                             save = !save;
-                                                                                             setChecked(!checked)
-                                                                                         }}/>&nbsp;데이터 저장하기</span>
 
-                                                                                        ) : 
-                                                                                         
-                                                                                        (<div></div>)
-                        }
-                    </div>
-                    <div>id: {props.username}</div>
-                </div>
-                &nbsp;&nbsp;&nbsp;&nbsp;
-                <div style={{
-                    fontSize: "0.6em",
-                    color: "red"
-                }}>{connected === true && isConnectionDropped === true ? "전송 중단됨" : ""}</div>
-                <div className={connected === true ? "border pt-2 ps-2 pe-2" : ""}>
-                    {
-                        connected === true
-                            ? dataTypes.map((elem) =>
-                                (<div key={elem}>
-                                    <SingleDataContainer type={elem} data={receivedData}
-                                                         current={receivedData[receivedData.length - 1]} stomp={stompClient}
-                                                         sendFunction={sendCalibrationMsg}/>
-                                </div>)
-                            )
-                            : (<></>)
-                    }
-                </div>
-            </div>
-        );
+    const [select, setSelect] = useState('');
+    const handleSensor = (e) => {
+        setSelect(e.target.value);
+    }
+
+    console.log(receivedData)
+
+    return(
+        <div>
+            <input placeholder='제목을 입력해주세요' />
+            <select onChange={handleSensor}>
+                <option value=''>센서 선택</option>
+                {dataTypes.map((dataType) => (
+                    <option key={dataType}>{dataType}</option>
+                ))}
+            </select>
+            <input placeholder='항목 이름을 입력해주세요' />
+            <MeasureSub type={select} data={receivedData} current={receivedData[receivedData.length - 1]} /> {/*SingleDataContainer*/}
+        </div>
+    )
 }
-
-export default SocketConnect;

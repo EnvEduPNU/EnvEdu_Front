@@ -29,6 +29,7 @@ import OpenApi from './OpenApi/OpenApi';
 import MyData from "./OpenApi/MyData";
 
 import Education from './Education/education';
+import Measure from './Education/measure';
 import Sample from './Socket/sample';
 import Test from './Education/test';
 
@@ -86,6 +87,7 @@ function App() {
 
           {/*Education */}
           <Route path="/E-Classes" exact={true} element={<Education/>} />
+          <Route path="/measure" exact={true} element={<Measure/>} />
 
           {/*Learnmore*/}
           <Route path="/training" exact={true} element={<Training/>} />

@@ -187,20 +187,16 @@ function SingleDataContainer(props) {
     };
 
     return (
-        <div style={{fontSize: '1.25rem'}}>
-            <div className="d-flex justify-content-between" style={{}}>
-                <div style={{}}>
-                    {/*여기 수정*/}
-                    <span style={{
-                        fontSize: "0.9em",
-                        padding: '0.1rem 1.5rem',
-                        background: '#fff',
-                        borderRadius: '1.25rem',
-                        fontSize: '1.25rem'
-                        //backgroundColor: `${value === -99999 ? "rgb(192,192,192)" : "rgb(102,255,102)"}`
-                    }}>
-                        {props.type}
-                    </span>
+        <div>
+            <div className="d-flex justify-content-between">
+                <div>
+                <span className="border pe-2 ps-2 mb-2" style={{
+                    display: "inline-block",
+                    fontSize: "0.9em",
+                    width: "8em",
+                    backgroundColor: `${value === -99999 ? "rgb(192,192,192)" : "rgb(102,255,102)"}`
+                }}>{props.type}</span>
+                    &nbsp;&nbsp;
 
                     {
                         /**
@@ -248,13 +244,11 @@ function SingleDataContainer(props) {
                         }
                     </OverlayTrigger>
                     
-                    {/*
                     <div style={{cursor: "pointer", display: "inline-block"}} onClick={() => {
                         setSeeGraph(!seeGraph);
                     }}>
                         📈
                     </div>
-                    */}
                 </div>
             </div>
 
