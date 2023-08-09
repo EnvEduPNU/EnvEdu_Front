@@ -55,7 +55,11 @@ export default function MeasureSub(props) {
         if (value !== -99999) {
             const currentTime = new Date().toLocaleTimeString();
             const sensor = dataTypes_ko[dataTypes.indexOf(props.type)]
-            const newRecord = { time: currentTime, sensor: sensor, value: value };
+            const newRecord = {
+                time: currentTime,
+                sensor: sensor,
+                value: `${value}${getUnitForType(props.type)}`
+            };
             setRecordedData([...recordedData, newRecord]);
         }
     }
@@ -114,7 +118,7 @@ export default function MeasureSub(props) {
                             <tr key={index}>
                                 <td>{record.time}</td>
                                 <td>{record.sensor}</td>
-                                <td>{record.value}{getUnitForType(props.type)}</td>
+                                <td>{record.value}</td>
                                 <td><input type="checkbox"/></td>
                             </tr>
                         ))}
