@@ -128,7 +128,7 @@ export default function MeasureSub(props) {
                             <tr
                                 key={index}
                                 style={{
-                                backgroundColor: selectedRows.includes(index) ? "rgba(255, 0, 0, 0.20)" : "#fff"
+                                backgroundColor: selectedRows.includes(index) ? "#FFE8FB" : "#fff"
                                 }}
                             >
                                 <td>{record.time}</td>
