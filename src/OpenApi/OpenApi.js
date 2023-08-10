@@ -2,17 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './OpenApi.css';
 import {customAxios} from "../Common/CustomAxios";
 import earthImg from "./earth.png"
-
-//추후 삭제 필요
-import waterdata from "./data.json" ;
-import airdata from "./data2.json";
-
-//그래프 그리기
 import { Chart } from 'chart.js/auto';
 import { Line } from 'react-chartjs-2';
-
-//로딩 시간 줄이려면 useEffect로 미리 res.data 다 받아온 다음에 
-//'수질', '대기질' 중 선택하는 항목에 따라 다른 component 보여줘야 함
 
 function OpenApi() {
     const [data, setData] = useState([]);
@@ -26,8 +17,6 @@ function OpenApi() {
     const [isFull, setIsFull] = useState([]);
     const [isShow, setIsShow] = useState(false);
     const [category, setCategory] = useState('');
-
-    const [koHeaders, setKoHeaders] = useState([]);
     
     //최초 화면 렌더링 시 '수질 데이터' 조회
     useEffect(() => {
@@ -35,10 +24,9 @@ function OpenApi() {
     }, [])
 
     const handleButtonClickOcean = () => {
-        //customAxios.get('/ocean-quality?location=부산')
-            //.then((jsonData) => {
-                //jsonData = jsonData.data;
-                const jsonData = waterdata;
+        customAxios.get('/ocean-quality?location=부산')
+            .then((jsonData) => {
+                jsonData = jsonData.data;
                 setData(jsonData);
                 setFilteredData(jsonData);
                 setSelectedOption(null);
@@ -47,21 +35,18 @@ function OpenApi() {
                 setIsShow(true);
                 setSelectedItems([])
                 setCategory("OCEAN")
-
-                setKoHeaders(['조사지점명', '측정연도', '측정월', '수온', 'pH', '용존산소', '생물화학적산소요구량', '화학적산소요구량', '총질소', '총인', '투명도', '클로로필-a', '전기전도도', '총유기탄소']);
                 // Set the table headers dynamically
                 const headers = Object.keys(jsonData[0]).filter((key) => key !== 'id' && key !== 'PTNM');
                 setHeaders(headers);
                 const checkedHeaders = Object.keys(jsonData[0]).filter((key) => key !== 'id' && key !== 'PTNM');
                 setCheckedHeaders(checkedHeaders);
-            //});
-
+            });
     };
+
     const handleButtonClickAir = () => {
-        //customAxios.get('/air-quality?location=부산')
-            //.then((jsonData) => {
-                //jsonData = jsonData.data;
-                const jsonData = airdata;
+        customAxios.get('/air-quality?location=부산')
+            .then((jsonData) => {
+                jsonData = jsonData.data;
                 setData(jsonData);
                 setFilteredData(jsonData);
                 setSelectedOption(null);
@@ -76,7 +61,7 @@ function OpenApi() {
                 setHeaders(headers);
                 const checkedHeaders = Object.keys(jsonData[0]).filter((key) => key !== 'id' && key !== 'PTNM');
                 setCheckedHeaders(checkedHeaders);
-            //});                   
+            });                   
     };
 
     const options = data.map((station) => ({
@@ -102,12 +87,6 @@ function OpenApi() {
         });
     };
 
-    {/*
-    function modalClick(){
-        setShowModal(!showModal);
-    }
-    */}
-
     {/* 필터링을 위해 addr 선택 */}
     function handleSelectChange (e) {
         if (e.target.value === '전체') {
@@ -121,18 +100,12 @@ function OpenApi() {
         }
     }
 
-
     function handleFullCheck(){
         setIsFull(!isFull)
         if (isFull)
             setSelectedItems([])
         else
             setSelectedItems(data)
-    }
-    function handleFullLookup() {
-        setSelectedOption(null);
-        setFilteredData(data);
-        setSelectedItems([]);
     }
 
     function handleViewCheckBoxChange(item){
@@ -153,19 +126,11 @@ function OpenApi() {
         }
     }
 
-    /*그래프 그리기 */
+    /*그래프 그리기 (수정 필요*/
     console.log(selectedItems);
     const graphLabel = selectedItems.map((selectedItem) => selectedItem.stationName);
     const oceanData_ITEMCOD = selectedItems.map((selectedItem) => selectedItem.ITEMCOD);
     const oceanData_ITEMDOC = selectedItems.map((selectedItem) => selectedItem.ITEMDOC);
-    //const airData = selectedItems.map((selectedItem) => selectedItem.pm10Value);
-
-    /* useEffect 사용하거나 버튼 살려서 완성하기 */
-    if (category === 'OCEAN') {
-
-    } else if (category === 'AIR') {
-
-    }
     
     let sample = {
         labels: graphLabel,
@@ -185,45 +150,43 @@ function OpenApi() {
         ],
       };
 
-    /*
-    const drawGraph = () => {
-        if (graphLabel.length === 0) {
-            alert("데이터를 선택해주세요");
-        } else {
-            
-        }
+    //항목 이름 (한국어 -> 영어)
+    const engToKor = (name) => {
+        const kor = {
+            //수질 데이터
+            "stationName": '조사지점명',
+            "PTNM": '조사지점명',
+            "WMYR": '측정연도',
+            "WMOD": '측정월',
+            "ITEMTEMP": '수온(°C)',
+            "ITEMPH": 'pH',
+            "ITEMDOC": '용존산소(㎎/L)',
+            "ITEMBOD": '생물화학적산소요구량(㎎/L)',
+            "ITEMCOD": '화학적산소요구량(㎎/L)',
+            "ITEMTN": '총질소(㎎/L)',
+            "ITEMTP": '총인(㎎/L)',
+            "ITEMTRANS": '투명도(㎎/L)',
+            "ITEMCLOA": '클로로필-a(㎎/L)',
+            "ITEMEC": '전기전도도(µS/㎝)',
+            "ITEMTOC": '총유기탄소(㎎/L)',
+
+            //대기질 데이터
+            "dataTime": "측정일",
+            "so2Value": "아황산가스 농도(ppm)",
+            "coValue": "일산화탄소 농도(ppm)",
+            "o3Value": "오존 농도(ppm)",
+            "no2Value": "이산화질소 농도(ppm)",
+            "pm10Value": "미세먼지(PM10) 농도(㎍/㎥)",
+            "pm25Value": "미세먼지(PM2.5)  농도(㎍/㎥)"            
+        };
+        return kor[name] || "";
     }
-    */
 
     console.log(category)
 
     return (
         <div style={{margin: 'auto'}}>
             <div id="wrap-openapi-div">
-                {/*
-                <div className={showModal ? 'modal-full' : ''} onClick={modalClick} style={{background: 'pink'}}></div>
-                {showModal &&
-                    <div className="modal-table">
-                        <div>
-                            <table>
-                                <thead>
-                                    <tr>
-                                        {headers.map((header) => (
-                                            <th key={header} onClick={modalClick}>{header}</th>
-                                        ))}
-                                        <th>확인</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {Object.values(selectedItem).map((value, index) => (
-                                        <td key={index} onClick={modalClick}>{value}</td>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                }
-                */}
                 <h3 className="air-div-full">
                     <img src={earthImg} 
                         style={{
@@ -277,7 +240,7 @@ function OpenApi() {
                                         checked={headers.includes(header)}
                                         onChange={handlePropertyCheckboxChange}
                                     />
-                                    {header}
+                                    {engToKor(header)}
                                 </label>
                             ))}
                     </div>
@@ -293,19 +256,12 @@ function OpenApi() {
                         style={{marginRight: '0.3rem'}} >
                         데이터 저장하기
                     </button>
-                    {/*
-                    <button 
-                        id="table-btn"
-                        onClick={drawGraph}>
-                        그래프 그리기
-                    </button>
-                    */}
                 </div>
 
                 <table border="1" className="openAPI-table">
                     <thead>
                         {headers.map((header) => (
-                            <th key={header}>{header}</th>
+                            <th key={header}>{engToKor(header)}</th>
                         ))}
                         {isShow &&
                             <th>
