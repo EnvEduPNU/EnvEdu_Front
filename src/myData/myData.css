@@ -1,0 +1,75 @@
+.myData table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/*
+.myData table thead tr th:first-child {
+    border-top-left-radius: 1rem;
+}
+
+.myData table thead tr th:last-child {
+    border-top-right-radius: 1rem;
+}
+*/
+
+.myData table thead tr th {
+    background-color: #f9d1d1;
+    color: black;
+}
+
+.myData table th,
+.myData table td {
+    padding: 0.188rem 0;
+    text-align: center;
+}
+
+/*
+.myData table tbody tr:nth-child(even) {
+    background-color: rgb(228, 228, 228);
+}
+*/
+
+.myData .startBtn {
+    text-align: center;
+    width: 3rem;
+    cursor: pointer;
+    background-color: #f765a3;
+    color: #fff;
+    margin-left: 1rem;
+    margin-right: 0.5rem;
+    border-radius: 10rem;
+}
+
+.myData .startBtn:hover {
+    background-color: #f91e79;
+}
+
+.myData .endBtn {
+    text-align: center;
+    width: 3rem;
+    cursor: pointer;
+    background-color: #0b1354;
+    color: #fff;
+    margin-right: 0.5rem;
+    border-radius: 10rem;
+}
+
+.myData .endBtn:hover {
+    background-color: #5b5b60;
+}
+
+.myData .drawGraph {
+    margin-top: 0;
+    width: 10rem;
+    background-color: #ffa4b6;
+    color: #fff;
+    border: none;
+    border-radius: 10rem;
+    font-weight: 600;
+    margin-left: 1rem;
+}
+
+.myData .select-var {
+    margin-left: 1rem;
+}
