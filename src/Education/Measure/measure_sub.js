@@ -69,40 +69,48 @@ export default function MeasureSub(props) {
     console.log(value);
 
     /*센서별 단위 설정*/
-    function getUnitForType(type) {
-        if (type === "temp") {
-            return "°C";
-        } else if (type === "ph" || type === "hum_EARTH") {
-            return "";
-        } else if (type === "hum") {
-            return "%";
-        } else if (type === "tur") {
-            return "NTU";
-        } else if (type === "dust") {
-            return "μg/m³";
-        } else if (type === "dox") {
-            return "mg/L";
-        } else if (type === "co2") {
-            return "ppm";
-        } else if (type === "lux") {
-            return "lx";
-        } else if (type === "pre") {
-            return "hPa";
-        }
-        return "";
-    }    
+    const getUnitForType = (type) => {
+        const units = {
+          "temp": "°C",
+          "ph": "",
+          "hum": "%",
+          "tur": "NTU",
+          "dust": "μg/m³",
+          "dox": "mg/L",
+          "co2": "ppm",
+          "lux": "lx",
+          "pre": "hPa"
+        };
+        return units[type] || "";
+    };
     
-    
+    // + 버튼 누르면 row 추가
     const [divCount, setDivCount] = useState(0);
 
     const addDiv = () => {
         setDivCount(prevCount => prevCount + 1);
     };
+
+    // 저장 버튼 누르면 해당 row의 background 색 변경
+    const [selectedRows, setSelectedRows] = useState([]);
+
+    const handleCheckboxChange = (index) => {
+        if (selectedRows.includes(index)) {
+        setSelectedRows(selectedRows.filter((rowIndex) => rowIndex !== index));
+        } else {
+        setSelectedRows([...selectedRows, index]);
+        }
+    };
     
     return(
         <div>
-            <button onClick={handleRecord}>기록하기</button>
-            {!props.enter && (value === -99999 ? "N/A" : value)}
+            {!props.enter && <>
+                <label>측정값</label>
+                <span>{value === -99999 ? "N/A" : value}</span>
+                <button onClick={handleRecord}>
+                    <img src='/assets/img/record.png' /> 기록하기
+                </button>
+            </>}
 
             {!props.enter &&
                 <table className="measure-table">
@@ -110,8 +118,8 @@ export default function MeasureSub(props) {
                         <tr>
                             <th>측정 시간</th>
                             <th>센서명</th>
-                            <th>항목 이름/장소</th>
-                            <th>값</th>
+                            <th>측정 항목/장소</th>
+                            <th>측정값</th>
                             <th>저장</th>
                         </tr>
                     </thead>
@@ -122,7 +130,13 @@ export default function MeasureSub(props) {
                                 <td>{record.sensor}</td>
                                 <td>{record.item}</td>
                                 <td>{record.value}</td>
-                                <td><input type="checkbox"/></td>
+                                <td>
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedRows.includes(index)}
+                                        onChange={() => handleCheckboxChange(index)}
+                                    />
+                                </td>
                             </tr>
                         ))}
                     </tbody>
@@ -135,8 +149,8 @@ export default function MeasureSub(props) {
                         <tr>
                             <th>측정 시간</th>
                             <th>센서명</th>
-                            <th>항목 이름/장소</th>
-                            <th>값</th>
+                            <th>측정 항목/장소</th>
+                            <th>측정값</th>
                             <th>저장</th>
                         </tr>
                     </thead>
@@ -152,7 +166,11 @@ export default function MeasureSub(props) {
                             </td>
                             <td><input /></td>
                             <td><input /></td>
-                            <td><input type="checkbox"/></td>
+                            <td>
+                                <input
+                                    type="checkbox"
+                                />
+                            </td>
                         </tr>
 
                         {Array.from({ length: divCount }, (_, index) => (
@@ -167,13 +185,17 @@ export default function MeasureSub(props) {
                                 </td>
                                 <td><input /></td>
                                 <td><input /></td>
-                                <td><input type="checkbox"/></td>
+                                <td>
+                                    <input
+                                        type="checkbox"
+                                    />
+                                </td>
                             </tr>
                         ))}
 
                         <tr>
-                            <td colSpan="5">
-                                <button onClick={addDiv}>+</button>
+                            <td colSpan="5" style={{paddingBottom: '1rem', background: '#fff'}}>
+                                <button onClick={addDiv} className="add-row">+</button>
                             </td>
                         </tr>
                     </tbody>
