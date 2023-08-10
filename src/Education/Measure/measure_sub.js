@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import './measure.css';
+import './measure.scss';
 
 export default function MeasureSub(props) {
     const dataTypes = ["temp", "ph", "hum", "hum_EARTH", "tur", "dust", "dox", "co2", "lux", "pre"];
@@ -110,7 +110,7 @@ export default function MeasureSub(props) {
                         <tr>
                             <th>측정 시간</th>
                             <th>센서명</th>
-                            <th>항목 이름</th>
+                            <th>항목 이름/장소</th>
                             <th>값</th>
                             <th>저장</th>
                         </tr>
@@ -120,7 +120,7 @@ export default function MeasureSub(props) {
                             <tr key={index}>
                                 <td>{record.time}</td>
                                 <td>{record.sensor}</td>
-                                <th>{record.item}</th>
+                                <td>{record.item}</td>
                                 <td>{record.value}</td>
                                 <td><input type="checkbox"/></td>
                             </tr>
@@ -135,7 +135,7 @@ export default function MeasureSub(props) {
                         <tr>
                             <th>측정 시간</th>
                             <th>센서명</th>
-                            <th>항목 이름</th>
+                            <th>항목 이름/장소</th>
                             <th>값</th>
                             <th>저장</th>
                         </tr>

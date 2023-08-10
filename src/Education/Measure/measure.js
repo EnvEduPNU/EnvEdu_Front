@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import SockJS from 'sockjs-client';
 import {decodeToken} from "react-jwt";
-import {customAxios} from "../Common/CustomAxios";
+import { customAxios } from '../../Common/CustomAxios';
 import MeasureSub from './measure_sub';
+import './measure.scss';
 
 const stomp = require('stompjs');
 /**
@@ -218,8 +219,8 @@ export default function Measure() {
                 <option key='직접 입력'>직접 입력</option>
             </select>
             <button onClick={() => { if (connected === false) { register(); setPaused(false); } }}>측정 시작</button>
-            <input onChange={handleItem} placeholder='항목 이름을 입력해주세요 ex) 식초' />
-            {connected ? (paused ? "일시 중지" : "connected") : "unconnected"}
+            <input onChange={handleItem} placeholder='항목 이름 또는 장소를 입력해주세요 ex) 식초, 교실' />
+            {connected ? "connected" : (paused ? "일시 중지" : "unconnected")}
             {/*<button onClick={handlePause}>{paused ? '다시 시작' : '일시 정지'}</button>*/}
             <button onClick={handlePause}>일시 정지</button>
 

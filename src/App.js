@@ -29,7 +29,7 @@ import OpenApi from './OpenApi/OpenApi';
 import MyData from "./OpenApi/MyData";
 
 import Education from './Education/education';
-import Measure from './Education/measure';
+import Measure from './Education/Measure/measure';
 import Sample from './Socket/sample';
 import Test from './Education/test';
 
