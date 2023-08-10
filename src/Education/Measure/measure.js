@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import SockJS from 'sockjs-client';
 import {decodeToken} from "react-jwt";
-import {customAxios} from "../Common/CustomAxios";
+import { customAxios } from '../../Common/CustomAxios';
 import MeasureSub from './measure_sub';
+import './measure.scss';
 
 const stomp = require('stompjs');
 /**
@@ -208,27 +209,47 @@ export default function Measure() {
     }
 
     return(
-        <div>
-            <input placeholder='제목을 입력해주세요' />
-            <select onChange={handleSensor}>
-                <option value=''>센서 선택</option>
-                {dataTypes_ko.map((dataType) => (
-                    <option key={dataType}>{dataType}</option>
-                ))}
-                <option key='직접 입력'>직접 입력</option>
-            </select>
-            <button onClick={() => { if (connected === false) { register(); setPaused(false); } }}>측정 시작</button>
-            <input onChange={handleItem} placeholder='항목 이름을 입력해주세요 ex) 식초' />
-            {connected ? (paused ? "일시 중지" : "connected") : "unconnected"}
-            {/*<button onClick={handlePause}>{paused ? '다시 시작' : '일시 정지'}</button>*/}
-            <button onClick={handlePause}>일시 정지</button>
+        <div className='measurement-container'>
+            <div style={{display: 'flex', alignItems: 'center'}}>
+                <label>제목</label>
+                <input className='title' placeholder='제목을 입력해주세요' />
+            </div>
 
-            {/*
-            {connected === true && isConnectionDropped === true ? "전송 중단됨" : ""}
-                */}
-            {"전송 중단됨"} {/*css만 수정하고 위의 코드 주석 해제하기*/}
+            <div style={{display: 'flex', alignItems: 'center', marginTop: '1rem'}}>
+                <label>측정 항목/장소</label>
+                <input className='item' onChange={handleItem} placeholder='ex) 식초, 교실' />
+                <label style={{marginLeft: '1rem'}}>센서 선택</label>
+                <select className='select-sensor' onChange={handleSensor}>
+                    <option value=''>센서 선택</option>
+                    {dataTypes_ko.map((dataType) => (
+                        <option key={dataType}>{dataType}</option>
+                    ))}
+                    <option key='직접 입력'>직접 입력</option>
+                </select>
+            </div>
 
-            <MeasureSub type={select} data={receivedData} current={receivedData[receivedData.length - 1]} enter={enter} item={item} /> {/*SingleDataContainer*/}
+            <div>
+                <label>기기 상태</label>
+                <span>
+                    {connected
+                    ? (isConnectionDropped
+                        ? "전송 중단"
+                        : "연결됨")
+                    : (paused
+                    ? "일시 중지"
+                    : "연결 해제")}
+                </span>
+
+                <button onClick={() => { if (connected === false) { register(); setPaused(false); } }}>
+                    <img src='/assets/img/start.png' /> 측정 시작
+                </button>
+                {/*<button onClick={handlePause}>{paused ? '다시 시작' : '일시 정지'}</button>*/}
+                <button onClick={handlePause}>
+                    <img src='/assets/img/pause.png' /> 일시 정지
+                </button>
+                
+                <MeasureSub type={select} data={receivedData} current={receivedData[receivedData.length - 1]} enter={enter} item={item} /> {/*SingleDataContainer*/}
+            </div>
         </div>
     )
 }
