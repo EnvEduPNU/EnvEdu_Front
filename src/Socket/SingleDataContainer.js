@@ -209,6 +209,7 @@ function SingleDataContainer(props) {
                     {props.type === 'lux' && <span className="border pe-2 ps-2 mb-2" style={style}>조도</span>}
                     {props.type === 'pre' && <span className="border pe-2 ps-2 mb-2" style={style}>기압</span>}
                     &nbsp;&nbsp;
+
                     {
                         /**
                          * 유효하지 않은 값의 처리
@@ -216,6 +217,7 @@ function SingleDataContainer(props) {
                         <span>{value === -99999 ? "N/A" : value}</span>
                     }
                 </div>
+
                 <div>
                     <OverlayTrigger
                         trigger="click"
@@ -253,7 +255,7 @@ function SingleDataContainer(props) {
                                 : <></>
                         }
                     </OverlayTrigger>
-
+                    
                     <div style={{cursor: "pointer", display: "inline-block"}} onClick={() => {
                         setSeeGraph(!seeGraph);
                     }}>
@@ -261,6 +263,7 @@ function SingleDataContainer(props) {
                     </div>
                 </div>
             </div>
+
             <div>
                 {
                     seeGraph === true && props.data.length !== 0 ?
