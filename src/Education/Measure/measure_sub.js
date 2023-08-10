@@ -125,7 +125,12 @@ export default function MeasureSub(props) {
                     </thead>
                     <tbody>
                         {recordedData.map((record, index) => (
-                            <tr key={index}>
+                            <tr
+                                key={index}
+                                style={{
+                                backgroundColor: selectedRows.includes(index) ? "rgba(255, 0, 0, 0.20)" : "#fff"
+                                }}
+                            >
                                 <td>{record.time}</td>
                                 <td>{record.sensor}</td>
                                 <td>{record.item}</td>

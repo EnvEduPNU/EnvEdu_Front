@@ -236,7 +236,7 @@ export default function Measure() {
                         ? "전송 중단"
                         : "연결됨")
                     : (paused
-                    ? "일시 중지"
+                    ? "일시 정지"
                     : "연결 해제")}
                 </span>
 
