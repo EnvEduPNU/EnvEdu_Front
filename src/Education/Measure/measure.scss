@@ -15,20 +15,29 @@
         border: none;
         border-radius: 0.625rem;
         font-weight: 600;
-        margin-left: 1rem;
+        margin-right: 1rem;
         img {
             margin-right: 0.3rem;
         }
     }
     //기기 상태, 측정값
-    span {
+    .navy-span {
         font-weight: 600;
         color: #fff;
-        background: #030526;
-        //background: #c7e4ff; 
+        background: #030526; 
         padding: 0.3rem 1rem;
         border-radius: 1.25rem;
+        //margin-right: 1rem;
     }
+    //센서명
+    .gray-span {
+        background: #f2f2f2;
+        font-weight: 600;
+        padding: 0.3rem 0 0.3rem 1rem;
+        border-radius: 1.25rem;
+        margin-right: 1rem;
+    }
+
     // 제목 input
     .title {
         width: 30rem;
