@@ -46,11 +46,11 @@
     .item {
         width: 10rem
     }
-    // 센서 선택 select
-    .select-sensor {
-        width: 10rem;
-        height: 2.2rem;
+    // 센서 선택 checkbox
+    input[type="checkbox"] {
+        accent-color: #030526;
     }
+
     // 표
     .measure-table {
         margin-top: 1rem;
@@ -65,9 +65,11 @@
             color: #fff;
             background-color: #23273d;
         }
+        /*
         tr:nth-child(even) {
             background-color: #f2f2f2;
         }
+        */
         input[type="date"], input[type="time"] {
            width: 10rem;
         }

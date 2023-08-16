@@ -44,7 +44,7 @@ export default function MeasureSub(props) {
         const newRecords = [];
 
         props.selectedDataTypes.forEach(selectedType => {
-            if (value[selectedType] !== -99999) {
+            if (value[selectedType] !== -99999 && value[selectedType] !== undefined) {
                 const sensor = dataTypes_ko[dataTypes.indexOf(selectedType)];
                 const newRecord = {
                     time: currentTime,
@@ -126,7 +126,7 @@ export default function MeasureSub(props) {
                         <tr
                             key={index}
                             style={{
-                            backgroundColor: selectedRows.includes(index) ? "#FFE8FB" : "#fff"
+                            backgroundColor: selectedRows.includes(index) ? "#f2f2f2" : "#fff"
                             }}
                         >
                             <td>{record.time}</td>
@@ -142,23 +142,8 @@ export default function MeasureSub(props) {
                             </td>
                         </tr>
                     ))}
-                </tbody>
-            </table>
-
-            {/*직접 입력
-            {props.enter && 
-                <table className="measure-table">
-                    <thead>
-                        <tr>
-                            <th>측정 시간</th>
-                            <th>센서명</th>
-                            <th>측정 항목/장소</th>
-                            <th>측정값</th>
-                            <th>저장</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
+                    {Array.from({ length: divCount }, (_, index) => (
+                        <tr key={index}>
                             <td><input type="date" /> <input type="time" /></td>
                             <td>
                                 <select>
@@ -175,35 +160,14 @@ export default function MeasureSub(props) {
                                 />
                             </td>
                         </tr>
-
-                        {Array.from({ length: divCount }, (_, index) => (
-                            <tr key={index}>
-                                <td><input type="date" /> <input type="time" /></td>
-                                <td>
-                                    <select>
-                                        {dataTypes_ko.map((dataType) => (
-                                            <option key={dataType}>{dataType}</option>
-                                        ))}
-                                    </select>
-                                </td>
-                                <td><input /></td>
-                                <td><input /></td>
-                                <td>
-                                    <input
-                                        type="checkbox"
-                                    />
-                                </td>
-                            </tr>
-                        ))}
-
-                        <tr>
-                            <td colSpan="5" style={{paddingBottom: '1rem', background: '#fff'}}>
-                                <button onClick={addDiv} className="add-row">+</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>}
-            */}
+                    ))}
+                    <tr>
+                        <td colSpan="5" style={{paddingBottom: '1rem', background: '#fff'}}>
+                            <button onClick={addDiv} className="add-row">+</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
 
         </div>
     )
