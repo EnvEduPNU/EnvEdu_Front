@@ -37,8 +37,6 @@ export default function Measure() {
         customAxios.get(`/user/device`)
             .then((response)=>{
                 setConnectableSocket(response.data.relatedUserDeviceList);
-                //console.log("/user/device 결과")
-                console.log(response.data)
             })
     },[]);
 
@@ -237,7 +235,7 @@ export default function Measure() {
                 {/*<select className='select-sensor' onChange={handleSensor}>*/}
                 {dataTypes_ko.map((dataType) => (
                     <label 
-                        style={{textAlign: 'center'}}
+                        style={{textAlign: 'center', fontWeight: '500'}}
                         key={dataType}
                     >
                         <input 
@@ -252,16 +250,16 @@ export default function Measure() {
 
             <div>
                 <label>연결된 기기</label>
-                {!connected && <span className='navy-span' style={{marginRight: '1rem'}}>없음</span>}
+                {!connected && !paused && <span className='navy-span' style={{marginRight: '1rem'}}>없음</span>}
 
-                {connected && connectableSocket !== undefined && connectableSocket.length > 0 && (
+                {(!connected && paused) || (connected && connectableSocket !== undefined && connectableSocket.length > 0) && (
                     <span
                         className='navy-span'
                         style={{ marginRight: '1rem', cursor: 'pointer' }}
                         onMouseEnter={() => setHovered(true)}
                         onMouseLeave={() => setHovered(false)}
                     >
-                        {hovered ? connectableSocket[0].elements[0].mac : connectableSocket[0].elements[0].name}
+                        {hovered ? connectableSocket[0].elements[0].mac : connectableSocket[0].elements[0].deviceName}
                     </span>
                 )}
 

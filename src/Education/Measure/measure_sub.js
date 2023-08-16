@@ -41,7 +41,7 @@ export default function MeasureSub(props) {
 
     const handleRecord = () => {
         const currentTime = new Date().toLocaleTimeString();
-        //const recordedValues = [];
+        const newRecords = [];
 
         props.selectedDataTypes.forEach(selectedType => {
             if (value[selectedType] !== -99999) {
@@ -52,11 +52,15 @@ export default function MeasureSub(props) {
                     item: props.item,
                     value: `${value[selectedType]}${getUnitForType(selectedType)}`
                 };
+                newRecords.push(newRecord);
                 //recordedValues.push(newRecord);
-                setRecordedData([...recordedData, newRecord]);
+                //setRecordedData([...recordedData, newRecord]);
             }
         });
+        setRecordedData(prevRecords => [...prevRecords, ...newRecords]);
+        console.log(newRecords)
     };
+    console.log(recordedData)
 
     /*센서별 단위 설정*/
     const getUnitForType = (type) => {
