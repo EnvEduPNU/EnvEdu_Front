@@ -173,17 +173,19 @@ export default function Measure() {
         setReceivedData([...receivedData]);
     }
 
+    {/*select, enter는 사용 안 할 예정 */}
     const [select, setSelect] = useState('');
-    const [enter, setEnter] = useState(false); //'직접 입력'을 선택했는지 bool로 구분
-    const handleSensor = (e) => {
-        if (e.target.value === "직접 입력") {
-            setEnter(true);
-        } else { //센서명 한국어 -> 영어로 바꾸기
-            setEnter(false);
-            const index = dataTypes_ko.indexOf(e.target.value);
-            if (index !== -1) setSelect(dataTypes[index]);
+
+    const [selectedDataTypes, setSelectedDataTypes] = useState([]);
+
+    const handleCheckboxChange = (dataType) => {
+        const index = dataTypes_ko.indexOf(dataType);
+        if (selectedDataTypes.includes(dataTypes[index])) {
+            setSelectedDataTypes(selectedDataTypes.filter(item => item !== dataTypes[index]));
+        } else {
+            if (index !== -1) setSelectedDataTypes([...selectedDataTypes, dataTypes[index]]);
         }
-    }
+    };
 
     /*일시 정지*/
     const [paused, setPaused] = useState(false);
@@ -207,6 +209,8 @@ export default function Measure() {
     const handleItem = (e) => {
         setItem(e.target.value);
     }
+    console.log(selectedDataTypes)
+    console.log(receivedData)
 
     return(
         <div className='measurement-container'>
@@ -218,14 +222,24 @@ export default function Measure() {
             <div style={{display: 'flex', alignItems: 'center', marginTop: '1rem'}}>
                 <label>측정 항목/장소</label>
                 <input className='item' onChange={handleItem} placeholder='ex) 식초, 교실' />
-                <label style={{marginLeft: '1rem'}}>센서 선택</label>
-                <select className='select-sensor' onChange={handleSensor}>
-                    <option value=''>센서 선택</option>
-                    {dataTypes_ko.map((dataType) => (
-                        <option key={dataType}>{dataType}</option>
-                    ))}
-                    <option key='직접 입력'>직접 입력</option>
-                </select>
+            </div>
+
+            <div style={{display: 'flex', alignItems: 'center', marginTop: '1rem'}}>
+                <label>센서 선택</label>
+                {/*<select className='select-sensor' onChange={handleSensor}>*/}
+                {dataTypes_ko.map((dataType) => (
+                    <label 
+                        style={{textAlign: 'center'}}
+                        key={dataType}
+                    >
+                        <input 
+                            type='checkbox' 
+                            checked={selectedDataTypes.includes(dataTypes[dataTypes_ko.indexOf(dataType)])}
+                            onChange={() => handleCheckboxChange(dataType)} 
+                        />
+                        {dataType}
+                    </label>  
+                ))}
             </div>
 
             <div>
@@ -248,7 +262,10 @@ export default function Measure() {
                     <img src='/assets/img/pause.png' /> 일시 정지
                 </button>
                 
-                <MeasureSub type={select} data={receivedData} current={receivedData[receivedData.length - 1]} enter={enter} item={item} /> {/*SingleDataContainer*/}
+                {selectedDataTypes.map((selectedDataType) => (
+                    <MeasureSub type={selectedDataType} data={receivedData} current={receivedData[receivedData.length - 1]} item={item} /> /*SingleDataContainer*/
+                ))}
+               
             </div>
         </div>
     )
