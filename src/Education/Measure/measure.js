@@ -250,7 +250,7 @@ export default function Measure() {
 
             <div>
                 <label>연결된 기기</label>
-                {!connected && !paused && <span className='navy-span' style={{marginRight: '1rem'}}>없음</span>}
+                {!connected && <span className='navy-span' style={{marginRight: '1rem'}}>없음</span>}
 
                 {connected && connectableSocket !== undefined && connectableSocket.length > 0 && (
                     <span
