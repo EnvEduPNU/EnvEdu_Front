@@ -37,16 +37,8 @@ export default function Measure() {
         customAxios.get(`/user/device`)
             .then((response)=>{
                 setConnectableSocket(response.data.relatedUserDeviceList);
-                //console.log("/user/device 결과")
-                //console.log(response.data)
             })
     },[]);
-
-    /*
-    const [connectableSocket, setConnectableSocket] = useState([
-        { username: "user1", elements: [{ deviceName: 'device1', mac: 'AA:BB:CC:DD:EE:FF' }] }
-    ]);
-    */
 
     /**
      * 센서 기기에서 전송하는 데이터 종류
@@ -173,15 +165,27 @@ export default function Measure() {
         setReceivedData([...receivedData]);
     }
 
-    const [select, setSelect] = useState('');
-    const [enter, setEnter] = useState(false); //'직접 입력'을 선택했는지 bool로 구분
-    const handleSensor = (e) => {
-        if (e.target.value === "직접 입력") {
-            setEnter(true);
-        } else { //센서명 한국어 -> 영어로 바꾸기
-            setEnter(false);
-            const index = dataTypes_ko.indexOf(e.target.value);
-            if (index !== -1) setSelect(dataTypes[index]);
+    const [selectedDataTypes, setSelectedDataTypes] = useState([]);
+
+    const handleCheckboxChange = (dataType) => {
+        const index = dataTypes_ko.indexOf(dataType);
+        if (selectedDataTypes.includes(dataTypes[index])) {
+            setSelectedDataTypes(selectedDataTypes.filter(item => item !== dataTypes[index]));
+        } else {
+            if (index !== -1) setSelectedDataTypes([...selectedDataTypes, dataTypes[index]]);
+        }
+    };
+
+    /*측정 시작*/
+    const handleStart = () => {
+        if (selectedDataTypes.length === 0) {
+            alert("센서를 1개 이상 선택해주세요.")
+        }
+        else {
+            if (connected === false) { 
+                register(); 
+                setPaused(false); 
+            }
         }
     }
 
@@ -208,6 +212,12 @@ export default function Measure() {
         setItem(e.target.value);
     }
 
+    /*연결된 기기 + mac 주소*/
+    const [hovered, setHovered] = useState(false);
+
+    console.log(selectedDataTypes)
+    console.log(receivedData)
+
     return(
         <div className='measurement-container'>
             <div style={{display: 'flex', alignItems: 'center'}}>
@@ -218,19 +228,43 @@ export default function Measure() {
             <div style={{display: 'flex', alignItems: 'center', marginTop: '1rem'}}>
                 <label>측정 항목/장소</label>
                 <input className='item' onChange={handleItem} placeholder='ex) 식초, 교실' />
-                <label style={{marginLeft: '1rem'}}>센서 선택</label>
-                <select className='select-sensor' onChange={handleSensor}>
-                    <option value=''>센서 선택</option>
-                    {dataTypes_ko.map((dataType) => (
-                        <option key={dataType}>{dataType}</option>
-                    ))}
-                    <option key='직접 입력'>직접 입력</option>
-                </select>
+            </div>
+
+            <div style={{display: 'flex', alignItems: 'center', marginTop: '1rem'}}>
+                <label>센서 선택</label>
+                {/*<select className='select-sensor' onChange={handleSensor}>*/}
+                {dataTypes_ko.map((dataType) => (
+                    <label 
+                        style={{textAlign: 'center', fontWeight: '500'}}
+                        key={dataType}
+                    >
+                        <input 
+                            type='checkbox' 
+                            checked={selectedDataTypes.includes(dataTypes[dataTypes_ko.indexOf(dataType)])}
+                            onChange={() => handleCheckboxChange(dataType)} 
+                        />
+                        {dataType}
+                    </label>  
+                ))}
             </div>
 
             <div>
+                <label>연결된 기기</label>
+                {!connected && <span className='navy-span' style={{marginRight: '1rem'}}>없음</span>}
+
+                {connected && connectableSocket !== undefined && connectableSocket.length > 0 && (
+                    <span
+                        className='navy-span'
+                        style={{ marginRight: '1rem', cursor: 'pointer' }}
+                        onMouseEnter={() => setHovered(true)}
+                        onMouseLeave={() => setHovered(false)}
+                    >
+                        {hovered ? connectableSocket[0].elements[0].mac : connectableSocket[0].elements[0].deviceName}
+                    </span>
+                )}
+
                 <label>기기 상태</label>
-                <span>
+                <span className='navy-span' style={{marginRight: '2rem'}}>
                     {connected
                     ? (isConnectionDropped
                         ? "전송 중단"
@@ -240,7 +274,7 @@ export default function Measure() {
                     : "연결 해제")}
                 </span>
 
-                <button onClick={() => { if (connected === false) { register(); setPaused(false); } }}>
+                <button onClick={handleStart}>
                     <img src='/assets/img/start.png' /> 측정 시작
                 </button>
                 {/*<button onClick={handlePause}>{paused ? '다시 시작' : '일시 정지'}</button>*/}
@@ -248,7 +282,8 @@ export default function Measure() {
                     <img src='/assets/img/pause.png' /> 일시 정지
                 </button>
                 
-                <MeasureSub type={select} data={receivedData} current={receivedData[receivedData.length - 1]} enter={enter} item={item} /> {/*SingleDataContainer*/}
+                <MeasureSub selectedDataTypes={selectedDataTypes} data={receivedData} current={receivedData[receivedData.length - 1]} item={item} /> {/*SingleDataContainer*/}
+    
             </div>
         </div>
     )

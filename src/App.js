@@ -29,7 +29,7 @@ import OpenApi from './OpenApi/OpenApi';
 import MyData from "./OpenApi/MyData";
 
 import MyData2 from './myData/myData';
-import Education from './Education/education';
+//import Education from './Education/education';
 import Measure from './Education/Measure/measure';
 import Sample from './Socket/sample';
 import Test from './Education/test';
@@ -46,9 +46,6 @@ function App() {
       <Header />
       <div className="wrap">
         <Routes>
-          {/*test*/}
-          <Route path="/test" exact={true} element={<Test/>}/>
-
           {/*home*/}
           <Route index element={<HomePage />} />
           
@@ -88,7 +85,7 @@ function App() {
           <Route path="/what" exact={true} element={<What/>} />
 
           {/*Education */}
-          <Route path="/E-Classes" exact={true} element={<Education/>} />
+          {/*<Route path="/E-Classes" exact={true} element={<Test/>} />*/}
           <Route path="/measure" exact={true} element={<Measure/>} />
 
           {/*Learnmore*/}
