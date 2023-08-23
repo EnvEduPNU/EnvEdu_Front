@@ -24,7 +24,7 @@
     .navy-span {
         font-weight: 600;
         color: #fff;
-        background: #030526; 
+        background: #030526;
         padding: 0.3rem 1rem;
         border-radius: 1.25rem;
         //margin-right: 1rem;
@@ -49,6 +49,12 @@
     // 센서 선택 checkbox
     input[type="checkbox"] {
         accent-color: #030526;
+    }
+    // number input
+    input[type="number"] {
+        width: 5rem;
+        margin-right: 0.3rem;
+        text-align: center;
     }
 
     // 표
