@@ -58,7 +58,6 @@ export default function ContinuousSub(props) {
         });
         setRecordedData(prevRecords => [...prevRecords, ...newRecords]);
     };
-    console.log(recordedData)
 
     /*센서별 단위 설정*/
     const getUnitForType = (type) => {
@@ -101,26 +100,36 @@ export default function ContinuousSub(props) {
     // n초 동안 m초 간격으로 저장
     const [wholeTime, setWholeTime] = useState(0); //n초
     const [interval, setInterv] = useState(0); //m초
-    
+
     const handleStart = () => {
         if (props.selectedDataTypes.length === 0) {
             alert("센서를 1개 이상 선택해주세요.")
         } else {
             props.onRegister();
-            let cnt = 0;
+
+            setTimeout(() => {
+                clearInterval(handleRecordIntervalId);
+                alert("데이터 측정이 완료되었습니다. 측정한 값은 My data에서 확인 가능합니다.");
+                console.log("완료:", recordedData);
+                // disconnect 함수 추가
+            }, wholeTime * 1000);
+
             const handleRecordIntervalId = setInterval(() => {
                 handleRecord();
-                console.log("handleRecord 실행됨")
-                cnt += interval;
-                console.log(cnt)
+                console.log("기록됨")
+                {/*
+                //cnt += interval;
+                //console.log(cnt)
                 if (cnt >= wholeTime) {
                     clearInterval(handleRecordIntervalId);
                     alert("데이터 측정이 완료되었습니다. 측정한 값은 My data에서 확인 가능합니다.");
                     console.log("완료:", recordedData);
                 }
+                */}
             }, interval * 1000);
         }
     };
+    console.log(recordedData)
 
     return(
         <div>
