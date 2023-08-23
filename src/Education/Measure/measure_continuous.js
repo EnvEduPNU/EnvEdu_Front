@@ -184,9 +184,6 @@ export default function MeasureContinuous() {
     /*연결된 기기 + mac 주소*/
     const [hovered, setHovered] = useState(false);
 
-    console.log(selectedDataTypes)
-    console.log(receivedData)
-
     return(
         <div className='measurement-container'>
             <h4>연속 데이터 측정하기</h4>

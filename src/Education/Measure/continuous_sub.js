@@ -32,9 +32,7 @@ export default function ContinuousSub(props) {
             });
             setValue(newValues);
         }
-        console.log(newValues)
     }, [props.data, props.type, props.current]);
-    console.log(value)
     
     /*기록하기*/
     const [recordedData, setRecordedData] = useState([]);
@@ -58,7 +56,6 @@ export default function ContinuousSub(props) {
             }
         });
         setRecordedData(prevRecords => [...prevRecords, ...newRecords]);
-        console.log(newRecords)
     };
     console.log(recordedData)
 
@@ -108,11 +105,9 @@ export default function ContinuousSub(props) {
     const handleStart = () => {
         if (props.selectedDataTypes.length === 0) {
             alert("센서를 1개 이상 선택해주세요.")
-        }
-        else {
+        } else {
             props.onRegister();
 
-            // n초 간격으로 기록
             let cnt = 0;
             const handleRecordIntervalId = setInterval(() => {
                 handleRecord();
@@ -123,10 +118,6 @@ export default function ContinuousSub(props) {
                     console.log("완료:", recordedData);
                 }
             }, interval * 1000);
-            
-            return () => {
-                clearInterval(handleRecordIntervalId);
-            };
         }
     };
 
