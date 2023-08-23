@@ -100,7 +100,7 @@ export default function ContinuousSub(props) {
     // n초 동안 m초 간격으로 저장
     const [wholeTime, setWholeTime] = useState(0); //n초
     const [interval, setInterv] = useState(0); //m초
-    const [timerId, setTimerId] = useState(null);
+    console.log(parseInt(wholeTime)+123);
 
     const handleStart = () => {
         if (props.selectedDataTypes.length === 0) {
@@ -111,14 +111,14 @@ export default function ContinuousSub(props) {
             const handleRecordIntervalId = setInterval(() => {
                 handleRecord();
                 console.log("handleRecord 실행됨")
-                cnt += interval;
+                cnt += parseInt(interval);
                 console.log(cnt)
                 if (cnt >= wholeTime) {
                     clearInterval(handleRecordIntervalId);
                     alert("데이터 측정이 완료되었습니다. 측정한 값은 My data에서 확인 가능합니다.");
                     console.log("완료:", recordedData);
                 }
-            }, interval * 1000);
+            }, parseInt(interval) * 1000);
         }
     };
 
