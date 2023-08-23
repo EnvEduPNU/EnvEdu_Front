@@ -158,6 +158,10 @@ function SocketConnect(props) {
         }
         setReceivedData([...receivedData]);
     }
+    
+    console.log(decodeToken(localStorage.getItem("access_token")));
+    console.log(props.username)
+
     return (
             <div>
                 <br/>
