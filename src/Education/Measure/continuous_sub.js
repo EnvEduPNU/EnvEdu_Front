@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import './measure.scss';
+import { type } from "@testing-library/user-event/dist/type";
 
 export default function ContinuousSub(props) {
     const dataTypes = ["temp", "ph", "hum", "hum_EARTH", "tur", "dust", "dox", "co2", "lux", "pre"];
@@ -100,8 +101,7 @@ export default function ContinuousSub(props) {
     // n초 동안 m초 간격으로 저장
     const [wholeTime, setWholeTime] = useState(0); //n초
     const [interval, setInterv] = useState(0); //m초
-    console.log(parseInt(wholeTime)+123);
-
+    
     const handleStart = () => {
         if (props.selectedDataTypes.length === 0) {
             alert("센서를 1개 이상 선택해주세요.")
@@ -111,14 +111,14 @@ export default function ContinuousSub(props) {
             const handleRecordIntervalId = setInterval(() => {
                 handleRecord();
                 console.log("handleRecord 실행됨")
-                cnt += parseInt(interval);
+                cnt += interval;
                 console.log(cnt)
                 if (cnt >= wholeTime) {
                     clearInterval(handleRecordIntervalId);
                     alert("데이터 측정이 완료되었습니다. 측정한 값은 My data에서 확인 가능합니다.");
                     console.log("완료:", recordedData);
                 }
-            }, parseInt(interval) * 1000);
+            }, interval * 1000);
         }
     };
 
@@ -135,8 +135,8 @@ export default function ContinuousSub(props) {
             </div>
  
             <div style={{display: 'flex', alignItems: 'center', marginTop: '1rem'}}>
-                <input type="number" onChange={(e) => {setWholeTime(e.target.value)}} />초 동안
-                <input type="number" onChange={(e) => {setInterv(e.target.value)}} style={{marginLeft: '1rem'}}/>초 간격으로 저장
+                <input type="number" onChange={(e) => {setWholeTime(parseInt(e.target.value))}} />초 동안
+                <input type="number" onChange={(e) => {setInterv(parseInt(e.target.value))}} style={{marginLeft: '1rem'}}/>초 간격으로 저장
                 <button onClick={handleStart}>확인</button>
             </div>
 
