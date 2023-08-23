@@ -107,11 +107,12 @@ export default function ContinuousSub(props) {
             alert("센서를 1개 이상 선택해주세요.")
         } else {
             props.onRegister();
-
             let cnt = 0;
             const handleRecordIntervalId = setInterval(() => {
                 handleRecord();
+                console.log("handleRecord 실행됨")
                 cnt += interval;
+                console.log(cnt)
                 if (cnt >= wholeTime) {
                     clearInterval(handleRecordIntervalId);
                     alert("데이터 측정이 완료되었습니다. 측정한 값은 My data에서 확인 가능합니다.");
