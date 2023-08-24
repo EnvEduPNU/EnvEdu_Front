@@ -111,6 +111,12 @@ export default function ContinuousSub(props) {
         } else {
             props.onRegister();
 
+            //m초 간격으로
+            const handleRecordIntervalId = setInterval(() => {
+                handleRecord();
+                setIsRecording(true);
+            }, interval * 1000);
+
             // n초 동안
             setTimeout(() => {
                 clearInterval(handleRecordIntervalId);
@@ -133,12 +139,6 @@ export default function ContinuousSub(props) {
                 })
                 
             }, wholeTime * 1000 + 10);
-
-            //m초 간격으로
-            const handleRecordIntervalId = setInterval(() => {
-                handleRecord();
-                setIsRecording(true);
-            }, interval * 1000);
         } 
     };
 
