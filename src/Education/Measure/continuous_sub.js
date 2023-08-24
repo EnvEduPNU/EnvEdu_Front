@@ -112,6 +112,7 @@ export default function ContinuousSub(props) {
     const [interval, setInterv] = useState(0); //m초
 
     const handleSave = () => {
+        setGraphData({});
         if (props.selectedDataTypes.length === 0) {
             alert("센서를 1개 이상 선택해주세요.")
         } else {
@@ -130,8 +131,7 @@ export default function ContinuousSub(props) {
                 alert("데이터 측정이 완료되었습니다. 측정한 값은 My data에서 확인 가능합니다.");
                 console.log("완료");
                 console.log("저장 전 recordedData:", recordedData);
-                setRecordedData([]);
-                setGraphData({});
+                
                 // 데이터 저장
                 customAxios.post('/user/save', {data: JSON.stringify(recordedData)})
                 .then((res) => {
@@ -142,7 +142,9 @@ export default function ContinuousSub(props) {
                     console.log(err);
                     console.log(JSON.stringify(recordedData));
                 })
-                
+
+                setRecordedData([]);
+                setGraphData({});
             }, wholeTime * 1000 + 10);
         } 
     };
