@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import './measure.scss';
 import { customAxios } from '../../Common/CustomAxios';
+import { Chart } from 'chart.js/auto';
+import { Line } from 'react-chartjs-2';
 
 export default function ContinuousSub(props) {
     const dataTypes = ["temp", "ph", "hum", "hum_EARTH", "tur", "dust", "dox", "co2", "lux", "pre"];
@@ -37,12 +39,14 @@ export default function ContinuousSub(props) {
     
     /*기록하기*/
     const [recordedData, setRecordedData] = useState([]);
+    const graphData = { };
 
     const handleRecord = () => {
         const newRecord = { };
 
         dataTypes.forEach(dataType => {
             newRecord[dataType] = null;
+            graphData[dataType] = [];
         });
 
         
@@ -51,6 +55,7 @@ export default function ContinuousSub(props) {
                 const lastData = props.data[props.data.length - 1][selectedType];
                 if (lastData !== -99999 && lastData !== undefined) {
                     newRecord[selectedType] = lastData;
+                    graphData[selectedType].push(lastData);
                 }
             }
         });
@@ -150,6 +155,10 @@ export default function ContinuousSub(props) {
         console.log(value);
     }, [value]);
 
+    useEffect(() => {
+        console.log(graphData);
+    }, [graphData]);
+
     return(
         <div>
             <div style={{marginTop: '1rem'}}>
@@ -171,7 +180,26 @@ export default function ContinuousSub(props) {
             <div>
                 <img src="/assets/img/record.png" className={isRecording ? "blink" : "not-blink"} />REC
             </div>
-
+            
+            {props.selectedDataTypes.map((selectedDataType) => (
+                <div style={{ display: 'flex', justifyContent: 'center' }}>                  
+                    <div style={{ width: '50%' }}>
+                        <Line 
+                            type="line" 
+                            data={{
+                                labels: Array.from({ length: graphData[selectedDataType].length }, (_, i) => i + 1),
+                                datasets: [
+                                    {
+                                        type: 'line',
+                                        label: selectedDataType,
+                                        data: graphData[selectedDataType],
+                                        borderColor: '#EE2E31'
+                                    }
+                                ]
+                            }} />
+                    </div>
+                </div>
+            ))}
         </div>
     )
 }
