@@ -149,6 +149,7 @@ function SocketConnect(props) {
             saveData.push(JSON.stringify(receiveObject));
             setSaveData([...saveData]);
             if (saveData.length === 5) {
+                console.log(saveData) //확인
                 customAxios.post("/user/save", {data: saveData}).then().catch(() => {
                     disconnect();
                 });
