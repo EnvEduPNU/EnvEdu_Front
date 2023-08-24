@@ -40,7 +40,7 @@ export default function ContinuousSub(props) {
 
     const handleRecord = () => {
         const currentTime = new Date().toLocaleTimeString();
-        const newRecords = [];
+        //const newRecords = [];
 
         props.selectedDataTypes.forEach(selectedType => {
             if (value[selectedType] !== -99999 && value[selectedType] !== undefined) {
@@ -51,12 +51,12 @@ export default function ContinuousSub(props) {
                     item: props.item,
                     value: `${value[selectedType]}${getUnitForType(selectedType)}`
                 };
-                newRecords.push(newRecord);
+                //newRecords.push(newRecord);
                 //recordedValues.push(newRecord);
-                //setRecordedData([...recordedData, newRecord]);
+                setRecordedData([...recordedData, newRecord]);
             }
         });
-        setRecordedData(prevRecords => [...prevRecords, ...newRecords]);
+        //setRecordedData(prevRecords => [...prevRecords, ...newRecords]);
     };
 
     /*센서별 단위 설정*/
@@ -107,13 +107,16 @@ export default function ContinuousSub(props) {
         } else {
             props.onRegister();
 
+            // n초 동안
             setTimeout(() => {
                 clearInterval(handleRecordIntervalId);
                 alert("데이터 측정이 완료되었습니다. 측정한 값은 My data에서 확인 가능합니다.");
-                console.log("완료:", recordedData);
+                console.log("완료");
+                console.log(recordedData);
                 // disconnect 함수 추가
             }, wholeTime * 1000);
 
+            //m초 간격으로
             const handleRecordIntervalId = setInterval(() => {
                 handleRecord();
                 console.log("기록됨")
@@ -129,7 +132,6 @@ export default function ContinuousSub(props) {
             }, interval * 1000);
         }
     };
-    console.log(recordedData)
 
     return(
         <div>
