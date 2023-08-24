@@ -39,21 +39,15 @@ export default function ContinuousSub(props) {
     const [recordedData, setRecordedData] = useState([]);
 
     const handleRecord = () => {
-        const newRecord = { };
-    
+        const newRecord = { ...value };
+        
         dataTypes.forEach(dataType => {
-            newRecord[dataType] = null;
-        });
-    
-        props.selectedDataTypes.forEach(selectedType => {
-            if (value[selectedType] !== -99999 && value[selectedType] !== undefined) {
-                newRecord[selectedType] = value[selectedType];
+            if (!props.selectedDataTypes.includes(dataType)) {
+                newRecord[dataType] = null;
             }
         });
-
         setRecordedData(prevRecords => [...prevRecords, newRecord]);
     };
-
 
     /*센서별 단위 설정*/
     {/*
