@@ -40,7 +40,7 @@ export default function ContinuousSub(props) {
 
     const handleRecord = () => {
         const currentTime = new Date().toLocaleTimeString();
-        //const newRecords = [];
+        const newRecords = [];
 
         props.selectedDataTypes.forEach(selectedType => {
             if (value[selectedType] !== -99999 && value[selectedType] !== undefined) {
@@ -51,12 +51,12 @@ export default function ContinuousSub(props) {
                     item: props.item,
                     value: `${value[selectedType]}${getUnitForType(selectedType)}`
                 };
-                //newRecords.push(newRecord);
+                newRecords.push(newRecord);
                 //recordedValues.push(newRecord);
                 //setRecordedData([...recordedData, newRecord]);
-                setRecordedData(prevData => [...prevData, newRecord]);
             }
         });
+        setRecordedData(prevRecords => [...prevRecords, ...newRecords]);
         //setRecordedData(prevRecords => [...prevRecords, ...newRecords]);
     };
 
