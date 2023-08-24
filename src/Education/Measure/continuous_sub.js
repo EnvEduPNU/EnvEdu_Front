@@ -110,31 +110,35 @@ export default function ContinuousSub(props) {
             alert("센서를 1개 이상 선택해주세요.")
         } else {
             props.onRegister();
-            if (!props.isConnectionDropped) {
-                // n초 동안
-                setTimeout(() => {
-                    clearInterval(handleRecordIntervalId);
-                    setIsRecording(false);
-                    alert("데이터 측정이 완료되었습니다. 측정한 값은 My data에서 확인 가능합니다.");
-                    console.log("완료");
-                    console.log("저장 전 recordedData:", recordedData);
-                    // 데이터 저장
-                    {/*
-                    customAxios.post('/user/save', JSON.stringify(recordedData))
-                    .then((res) => console.log(res))
-                    .catch((err) => console.log(err))
-                    */}
-                    setRecordedData([]);
-                    // disconnect 함수 추가
-                }, wholeTime * 1000 + 10);
 
-                //m초 간격으로
-                const handleRecordIntervalId = setInterval(() => {
-                    handleRecord();
-                    setIsRecording(true);
-                }, interval * 1000);
-            }
-        }
+            // n초 동안
+            setTimeout(() => {
+                clearInterval(handleRecordIntervalId);
+                setIsRecording(false);
+                alert("데이터 측정이 완료되었습니다. 측정한 값은 My data에서 확인 가능합니다.");
+                console.log("완료");
+                console.log("저장 전 recordedData:", recordedData);
+
+                // 데이터 저장
+                customAxios.post('/user/save', JSON.stringify(recordedData))
+                .then((res) => {
+                    console.log(res.data);
+                    console.log(JSON.stringify(recordedData));
+                    setRecordedData([]);
+                })
+                .catch((err) => {
+                    console.log(err);
+                    setRecordedData([]);
+                })
+                
+            }, wholeTime * 1000 + 10);
+
+            //m초 간격으로
+            const handleRecordIntervalId = setInterval(() => {
+                handleRecord();
+                setIsRecording(true);
+            }, interval * 1000);
+        } 
     };
 
     useEffect(() => {

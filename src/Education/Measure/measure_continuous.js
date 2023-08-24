@@ -249,7 +249,7 @@ export default function MeasureContinuous() {
 
                 {/*<button onClick={handlePause}>{paused ? '다시 시작' : '일시 정지'}</button>*/}
                 
-                <ContinuousSub selectedDataTypes={selectedDataTypes} data={receivedData} current={receivedData[receivedData.length - 1]} item={item} onRegister={register} isConnectionDropped={isConnectionDropped}/> {/*SingleDataContainer*/}
+                <ContinuousSub selectedDataTypes={selectedDataTypes} data={receivedData} current={receivedData[receivedData.length - 1]} item={item} onRegister={register} /> {/*SingleDataContainer*/}
     
             </div>
         </div>
