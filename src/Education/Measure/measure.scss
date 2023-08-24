@@ -56,6 +56,16 @@
         margin-right: 0.3rem;
         text-align: center;
     }
+    // blink
+    @keyframes blink-effect {
+        50% {
+          opacity: 0;
+        }
+    }
+      
+    .blink {
+    animation: blink-effect 1s step-end infinite;
+    }
 
     // 표
     .measure-table {

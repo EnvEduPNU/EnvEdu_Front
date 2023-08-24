@@ -39,24 +39,21 @@ export default function ContinuousSub(props) {
     const [recordedData, setRecordedData] = useState([]);
 
     const handleRecord = () => {
-        // 선택한 데이터 유형에 대한 값만 업데이트
-        const newRecord = { ...value };
-        console.log("value:", value)
-        console.log("newRecord:", newRecord)
+        const newRecord = { };
+
+        dataTypes.forEach(dataType => {
+            newRecord[dataType] = null;
+        });
 
         props.selectedDataTypes.forEach(selectedType => {
             if (value[selectedType] !== -99999 && value[selectedType] !== undefined) {
                 const lastData = props.data[props.data.length - 1][selectedType];
-                newRecord[selectedType] = lastData;
+                if (lastData !== -99999 && lastData !== undefined) {
+                    newRecord[selectedType] = lastData;
+                }
             }
         });
 
-        dataTypes.forEach(dataType => {
-            if (!props.selectedDataTypes.includes(dataType)) {
-                newRecord[dataType] = null;
-            }
-        });
-    
         setRecordedData(prevRecords => [...prevRecords, newRecord]);
     };
 
@@ -100,6 +97,8 @@ export default function ContinuousSub(props) {
     console.log(props.selectedDataTypes)
     */}
     
+    // 측정하는 동안 빨간색 버튼 blink
+    const [isRecording, setIsRecording] = useState(false);
 
     // n초 동안 m초 간격으로 저장
     const [wholeTime, setWholeTime] = useState(0); //n초
@@ -116,20 +115,22 @@ export default function ContinuousSub(props) {
                 clearInterval(handleRecordIntervalId);
                 alert("데이터 측정이 완료되었습니다. 측정한 값은 My data에서 확인 가능합니다.");
                 console.log("완료");
-                console.log(recordedData);
+                console.log("저장 전 recordedData:", recordedData);
+                setIsRecording(false);
                 // 데이터 저장
                 {/*
                 customAxios.post('/user/save', JSON.stringify(recordedData))
                 .then((res) => console.log(res))
                 .catch((err) => console.log(err))
-            */}
+                */}
+                setRecordedData([]);
                 // disconnect 함수 추가
-            }, wholeTime * 1000);
+            }, wholeTime * 1000 + 10);
 
             //m초 간격으로
             const handleRecordIntervalId = setInterval(() => {
                 handleRecord();
-                console.log("기록됨");
+                setIsRecording(true);
             }, interval * 1000);
         }
     };
@@ -157,7 +158,11 @@ export default function ContinuousSub(props) {
             <div style={{display: 'flex', alignItems: 'center', marginTop: '1rem'}}>
                 <input type="number" onChange={(e) => {setWholeTime(parseInt(e.target.value))}} />초 동안
                 <input type="number" onChange={(e) => {setInterv(parseInt(e.target.value))}} style={{marginLeft: '1rem'}}/>초 간격으로 저장
-                <button onClick={handleStart}>확인</button>
+                <button onClick={handleStart}>확인</button> 
+            </div>
+
+            <div>
+                <img src="/assets/img/record.png" className={isRecording ? "blink" : "not-blink"} />REC
             </div>
 
         </div>
