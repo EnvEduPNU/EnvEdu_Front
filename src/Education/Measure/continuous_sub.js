@@ -39,7 +39,7 @@ export default function ContinuousSub(props) {
     const [recordedData, setRecordedData] = useState([]);
 
     const handleRecord = () => {
-        const newRecord = {};
+        const newRecord = { ...value };
     
         dataTypes.forEach(dataType => {
             newRecord[dataType] = null;
