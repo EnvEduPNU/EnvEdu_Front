@@ -132,6 +132,10 @@ export default function ContinuousSub(props) {
         }
     };
 
+    useEffect(() => {
+        console.log(recordedData);
+    }, [recordedData]);
+
     return(
         <div>
             <div style={{marginTop: '1rem'}}>
