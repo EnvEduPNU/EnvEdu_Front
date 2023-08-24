@@ -45,6 +45,7 @@ export default function ContinuousSub(props) {
             newRecord[dataType] = null;
         });
 
+        
         props.selectedDataTypes.forEach(selectedType => {
             if (value[selectedType] !== -99999 && value[selectedType] !== undefined) {
                 const lastData = props.data[props.data.length - 1][selectedType];
@@ -104,34 +105,35 @@ export default function ContinuousSub(props) {
     const [wholeTime, setWholeTime] = useState(0); //n초
     const [interval, setInterv] = useState(0); //m초
 
-    const handleStart = () => {
+    const handleSave = () => {
         if (props.selectedDataTypes.length === 0) {
             alert("센서를 1개 이상 선택해주세요.")
         } else {
             props.onRegister();
+            if (!props.isConnectionDropped) {
+                // n초 동안
+                setTimeout(() => {
+                    clearInterval(handleRecordIntervalId);
+                    setIsRecording(false);
+                    alert("데이터 측정이 완료되었습니다. 측정한 값은 My data에서 확인 가능합니다.");
+                    console.log("완료");
+                    console.log("저장 전 recordedData:", recordedData);
+                    // 데이터 저장
+                    {/*
+                    customAxios.post('/user/save', JSON.stringify(recordedData))
+                    .then((res) => console.log(res))
+                    .catch((err) => console.log(err))
+                    */}
+                    setRecordedData([]);
+                    // disconnect 함수 추가
+                }, wholeTime * 1000 + 10);
 
-            // n초 동안
-            setTimeout(() => {
-                clearInterval(handleRecordIntervalId);
-                alert("데이터 측정이 완료되었습니다. 측정한 값은 My data에서 확인 가능합니다.");
-                console.log("완료");
-                console.log("저장 전 recordedData:", recordedData);
-                setIsRecording(false);
-                // 데이터 저장
-                {/*
-                customAxios.post('/user/save', JSON.stringify(recordedData))
-                .then((res) => console.log(res))
-                .catch((err) => console.log(err))
-                */}
-                setRecordedData([]);
-                // disconnect 함수 추가
-            }, wholeTime * 1000 + 10);
-
-            //m초 간격으로
-            const handleRecordIntervalId = setInterval(() => {
-                handleRecord();
-                setIsRecording(true);
-            }, interval * 1000);
+                //m초 간격으로
+                const handleRecordIntervalId = setInterval(() => {
+                    handleRecord();
+                    setIsRecording(true);
+                }, interval * 1000);
+            }
         }
     };
 
@@ -158,7 +160,7 @@ export default function ContinuousSub(props) {
             <div style={{display: 'flex', alignItems: 'center', marginTop: '1rem'}}>
                 <input type="number" onChange={(e) => {setWholeTime(parseInt(e.target.value))}} />초 동안
                 <input type="number" onChange={(e) => {setInterv(parseInt(e.target.value))}} style={{marginLeft: '1rem'}}/>초 간격으로 저장
-                <button onClick={handleStart}>확인</button> 
+                <button onClick={handleSave}>저장 시작</button> 
             </div>
 
             <div>
