@@ -39,19 +39,18 @@ export default function ContinuousSub(props) {
     const [recordedData, setRecordedData] = useState([]);
 
     const handleRecord = () => {
+        // 선택한 데이터 유형에 대한 값만 업데이트
         const newRecord = { ...value };
         console.log("value:", value)
         console.log("newRecord:", newRecord)
-        // 선택한 데이터 유형에 대한 값만 업데이트
+
         props.selectedDataTypes.forEach(selectedType => {
             if (value[selectedType] !== -99999 && value[selectedType] !== undefined) {
-                console.log(value);
-                newRecord[selectedType] = value[selectedType];
-                console.log(newRecord[selectedType])
+                const lastData = props.data[props.data.length - 1][selectedType];
+                newRecord[selectedType] = lastData;
             }
         });
 
-        // 모든 데이터 유형을 null로 초기화
         dataTypes.forEach(dataType => {
             if (!props.selectedDataTypes.includes(dataType)) {
                 newRecord[dataType] = null;
@@ -60,6 +59,7 @@ export default function ContinuousSub(props) {
     
         setRecordedData(prevRecords => [...prevRecords, newRecord]);
     };
+
 
     /*센서별 단위 설정*/
     {/*
@@ -106,7 +106,6 @@ export default function ContinuousSub(props) {
     const [interval, setInterv] = useState(0); //m초
 
     const handleStart = () => {
-        let handleRecordIntervalId;
         if (props.selectedDataTypes.length === 0) {
             alert("센서를 1개 이상 선택해주세요.")
         } else {
@@ -128,7 +127,7 @@ export default function ContinuousSub(props) {
             }, wholeTime * 1000);
 
             //m초 간격으로
-            handleRecordIntervalId = setInterval(() => {
+            const handleRecordIntervalId = setInterval(() => {
                 handleRecord();
                 console.log("기록됨");
             }, interval * 1000);
