@@ -40,17 +40,21 @@ export default function ContinuousSub(props) {
 
     const handleRecord = () => {
         const newRecord = { ...value };
-    
-        // 모든 데이터 유형을 null로 초기화
-        dataTypes.forEach(dataType => {
-            newRecord[dataType] = null;
-        });
-    
+        console.log("value:", value)
+        console.log("newRecord:", newRecord)
         // 선택한 데이터 유형에 대한 값만 업데이트
         props.selectedDataTypes.forEach(selectedType => {
             if (value[selectedType] !== -99999 && value[selectedType] !== undefined) {
                 console.log(value);
                 newRecord[selectedType] = value[selectedType];
+                console.log(newRecord[selectedType])
+            }
+        });
+
+        // 모든 데이터 유형을 null로 초기화
+        dataTypes.forEach(dataType => {
+            if (!props.selectedDataTypes.includes(dataType)) {
+                newRecord[dataType] = null;
             }
         });
     
@@ -115,9 +119,11 @@ export default function ContinuousSub(props) {
                 console.log("완료");
                 console.log(recordedData);
                 // 데이터 저장
+                {/*
                 customAxios.post('/user/save', JSON.stringify(recordedData))
                 .then((res) => console.log(res))
                 .catch((err) => console.log(err))
+            */}
                 // disconnect 함수 추가
             }, wholeTime * 1000);
 
