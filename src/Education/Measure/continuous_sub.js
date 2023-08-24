@@ -42,19 +42,21 @@ export default function ContinuousSub(props) {
     const [graphData, setGraphData] = useState({});
 
     const handleRecord = () => {
-        const newRecord = { };
+        const newRecord = {};
 
         dataTypes.forEach(dataType => {
             newRecord[dataType] = null;
         });
 
-        
         props.selectedDataTypes.forEach(selectedType => {
             if (value[selectedType] !== -99999 && value[selectedType] !== undefined) {
                 const lastData = props.data[props.data.length - 1][selectedType];
                 if (lastData !== -99999 && lastData !== undefined) {
                     newRecord[selectedType] = lastData;
-                    graphData[selectedType].push(lastData);
+                    setGraphData(prevGraphData => ({
+                        ...prevGraphData,
+                        [selectedType]: [...(prevGraphData[selectedType] || []), lastData]
+                    }));
                 }
             }
         });
