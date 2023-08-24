@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import './measure.scss';
-import { type } from "@testing-library/user-event/dist/type";
+import { customAxios } from '../../Common/CustomAxios';
 
 export default function ContinuousSub(props) {
     const dataTypes = ["temp", "ph", "hum", "hum_EARTH", "tur", "dust", "dox", "co2", "lux", "pre"];
@@ -53,7 +53,8 @@ export default function ContinuousSub(props) {
                 };
                 //newRecords.push(newRecord);
                 //recordedValues.push(newRecord);
-                setRecordedData([...recordedData, newRecord]);
+                //setRecordedData([...recordedData, newRecord]);
+                setRecordedData(prevData => [...prevData, newRecord]);
             }
         });
         //setRecordedData(prevRecords => [...prevRecords, ...newRecords]);
@@ -102,6 +103,7 @@ export default function ContinuousSub(props) {
     const [interval, setInterv] = useState(0); //m초
 
     const handleStart = () => {
+        let handleRecordIntervalId;
         if (props.selectedDataTypes.length === 0) {
             alert("센서를 1개 이상 선택해주세요.")
         } else {
@@ -113,22 +115,19 @@ export default function ContinuousSub(props) {
                 alert("데이터 측정이 완료되었습니다. 측정한 값은 My data에서 확인 가능합니다.");
                 console.log("완료");
                 console.log(recordedData);
+                /*
+                // 데이터 저장
+                customAxios.post('/user/save', recordedData)
+                    .then((res) => console.log(res))
+                    .catch((err) => console.log(err))
+                */
                 // disconnect 함수 추가
             }, wholeTime * 1000);
 
             //m초 간격으로
-            const handleRecordIntervalId = setInterval(() => {
+            handleRecordIntervalId = setInterval(() => {
                 handleRecord();
-                console.log("기록됨")
-                {/*
-                //cnt += interval;
-                //console.log(cnt)
-                if (cnt >= wholeTime) {
-                    clearInterval(handleRecordIntervalId);
-                    alert("데이터 측정이 완료되었습니다. 측정한 값은 My data에서 확인 가능합니다.");
-                    console.log("완료:", recordedData);
-                }
-                */}
+                console.log("기록됨");
             }, interval * 1000);
         }
     };
