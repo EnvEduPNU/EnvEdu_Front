@@ -39,14 +39,13 @@ export default function ContinuousSub(props) {
     
     /*기록하기*/
     const [recordedData, setRecordedData] = useState([]);
-    const graphData = { };
+    const [graphData, setGraphData] = useState({});
 
     const handleRecord = () => {
         const newRecord = { };
 
         dataTypes.forEach(dataType => {
             newRecord[dataType] = null;
-            graphData[dataType] = [];
         });
 
         
