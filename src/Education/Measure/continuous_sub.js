@@ -39,7 +39,7 @@ export default function ContinuousSub(props) {
     const [recordedData, setRecordedData] = useState([]);
 
     const handleRecord = () => {
-        const newRecord = { ...value };
+        const newRecord = { };
     
         dataTypes.forEach(dataType => {
             newRecord[dataType] = null;
@@ -112,12 +112,10 @@ export default function ContinuousSub(props) {
                 alert("데이터 측정이 완료되었습니다. 측정한 값은 My data에서 확인 가능합니다.");
                 console.log("완료");
                 console.log(recordedData);
-                /*
                 // 데이터 저장
                 customAxios.post('/user/save', recordedData)
                     .then((res) => console.log(res))
                     .catch((err) => console.log(err))
-                */
                 // disconnect 함수 추가
             }, wholeTime * 1000);
 
@@ -132,6 +130,10 @@ export default function ContinuousSub(props) {
     useEffect(() => {
         console.log(recordedData);
     }, [recordedData]);
+
+    useEffect(() => {
+        console.log(value);
+    }, [value]);
 
     return(
         <div>
