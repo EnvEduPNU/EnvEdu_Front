@@ -43,9 +43,7 @@ export default function MeasureContinuous() {
      * 센서 기기에서 전송하는 데이터 종류
      */
     const dataTypes = ["temp", "ph", "hum", "hum_EARTH", "tur", "dust", "dox", "co2", "lux", "pre"];
-    const dataTypes_ko = ["기온", "pH", "습도", "토양 습도", "탁도", "미세먼지", "용존산소량", "이산화탄소 농도", "조도", "기압"]
-
-    const [checked, setChecked] = useState(false);
+    const dataTypes_ko = ["기온", "pH", "습도", "토양 습도", "탁도", "미세먼지", "용존산소량", "이산화탄소 농도", "조도", "기압"];
 
     /**
      * 현재 웹 소켓 연결 여부
@@ -232,17 +230,26 @@ export default function MeasureContinuous() {
                 )}
 
                 <label>기기 상태</label>
-                <span className='navy-span' style={{marginRight: '2rem'}}>
+                <span 
+                    className='navy-span' 
+                    style={{
+                        background: connected
+                            ? (isConnectionDropped
+                                ? "#FF0000"
+                                : "#23273D")
+                            : "#838383",
+                        marginRight: '2rem'
+                    }}>
                     {connected
-                    ? (isConnectionDropped
-                        ? "전송 중단"
-                        : "연결됨")
-                    : "연결 해제"}
+                        ? (isConnectionDropped
+                            ? "전송 중단"
+                            : "연결됨")
+                        : "연결 해제"}
                 </span>
-                
+
                 {/*<button onClick={handlePause}>{paused ? '다시 시작' : '일시 정지'}</button>*/}
                 
-                <ContinuousSub selectedDataTypes={selectedDataTypes} data={receivedData} current={receivedData[receivedData.length - 1]} item={item} onRegister={register} /> {/*SingleDataContainer*/}
+                <ContinuousSub selectedDataTypes={selectedDataTypes} data={receivedData} current={receivedData[receivedData.length - 1]} item={item} onRegister={register} isConnectionDropped={isConnectionDropped}/> {/*SingleDataContainer*/}
     
             </div>
         </div>
