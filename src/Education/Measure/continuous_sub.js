@@ -120,7 +120,7 @@ export default function ContinuousSub(props) {
                 console.log("저장 전 recordedData:", recordedData);
 
                 // 데이터 저장
-                customAxios.post('/user/save', JSON.stringify(recordedData))
+                customAxios.post('/user/save', {data: JSON.stringify(recordedData)})
                 .then((res) => {
                     console.log(res.data);
                     console.log(JSON.stringify(recordedData));
@@ -128,6 +128,7 @@ export default function ContinuousSub(props) {
                 })
                 .catch((err) => {
                     console.log(err);
+                    console.log(JSON.stringify(recordedData));
                     setRecordedData([]);
                 })
                 
