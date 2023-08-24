@@ -39,28 +39,24 @@ export default function ContinuousSub(props) {
     const [recordedData, setRecordedData] = useState([]);
 
     const handleRecord = () => {
-        const currentTime = new Date().toLocaleTimeString();
-        const newRecords = [];
-
+        const newRecord = {};
+    
+        dataTypes.forEach(dataType => {
+            newRecord[dataType] = null;
+        });
+    
         props.selectedDataTypes.forEach(selectedType => {
             if (value[selectedType] !== -99999 && value[selectedType] !== undefined) {
-                const sensor = dataTypes_ko[dataTypes.indexOf(selectedType)];
-                const newRecord = {
-                    time: currentTime,
-                    sensor: sensor,
-                    item: props.item,
-                    value: `${value[selectedType]}${getUnitForType(selectedType)}`
-                };
-                newRecords.push(newRecord);
-                //recordedValues.push(newRecord);
-                //setRecordedData([...recordedData, newRecord]);
+                newRecord[selectedType] = value[selectedType];
             }
         });
-        setRecordedData(prevRecords => [...prevRecords, ...newRecords]);
-        //setRecordedData(prevRecords => [...prevRecords, ...newRecords]);
+
+        setRecordedData(prevRecords => [...prevRecords, newRecord]);
     };
 
+
     /*센서별 단위 설정*/
+    {/*
     const getUnitForType = (type) => {
         const units = {
           "temp": "°C",
@@ -76,7 +72,7 @@ export default function ContinuousSub(props) {
         return units[type] || "";
     };
     
-    {/*
+    
     // + 버튼 누르면 row 추가
     const [divCount, setDivCount] = useState(0);
 
@@ -97,6 +93,7 @@ export default function ContinuousSub(props) {
     };
     console.log(props.selectedDataTypes)
     */}
+    
 
     // n초 동안 m초 간격으로 저장
     const [wholeTime, setWholeTime] = useState(0); //n초
