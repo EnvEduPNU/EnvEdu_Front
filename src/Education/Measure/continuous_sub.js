@@ -130,18 +130,17 @@ export default function ContinuousSub(props) {
                 alert("데이터 측정이 완료되었습니다. 측정한 값은 My data에서 확인 가능합니다.");
                 console.log("완료");
                 console.log("저장 전 recordedData:", recordedData);
-
+                setRecordedData([]);
+                setGraphData({});
                 // 데이터 저장
                 customAxios.post('/user/save', {data: JSON.stringify(recordedData)})
                 .then((res) => {
                     console.log(res.data);
                     console.log(JSON.stringify(recordedData));
-                    setRecordedData([]);
                 })
                 .catch((err) => {
                     console.log(err);
                     console.log(JSON.stringify(recordedData));
-                    setRecordedData([]);
                 })
                 
             }, wholeTime * 1000 + 10);
@@ -182,25 +181,30 @@ export default function ContinuousSub(props) {
                 <img src="/assets/img/record.png" className={isRecording ? "blink" : "not-blink"} />REC
             </div>
             
-            {props.selectedDataTypes.map((selectedDataType) => (
-                <div style={{ display: 'flex', justifyContent: 'center' }}>                  
-                    <div style={{ width: '50%' }}>
-                        <Line 
-                            type="line" 
+            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                {props.selectedDataTypes.map((selectedDataType) => (
+                    <div key={selectedDataType} style={{ width: '50%', marginBottom: '0.5rem'}}>
+                        <Line
                             data={{
-                                labels: Array.from({ length: graphData[selectedDataType]?.length || 0 }, (_, i) => i + 1),
-                                datasets: [
-                                    {
-                                        type: 'line',
-                                        label: selectedDataType,
-                                        data: graphData[selectedDataType],
-                                        borderColor: '#EE2E31'
-                                    }
-                                ]
-                            }} />
+                            labels: Array.from(
+                                { length: graphData[selectedDataType]?.length || 0 },
+                                (_, i) => i + 1
+                            ),
+                            datasets: [
+                                {
+                                type: 'line',
+                                label: dataTypes_ko[dataTypes.indexOf(selectedDataType)],
+                                data: graphData[selectedDataType],
+                                borderColor: '#EE2E31',
+                                backgroundColor: '#F18486',
+                                },
+                            ],
+                            }}
+                        />
                     </div>
-                </div>
-            ))}
+                ))}
+            </div>
+
         </div>
     )
 }
