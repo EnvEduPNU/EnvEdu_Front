@@ -187,7 +187,7 @@ export default function ContinuousSub(props) {
                         <Line 
                             type="line" 
                             data={{
-                                labels: Array.from({ length: graphData[selectedDataType].length }, (_, i) => i + 1),
+                                labels: Array.from({ length: graphData[selectedDataType]?.length || 0 }, (_, i) => i + 1),
                                 datasets: [
                                     {
                                         type: 'line',
