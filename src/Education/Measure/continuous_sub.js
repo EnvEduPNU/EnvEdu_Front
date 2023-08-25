@@ -145,7 +145,7 @@ export default function ContinuousSub(props) {
 
                 setRecordedData([]);
                 //setGraphData({});
-            }, wholeTime * 1000 + 10);
+            }, wholeTime * 1000);
         } 
     };
 
