@@ -144,7 +144,7 @@ export default function ContinuousSub(props) {
                 })
 
                 setRecordedData([]);
-                setGraphData({});
+                //setGraphData({});
             }, wholeTime * 1000 + 10);
         } 
     };
@@ -163,27 +163,30 @@ export default function ContinuousSub(props) {
 
     return(
         <div>
-            <div style={{marginTop: '1rem'}}>
+            <div style={{marginTop: '1.5rem'}}>
                 {props.selectedDataTypes.map(selectedType => (
                     <span className="gray-span">  
                         <label>{dataTypes_ko[dataTypes.indexOf(selectedType)]}</label>
                         <span className="navy-span">{value[selectedType] === -99999 ? "N/A" : value[selectedType]}</span>
                     </span>
                 ))}
-                <button>dd</button>
             </div>
  
-            <div style={{display: 'flex', alignItems: 'center', marginTop: '1rem'}}>
+            <div style={{display: 'flex', alignItems: 'center', marginTop: '1.5rem'}}>
                 <input type="number" onChange={(e) => {setWholeTime(parseInt(e.target.value))}} />초 동안
                 <input type="number" onChange={(e) => {setInterv(parseInt(e.target.value))}} style={{marginLeft: '1rem'}}/>초 간격으로 저장
-                <button onClick={handleSave}>저장 시작</button> 
+                <div style={{cursor: 'pointer', padding: '0.3rem 1.5rem', backgroundColor: '#000', color: '#fff', fontWeight: '600', borderRadius: '1.25rem', margin: '0 1rem'}} onClick={handleSave}>
+                    확인
+                </div>
+                <div>
+                    <img 
+                    src="/assets/img/record.png" 
+                    style={{marginRight: '0.3rem'}} 
+                    className={isRecording ? "blink" : "not-blink"} />REC
+                </div>
             </div>
 
-            <div>
-                <img src="/assets/img/record.png" className={isRecording ? "blink" : "not-blink"} />REC
-            </div>
-            
-            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: '2rem' }}>
                 {props.selectedDataTypes.map((selectedDataType) => (
                     <div key={selectedDataType} style={{ width: '50%', marginBottom: '0.5rem'}}>
                         <Line

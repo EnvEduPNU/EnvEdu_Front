@@ -214,7 +214,7 @@ export default function MeasureContinuous() {
                 ))}
             </div>
 
-            <div>
+            <div style={{marginTop: '1.5rem'}}>
                 <label>연결된 기기</label>
                 {!connected && <span className='navy-span' style={{marginRight: '1rem'}}>없음</span>}
 
