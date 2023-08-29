@@ -33,6 +33,7 @@ import MyData2 from './myData/myData';
 import Measure from './Education/Measure/measure';
 import Sample from './Socket/sample';
 import Test from './Education/test';
+import Search from './OpenApi/search';
 
 function App() {
   /**
@@ -58,9 +59,13 @@ function App() {
             exact={true}
             element={<RegisterStudents />}
           />
+
+          {/*open API*/}
           <Route path="/openapi" exact={true} element={<OpenApi />} />
           <Route path="/myData" exact={true} element={<MyData />} />
           <Route path="/myData2" exact={true} element={<MyData2 />} />
+          <Route path="/search" exact={true} element={<Search />} />
+
           {/*login*/}
           <Route path="/login" exact={true} element={<LoginForm />} />
           

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './OpenApi.css';
 import {customAxios} from "../Common/CustomAxios";
+import { Link } from 'react-router-dom';
 import earthImg from "./earth.png"
 import { Chart } from 'chart.js/auto';
 import { Line } from 'react-chartjs-2';
@@ -277,7 +278,13 @@ function OpenApi() {
                         {filteredData.map((item) => (
                             <tr key={item.id}>
                                 {headers.map((header) => (
-                                    <td key={header}>{item[header]}</td>
+                                    (header === "stationName" && category === 'AIR' ? (
+                                        <Link to={"/search"} state={{ stationName: header }}>
+                                            <td key={header}>{item[header]}</td>
+                                        </Link>
+                                    ) : (
+                                        <td key={header}>{item[header]}</td>
+                                    ))
                                 ))}
                                 <td>
                                     <input
