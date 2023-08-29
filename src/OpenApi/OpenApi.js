@@ -279,7 +279,7 @@ function OpenApi() {
                             <tr key={item.id}>
                                 {headers.map((header) => (
                                     (header === "stationName" && category === 'AIR' ? (
-                                        <Link to={"/search"} state={{ stationName: header }}>
+                                        <Link to={"/search"} state={{ stationName: item[header] }}>
                                             <td key={header}>{item[header]}</td>
                                         </Link>
                                     ) : (
