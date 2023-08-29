@@ -4,10 +4,11 @@ import { useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 
 export default function Search() {
-    useEffect(() => {
-        const location = useLocation();
+    const location = useLocation();
         const stationName = location.state.stationName;
         console.log(stationName);
+        
+    useEffect(() => {
         customAxios.get(`/air-quality/station?addr=${stationName}`)
             .then((res) => console.log(res.data))
             .catch((err) => console.log(err));
