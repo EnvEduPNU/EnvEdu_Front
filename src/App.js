@@ -35,6 +35,8 @@ import Sample from './Socket/sample';
 import Test from './Education/test';
 import Search from './OpenApi/search';
 
+import MeasureContinuous from './Education/Measure/measure_continuous';
+
 function App() {
   /**
    * 처음에 반드시 .env 파일 생성 후 REACT_APP_API_URL = ${서버 도메인} 작성
@@ -92,6 +94,7 @@ function App() {
           {/*Education */}
           {/*<Route path="/E-Classes" exact={true} element={<Test/>} />*/}
           <Route path="/measure" exact={true} element={<Measure/>} />
+          <Route path="/measureContinuous" exact={true} element={<MeasureContinuous/>} />
 
           {/*Learnmore*/}
           <Route path="/training" exact={true} element={<Training/>} />

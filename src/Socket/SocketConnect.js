@@ -149,6 +149,7 @@ function SocketConnect(props) {
             saveData.push(JSON.stringify(receiveObject));
             setSaveData([...saveData]);
             if (saveData.length === 5) {
+                console.log(saveData) //확인
                 customAxios.post("/user/save", {data: saveData}).then().catch(() => {
                     disconnect();
                 });
@@ -158,6 +159,10 @@ function SocketConnect(props) {
         }
         setReceivedData([...receivedData]);
     }
+    
+    console.log(decodeToken(localStorage.getItem("access_token")).user_info.username);
+    console.log(props.username)
+
     return (
             <div>
                 <br/>
@@ -169,7 +174,7 @@ function SocketConnect(props) {
                         }} onClick={() => {
                             if (connected === false) {
                                 
-                                if (props.username === decodeToken(localStorage.getItem("access_token"))) {
+                                if (props.username === decodeToken(localStorage.getItem("access_token")).user_info.username) {
                                     location = prompt("위치 정보를 입력하세요(optional)");
                                 }
                                 
@@ -179,7 +184,7 @@ function SocketConnect(props) {
                             }
                         }}>{props.mac}</span>
                         {
-                            props.username === decodeToken(localStorage.getItem("access_token")).username ? (
+                            props.username === decodeToken(localStorage.getItem("access_token")).user_info.username ? (
                                 <span className="p-2" style={{fontSize: "0.7em"}}><input type="checkbox"
                                                                                          checked={checked}
                                                                                          onChange={() => {
