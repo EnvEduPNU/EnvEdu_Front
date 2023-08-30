@@ -135,11 +135,36 @@ function Water() {
         return kor[name] || "";
     }
 
+
+    const years = [];
+    const [selectedYear, setSelectedYear] = useState('2022');
+    const [selectedMonth, setSelectedMonth] = useState('06');
+
+    for (let year = 1989; year <= 2023; year++) {
+        years.push(year);
+    }
+
+    const months = Array.from({ length: 12 }, (_, index) => {
+        const month = (index + 1).toString().padStart(2, '0');
+        return month;
+    });
+
+    useEffect(() => {
+        customAxios.get(`/ocean-quality?year=${selectedYear}&month=${selectedMonth}`)
+        .then((res) => {console.log(res.data); /*setFilteredData(res.data)*/})
+        .catch((err) => console.log(err));
+    }, [selectedYear, selectedMonth]);
+
+    console.log(months)
+    console.log(selectedYear)
+    console.log(selectedMonth)
+
     return (
         <div>
             <div id="wrap-openapi-div">
                 <div style={{marginTop: '1.875rem'}}> 
                     <label className="filter-label" style={{marginRight: '0.625rem'}}>조사 지점 필터링</label>
+                    {/*조사 지점*/}
                     <select
                         value={selectedOption ? selectedOption.PTNM : ''}
                         onChange={handleSelectChange}
@@ -149,6 +174,32 @@ function Water() {
                         {options.map((option) => (
                             <option key={option.id} value={option.value}>
                                 {option.label}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                <div style={{marginTop: '1rem'}}> 
+                    <label className="filter-label" style={{marginRight: '0.625rem'}}>측정 연도(월) 필터링</label>
+                    {/*연도*/}
+                    <select
+                        value={selectedYear}
+                        onChange={(e) => setSelectedYear(e.target.value)}
+                        className="air-buttons">   
+                        {years.map((year) => (
+                            <option key={year} value={year}>
+                                {year}
+                            </option>
+                        ))}
+                    </select>
+                    {/*월*/}
+                    <select
+                        value={selectedMonth}
+                        onChange={(e) => setSelectedMonth(e.target.value)}
+                        className="air-buttons"> 
+                        {months.map((month) => (
+                            <option key={month} value={month}>
+                                {month}
                             </option>
                         ))}
                     </select>
