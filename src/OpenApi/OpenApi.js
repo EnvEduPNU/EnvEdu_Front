@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './OpenApi.css';
+import './OpenApi.scss';
 import { Link } from 'react-router-dom';
 import earthImg from "./earth.png";
 import Water from './water';
@@ -16,7 +16,6 @@ export default function OpenApi() {
             border: category === selectedCategory ? '2px solid #027c2b' : 'none'
         };
     };
-    console.log(category)
 
     return (
         <div>
