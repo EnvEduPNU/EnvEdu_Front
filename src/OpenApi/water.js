@@ -13,7 +13,6 @@ function Water() {
     const [checkedHeaders, setCheckedHeaders] = useState([]);
     const [selectedItems, setSelectedItems] = useState([]);
     const [isFull, setIsFull] = useState([]);
-    const [isShow, setIsShow] = useState(false);
     
     //최초 화면 렌더링 시 '수질 데이터' 조회
     useEffect(() => {
@@ -24,7 +23,6 @@ function Water() {
                 setFilteredData(jsonData);
                 setSelectedOption(null);
                 setIsFull(false);
-                setIsShow(true);
                 setSelectedItems([]);
                 
                 // Set the table headers dynamically
@@ -199,15 +197,13 @@ function Water() {
                         {headers.map((header) => (
                             <th key={header}>{engToKor(header)}</th>
                         ))}
-                        {isShow &&
-                            <th>
-                                <input
-                                    type="checkbox"
-                                    onChange={() => handleFullCheck()}
-                                    checked={isFull}
-                                ></input>
-                            </th>
-                        }
+                        <th>
+                            <input
+                                type="checkbox"
+                                onChange={() => handleFullCheck()}
+                                checked={isFull}
+                            ></input>
+                        </th>
                     </thead>
                     <tbody>
                         {filteredData.map((item) => (
