@@ -137,32 +137,24 @@ function Water() {
 
 
     const years = [];
-    const months = [];
+
     const [selectedYear, setSelectedYear] = useState('2022');
-    const [selectedMonth, setSelectedMonth] = useState('6');
+    const [selectedMonth, setSelectedMonth] = useState('06');
 
     for (let year = 1989; year <= 2023; year++) {
         years.push(year);
     }
 
-    for (let month = 1; month <= 12; month++) {
-        months.push(month);
-    }
-    /*
     const months = Array.from({ length: 12 }, (_, index) => {
         const month = (index + 1).toString().padStart(2, '0');
         return month;
     });
-    */
+
     useEffect(() => {
-        customAxios.get(`/ocean-quality?year=${selectedYear}&month=${selectedMonth}`)
+        customAxios.get(`/ocean-quality?year=${selectedYear}&months=${selectedMonth}`)
         .then((res) => {console.log(res.data); /*setFilteredData(res.data)*/})
         .catch((err) => console.log(err));
     }, [selectedYear, selectedMonth]);
-
-    console.log(months)
-    console.log(selectedYear)
-    console.log(selectedMonth)
 
     return (
         <div>
