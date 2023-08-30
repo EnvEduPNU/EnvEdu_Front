@@ -19,7 +19,7 @@ function Header() {
     customAxios.post('/logout').then(() => {
       localStorage.clear();
       navigate('/');
-      //window.location.reload();
+      window.location.reload();
     });
   }
 

@@ -3,6 +3,7 @@ import {customAxios} from "../Common/CustomAxios";
 import earthImg from "../OpenApi/earth.png";
 import '../OpenApi/OpenApi.scss';
 import MySeedData from "./mySeedData";
+import { useEffect } from "react";
 
 function MyData(){
     const [data, setData] = useState([]);
@@ -11,6 +12,10 @@ function MyData(){
     const [selectedItems, setSelectedItems] = useState([]);
     const [isFull, setIsFull] = useState(false);
     const [category, setCategory] = useState('water');
+
+    useEffect(() => {
+        getMyData('water');
+    }, []);
 
     function handleFullCheck(){
         setIsFull(!isFull)
@@ -32,16 +37,15 @@ function MyData(){
         setCategory(type);
         let path = ''
         let username = localStorage.getItem('username');
-        if (type === 'air') {
-            path = '/air-quality/mine?username=' + username;
-        } else if (type === 'water') {
+        if (type === 'water') {
             path = '/ocean-quality/mine?username=' + username;
-        }
+        } else if (type === 'air') {
+            path = '/air-quality/mine?username=' + username;
+        } 
 
         customAxios.get(path)
             .then((jsonData)=>{
                 jsonData = jsonData.data;
-                console.log(jsonData)
                 setData(jsonData);
                 setFilteredData(jsonData);
                 
@@ -91,7 +95,7 @@ function MyData(){
         return kor[name] || "";
     }
 
-    console.log(selectedItems)
+    console.log(selectedItems) //데이터 삭제할 때 사용
 
     return (
         <div id="wrap-openapi-div">
@@ -130,7 +134,7 @@ function MyData(){
 
             
             <div style={{marginTop: '1.875rem'}}>
-                {filteredData.length !== 0 && 
+                {category !== 'seed' && filteredData.length !== 0 && 
                     <table border="1" className="myData-table">
                         <thead>
                             <tr>
@@ -166,9 +170,8 @@ function MyData(){
                         </tbody>
                     </table>
                 }
+                {category === 'seed' && <MySeedData />}
             </div>
-            
-            {category === 'seed' && <MySeedData />}
 
         </div>
     );
