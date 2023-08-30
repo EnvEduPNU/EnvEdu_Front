@@ -16,13 +16,16 @@ export default function Search() {
     const [selectedItems, setSelectedItems] = useState([]);
     const [isFull, setIsFull] = useState([]);
 
+    //dataTerm 선택하기
+    const [dataTerm, setDataTerm] = useState('DAILY');
+
     useEffect(() => {
         if (location.state) {
             customAxios.get(`/air-quality/station?addr=${stationName}`)
             .then((res) => setStations(res.data))
             .catch((err) => console.log(err));
 
-            customAxios.get(`/air-quality?stationName=${stationName}`)
+            customAxios.get(`/air-quality?stationName=${stationName}&dataTerm=${dataTerm}`)
             .then((res) => {
                 console.log(res.data);
                 setPastData(res.data);
@@ -32,7 +35,7 @@ export default function Search() {
             })
             .catch((err) => console.log(err));
         }
-    }, []);
+    }, [dataTerm]);
 
     {/*선택한 데이터 저장하기*/}
     const handleSaveMyData = async (e) => {
@@ -104,6 +107,18 @@ export default function Search() {
                     측정소 위치 : {station.addr}
                 </div>
             ))}
+            
+            <div>
+                <label>측정 기간 범위 선택</label>
+                <select onChange={(e) => setDataTerm(e.target.value)}>
+                    <option value="DAILY">DAILY</option>
+                    <option value="MONTH">MONTH</option>
+                    <option value="3MONTH">3MONTH</option>
+                </select>
+                <span>
+                    *선택하지 않으면 default는 24시간(daily)
+                </span>
+            </div>
 
             <div style={{marginTop: '1rem'}}>
                 <label className="filter-label">추가/삭제</label>
@@ -142,37 +157,39 @@ export default function Search() {
                 </button>
             </div>
 
-            <table border="1" className="openAPI-table">
-                <thead>
-                    {headers.map((header) => (
-                        <th key={header}>{engToKor(header)}</th>
-                    ))}
-                    <th>
-                        <input
-                            type="checkbox"
-                            onChange={() => handleFullCheck()}
-                            checked={isFull}
-                        ></input>
-                    </th>
-                </thead>
-                <tbody>
-                    {pastData.map((item, index) => (
-                        <tr key={index}>
-                            {headers.map((header) => (
-                                <td key={header}>{item[header]}</td>
-                            ))}
-                            <td>
-                                <input
-                                    type="checkbox"
-                                    name={item}
-                                    checked={selectedItems.includes(item)}
-                                    onChange={() => handleViewCheckBoxChange(item)}
-                                ></input>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+            {pastData.length !== 0 && 
+                <table border="1" className="openAPI-table">
+                    <thead>
+                        {headers.map((header) => (
+                            <th key={header}>{engToKor(header)}</th>
+                        ))}
+                        <th>
+                            <input
+                                type="checkbox"
+                                onChange={() => handleFullCheck()}
+                                checked={isFull}
+                            ></input>
+                        </th>
+                    </thead>
+                    <tbody>
+                        {pastData.map((item, index) => (
+                            <tr key={index}>
+                                {headers.map((header) => (
+                                    <td key={header}>{item[header]}</td>
+                                ))}
+                                <td>
+                                    <input
+                                        type="checkbox"
+                                        name={item}
+                                        checked={selectedItems.includes(item)}
+                                        onChange={() => handleViewCheckBoxChange(item)}
+                                    ></input>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            }
         </div>
     )
 }

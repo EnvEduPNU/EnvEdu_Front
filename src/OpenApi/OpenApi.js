@@ -16,7 +16,6 @@ export default function OpenApi() {
             border: category === selectedCategory ? '2px solid #027c2b' : 'none'
         };
     };
-    console.log(category)
 
     return (
         <div>

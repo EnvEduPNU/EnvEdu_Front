@@ -91,7 +91,6 @@ function Water() {
     }
 
     /*그래프 그리기 (수정 필요)*/
-    console.log(selectedItems);
     const graphLabel = selectedItems.map((selectedItem) => selectedItem.PTNM);
     const oceanData_ITEMCOD = selectedItems.map((selectedItem) => selectedItem.ITEMCOD);
     const oceanData_ITEMDOC = selectedItems.map((selectedItem) => selectedItem.ITEMDOC);
@@ -192,37 +191,39 @@ function Water() {
                     </button>
                 </div>
 
-                <table border="1" className="openAPI-table">
-                    <thead>
-                        {headers.map((header) => (
-                            <th key={header}>{engToKor(header)}</th>
-                        ))}
-                        <th>
-                            <input
-                                type="checkbox"
-                                onChange={() => handleFullCheck()}
-                                checked={isFull}
-                            ></input>
-                        </th>
-                    </thead>
-                    <tbody>
-                        {filteredData.map((item) => (
-                            <tr key={item.id}>
-                                {headers.map((header) => (
-                                    <td key={header}>{item[header]}</td>
-                                ))}
-                                <td>
-                                    <input
-                                        type="checkbox"
-                                        name={item}
-                                        checked={selectedItems.includes(item)}
-                                        onChange={() => handleViewCheckBoxChange(item)}
-                                    ></input>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                {filteredData.length !== 0 && 
+                    <table border="1" className="openAPI-table">
+                        <thead>
+                            {headers.map((header) => (
+                                <th key={header}>{engToKor(header)}</th>
+                            ))}
+                            <th>
+                                <input
+                                    type="checkbox"
+                                    onChange={() => handleFullCheck()}
+                                    checked={isFull}
+                                ></input>
+                            </th>
+                        </thead>
+                        <tbody>
+                            {filteredData.map((item) => (
+                                <tr key={item.id}>
+                                    {headers.map((header) => (
+                                        <td key={header}>{item[header]}</td>
+                                    ))}
+                                    <td>
+                                        <input
+                                            type="checkbox"
+                                            name={item}
+                                            checked={selectedItems.includes(item)}
+                                            onChange={() => handleViewCheckBoxChange(item)}
+                                        ></input>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                }
                 
                 {/*                       
                 <div style={{
