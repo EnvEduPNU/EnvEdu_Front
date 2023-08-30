@@ -1,4 +1,4 @@
-import './OpenApi.css';
+import './OpenApi.scss';
 import './search.scss';
 import { customAxios } from '../Common/CustomAxios';
 import { useLocation } from 'react-router-dom';
@@ -26,8 +26,9 @@ export default function Search() {
             .then((res) => {
                 console.log(res.data);
                 setPastData(res.data);
-                const checkedHeaders = Object.keys(res.data[0]).filter((key) => key !== 'id' && key !== 'PTNM');
-                setCheckedHeaders(checkedHeaders);
+                const headers = Object.keys(res.data[0]).filter((key) => key !== 'id');
+                setHeaders(headers);
+                setCheckedHeaders(headers);
             })
             .catch((err) => console.log(err));
         }
@@ -88,7 +89,7 @@ export default function Search() {
     }
 
     return(
-        <div>
+        <div id="wrap-openapi-div">
             <h4>측정소 목록 조회</h4>
             {stationName ? (
                 <p>
@@ -155,8 +156,8 @@ export default function Search() {
                     </th>
                 </thead>
                 <tbody>
-                    {pastData.map((item) => (
-                        <tr key={item.id}>
+                    {pastData.map((item, index) => (
+                        <tr key={index}>
                             {headers.map((header) => (
                                 <td key={header}>{item[header]}</td>
                             ))}

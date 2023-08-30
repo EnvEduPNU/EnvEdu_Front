@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './OpenApi.css';
+import './OpenApi.scss';
 import { Link } from 'react-router-dom';
 import earthImg from "./earth.png";
 import Water from './water';

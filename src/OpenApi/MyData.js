@@ -74,7 +74,7 @@ function MyData(){
         customAxios.get(path)
             .then((jsonData)=>{
                 jsonData = jsonData.data;
-
+                console.log(jsonData)
                 setData(jsonData);
                 setFilteredData(jsonData);
                 setSelectedOption(jsonData[0]);

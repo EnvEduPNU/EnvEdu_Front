@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import './OpenApi.css';
-import {customAxios} from "../Common/CustomAxios";
+import './OpenApi.scss';
+import { customAxios } from "../Common/CustomAxios";
 import { Link } from 'react-router-dom';
 import { Chart } from 'chart.js/auto';
 import { Line } from 'react-chartjs-2';
