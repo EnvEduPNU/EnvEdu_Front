@@ -27,7 +27,6 @@ import Resource from './Learnmore/Resource/Resource';
 import Tboard from './Learnmore/Train/Tborad';
 import OpenApi from './OpenApi/OpenApi';
 import MyData from "./OpenApi/MyData";
-
 import MyData2 from './myData/myData';
 //import Education from './Education/education';
 import Measure from './Education/Measure/measure';
@@ -36,6 +35,7 @@ import Test from './Education/test';
 import Search from './OpenApi/search';
 
 import MeasureContinuous from './Education/Measure/measure_continuous';
+
 
 function App() {
   /**
@@ -63,7 +63,7 @@ function App() {
           />
 
           {/*open API*/}
-          <Route path="/openapi" exact={true} element={<OpenApi />} />
+          <Route path="/openAPI" exact={true} element={<OpenApi />} />
           <Route path="/myData" exact={true} element={<MyData />} />
           <Route path="/myData2" exact={true} element={<MyData2 />} />
           <Route path="/search" exact={true} element={<Search />} />
