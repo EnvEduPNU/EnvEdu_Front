@@ -12,7 +12,7 @@ function Water() {
     const [headers, setHeaders] = useState([]);
     const [checkedHeaders, setCheckedHeaders] = useState([]);
     const [selectedItems, setSelectedItems] = useState([]);
-    const [isFull, setIsFull] = useState([]);
+    const [isFull, setIsFull] = useState(false);
     
     //최초 화면 렌더링 시 '수질 데이터' 조회
     useEffect(() => {
@@ -21,9 +21,6 @@ function Water() {
                 jsonData = jsonData.data;
                 setData(jsonData);
                 setFilteredData(jsonData);
-                setSelectedOption(null);
-                setIsFull(false);
-                setSelectedItems([]);
                 
                 // Set the table headers dynamically
                 const headers = Object.keys(jsonData[0]).filter((key) => key !== 'id');
@@ -46,8 +43,11 @@ function Water() {
             alert("데이터 저장을 성공했습니다!");
         })
         .catch((err) => {
-            alert("데이터 저장을 실패했습니다.");
-            console.log(err);
+            if (err.response.status === 500) {
+                alert("이미 저장한 데이터입니다.");
+            } else {
+                alert("데이터 저장을 실패했습니다.");
+            }
         });
     };
 

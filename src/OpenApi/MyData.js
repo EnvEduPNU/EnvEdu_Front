@@ -12,41 +12,6 @@ function MyData(){
     const [isShow, setIsShow] = useState(false);
     const [category, setCategory] = useState(false);
 
-    function redirectToExternalUrl(url, values) {
-        const form = document.createElement('form');
-        form.method = 'post';
-        form.action = url;
-
-        Object.keys(values).forEach((key) => {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = key;
-            input.value = Array.isArray(values[key]) ? JSON.stringify(values[key]) : values[key];
-            form.appendChild(input);
-        });
-
-        const newWindow = window.open('', '_blank');
-        if (newWindow) {
-            newWindow.document.body.appendChild(form);
-            form.submit();
-        }
-    }
-
-    function handleThClick(header){
-        if (selectedItems.length <= 0){
-            alert("차트로 만들 값을 선택해주세요")
-            return null;
-        }
-        const values = selectedItems.reduce((arr, user) => { // create a new array that contains only the values of the specified key for all objects in the array
-            if (user.hasOwnProperty(header)) { // check if the key exists in the current object
-                arr.push(user[header]); // add the value of the key to the array
-            }
-            return arr;
-        }, []);
-        redirectToExternalUrl("http://localhost:8080/chart", values)
-        return values;
-    }
-
     function handleFullCheck(){
         setIsFull(!isFull)
         if (isFull)
@@ -110,7 +75,7 @@ function MyData(){
                     <thead>
                     <tr>
                         {headers.map((header) => (
-                            <th key={header} onClick={()=> handleThClick(header)}>{header}</th>
+                            <th key={header}>{header}</th>
                         ))}
                         {isShow &&
                             <th>
