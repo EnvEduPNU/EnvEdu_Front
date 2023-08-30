@@ -35,13 +35,13 @@ export default function OpenApi() {
                         className="select-type" 
                         onClick={() => setCategory('water')}
                         style={changeStyle('water')}>
-                        수질 데이터 조회
+                        수질 데이터
                     </div>
                     <div 
                         className="select-type" 
                         onClick={() => setCategory('air')}
                         style={changeStyle('air')}>
-                        대기질 데이터 조회
+                        대기질 데이터
                     </div>
                 </div>
 

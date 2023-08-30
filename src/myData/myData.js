@@ -1,219 +1,176 @@
-import { useState, useEffect } from "react";
-import './myData.css';
-import { Line } from 'react-chartjs-2';
+import React, {useState} from "react";
+import {customAxios} from "../Common/CustomAxios";
+import earthImg from "../OpenApi/earth.png";
+import '../OpenApi/OpenApi.scss';
+import MySeedData from "./mySeedData";
 
-import data from './data.json';
+function MyData(){
+    const [data, setData] = useState([]);
+    const [filteredData, setFilteredData] = useState([]);
+    const [headers, setHeaders] = useState([]);
+    const [selectedItems, setSelectedItems] = useState([]);
+    const [isFull, setIsFull] = useState(false);
+    const [category, setCategory] = useState('water');
 
-export default function MyData2() {
-    const attribute_ko = ['측정 시간', '측정 위치', '소속', '습도', '기온', '탁도', 'pH', '미세먼지', '용존산소량', '이산화탄소', '조도', '토양 습도', '기압'];
-    const attribute = ['measuredDate', 'location', 'unit', 'hum', 'temp', 'tur', 'ph', 'dust', 'dox', 'co2', 'lux', 'hum_EARTH', 'pre'];
-
-    const [start, setStart] = useState(null);
-    const [end, setEnd] = useState(null);
-    const [showIndividual, setShowIndividual] = useState(false);
-    const [showComparative, setShowComparative] = useState(false);
-
-    const handleStart = (date) => {
-        if ((end !== null) && (new Date(end) < new Date(date))) alert("시작을 올바른 값으로 선택해주세요.")
-        else setStart(date);
+    function handleFullCheck(){
+        setIsFull(!isFull)
+        if (isFull)
+            setSelectedItems([])
+        else
+            setSelectedItems(data)
     }
 
-    const handleEnd = (date) => {
-        if (new Date(start) > new Date(date)) alert("끝을 올바른 값으로 선택해주세요.")
-        else setEnd(date);
-    }
-
-    /* 선택한 범위 내의 data들 */
-    const filteredData = data.filter((item) => {
-        const measuredDate = new Date(item.measuredDate);
-        return measuredDate >= new Date(start) && measuredDate <= new Date(end);
-    });
-    
-    const sensorName = attribute.slice(3, attribute.length);
-    const sensorName_ko = attribute_ko.slice(3, attribute_ko.length);
-    //const sensorName = ['hum', 'temp', 'tur', 'ph', 'dust', 'dox', 'co2', 'lux', 'hum_EARTH', 'pre'];
-    //const sensorName_ko = ['습도', '기온', '탁도', 'pH', '미세먼지', '용존산소량', '이산화탄소량', '조도', '토양 습도', '기압'];
-    const borderColors = ["#f9d1d1", "#ffa4b6", "#f765a3", "#f91e79", "#d9baee", "#a155b9", "#165baa", "#0b1354", "#5b5b60", "#dcdcde"]
-
-    /*
-    let graphData =  {
-        labels: filteredData.map((item) => item.measuredDate),
-        datasets: datasets
-    };
-    */
-
-    /*개별 그래프*/
-    const drawIndividualGraph = () => {
-        if (start === null || end === null) alert("그래프 시작과 끝을 선택해주세요.")
-        else {
-            setShowIndividual(true);
-            setShowComparative(false);
+    function handleViewCheckBoxChange(item) {
+        if (selectedItems.includes(item)) {
+            setSelectedItems(selectedItems.filter((selectedItem) => selectedItem !== item));
+        } else {
+            setSelectedItems([...selectedItems, item]);
         }
     }
 
-    /*비교 그래프*/
-    const drawComparativeGraph = () => {
-        if (start === null || end === null) alert("그래프 시작과 끝을 선택해주세요.")
-        else if (var1 === var2) alert("서로 다른 변인을 선택해주세요.")
-        else {
-            setShowComparative(true);
-            setShowIndividual(false);
+    function getMyData(type) {
+        setCategory(type);
+        let path = ''
+        let username = localStorage.getItem('username');
+        if (type === 'air') {
+            path = '/air-quality/mine?username=' + username;
+        } else if (type === 'water') {
+            path = '/ocean-quality/mine?username=' + username;
         }
-    }
-    
-    /*개별 그래프와 비교 그래프 공통 datasets*/
-    let datasets = sensorName.map((key, index) => ({
-        type: 'line',
-        label: sensorName_ko[index],
-        backgroundColor: borderColors[index],
-        borderColor: borderColors[index],
-        data: filteredData.map((item) => item[key]),
-        borderWidth: 2,
-        yAxisID: sensorName[index]
-    }));
 
-    /*개별 그래프*/
-    const individualGraphs = sensorName.map((name, index) => (
-        <div key={name} style={{ display: 'flex', justifyContent: 'center', marginTop: '5rem', width: '50%' }}>
-          <Line type="line" data={{
-            labels: filteredData.map((item) => item.measuredDate),
-            datasets: [datasets[index]]
-          }} />
-        </div>
-    ));
-
-    /*비교 그래프 변인 2개 설정*/
-    const [var1, setVar1] = useState(0);
-    const [var2, setVar2] = useState(0);
-
-    /*비교 그래프 option*/
-    const options = {
-        scales: {
-            x: {
-                grid: {
-                display: true,
-                },
-            },
-            [sensorName[var1]]: {
-                type: 'linear',
-                position: 'left',
-                grid: {
-                    display: true,
-                },
-                title: {
-                    display: true,
-                    text: sensorName_ko[var1]
-                },
-            },
-            [sensorName[var2]]: {
-                type: 'linear',
-                position: 'right',
-                grid: {
-                    display: false,
-                },
-                title: {
-                    display: true,
-                    text: sensorName_ko[var2], 
-                },
-            },
-        },
+        customAxios.get(path)
+            .then((jsonData)=>{
+                jsonData = jsonData.data;
+                console.log(jsonData)
+                setData(jsonData);
+                setFilteredData(jsonData);
+                
+                // Set the table headers dynamically
+                const headers = Object.keys(jsonData[0]).filter((key) => key !== 'id' && key !== 'owner');
+                setHeaders(headers);
+            });
     };
 
-    console.log(var1)
+    const changeStyle = (selectedCategory) => {
+        return {
+            backgroundColor: category === selectedCategory ? '#fff' : '#23273D',
+            color: category === selectedCategory ? '#23273D' : '#fff',
+            border: category === selectedCategory ? '2px solid #23273D' : 'none'
+        };
+    };
 
-    return(
-        <div className='myData'>
-            <div style={{
-                display: 'flex',
-                marginBottom: '1rem'
-            }}>
-                <label style={{fontWeight: 'bold'}}>원하는 구간 선택하기</label>
-                <div className='startBtn'>시작</div>
-                <div>{start}</div>
-                <div className='endBtn' style={{marginLeft: '1rem'}}>끝</div>
-                <div>{end}</div>
-            </div>
+    //항목 이름 (한국어 -> 영어)
+    const engToKor = (name) => {
+        const kor = {
+            //수질 데이터
+            "PTNM": '조사지점명',
+            "WMYR": '측정연도',
+            "WMOD": '측정월',
+            "ITEMTEMP": '수온(°C)',
+            "ITEMPH": 'pH',
+            "ITEMDOC": 'DO(㎎/L)',
+            "ITEMBOD": 'BOD(㎎/L)',
+            "ITEMCOD": 'COD(㎎/L)',
+            "ITEMTN": '총질소(㎎/L)',
+            "ITEMTP": '총인(㎎/L)',
+            "ITEMTRANS": '투명도(㎎/L)',
+            "ITEMCLOA": '클로로필-a(㎎/L)',
+            "ITEMEC": '전기전도도(µS/㎝)',
+            "ITEMTOC": 'TOC(㎎/L)',
 
-            <div style={{display: 'flex'}}>
-                <label style={{fontWeight: 'bold', marginBottom: '0.5rem'}}>그래프 종류 선택하기</label>
-                <div style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    marginBottom: '1rem'
-                }}> 
-                    <button className="drawGraph" onClick={drawIndividualGraph}>개별 그래프</button>
-                    <div style={{display: 'flex', marginTop: '0.5rem'}}>
-                        <button className="drawGraph" onClick={drawComparativeGraph}>비교 그래프</button>
-                        <select className='select-var' onChange={(e) => setVar1(e.target.selectedIndex)}>
-                            {sensorName_ko.map((name) => (
-                                <option key={name}>{name}</option>
-                            ))}
-                        </select>
-                        <select className='select-var' onChange={(e) => setVar2(e.target.selectedIndex)}>
-                            {sensorName_ko.map((name) => (
-                                <option key={name}>{name}</option>
-                            ))}
-                        </select>
-                    </div>  
+            //대기질 데이터
+            "stationName": '조사지점명',
+            "dataTime": "측정일",
+            "so2Value": "아황산가스 농도(ppm)",
+            "coValue": "일산화탄소 농도(ppm)",
+            "o3Value": "오존 농도(ppm)",
+            "no2Value": "이산화질소 농도(ppm)",
+            "pm10Value": "미세먼지(PM10) 농도(㎍/㎥)",
+            "pm25Value": "미세먼지(PM2.5)  농도(㎍/㎥)"            
+        };
+        return kor[name] || "";
+    }
+
+    console.log(selectedItems)
+
+    return (
+        <div id="wrap-openapi-div">
+            <h3>
+                <img src={earthImg} 
+                        style={{
+                            width: '3.125rem', 
+                            marginRight: '0.625rem'
+                            }}/>
+                저장한 데이터
+                {category === "water" && " [수질]"}
+                {category === "air" && " [대기질]"}
+                {category === "seed" && " [SEED]"}
+            </h3>
+
+            <div className="wrap-select-type">
+                <div 
+                    className="select-type" 
+                    onClick={() => getMyData('water')}
+                    style={changeStyle('water')}>
+                    수질 데이터
+                </div>
+                <div 
+                    className="select-type" 
+                    onClick={() => getMyData('air')}
+                    style={changeStyle('air')}>
+                    대기질 데이터
+                </div>
+                <div 
+                    className="select-type" 
+                    onClick={() => setCategory('seed')}
+                    style={changeStyle('seed')}>
+                    SEED
                 </div>
             </div>
 
-            <table>
-                <thead>
-                    <tr>
-                        {attribute_ko.map((name) => (
-                            <th key={name}>{name}</th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody>
-                {data.map((item) => (
-                    <tr key={item.id}>
-                        {attribute.map((name) => (
-                        <td key={name}
-                            style={{ background: 
-                                (start === item['measuredDate'] && '#FFDDE4') ||
-                                (end === item['measuredDate'] && '#C7CDFF') ||
-                                'transparent'
-                            }}>
-                            {name === "measuredDate" ? (
-                            <div style={{display: 'flex', 
-                                        justifyContent: 'center',
-                                        alignItems: 'center'}}>
-                                {item[name]}
-                                <div className='startBtn' 
-                                    onClick={() => handleStart(item['measuredDate'])}>시작</div>
-                                <div className='endBtn'
-                                    onClick={() => handleEnd(item['measuredDate'])}>끝</div>
-                            </div>
-                            ) : (
-                            item[name]
-                            )}
-                        </td>
-                        ))}
-                    </tr>
-                ))}
-                </tbody>
-            </table>
             
-            {showIndividual && 
-                <div style={{display: 'flex', flexWrap: 'wrap', width: '100%', justifyContent: 'center'}}>
-                    {individualGraphs}
-                </div>
-            }
+            <div style={{marginTop: '1.875rem'}}>
+                {filteredData.length !== 0 && 
+                    <table border="1" className="myData-table">
+                        <thead>
+                            <tr>
+                                {headers.map((header) => (
+                                    <th key={header}>{engToKor(header)}</th>
+                                ))}
+                                <th>
+                                    <input
+                                        type="checkbox"
+                                        onChange={() => handleFullCheck()}
+                                        checked={isFull}
+                                    ></input>
+                                </th>
+                            </tr>
+                        </thead>
+                        
+                        <tbody>
+                            {filteredData.map((item) => (
+                                <tr key={item.id}>
+                                    {headers.map((header) => (
+                                        <td key={header}>{item[header]}</td>
+                                    ))}
+                                    <td>
+                                        <input
+                                            type="checkbox"
+                                            name={item}
+                                            checked={selectedItems.includes(item)}
+                                            onChange={() => handleViewCheckBoxChange(item)}
+                                        ></input>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                }
+            </div>
+            
+            {category === 'seed' && <MySeedData />}
 
-            {showComparative && 
-                <div style={{display: 'flex', justifyContent: 'center', width: '100%', marginTop: '5rem'}}>
-                    <div style={{width: '70%'}}>
-                        <Line 
-                            data={{
-                                labels: filteredData.map((item) => item.measuredDate),
-                                datasets: [datasets[var1], datasets[var2]]
-                            }} 
-                            options={options} />
-                    </div>
-                </div>
-            }  
         </div>
-    )
+    );
 }
+export default MyData;

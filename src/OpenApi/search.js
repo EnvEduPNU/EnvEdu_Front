@@ -14,7 +14,7 @@ export default function Search() {
     const [headers, setHeaders] = useState([]);
     const [checkedHeaders, setCheckedHeaders] = useState([]);
     const [selectedItems, setSelectedItems] = useState([]);
-    const [isFull, setIsFull] = useState([]);
+    const [isFull, setIsFull] = useState(false);
 
     //dataTerm 선택하기
     const [dataTerm, setDataTerm] = useState('DAILY');
@@ -45,8 +45,11 @@ export default function Search() {
             alert("데이터 저장을 성공했습니다!");
         })
         .catch((err) => {
-            alert("데이터 저장을 실패했습니다.");
-            console.log(err);
+            if (err.response.status === 500) {
+                alert("이미 저장한 데이터입니다.");
+            } else {
+                alert("데이터 저장을 실패했습니다.");
+            }
         });
     };
 
@@ -111,9 +114,9 @@ export default function Search() {
             <div>
                 <label>측정 기간 범위 선택</label>
                 <select onChange={(e) => setDataTerm(e.target.value)}>
-                    <option value="DAILY">DAILY</option>
-                    <option value="MONTH">MONTH</option>
-                    <option value="3MONTH">3MONTH</option>
+                    <option value="DAILY">24시간</option>
+                    <option value="MONTH">1개월</option>
+                    <option value="3MONTH">3개월</option>
                 </select>
                 <span>
                     *선택하지 않으면 default는 24시간(daily)
