@@ -5,8 +5,14 @@ import { Line } from 'react-chartjs-2';
 import data from './data.json';
 
 export default function MySeedData() {
-    const attribute_ko = ['측정 시간', '측정 위치', '소속', '습도', '기온', '탁도', 'pH', '미세먼지', '용존산소량', '이산화탄소', '조도', '토양 습도', '기압'];
+    const attribute_ko = ['측정 시간', '측정 장소', '소속', '습도', '기온', '탁도', 'pH', '미세먼지', '용존산소량', '이산화탄소', '조도', '토양 습도', '기압'];
     const attribute = ['measuredDate', 'location', 'unit', 'hum', 'temp', 'tur', 'ph', 'dust', 'dox', 'co2', 'lux', 'hum_EARTH', 'pre'];
+
+    //const attribute_ko_sensor = ['측정 장소', '측정 시간', '소속', '습도', '기온', '탁도', 'pH', '미세먼지', '용존산소량', '이산화탄소', '조도', '토양 습도', '기압'];
+    //const attribute_sensor = ['location', 'measuredDate', 'unit', 'hum', 'temp', 'tur', 'ph', 'dust', 'dox', 'co2', 'lux', 'hum_EARTH', 'pre'];
+
+    const attribute_ko_location = ['측정 장소', '측정 시간', '소속', '습도', '기온', '탁도', 'pH', '미세먼지', '용존산소량', '이산화탄소', '조도', '토양 습도', '기압'];
+    const attribute_location = ['measuredDate', 'unit', 'hum', 'temp', 'tur', 'ph', 'dust', 'dox', 'co2', 'lux', 'hum_EARTH', 'pre'];
 
     const [start, setStart] = useState(null);
     const [end, setEnd] = useState(null);
@@ -119,6 +125,38 @@ export default function MySeedData() {
         },
     };
 
+    const [selectedButton, setSelectedButton] = useState('reset');
+
+    const handleButtonClick = (button) => {
+        setSelectedButton(button);
+    };
+
+    // 표 재정렬 - 센서 기준
+    const groupedDataBySensor = {};
+    data.forEach((item) => {
+        sensorName.forEach((sensor) => { 
+            if (!groupedDataBySensor[sensor]) {
+                groupedDataBySensor[sensor] = [];
+                if (item[sensor] !== null) {
+                    groupedDataBySensor[sensor].push(item);
+                }
+            } else {
+                if (item[sensor] !== null) {
+                    groupedDataBySensor[sensor].push(item);
+                }
+            }  
+        });
+    });
+
+    //표 재정렬 - 측정 장소 기준 
+    const groupedDataByLoc = {};
+    data.forEach((item) => {
+        if (!groupedDataByLoc[item.location]) {
+            groupedDataByLoc[item.location] = [];
+        }
+        groupedDataByLoc[item.location].push(item);
+    });
+
     return(
         <div className='myData'>
             <div style={{
@@ -131,6 +169,33 @@ export default function MySeedData() {
                 <div className='endBtn' style={{marginLeft: '1rem'}}>끝</div>
                 <div>{end}</div>
             </div>
+
+            <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                marginBottom: '1rem'
+            }}>
+                <label style={{ fontWeight: 'bold' }}>표 재정렬</label>
+                <button
+                    className={`rearrange ${selectedButton === 'reset' ? 'selected' : ''}`}
+                    onClick={() => handleButtonClick('reset')}
+                >
+                    초기화
+                </button>
+                <button
+                    className={`rearrange ${selectedButton === 'sensor' ? 'selected' : ''}`}
+                    onClick={() => handleButtonClick('sensor')}
+                >
+                    센서 기준
+                </button>
+                <button
+                    className={`rearrange ${selectedButton === 'location' ? 'selected' : ''}`}
+                    onClick={() => handleButtonClick('location')}
+                >
+                    측정 장소 기준
+                </button>
+            </div>
+
 
             <div style={{display: 'flex'}}>
                 <label style={{fontWeight: 'bold', marginBottom: '0.5rem'}}>그래프 종류 선택하기</label>
@@ -156,43 +221,103 @@ export default function MySeedData() {
                 </div>
             </div>
 
-            <table>
-                <thead>
-                    <tr>
-                        {attribute_ko.map((name) => (
-                            <th key={name}>{name}</th>
+            {selectedButton === 'reset' && (
+                <table>
+                    <thead>
+                        <tr>
+                            {attribute_ko.map((name) => (
+                                <th key={name}>{name}</th>
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {data.map((item) => (
+                        <tr key={item.id}>
+                            {attribute.map((name) => (
+                            <td key={name}
+                                style={{ background: 
+                                    (start === item['measuredDate'] && '#FFDDE4') ||
+                                    (end === item['measuredDate'] && '#C7CDFF') ||
+                                    'transparent'
+                                }}>
+                                {name === "measuredDate" ? (
+                                <div style={{display: 'flex', 
+                                            justifyContent: 'center',
+                                            alignItems: 'center'}}>
+                                    {item[name]}
+                                    <div className='startBtn' 
+                                        onClick={() => handleStart(item['measuredDate'])}>시작</div>
+                                    <div className='endBtn'
+                                        onClick={() => handleEnd(item['measuredDate'])}>끝</div>
+                                </div>
+                                ) : (
+                                    item[name]
+                                )}
+                            </td>
+                            ))}
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
+            )}
+
+            {selectedButton === 'sensor' && (
+                <table>
+                    <thead>
+                        <tr>
+                            <th>센서명</th>
+                            <th>값</th>
+                            <th>측정 시간</th>
+                            <th>측정 장소</th>
+                            <th>소속</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {Object.keys(groupedDataBySensor).map((sensor) => (
+                            groupedDataBySensor[sensor].map((item, index) => (
+                                <tr key={item.id}>
+                                    {index === 0 && (
+                                        <td rowSpan={groupedDataBySensor[sensor].length}>{attribute_ko[attribute.indexOf(sensor)]}</td>
+                                    )}
+                                    <td key={sensor}>
+                                        {item[sensor] !== null ? item[sensor] : ''}
+                                    </td>
+                                    <td>{item.measuredDate}</td>
+                                    <td>{item.location}</td>
+                                    <td>{item.unit}</td>
+                                </tr>
+                            ))
                         ))}
-                    </tr>
-                </thead>
-                <tbody>
-                {data.map((item) => (
-                    <tr key={item.id}>
-                        {attribute.map((name) => (
-                        <td key={name}
-                            style={{ background: 
-                                (start === item['measuredDate'] && '#FFDDE4') ||
-                                (end === item['measuredDate'] && '#C7CDFF') ||
-                                'transparent'
-                            }}>
-                            {name === "measuredDate" ? (
-                            <div style={{display: 'flex', 
-                                        justifyContent: 'center',
-                                        alignItems: 'center'}}>
-                                {item[name]}
-                                <div className='startBtn' 
-                                    onClick={() => handleStart(item['measuredDate'])}>시작</div>
-                                <div className='endBtn'
-                                    onClick={() => handleEnd(item['measuredDate'])}>끝</div>
-                            </div>
-                            ) : (
-                            item[name]
-                            )}
-                        </td>
+                    </tbody>
+                </table>
+            )}
+
+            {selectedButton === 'location' && (
+                <table>
+                    <thead>
+                        <tr>
+                            {attribute_ko_location.map((name) => (
+                                <th key={name}>{name}</th>
+                            ))}
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {Object.keys(groupedDataByLoc).map((location) => (
+                            groupedDataByLoc[location].map((item, index) => (
+                            <tr key={item.id}>
+                                {index === 0 ? (
+                                    <td rowSpan={groupedDataByLoc[location].length}>{item.location}</td>
+                                ) : null}
+                                {attribute_location.map((attr) => (
+                                    <td>{item[attr]}</td>
+                                ))}
+                            </tr>
+                            ))
                         ))}
-                    </tr>
-                ))}
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            )}
             
             {showIndividual && 
                 <div style={{display: 'flex', flexWrap: 'wrap', width: '100%', justifyContent: 'center'}}>

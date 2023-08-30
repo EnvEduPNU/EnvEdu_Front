@@ -13,12 +13,16 @@ function Water() {
     const [checkedHeaders, setCheckedHeaders] = useState([]);
     const [selectedItems, setSelectedItems] = useState([]);
     const [isFull, setIsFull] = useState(false);
+
+    const [selectedYear, setSelectedYear] = useState('2022');
+    const [selectedMonth, setSelectedMonth] = useState('06');
     
-    //최초 화면 렌더링 시 '수질 데이터' 조회
     useEffect(() => {
-        customAxios.get('/ocean-quality?location=부산')
+        customAxios.get(`/ocean-quality?year=${selectedYear}&months=${selectedMonth}`)
             .then((jsonData) => {
+                setSelectedOption(null); //측정 시점 필터링 조건 바뀌면 조사 지점 필터링이 null('전체') 되게
                 jsonData = jsonData.data;
+                console.log(jsonData);
                 setData(jsonData);
                 setFilteredData(jsonData);
                 
@@ -27,8 +31,9 @@ function Water() {
                 setHeaders(headers);
                 const checkedHeaders = Object.keys(jsonData[0]).filter((key) => key !== 'id');
                 setCheckedHeaders(checkedHeaders);
-            });
-    }, []);
+            })
+            .catch((err) => console.log(err));
+    }, [selectedYear, selectedMonth]);
 
     const options = data.map((station) => ({
         value: station.PTNM,
@@ -137,54 +142,20 @@ function Water() {
 
 
     const years = [];
-    const months = [];
-    const [selectedYear, setSelectedYear] = useState('2022');
-    const [selectedMonth, setSelectedMonth] = useState('6');
 
     for (let year = 1989; year <= 2023; year++) {
         years.push(year);
     }
 
-    for (let month = 1; month <= 12; month++) {
-        months.push(month);
-    }
-    /*
     const months = Array.from({ length: 12 }, (_, index) => {
         const month = (index + 1).toString().padStart(2, '0');
         return month;
     });
-    */
-    useEffect(() => {
-        customAxios.get(`/ocean-quality?year=${selectedYear}&month=${selectedMonth}`)
-        .then((res) => {console.log(res.data); /*setFilteredData(res.data)*/})
-        .catch((err) => console.log(err));
-    }, [selectedYear, selectedMonth]);
-
-    console.log(months)
-    console.log(selectedYear)
-    console.log(selectedMonth)
 
     return (
         <div>
             <div id="wrap-openapi-div">
                 <div style={{marginTop: '1.875rem'}}> 
-                    <label className="filter-label" style={{marginRight: '0.625rem'}}>조사 지점 필터링</label>
-                    {/*조사 지점*/}
-                    <select
-                        value={selectedOption ? selectedOption.PTNM : ''}
-                        onChange={handleSelectChange}
-                        className="air-buttons"
-                    >   
-                        <option key="전체" value="전체">전체</option>
-                        {options.map((option) => (
-                            <option key={option.id} value={option.value}>
-                                {option.label}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-
-                <div style={{marginTop: '1rem'}}> 
                     <label className="filter-label" style={{marginRight: '0.625rem'}}>측정 연도(월) 필터링</label>
                     {/*연도*/}
                     <select
@@ -201,10 +172,28 @@ function Water() {
                     <select
                         value={selectedMonth}
                         onChange={(e) => setSelectedMonth(e.target.value)}
-                        className="air-buttons"> 
+                        className="air-buttons"
+                        style={{marginLeft: '0.5rem'}}> 
                         {months.map((month) => (
                             <option key={month} value={month}>
                                 {month}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                <div style={{marginTop: '1rem'}}> 
+                    <label className="filter-label" style={{marginRight: '0.625rem'}}>조사 지점 필터링</label>
+                    {/*조사 지점*/}
+                    <select
+                        value={selectedOption ? selectedOption.PTNM : ''}
+                        onChange={handleSelectChange}
+                        className="air-buttons"
+                    >   
+                        <option key="전체" value="전체">전체</option>
+                        {options.map((option) => (
+                            <option key={option.id} value={option.value}>
+                                {option.label}
                             </option>
                         ))}
                     </select>

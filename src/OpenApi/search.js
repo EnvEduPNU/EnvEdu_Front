@@ -27,7 +27,6 @@ export default function Search() {
 
             customAxios.get(`/air-quality?stationName=${stationName}&dataTerm=${dataTerm}`)
             .then((res) => {
-                console.log(res.data);
                 setPastData(res.data);
                 const headers = Object.keys(res.data[0]).filter((key) => key !== 'id');
                 setHeaders(headers);

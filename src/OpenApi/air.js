@@ -131,7 +131,7 @@ function Air() {
         <div>
             <div id="wrap-openapi-div">
                 <div style={{marginTop: '1.875rem'}}> 
-                    <label className="filter-label" style={{marginRight: '0.625rem'}}>조사 지점 필터링</label>
+                    <label className="filter-label" style={{marginRight: '0.625rem'}}>측정소명 필터링</label>
                     <select
                         value={selectedOption ? selectedOption.stationName : ''}
                         onChange={handleSelectChange}
