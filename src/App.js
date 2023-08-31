@@ -26,6 +26,7 @@ import ContactUs from './Contact/ContactUs';
 import Resource from './Learnmore/Resource/Resource';
 import Tboard from './Learnmore/Train/Tborad';
 import OpenApi from './OpenApi/OpenApi';
+import OpenApiPast from './OpenApi/openAPIPast';
 import Search from './OpenApi/search';
 import MyData from "./myData/myData";
 
@@ -63,6 +64,7 @@ function App() {
 
           {/*open API*/}
           <Route path="/openAPI" exact={true} element={<OpenApi />} />
+          <Route path="/openAPI/past" exact={true} element={<OpenApiPast />} />
           <Route path="/search" exact={true} element={<Search />} />
           <Route path="/myData" exact={true} element={<MyData />} />
 
