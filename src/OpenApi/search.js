@@ -69,7 +69,7 @@ export default function Search() {
                         onChange={handleSubLocationChange} 
                         value={subLocation}
                         disabled={!location}>
-                            <option value="">선택</option>
+                            <option value="">전체</option>
                         {districts[location] && districts[location].map((subLocation) => (
                             <option key={subLocation} value={subLocation}>{subLocation}</option>
                         ))}

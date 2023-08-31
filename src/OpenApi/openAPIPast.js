@@ -1,6 +1,6 @@
 import './openApIPast.scss';
 import { customAxios } from '../Common/CustomAxios';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 export default function OpenApiPast() {
@@ -21,7 +21,7 @@ export default function OpenApiPast() {
     useEffect(() => {
         if (location.state) {
             customAxios.get(`/air-quality/station?addr=${stationName}`)
-            .then((res) => setStations(res.data))
+            .then((res) => {setStations(res.data); console.log(res.data)})
             .catch((err) => console.log(err));
 
             customAxios.get(`/air-quality?stationName=${stationName}&dataTerm=${dataTerm}`)
@@ -33,7 +33,7 @@ export default function OpenApiPast() {
             })
             .catch((err) => console.log(err));
         }
-    }, [dataTerm]);
+    }, [dataTerm, stationName]);
 
     {/*선택한 데이터 저장하기*/}
     const handleSaveMyData = async (e) => {
@@ -96,6 +96,10 @@ export default function OpenApiPast() {
         <div className='openApIPast-container'>
             {stationName && <h4 style={{marginBottom: '2rem'}}>
                 <span style={{ color: '#f06313', fontWeight: '600' }}>{stationName}</span> 과거 데이터 조회
+                <img src='/assets/img/question.png' style={{marginLeft: '1rem', marginRight: '0.3rem', width : '1rem', height: '1rem'}}/>
+                <span>
+                    <Link to={'/search'} style={{color: "#aaa", fontSize: '1rem'}}>다른 지역의 측정소 조회하기</Link>
+                </span>
             </h4>}
             
             {stations.map((station, index) => (
