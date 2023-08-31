@@ -27,7 +27,13 @@ export default function OpenApi() {
                             marginRight: '0.625rem'
                             }}/>
                     {category === "water" && "수질 데이터 조회"}
-                    {category === "air" && "대기질 데이터 조회"}
+                    {category === "air" && <>
+                        대기질 데이터 조회
+                        <img src='/assets/img/question.png' style={{marginLeft: '1rem', marginRight: '0.3rem', width : '1rem', height: '1rem'}}/>
+                        <span>
+                            <Link to={'/search'} style={{color: "#aaa", fontSize: '1rem'}}>다른 지역의 측정소 조회하기</Link>
+                        </span>
+                    </>}
                 </h3>
 
                 <div className="wrap-select-type">
