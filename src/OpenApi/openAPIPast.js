@@ -1,4 +1,4 @@
-import './OpenApi.scss';
+import './openApIPast.scss';
 import { customAxios } from '../Common/CustomAxios';
 import { useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -93,32 +93,24 @@ export default function OpenApiPast() {
     }
 
     return(
-        <div id="wrap-openapi-div">
-            <h4>측정소 목록 조회</h4>
-            {stationName ? (
-                <p>
-                    <span style={{ color: '#027c2b' }}>{stationName}</span>에 대한 검색 결과
-                </p>
-            ) : (
-                ""
-            )}
-
+        <div className='openApIPast-container'>
+            {stationName && <h4 style={{marginBottom: '2rem'}}>
+                <span style={{ color: '#f06313', fontWeight: '600' }}>{stationName}</span> 과거 데이터 조회
+            </h4>}
+            
             {stations.map((station, index) => (
                 <div key={index}>
-                    측정소 위치 : {station.addr}
+                    <label style={{fontWeight: '600', marginRight: '1rem'}}>측정소 위치</label>{station.addr}
                 </div>
             ))}
-            
-            <div>
-                <label>측정 기간 범위 선택</label>
+
+            <div style={{marginTop: '1rem'}}>
+                <label style={{fontWeight: '600', marginRight: '1rem'}}>측정 기간 범위 선택</label>
                 <select onChange={(e) => setDataTerm(e.target.value)}>
                     <option value="DAILY">24시간</option>
                     <option value="MONTH">1개월</option>
                     <option value="3MONTH">3개월</option>
                 </select>
-                <span>
-                    *선택하지 않으면 default는 24시간(daily)
-                </span>
             </div>
 
             <div style={{marginTop: '1rem'}}>
@@ -159,7 +151,7 @@ export default function OpenApiPast() {
             </div>
 
             {pastData.length !== 0 && 
-                <table border="1" className="openAPI-table">
+                <table border="1" className="openAPIPast-table">
                     <thead>
                         {headers.map((header) => (
                             <th key={header}>{engToKor(header)}</th>
