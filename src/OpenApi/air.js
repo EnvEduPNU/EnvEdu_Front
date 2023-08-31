@@ -203,7 +203,7 @@ function Air() {
                                     {headers.map((header) => (
                                         (header === "stationName" ? (
                                             <td key={header}>
-                                                <Link to={"/search"} state={{ stationName: item[header] }}>
+                                                <Link to={"/openAPI/past"} state={{ stationName: item[header] }}>
                                                     {item[header]}
                                                 </Link>
                                             </td>
