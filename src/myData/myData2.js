@@ -1,17 +1,21 @@
-import { useState, useEffect } from 'react';
+import React, {useState} from "react";
+import {customAxios} from "../Common/CustomAxios";
+import earthImg from "../OpenApi/earth.png";
 import '../OpenApi/OpenApi.scss';
-import { customAxios } from '../Common/CustomAxios';
-import MySeedData from './mySeedData';
+import MySeedData from "./mySeedData";
+import { useEffect } from "react";
 
-import datas from './fakeDB.json';
-
-export default function MyData() {
+export default function MyData2(){
     const [data, setData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const [headers, setHeaders] = useState([]);
     const [selectedItems, setSelectedItems] = useState([]);
     const [isFull, setIsFull] = useState(false);
-    const [category, setCategory] = useState('');
+    const [category, setCategory] = useState('water');
+
+    useEffect(() => {
+        getMyData('water');
+    }, []);
 
     function handleFullCheck(){
         setIsFull(!isFull)
@@ -51,6 +55,14 @@ export default function MyData() {
             });
     };
 
+    const changeStyle = (selectedCategory) => {
+        return {
+            backgroundColor: category === selectedCategory ? '#fff' : '#23273D',
+            color: category === selectedCategory ? '#23273D' : '#fff',
+            border: category === selectedCategory ? '2px solid #23273D' : 'none'
+        };
+    };
+
     //항목 이름 (한국어 -> 영어)
     const engToKor = (name) => {
         const kor = {
@@ -85,39 +97,45 @@ export default function MyData() {
 
     console.log(selectedItems) //데이터 삭제할 때 사용
 
-    return(
+    return (
         <div id="wrap-openapi-div">
             <h3>
-                <img src="/assets/img/folder-icon.png"
+                <img src={earthImg} 
                         style={{
-                            width: '2rem', 
-                            marginRight: '1rem'
+                            width: '3.125rem', 
+                            marginRight: '0.625rem'
                             }}/>
                 저장한 데이터
+                {category === "water" && " [수질]"}
+                {category === "air" && " [대기질]"}
+                {category === "seed" && " [SEED]"}
             </h3>
 
-            <table className='myData-list'>
-                <thead>
-                    <tr>
-                        {Object.keys(datas[0]).map(key => (
-                            <th key={key}>{key}</th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody>
-                    {datas.map(data => (
-                        <tr key={data.id} onClick={() => getMyData(data.data)}>
-                            {Object.values(data).map(value => (
-                                <td key={value}>{value}</td>
-                            ))}
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+            <div className="wrap-select-type">
+                <div 
+                    className="select-type" 
+                    onClick={() => getMyData('water')}
+                    style={changeStyle('water')}>
+                    수질 데이터
+                </div>
+                <div 
+                    className="select-type" 
+                    onClick={() => getMyData('air')}
+                    style={changeStyle('air')}>
+                    대기질 데이터
+                </div>
+                <div 
+                    className="select-type" 
+                    onClick={() => setCategory('seed')}
+                    style={changeStyle('seed')}>
+                    SEED
+                </div>
+            </div>
 
+            
             <div style={{marginTop: '1.875rem'}}>
                 {category !== 'seed' && filteredData.length !== 0 && 
-                    <table border="1" className='myData-list-detail'>
+                    <table border="1" className="myData-table">
                         <thead>
                             <tr>
                                 {headers.map((header) => (
@@ -154,6 +172,7 @@ export default function MyData() {
                 }
                 {category === 'seed' && <MySeedData />}
             </div>
+
         </div>
-    )
+    );
 }
