@@ -28,9 +28,8 @@ import Tboard from './Learnmore/Train/Tborad';
 import OpenApi from './OpenApi/OpenApi';
 import OpenApiPast from './OpenApi/openAPIPast';
 import Search from './OpenApi/search';
-import MyData from "./myData/myData";
+import MyData from './myData/myData';
 
-//import Education from './Education/education';
 import Measure from './Education/Measure/measure';
 import Sample from './Socket/sample';
 
