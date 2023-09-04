@@ -38,17 +38,19 @@ export default function MyData() {
         } else if (type === 'air') {
             path = '/air-quality/mine?username=' + username;
         } 
-
-        customAxios.get(path)
-            .then((jsonData)=>{
-                jsonData = jsonData.data;
-                setData(jsonData);
-                setFilteredData(jsonData);
-                
-                // Set the table headers dynamically
-                const headers = Object.keys(jsonData[0]).filter((key) => key !== 'id' && key !== 'owner');
-                setHeaders(headers);
-            });
+        
+        if (type === 'water' || type === 'air') {
+            customAxios.get(path)
+                .then((jsonData)=>{
+                    jsonData = jsonData.data;
+                    setData(jsonData);
+                    setFilteredData(jsonData);
+                    
+                    // Set the table headers dynamically
+                    const headers = Object.keys(jsonData[0]).filter((key) => key !== 'id' && key !== 'owner');
+                    setHeaders(headers);
+                });
+        }
     };
 
     //항목 이름 (한국어 -> 영어)
@@ -82,7 +84,7 @@ export default function MyData() {
         };
         return kor[name] || "";
     }
-
+    console.log(category)
     console.log(selectedItems) //데이터 삭제할 때 사용
 
     return(
