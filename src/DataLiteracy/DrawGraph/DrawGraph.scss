@@ -1,0 +1,27 @@
+.myData-list {
+  width: 100%;
+  border-collapse: collapse;
+  th {
+    background-color: #348af3;
+  }
+  th,
+  td {
+    border: 1px solid #000;
+    padding: 0.3125rem;
+    text-align: center;
+  }
+  tbody tr:hover {
+    cursor: pointer;
+    background-color: #bae9ff;
+  }
+  tbody tr:nth-child(even) {
+    background-color: rgb(228, 228, 228);
+  }
+  tbody tr:nth-child(even):hover {
+    background-color: #bae9ff;
+  }
+  .checkBox {
+    display: inline-block;
+    margin-left: 10px;
+  }
+}
