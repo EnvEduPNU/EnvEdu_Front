@@ -2,11 +2,21 @@ import { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import "./DrawGraph.scss";
 import GraphSelectionModal from "./GraphSelectionModal";
+import { Bar, Doughnut, Line, Scatter } from "react-chartjs-2";
+import DrawGraph from "./DrawGraph";
 
 function GraphSelection() {
   const [data, setData] = useState([[]]);
   const [isVisibleModal, setIsVisibleModal] = useState(false);
   const [selectedGraph, setSelectedGraph] = useState(-1);
+  const [labels, setLabels] = useState();
+  const [datasets, setDatasets] = useState();
+
+  console.log(datasets);
+  const randomColor = (transparency = 0.5) =>
+    `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${
+      Math.random() * 255
+    }, ${transparency})`;
 
   useEffect(() => {
     const dataLiteracy = JSON.parse(localStorage.getItem("dataLiteracy"));
@@ -20,6 +30,17 @@ function GraphSelection() {
         dataLiteracy.drawGraph.selectedIdx.includes(index)
       );
     });
+    console.log(filterData.slice(1));
+    setLabels(filterData.slice(1).map(d => d[0]));
+    setDatasets(
+      filterData[0].slice(1).map((label, idx) => ({
+        label,
+        data: filterData.slice(1).map(d => d[idx + 1]),
+        backgroundColor: randomColor(),
+        borderColor: randomColor(),
+        borderWidth: 1,
+      }))
+    );
     setData(filterData);
   }, []);
 
@@ -27,9 +48,6 @@ function GraphSelection() {
     setIsVisibleModal(state => !state);
   };
 
-  const drwaGraph = () => {
-    if (selectedGraph === -1) return;
-  };
   return (
     <div className="graph-selection">
       <div className="buttons">
@@ -58,14 +76,16 @@ function GraphSelection() {
             })}
           </tbody>
         </table>
-        {/* <Button onClick={onClickButton}>다음</Button> */}
-        {isVisibleModal && (
-          <GraphSelectionModal
-            setSelectedGraph={setSelectedGraph}
-            setIsVisibleModal={setIsVisibleModal}
-          />
+        {selectedGraph !== -1 && !isVisibleModal && (
+          <DrawGraph data={data} graph={selectedGraph} />
         )}
       </div>
+      {isVisibleModal && (
+        <GraphSelectionModal
+          setSelectedGraph={setSelectedGraph}
+          setIsVisibleModal={setIsVisibleModal}
+        />
+      )}
     </div>
   );
 }
