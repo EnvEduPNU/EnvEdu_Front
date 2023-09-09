@@ -1,4 +1,3 @@
-import { Chart } from "chart.js";
 import { Bar, Bubble, Doughnut, Line, Scatter } from "react-chartjs-2";
 
 function DrawGraph({ data, graph }) {
@@ -16,7 +15,7 @@ function DrawGraph({ data, graph }) {
         type === "bubble"
           ? data
               .slice(1)
-              .map(item => ({ x: item[1], y: item[2], r: item[3] / 50 }))
+              .map(item => ({ x: item[1], y: item[2], r: item[3] / 10 }))
           : type == "scatter"
           ? data.slice(1).map(item => ({ x: item[1], y: item[2] }))
           : data.slice(1).map(item => item[idx + 1]),
@@ -29,20 +28,43 @@ function DrawGraph({ data, graph }) {
     const datasets = createDatasets();
     if (datasets.length > 0) {
       datasets[0].type = "line";
+      datasets[0].yAxisID = "y1"; // 첫 번째 데이터셋(선 그래프)를 첫 번째 y축에 연결
     }
+    if (datasets.length > 1) {
+      datasets[1].yAxisID = "y2"; // 두 번째 데이터셋(막대 그래프)를 두 번째 y축에 연결
+    }
+
     return (
-      <Chart
-        type="bar"
+      <Bar
         data={{
           labels,
           datasets,
+        }}
+        options={{
+          scales: {
+            y1: {
+              beginAtZero: true,
+              position: "left",
+              id: "y1",
+            },
+            y2: {
+              beginAtZero: true,
+              position: "right",
+              grid: {
+                drawOnChartArea: false, // 오른쪽 y축의 그리드 라인을 숨김
+              },
+              display: true,
+            },
+          },
+          responsive: true,
+          maintainAspectRatio: false,
         }}
       />
     );
   };
 
   return (
-    <div style={{ width: "600px", height: "400px" }}>
+    <div style={{ width: "800px", height: "400px" }}>
       {graph === 0 && (
         <Bar
           data={{

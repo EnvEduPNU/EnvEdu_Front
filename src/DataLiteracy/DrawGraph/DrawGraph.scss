@@ -35,6 +35,10 @@
       width: fit-content;
     }
   }
+  .data-list {
+    display: flex;
+    gap: 40px;
+  }
 }
 
 .graph-selection-modal {
