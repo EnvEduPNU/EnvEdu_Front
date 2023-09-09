@@ -15,6 +15,10 @@ function GraphSelectionModal({
     "산점도",
     "막대와 꺽은선의 혼합 그래프",
   ];
+  const onClickCreateGraphBtn = () => {
+    // localStorage.setItem("");
+    setIsVisibleModal(state => !state);
+  };
   return (
     <>
       <div
@@ -36,9 +40,7 @@ function GraphSelectionModal({
               </div>
             ))}
           </div>
-          <Button onClick={() => setIsVisibleModal(state => !state)}>
-            그래프 생성하기
-          </Button>
+          <Button onClick={onClickCreateGraphBtn}>그래프 생성하기</Button>
         </div>
       </div>
       ;

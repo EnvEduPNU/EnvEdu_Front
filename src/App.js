@@ -34,8 +34,7 @@ import Measure from "./Education/Measure/measure";
 import Sample from "./Socket/sample";
 
 import MeasureContinuous from "./Education/Measure/measure_continuous";
-import VariableSelection from "./DataLiteracy/DrawGraph/VariableSelection";
-import GraphSelection from "./DataLiteracy/DrawGraph/GraphSelection";
+import DrawGraph from "./DataLiteracy/DrawGraph/DrawGraph";
 
 function App() {
   /**
@@ -123,10 +122,11 @@ function App() {
           <Route path="/contactus" exact={true} element={<ContactUs />} />
 
           {/*DataLiteracy */}
-          <Route path="/dataLiteracy/drawGraph">
-            <Route path="1" element={<VariableSelection />} />
-            <Route path="2" element={<GraphSelection />} />
-          </Route>
+          <Route
+            path="/dataLiteracy/drawGraph"
+            exact={true}
+            element={<DrawGraph />}
+          />
         </Routes>
       </div>
       <Footer />

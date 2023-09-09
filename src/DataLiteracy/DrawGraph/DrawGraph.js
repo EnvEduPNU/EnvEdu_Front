@@ -1,118 +1,75 @@
-import { Bar, Bubble, Doughnut, Line, Scatter } from "react-chartjs-2";
+import { useEffect, useState } from "react";
+import "./DrawGraph.scss";
+import Stepper from "../common/Stepper/Stepper";
+import VariableSelection from "./VariableSelection";
+import GraphSelection from "./GraphSelection";
+import { Button } from "react-bootstrap";
+import { useSelectedVariable } from "../store/drawGraphStore";
 
-function DrawGraph({ data, graph }) {
-  const labels = data.slice(1).map(item => item[0]);
+function DrawGraph() {
+  const [activeStep, setActiveStep] = useState(1);
+  const { selectedVariable } = useSelectedVariable();
+  useEffect(() => {
+    const currStep = JSON.parse(localStorage.getItem("dataLiteracy")).step;
+    setActiveStep(currStep ? currStep : 1);
+  }, []);
 
-  const randomColor = (transparency = 0.5) =>
-    `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${
-      Math.random() * 255
-    }, ${transparency})`;
+  const steps = [
+    "변인 선택",
+    "그래프 유형 선택",
+    "축 및 스케일",
+    "레이블,제목 범례",
+  ];
 
-  const createDatasets = (type = "bar") =>
-    data[0].slice(1).map((label, idx) => ({
-      label,
-      data:
-        type === "bubble"
-          ? data
-              .slice(1)
-              .map(item => ({ x: item[1], y: item[2], r: item[3] / 10 }))
-          : type == "scatter"
-          ? data.slice(1).map(item => ({ x: item[1], y: item[2] }))
-          : data.slice(1).map(item => item[idx + 1]),
-      backgroundColor: randomColor(),
-      borderColor: randomColor(),
-      borderWidth: 1,
-    }));
-
-  const MixedChartComponent = () => {
-    const datasets = createDatasets();
-    if (datasets.length > 0) {
-      datasets[0].type = "line";
-      datasets[0].yAxisID = "y1"; // 첫 번째 데이터셋(선 그래프)를 첫 번째 y축에 연결
+  const Step = () => {
+    switch (activeStep) {
+      case 1:
+        return <VariableSelection />;
+      case 2:
+        return <GraphSelection />;
     }
-    if (datasets.length > 1) {
-      datasets[1].yAxisID = "y2"; // 두 번째 데이터셋(막대 그래프)를 두 번째 y축에 연결
-    }
-
-    return (
-      <Bar
-        data={{
-          labels,
-          datasets,
-        }}
-        options={{
-          scales: {
-            y1: {
-              beginAtZero: true,
-              position: "left",
-              id: "y1",
-            },
-            y2: {
-              beginAtZero: true,
-              position: "right",
-              grid: {
-                drawOnChartArea: false, // 오른쪽 y축의 그리드 라인을 숨김
-              },
-              display: true,
-            },
-          },
-          responsive: true,
-          maintainAspectRatio: false,
-        }}
-      />
-    );
   };
 
+  const onClickPrevButton = () => {
+    if (activeStep === 1) {
+      return;
+    }
+
+    const dataLiteracy = JSON.parse(localStorage.getItem("dataLiteracy"));
+    localStorage.setItem(
+      "dataLiteracy",
+      JSON.stringify({
+        ...dataLiteracy,
+        step: 2,
+      })
+    );
+    setActiveStep(state => state - 1);
+  };
+  const onClickNextBtn = () => {
+    if (activeStep === 1) {
+      localStorage.setItem(
+        "dataLiteracy",
+        JSON.stringify({
+          drawGraph: { selectedIdx: selectedVariable },
+          step: 2,
+        })
+      );
+    }
+
+    if (activeStep === steps.length) {
+      return;
+    }
+
+    setActiveStep(state => state + 1);
+  };
   return (
-    <div style={{ width: "800px", height: "400px" }}>
-      {graph === 0 && (
-        <Bar
-          data={{
-            labels,
-            datasets: createDatasets("bar"),
-          }}
-        />
-      )}
-      {graph === 1 && (
-        <Line
-          data={{
-            labels,
-            datasets: createDatasets("line"),
-          }}
-        />
-      )}
-      {graph === 2 && (
-        <Bubble
-          data={{
-            labels,
-            datasets: createDatasets("bubble"),
-          }}
-        />
-      )}
-      {graph === 3 && (
-        <Doughnut
-          data={{
-            labels,
-            datasets: createDatasets("doughnut"),
-          }}
-        />
-      )}
-      {graph === 4 && (
-        <Scatter
-          data={{
-            datasets: createDatasets("scatter"),
-          }}
-          options={{
-            scales: {
-              x: {
-                type: "linear",
-                position: "bottom",
-              },
-            },
-          }}
-        />
-      )}
-      {graph === 5 && <MixedChartComponent />}
+    <div className="draw-graph">
+      <Stepper steps={steps} activeStep={activeStep} />
+      <Step />
+      <div className="buttonWrapper">
+        <Button onClick={onClickPrevButton}>이전</Button>
+        <Button onClick={onClickNextBtn}>다음</Button>
+      </div>
     </div>
   );
 }
