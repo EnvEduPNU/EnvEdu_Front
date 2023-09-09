@@ -47,6 +47,7 @@ function VariableSelection() {
     localStorage.setItem(
       "dataLiteracy",
       JSON.stringify({
+        sampleData: data,
         drawGraph: {
           selectedIdx,
         },
