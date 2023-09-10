@@ -6,7 +6,7 @@
     width: 100%;
     display: flex;
     gap: 10px;
-    justify-content: end;
+    justify-content: flex-end;
   }
 }
 
@@ -41,7 +41,7 @@
 .graph-selection {
   .buttons {
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
     button {
       font-size: 14px;
       width: fit-content;

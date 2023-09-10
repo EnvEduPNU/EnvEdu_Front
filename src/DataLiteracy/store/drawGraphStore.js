@@ -1,9 +1,9 @@
 import { create } from "zustand";
 
 export const useSelectedVariable = create(set => ({
-  selectedVariable: JSON.parse(localStorage.getItem("dataLiteracy"))?.drawGraph
-    ?.selectedIdx
-    ? JSON.parse(localStorage.getItem("dataLiteracy"))?.drawGraph?.selectedIdx
+  selectedVariable: JSON.parse(localStorage.getItem("drawGraph"))
+    ?.selectedVariable
+    ? JSON.parse(localStorage.getItem("drawGraph"))?.selectedVariable
     : [],
   changeSelectedVariable: variableIdx =>
     set(state => {

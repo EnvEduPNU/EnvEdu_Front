@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "react-bootstrap";
 import "./DrawGraph.scss";
 import GraphSelectionModal from "./GraphSelectionModal";
@@ -6,31 +6,20 @@ import SelectedGraph from "./SelectedGraph";
 import { data } from "../sampleData/sampleData";
 
 function GraphSelection() {
-  const filterData = data.map((row, idx) => {
-    return row.filter((col, index) =>
-      JSON.parse(
-        localStorage.getItem("dataLiteracy")
-      ).drawGraph.selectedIdx.includes(index)
+  const localStorageData = JSON.parse(localStorage.getItem("drawGraph")) || {};
+
+  const filterData = data.map(row => {
+    return row.filter((_, index) =>
+      localStorageData.selectedVariable?.includes(index)
     );
   });
+
+  // 초기 상태 값 설정
+  const initialSelectedGraph =
+    localStorageData.selectedGraph > -1 ? localStorageData.selectedGraph : -1;
+
   const [isVisibleModal, setIsVisibleModal] = useState(false);
-  const [selectedGraph, setSelectedGraph] = useState(-1);
-
-  // useEffect(() => {
-  //   const dataLiteracy = JSON.parse(localStorage.getItem("dataLiteracy"));
-  //   if (dataLiteracy === null) {
-  //     // TODO: null일때 어떻게 할지 고민...
-  //     return;
-  //   }
-
-  //   const filterData = dataLiteracy.sampleData.map((row, idx) => {
-  //     return row.filter((col, index) =>
-  //       dataLiteracy.drawGraph.selectedIdx.includes(index)
-  //     );
-  //   });
-
-  //   setData(filterData);
-  // }, []);
+  const [selectedGraph, setSelectedGraph] = useState(initialSelectedGraph);
 
   const onClickGraphSelectionBtn = () => {
     setIsVisibleModal(state => !state);
@@ -52,20 +41,17 @@ function GraphSelection() {
             </tr>
           </thead>
           <tbody>
-            {filterData?.map((d, idx) => {
-              if (idx < 1) return;
-              return (
-                <tr key={idx}>
-                  {d.map(key => (
-                    <td key={key}>{key}</td>
-                  ))}
-                </tr>
-              );
-            })}
+            {filterData.slice(1).map((d, idx) => (
+              <tr key={idx}>
+                {d.map(key => (
+                  <td key={key}>{key}</td>
+                ))}
+              </tr>
+            ))}
           </tbody>
         </table>
 
-        {selectedGraph !== -1 && !isVisibleModal && (
+        {selectedGraph !== -1 && (
           <div className="graph">
             <SelectedGraph data={filterData} graph={selectedGraph} />
           </div>
