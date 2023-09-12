@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './Header.css';
 import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { customAxios } from '../Common/CustomAxios';
 
 function Header() {
@@ -14,9 +14,11 @@ function Header() {
   /**
    * 로그아웃 성공 시, 단순히 한 번 새로고침해 UI에 변경 반영
    */
+  const navigate = useNavigate('');
   function logout() {
     customAxios.post('/logout').then(() => {
       localStorage.clear();
+      navigate('/');
       window.location.reload();
     });
   }
@@ -98,6 +100,9 @@ function Header() {
                 </NavLink>
                 <NavLink className={'nav-link'} to="/openapi">
                   Open Api Data
+                </NavLink>
+                <NavLink className={'nav-link'} to="/socket">
+                  SEEd 측정 기기
                 </NavLink>
               </NavDropdown>
               <NavDropdown
