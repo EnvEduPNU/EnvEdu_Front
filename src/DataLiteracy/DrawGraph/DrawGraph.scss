@@ -48,11 +48,19 @@
     }
   }
   .data-list {
-    display: flex;
-    gap: 40px;
+    // display: grid;
+    // gap: 40px;
+    // grid-template-columns: repeat(2, 1fr);
     .graph {
-      align-self: center;
+      height: 100%;
+      display: flex;
+      align-items: center;
     }
+  }
+  .data-list.grid {
+    display: grid;
+    gap: 40px;
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 

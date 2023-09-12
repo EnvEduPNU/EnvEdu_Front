@@ -31,11 +31,11 @@ function GraphSelection() {
         <Button>추천 그래프 유형</Button>
         <Button onClick={onClickGraphSelectionBtn}>그래프 선택하기</Button>
       </div>
-      <div className="data-list">
+      <div className={selectedGraph !== -1 ? "data-list grid" : "data-list"}>
         <table className="myData-list">
           <thead>
             <tr>
-              {filterData[0]?.map((key, idx) => (
+              {filterData[0].map((key, idx) => (
                 <th key={key}>{key}</th>
               ))}
             </tr>
