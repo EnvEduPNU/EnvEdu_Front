@@ -150,7 +150,7 @@ function SocketConnect(props) {
             setSaveData([...saveData]);
             if (saveData.length === 5) {
                 console.log(saveData) //확인
-                customAxios.post("/user/save", {data: saveData}).then().catch(() => {
+                customAxios.post("/seed/save/continuous", {data: saveData}).then().catch(() => {
                     disconnect();
                 });
                 saveData.splice(0, saveData.length);
