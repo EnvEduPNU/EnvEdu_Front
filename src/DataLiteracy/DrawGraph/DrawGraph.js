@@ -5,6 +5,7 @@ import VariableSelection from "./VariableSelection";
 import GraphSelection from "./GraphSelection";
 import { Button } from "react-bootstrap";
 import { useSelectedVariable } from "../store/drawGraphStore";
+import ChartAxisScaleEditor from "./ChartAxisScaleEditor";
 
 function DrawGraph() {
   const localStorageData = JSON.parse(localStorage.getItem("drawGraph"));
@@ -23,24 +24,22 @@ function DrawGraph() {
   const onClickPrevButton = () => {
     if (activeStep === 1) return;
 
-    if (activeStep === 2) {
-      const drawGraph = JSON.parse(localStorage.getItem("drawGraph"));
-      localStorage.setItem(
-        "drawGraph",
-        JSON.stringify({
-          ...drawGraph,
-          step: 1,
-        })
-      );
-    }
+    const drawGraph = JSON.parse(localStorage.getItem("drawGraph"));
+    localStorage.setItem(
+      "drawGraph",
+      JSON.stringify({
+        ...drawGraph,
+        step: activeStep - 1,
+      })
+    );
+
     setActiveStep(state => state - 1);
   };
 
   const onClickNextBtn = () => {
     if (activeStep === steps.length) return;
-
+    const drawGraph = JSON.parse(localStorage.getItem("drawGraph"));
     if (activeStep === 1) {
-      const drawGraph = JSON.parse(localStorage.getItem("drawGraph"));
       if (drawGraph) {
         //이미 있다면 1단계보다 높은 스텝에서 이전 버튼으로 온것임
         localStorage.setItem(
@@ -60,7 +59,17 @@ function DrawGraph() {
           })
         );
       }
+      setActiveStep(state => state + 1);
+      return;
     }
+    localStorage.setItem(
+      "drawGraph",
+      JSON.stringify({
+        ...drawGraph,
+        selectedVariable,
+        step: activeStep + 1,
+      })
+    );
     setActiveStep(state => state + 1);
   };
 
@@ -70,6 +79,8 @@ function DrawGraph() {
         return <VariableSelection />;
       case 2:
         return <GraphSelection />;
+      case 3:
+        return <ChartAxisScaleEditor />;
       default:
         return;
     }

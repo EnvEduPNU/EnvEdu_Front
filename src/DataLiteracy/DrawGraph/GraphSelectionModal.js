@@ -2,6 +2,7 @@ import { Button } from "react-bootstrap";
 import "./DrawGraph.scss";
 import FormCheckInput from "react-bootstrap/esm/FormCheckInput";
 import { useState } from "react";
+import ExampleGraph from "./ExampleGraph";
 
 function GraphSelectionModal({
   setSelectedGraph,
@@ -18,7 +19,6 @@ function GraphSelectionModal({
     "막대와 꺽은선의 혼합 그래프",
   ];
   const onClickCreateGraphBtn = () => {
-    // localStorage.setItem("");
     const drawGraph = JSON.parse(localStorage.getItem("drawGraph"));
 
     localStorage.setItem(
@@ -44,12 +44,15 @@ function GraphSelectionModal({
           <div className="graphs">
             {graphs.map((graph, idx) => (
               <div className="graph" key={idx + graph}>
-                <FormCheckInput
-                  checked={graphIdx === idx}
-                  id={graph}
-                  onChange={() => setGraphIdx(idx)}
-                />
-                <span>{graph}</span>
+                <ExampleGraph type={idx} />
+                <div className="checkboxGraph">
+                  <FormCheckInput
+                    checked={graphIdx === idx}
+                    id={graph}
+                    onChange={() => setGraphIdx(idx)}
+                  />
+                  <span>{graph}</span>
+                </div>
               </div>
             ))}
           </div>

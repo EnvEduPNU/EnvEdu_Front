@@ -68,7 +68,7 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -30%);
   .block {
     background-color: #fff;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
@@ -82,14 +82,18 @@
       margin-bottom: 10px;
     }
     .graphs {
-      width: 300px;
-      max-width: 300px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
+      width: 450px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
       .graph {
-        display: flex;
-        gap: 5px;
+        img {
+          width: 80px;
+          height: 80px;
+        }
+        .checkboxGraph {
+          display: flex;
+          gap: 5px;
+        }
       }
       margin-bottom: 30px;
     }
