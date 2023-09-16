@@ -110,14 +110,6 @@ function SelectedGraph({ data, graph }) {
             labels,
             datasets: createDatasets("line"),
           }}
-          // options={{
-          //   scales: {
-          //     y: {
-          //       min: 0,
-          //       max: 1000,
-          //     },
-          //   },
-          // }}
         />
       )}
       {graph === 2 && (
