@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { FormCheck, InputGroup } from "react-bootstrap";
-import "./DrawGraph.scss";
 import { Bar } from "react-chartjs-2";
 
 function BarAxisScaleEditor({ data, qualitativeVariableIdx }) {
@@ -102,7 +101,7 @@ function BarAxisScaleEditor({ data, qualitativeVariableIdx }) {
   };
 
   return (
-    <div className="barAxisScaleEditor">
+    <div className="barAxisScaleEditor axisScaleEditor">
       <div className="variables-checkBox">
         <span className="title">X축: </span>
         <div className="variables">

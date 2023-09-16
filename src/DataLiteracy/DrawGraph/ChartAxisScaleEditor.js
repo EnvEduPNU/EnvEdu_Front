@@ -1,5 +1,6 @@
 import { data } from "../sampleData/sampleData";
-import BarAxisScaleEditor from "./BarAxisScaleEditor";
+import BarAxisScaleEditor from "./AxisScaleEditor/BarAxisScaleEditor";
+import LineAxisScaleEditor from "./AxisScaleEditor/LineAxisScaleEditor";
 
 function ChartAxisScaleEditor() {
   const localStorageData = JSON.parse(localStorage.getItem("drawGraph")) || {};
@@ -31,7 +32,7 @@ function ChartAxisScaleEditor() {
           ))}
         </tbody>
       </table>
-      <BarAxisScaleEditor
+      <LineAxisScaleEditor
         data={filterData}
         qualitativeVariableIdx={qualitativeVariableIdx}
       />
