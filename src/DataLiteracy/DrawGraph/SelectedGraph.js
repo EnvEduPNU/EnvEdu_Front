@@ -93,6 +93,7 @@ function SelectedGraph({ data, graph }) {
     );
   };
 
+  console.log(createDatasets("line"));
   return (
     <>
       {graph === 0 && (
@@ -109,6 +110,14 @@ function SelectedGraph({ data, graph }) {
             labels,
             datasets: createDatasets("line"),
           }}
+          // options={{
+          //   scales: {
+          //     y: {
+          //       min: 0,
+          //       max: 1000,
+          //     },
+          //   },
+          // }}
         />
       )}
       {graph === 2 && (

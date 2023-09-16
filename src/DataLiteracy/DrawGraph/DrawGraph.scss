@@ -114,3 +114,47 @@
   height: -webkit-fill-available;
   background: rgba(0, 0, 0, 0.6);
 }
+
+.variables-checkBox {
+  display: flex;
+  gap: 20px;
+  .variables {
+    display: flex;
+    gap: 20px;
+    .variable {
+      display: flex;
+      gap: 5px;
+
+      cursor: pointer;
+    }
+    .disabled {
+      text-decoration: line-through;
+    }
+  }
+}
+
+.chartAxisScaleEditor {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 40px;
+}
+
+.barAxisScaleEditor {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  .scale-input-group {
+    display: flex;
+    gap: 20px;
+    label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      input {
+        width: 100px;
+        font-size: 16px;
+      }
+    }
+  }
+}
