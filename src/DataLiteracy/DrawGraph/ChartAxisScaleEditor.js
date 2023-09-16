@@ -2,6 +2,7 @@ import { data } from "../sampleData/sampleData";
 import BarAxisScaleEditor from "./AxisScaleEditor/BarAxisScaleEditor";
 import BubbleAxisScaleEditor from "./AxisScaleEditor/BubbleAxisScaleEditor";
 import LineAxisScaleEditor from "./AxisScaleEditor/LineAxisScaleEditor";
+import MixChartAxisScaleEditor from "./AxisScaleEditor/MixChartAxisScaleEditor";
 import ScatterAxisScaleEditor from "./AxisScaleEditor/ScatterAxisScaleEditor";
 
 function ChartAxisScaleEditor() {
@@ -34,7 +35,7 @@ function ChartAxisScaleEditor() {
           ))}
         </tbody>
       </table>
-      <ScatterAxisScaleEditor
+      <MixChartAxisScaleEditor
         data={filterData}
         qualitativeVariableIdx={qualitativeVariableIdx}
       />
