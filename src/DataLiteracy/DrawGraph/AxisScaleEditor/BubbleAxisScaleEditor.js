@@ -22,24 +22,25 @@ function BubbleAxisScaleEditor({ data, qualitativeVariableIdx }) {
 
   const variables = data[qualitativeVariableIdx];
 
-  const onChange = (setSelected, idx) => {
-    if (idx == qualitativeVariableIdx) {
+  const onChange = (selected, setSelected, idx) => {
+    if (idx === qualitativeVariableIdx) {
       alert("만들 수 없는 그래프 유형입니다.");
       return;
     }
-    setSelected(idx);
+    if (selected === idx) setSelected(-1);
+    else setSelected(idx);
   };
 
   const onChangeSelectedX = idx => {
-    onChange(setSelectedX, idx);
+    onChange(selectedX, setSelectedX, idx);
   };
 
   const onChangeSelectedY = idx => {
-    onChange(setSelectedY, idx);
+    onChange(selectedY, setSelectedY, idx);
   };
 
   const onChangeSelectedR = idx => {
-    onChange(setSelectedR, idx);
+    onChange(selectedR, setSelectedR, idx);
   };
 
   const randomColor = (transparency = 0.5) =>

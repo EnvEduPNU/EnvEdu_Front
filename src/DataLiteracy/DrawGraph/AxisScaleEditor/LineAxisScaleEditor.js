@@ -49,7 +49,7 @@ function LineAxisScaleEditor({ data, qualitativeVariableIdx }) {
       Math.random() * 255
     }, ${transparency})`;
 
-  const createDataset = () => {
+  const datasets = () => {
     if (selectedX.includes(qualitativeVariableIdx)) {
       //x축에 질적 변인이 있다면 y축에 양적변인이 다 있음
       const yData = data[0].filter((label, idx) => selectedY.includes(idx));
@@ -154,7 +154,7 @@ function LineAxisScaleEditor({ data, qualitativeVariableIdx }) {
             <Line
               data={{
                 labels: data.slice(1).map(item => item[0]),
-                datasets: createDataset(),
+                datasets: datasets(),
               }}
               options={createOptions()}
             />

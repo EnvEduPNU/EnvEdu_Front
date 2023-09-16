@@ -4,13 +4,13 @@ import { Scatter } from "react-chartjs-2";
 
 function ScatterAxisScaleEditor({ data, qualitativeVariableIdx }) {
   /* X축 관련 상태*/
-  const [selectedX, setSelectedX] = useState([]);
+  const [selectedX, setSelectedX] = useState(-1);
   const [minXValue, setMinXValue] = useState(0);
   const [maxXValue, setMaxXValue] = useState(0);
   const [xStepSize, setXStepSize] = useState(0);
 
   /* Y축 관련 상태 */
-  const [selectedY, setSelectedY] = useState([]);
+  const [selectedY, setSelectedY] = useState(-1);
   const [minYValue, setMinYValue] = useState(0);
   const [maxYValue, setMaxYValue] = useState(0);
   const [yStepSize, setYStepSize] = useState(0);
@@ -18,35 +18,19 @@ function ScatterAxisScaleEditor({ data, qualitativeVariableIdx }) {
   const variables = data[qualitativeVariableIdx];
 
   const onChange = (selected, setSelected, idx) => {
-    if (selected.includes(idx)) {
-      setSelected(state => state.filter(s => s !== idx));
-      return;
-    }
-
-    if (
-      selected.includes(qualitativeVariableIdx) ||
-      (idx == qualitativeVariableIdx && selected.length > 0)
-    ) {
-      alert("질적변인과 양적변인을 동시에 선택할 수 없습니다.");
-      return;
-    }
-
-    setSelected(state => [...state, idx]);
-  };
-
-  const onChangeSelectedX = idx => {
-    if (idx == qualitativeVariableIdx) {
+    if (idx === qualitativeVariableIdx) {
       alert("만들 수 없는 그래프 유형입니다.");
       return;
     }
+    if (selected === idx) setSelected(-1);
+    else setSelected(idx);
+  };
+
+  const onChangeSelectedX = idx => {
     onChange(selectedX, setSelectedX, idx);
   };
 
   const onChangeSelectedY = idx => {
-    if (idx == qualitativeVariableIdx) {
-      alert("만들 수 없는 그래프 유형입니다.");
-      return;
-    }
     onChange(selectedY, setSelectedY, idx);
   };
 
@@ -60,8 +44,8 @@ function ScatterAxisScaleEditor({ data, qualitativeVariableIdx }) {
       {
         label: "산점도 그래프",
         data: data.slice(1).map(item => ({
-          x: item[selectedX[0]],
-          y: item[selectedY[0]],
+          x: item[selectedX],
+          y: item[selectedY],
           label: item[qualitativeVariableIdx],
         })),
         backgroundColor: randomColor(),
@@ -100,14 +84,12 @@ function ScatterAxisScaleEditor({ data, qualitativeVariableIdx }) {
         <div className="variables">
           {variables.map((variable, idx) => (
             <label
-              className={
-                !selectedY.includes(idx) ? "variable" : "variable disabled"
-              }
+              className={selectedY !== idx ? "variable" : "variable disabled"}
               key={variable}
             >
               <FormCheck
-                disabled={selectedY.includes(idx)}
-                checked={selectedX.includes(idx)}
+                disabled={selectedY === idx}
+                checked={selectedX === idx}
                 onChange={() => onChangeSelectedX(idx)}
               />
               <span>{variable}</span>
@@ -120,14 +102,12 @@ function ScatterAxisScaleEditor({ data, qualitativeVariableIdx }) {
         <div className="variables">
           {variables.map((variable, idx) => (
             <label
-              className={
-                !selectedX.includes(idx) ? "variable" : "variable disabled"
-              }
+              className={selectedX !== idx ? "variable" : "variable disabled"}
               key={variable}
             >
               <FormCheck
-                disabled={selectedX.includes(idx) ? true : false}
-                checked={selectedY.includes(idx)}
+                disabled={selectedX === idx ? true : false}
+                checked={selectedY === idx}
                 onChange={() => onChangeSelectedY(idx)}
               />
               <span>{variable}</span>
@@ -191,7 +171,7 @@ function ScatterAxisScaleEditor({ data, qualitativeVariableIdx }) {
       </InputGroup>
 
       <div className="chart">
-        {selectedX.length > 0 && selectedY.length > 0 && (
+        {selectedX > -1 && selectedY > -1 && (
           <Scatter
             data={{ datasets: createDataset() }}
             options={createOptions()}

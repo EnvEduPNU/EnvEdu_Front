@@ -34,7 +34,7 @@ function ChartAxisScaleEditor() {
           ))}
         </tbody>
       </table>
-      <BubbleAxisScaleEditor
+      <ScatterAxisScaleEditor
         data={filterData}
         qualitativeVariableIdx={qualitativeVariableIdx}
       />
