@@ -1,13 +1,19 @@
 import { useState } from "react";
 import { FormCheck, InputGroup } from "react-bootstrap";
-import { Bar, Line } from "react-chartjs-2";
+import { Scatter } from "react-chartjs-2";
 
-function LineAxisScaleEditor({ data, qualitativeVariableIdx }) {
+function ScatterAxisScaleEditor({ data, qualitativeVariableIdx }) {
+  /* X축 관련 상태*/
   const [selectedX, setSelectedX] = useState([]);
+  const [minXValue, setMinXValue] = useState(0);
+  const [maxXValue, setMaxXValue] = useState(0);
+  const [xStepSize, setXStepSize] = useState(0);
+
+  /* Y축 관련 상태 */
   const [selectedY, setSelectedY] = useState([]);
-  const [minValue, setMinValue] = useState(0);
-  const [maxValue, setMaxValue] = useState(0);
-  const [stepSize, setStepSize] = useState(0);
+  const [minYValue, setMinYValue] = useState(0);
+  const [maxYValue, setMaxYValue] = useState(0);
+  const [yStepSize, setYStepSize] = useState(0);
 
   const variables = data[qualitativeVariableIdx];
 
@@ -29,7 +35,7 @@ function LineAxisScaleEditor({ data, qualitativeVariableIdx }) {
   };
 
   const onChangeSelectedX = idx => {
-    if (idx != qualitativeVariableIdx) {
+    if (idx == qualitativeVariableIdx) {
       alert("만들 수 없는 그래프 유형입니다.");
       return;
     }
@@ -50,36 +56,45 @@ function LineAxisScaleEditor({ data, qualitativeVariableIdx }) {
     }, ${transparency})`;
 
   const createDataset = () => {
-    if (selectedX.includes(qualitativeVariableIdx)) {
-      //x축에 질적 변인이 있다면 y축에 양적변인이 다 있음
-      const yData = data[0].filter((label, idx) => selectedY.includes(idx));
-
-      return yData.map((label, idx) => ({
-        label,
-        data: data.slice(1).map(item => item[idx + 1]),
+    return [
+      {
+        label: "산점도 그래프",
+        data: data.slice(1).map(item => ({
+          x: item[selectedX[0]],
+          y: item[selectedY[0]],
+          label: item[qualitativeVariableIdx],
+        })),
         backgroundColor: randomColor(),
+        borderColor: randomColor(),
         borderWidth: 1,
-      }));
-    }
+      },
+    ];
   };
 
   const createOptions = () => {
     return {
       scales: {
-        y: {
-          min: minValue,
-          max: maxValue,
+        x: {
+          min: minXValue,
+          max: maxXValue,
           ticks: {
-            stepSize: stepSize,
+            stepSize: xStepSize,
+            autoSkip: false,
+          },
+        },
+        y: {
+          min: minYValue,
+          max: maxYValue,
+          ticks: {
+            stepSize: yStepSize,
             autoSkip: false,
           },
         },
       },
     };
   };
-
   return (
-    <div className="lineAxisScaleEditor axisScaleEditor">
+    <div className="scatterAxisScaleEditor axisScaleEditor">
       <div className="variables-checkBox">
         <span className="title">X축: </span>
         <div className="variables">
@@ -121,12 +136,13 @@ function LineAxisScaleEditor({ data, qualitativeVariableIdx }) {
         </div>
       </div>
       <InputGroup className="scale-input-group">
+        <span className="subTitle">X축 스케일: </span>
         <label>
           <span>최솟값</span>
           <input
             // placeholder="Min Value"
             type="number"
-            onChange={e => setMinValue(Math.round(e.target.value))}
+            onChange={e => setMinXValue(Math.round(e.target.value))}
           />
         </label>
         <label>
@@ -134,7 +150,7 @@ function LineAxisScaleEditor({ data, qualitativeVariableIdx }) {
           <input
             // placeholder="Max Value"
             type="number"
-            onChange={e => setMaxValue(Math.round(e.target.value))}
+            onChange={e => setMaxXValue(Math.round(e.target.value))}
           />
         </label>
         <label>
@@ -142,26 +158,48 @@ function LineAxisScaleEditor({ data, qualitativeVariableIdx }) {
           <input
             // placeholder="Step Size"
             type="number"
-            onChange={e => setStepSize(Math.round(e.target.value))}
+            onChange={e => setXStepSize(Math.round(e.target.value))}
+          />
+        </label>
+      </InputGroup>
+      <InputGroup className="scale-input-group">
+        <span className="subTitle">Y축 스케일: </span>
+        <label>
+          <span>최솟값</span>
+          <input
+            // placeholder="Min Value"
+            type="number"
+            onChange={e => setMinYValue(Math.round(e.target.value))}
+          />
+        </label>
+        <label>
+          <span>최댓값</span>
+          <input
+            // placeholder="Max Value"
+            type="number"
+            onChange={e => setMaxYValue(Math.round(e.target.value))}
+          />
+        </label>
+        <label>
+          <span>간격</span>
+          <input
+            // placeholder="Step Size"
+            type="number"
+            onChange={e => setYStepSize(Math.round(e.target.value))}
           />
         </label>
       </InputGroup>
 
       <div className="chart">
-        {selectedX.length > 0 &&
-          selectedY.length > 0 &&
-          selectedX.includes(qualitativeVariableIdx) && (
-            <Line
-              data={{
-                labels: data.slice(1).map(item => item[0]),
-                datasets: createDataset(),
-              }}
-              options={createOptions()}
-            />
-          )}
+        {selectedX.length > 0 && selectedY.length > 0 && (
+          <Scatter
+            data={{ datasets: createDataset() }}
+            options={createOptions()}
+          />
+        )}
       </div>
     </div>
   );
 }
 
-export default LineAxisScaleEditor;
+export default ScatterAxisScaleEditor;

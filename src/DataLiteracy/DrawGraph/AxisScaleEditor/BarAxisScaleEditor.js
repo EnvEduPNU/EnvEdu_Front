@@ -41,7 +41,7 @@ function BarAxisScaleEditor({ data, qualitativeVariableIdx }) {
       Math.random() * 255
     }, ${transparency})`;
 
-  const datasets = () => {
+  const createDataset = () => {
     if (selectedX.includes(qualitativeVariableIdx)) {
       //x축에 질적 변인이 있다면 y축에 양적변인이 다 있음
       const yData = data[0].filter((label, idx) => selectedY.includes(idx));
@@ -177,7 +177,7 @@ function BarAxisScaleEditor({ data, qualitativeVariableIdx }) {
             <Bar
               data={{
                 labels: data.slice(1).map(item => item[0]),
-                datasets: datasets(),
+                datasets: createDataset(),
               }}
               options={createOptions()}
             />
