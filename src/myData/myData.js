@@ -61,24 +61,25 @@ export default function MyData() {
             path = `/ocean-quality/mine/chunk?dataUUID=${id}`;
         } else if (type === "대기질 데이터") {
             path = `/air-quality/mine/chunk?dataUUID=${id}`;
-        } 
-        
-        if (type === "수질 데이터" || type === "대기질 데이터") {
-            customAxios.get(path)
-                .then((res)=>{
-                    console.log(res.data)
-                    //const data = res.data.map(({ id, dataUUID, saveDate, ...rest }) => rest);
-                    //console.log(data);
-                    setData(res.data);
-                    setFilteredData(res.data);
-    
-                    const headers = Object.keys(res.data[0]).filter(
-                        (key) => key !== "id" && key !== "dataUUID" && key !== "saveDate"
-                    );
-                    setHeaders(headers);
-                })
-                .catch((err) => console.log(err));
+        } else if (type === "SEED") {
+            path = `/seed/mine/chunk?dataUUID=${id}`;
         }
+        
+        customAxios.get(path)
+            .then((res)=>{
+                console.log(res.data)
+                //const data = res.data.map(({ id, dataUUID, saveDate, ...rest }) => rest);
+                //console.log(data);
+                setData(res.data);
+                setFilteredData(res.data);
+
+                const headers = Object.keys(res.data[0]).filter(
+                    (key) => key !== "id" && key !== "dataUUID" && key !== "saveDate" && key !== "dateString"
+                );
+                setHeaders(headers);
+            })
+            .catch((err) => console.log(err));
+
     };
 
     //항목 이름 (한국어 -> 영어)
@@ -108,9 +109,26 @@ export default function MyData() {
             "o3Value": "오존 농도(ppm)",
             "no2Value": "이산화질소 농도(ppm)",
             "pm10Value": "미세먼지(PM10) 농도(㎍/㎥)",
-            "pm25Value": "미세먼지(PM2.5)  농도(㎍/㎥)"            
+            "pm25Value": "미세먼지(PM2.5)  농도(㎍/㎥)",
+            
+            //SEED 데이터
+            "measuredDate": "측정 시간",
+            "location": "측정 장소",
+            "unit" : "소속",
+            "period" : "저장 주기",
+            "username": "사용자명",
+            "hum": "습도",
+            "temp": "기온",
+            "tur": "탁도",
+            "ph": "pH",
+            "dust": "미세먼지",
+            "dox": "용존산소량",
+            "co2": "이산화탄소",
+            "lux": "조도",
+            "hum_EARTH": "토양 습도",
+            "pre": "기압"
         };
-        return kor[name] || "";
+        return kor[name] || name;
     }
 
     console.log(selectedItems) //데이터 삭제할 때 사용
@@ -160,20 +178,22 @@ export default function MyData() {
             }
 
             <div style={{marginTop: '1.875rem'}}>
-                {category !== "SEED" && filteredData.length !== 0 && 
+                {filteredData.length !== 0 && 
                     <table border="1" className='myData-list-detail'>
                         <thead>
                             <tr>
                                 {headers.map((header) => (
                                     <th key={header}>{engToKor(header)}</th>
                                 ))}
-                                <th>
-                                    <input
-                                        type="checkbox"
-                                        onChange={() => handleFullCheck()}
-                                        checked={isFull}
-                                    ></input>
-                                </th>
+                                {category !== "SEED" && 
+                                    <th>
+                                        <input
+                                            type="checkbox"
+                                            onChange={() => handleFullCheck()}
+                                            checked={isFull}
+                                        ></input>
+                                    </th>
+                                }
                             </tr>
                         </thead>
                         
@@ -183,20 +203,21 @@ export default function MyData() {
                                     {headers.map((header) => (
                                         <td key={header}>{item[header]}</td>
                                     ))}
-                                    <td>
-                                        <input
-                                            type="checkbox"
-                                            name={item}
-                                            checked={selectedItems.includes(item)}
-                                            onChange={() => handleViewCheckBoxChange(item)}
-                                        ></input>
-                                    </td>
+                                    {category !== "SEED" && 
+                                        <td>
+                                            <input
+                                                type="checkbox"
+                                                name={item}
+                                                checked={selectedItems.includes(item)}
+                                                onChange={() => handleViewCheckBoxChange(item)}
+                                            ></input>
+                                        </td>
+                                    }
                                 </tr>
                             ))}
                         </tbody>
                     </table>
                 }
-                {category === 'SEED' && <MySeedData />}
             </div>
 
         </div>
