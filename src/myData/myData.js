@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import '../OpenApi/OpenApi.scss';
 import { customAxios } from '../Common/CustomAxios';
 import MySeedData from './mySeedData';
@@ -124,6 +125,8 @@ export default function MyData() {
                             }}/>
                 저장한 데이터
             </h3>
+
+            <Link to="/readExcel">엑셀 파일 업로드</Link>
             
             {summary.length > 0 &&
                 <table className='myData-list'>
