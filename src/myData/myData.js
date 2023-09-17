@@ -116,7 +116,7 @@ export default function MyData() {
     console.log(selectedItems) //데이터 삭제할 때 사용
 
     return(
-        <div id="wrap-openapi-div">
+        <div>
             <h3>
                 <img src="/assets/img/folder-icon.png"
                         style={{

@@ -27,7 +27,7 @@ export default function ReadExcel() {
             readExcel(file);
         }
     };
-
+console.log(excelData)
     return(
         <div className='read-excel-container'>
             <div style={{display: 'flex', marginBottom: '2rem'}}>
@@ -57,9 +57,9 @@ export default function ReadExcel() {
                 <tbody>
                     {excelData.slice(1).map((row, rowIndex) => (
                         <tr key={rowIndex}>
-                        {row.map((cell, cellIndex) => (
-                            <td key={cellIndex}>{cell}</td>
-                        ))}
+                            {row.map((cell, cellIndex) => (
+                                <td key={cellIndex}>{cell}</td>
+                            ))}
                         </tr>
                     ))}
                 </tbody>
@@ -71,8 +71,9 @@ export default function ReadExcel() {
 
             <div style={{display: 'flex', marginTop: '1rem', marginBottom: '0.5rem'}}>
                 <label>메모</label>   
+                <textarea />
             </div>
-            <textarea />
+            
 
             <div style={{display: 'flex', justifyContent: 'center', marginTop: '3rem'}}>
                 <button className='save-file-btn'>저장하기</button>
