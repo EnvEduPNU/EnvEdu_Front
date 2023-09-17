@@ -28,7 +28,7 @@ export default function MyData() {
             console.log(formattedData)
         })
         .catch((err) => console.log(err))
-    }, [summary]);
+    }, []);
 
     const [data, setData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
@@ -64,13 +64,14 @@ export default function MyData() {
         
         if (type === "수질 데이터" || type === "대기질 데이터") {
             customAxios.get(path)
-                .then((jsonData)=>{
-                    jsonData = jsonData.map(({ id, dataUUID, saveDate, ...rest }) => rest);
-                    console.log(jsonData);
-                    setData(jsonData);
-                    setFilteredData(jsonData);
+                .then((res)=>{
+                    console.log(res.data)
+                    //const data = res.data.map(({ id, dataUUID, saveDate, ...rest }) => rest);
+                    //console.log(data);
+                    setData(res.data);
+                    setFilteredData(res.data);
     
-                    const headers = Object.keys(jsonData[0]).filter(
+                    const headers = Object.keys(res.data[0]).filter(
                         (key) => key !== "id" && key !== "dataUUID" && key !== "saveDate"
                     );
                     setHeaders(headers);
