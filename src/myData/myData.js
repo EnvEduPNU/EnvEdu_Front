@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../OpenApi/OpenApi.scss';
 import { customAxios } from '../Common/CustomAxios';
-import MySeedData from './mySeedData';
+//import MySeedData from './mySeedData';
 
 export default function MyData() {
     const [summary, setSummary] = useState([]);
@@ -134,7 +134,7 @@ export default function MyData() {
     console.log(selectedItems) //데이터 삭제할 때 사용
 
     return(
-        <div>
+        <div id='wrap-openapi-div'>
             <h3>
                 <img src="/assets/img/folder-icon.png"
                         style={{
