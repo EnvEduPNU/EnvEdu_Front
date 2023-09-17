@@ -13,6 +13,55 @@ function ChartAxisScaleEditor() {
       localStorageData.selectedVariable?.includes(index)
     );
   });
+  const selectedGraph = Number(
+    JSON.parse(localStorage.getItem("drawGraph")).selectedGraph
+  );
+  const GraphAxisScaleEditor = () => {
+    switch (selectedGraph) {
+      case 0:
+        return (
+          <BarAxisScaleEditor
+            data={filterData}
+            qualitativeVariableIdx={qualitativeVariableIdx}
+          />
+        );
+      case 1:
+        return (
+          <LineAxisScaleEditor
+            data={filterData}
+            qualitativeVariableIdx={qualitativeVariableIdx}
+          />
+        );
+      case 2:
+        return (
+          <BubbleAxisScaleEditor
+            data={filterData}
+            qualitativeVariableIdx={qualitativeVariableIdx}
+          />
+        );
+      case 1:
+        return (
+          <BarAxisScaleEditor
+            data={filterData}
+            qualitativeVariableIdx={qualitativeVariableIdx}
+          />
+        );
+      case 1:
+        return (
+          <ScatterAxisScaleEditor
+            data={filterData}
+            qualitativeVariableIdx={qualitativeVariableIdx}
+          />
+        );
+      default:
+        return (
+          <MixChartAxisScaleEditor
+            data={filterData}
+            qualitativeVariableIdx={qualitativeVariableIdx}
+          />
+        );
+    }
+  };
 
   const qualitativeVariableIdx = 0;
   return (
@@ -35,10 +84,7 @@ function ChartAxisScaleEditor() {
           ))}
         </tbody>
       </table>
-      <MixChartAxisScaleEditor
-        data={filterData}
-        qualitativeVariableIdx={qualitativeVariableIdx}
-      />
+      <GraphAxisScaleEditor />
     </div>
   );
 }
