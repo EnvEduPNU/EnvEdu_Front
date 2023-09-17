@@ -6,6 +6,7 @@ import GraphSelection from "./GraphSelection";
 import { Button } from "react-bootstrap";
 import { useSelectedVariable } from "../store/drawGraphStore";
 import ChartAxisScaleEditor from "./ChartAxisScaleEditor";
+import SideBar from "../common/SideBar/SideBar";
 
 function DrawGraph() {
   const localStorageData = JSON.parse(localStorage.getItem("drawGraph"));
@@ -88,11 +89,14 @@ function DrawGraph() {
 
   return (
     <div className="draw-graph">
-      <Stepper steps={steps} activeStep={activeStep} />
-      <Step />
-      <div className="buttonWrapper">
-        <Button onClick={onClickPrevButton}>이전</Button>
-        <Button onClick={onClickNextBtn}>다음</Button>
+      <SideBar />
+      <div>
+        <Stepper steps={steps} activeStep={activeStep} />
+        <Step />
+        <div className="buttonWrapper">
+          <Button onClick={onClickPrevButton}>이전</Button>
+          <Button onClick={onClickNextBtn}>다음</Button>
+        </div>
       </div>
     </div>
   );
