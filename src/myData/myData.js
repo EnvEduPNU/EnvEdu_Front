@@ -140,16 +140,16 @@ export default function MyData() {
         }
         else {
             const modifiedSelectedItems = selectedItems.map((item) => {
-                const newItem = { ...item };
+                const newItem = { };
               
+                for (const key in item) {
+                    newItem[engToKor(key)] = item[key];
+                }
+                
                 delete newItem.dataUUID;
                 delete newItem.id;
                 delete newItem.dateString;
 
-                for (const key in item) {
-                    newItem[engToKor(key)] = item[key];
-                }
-              
                 return newItem;
             });
 
