@@ -18,6 +18,7 @@ function Air() {
         customAxios.get('/air-quality?location=부산')
             .then((jsonData) => {
                 jsonData = jsonData.data;
+                console.log(jsonData)
                 setData(jsonData);
                 setFilteredData(jsonData);
 
