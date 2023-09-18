@@ -3,10 +3,6 @@ export const randomColor = (transparency = 0.5) =>
     Math.random() * 255
   }, ${transparency})`;
 
-const generateRandomColorsArray = (length = 10, transparency = 0.5) => {
-  return Array.from({ length }, () => randomColor(transparency));
-};
-
 export const colorsArray = [
   "rgba(31, 119, 180, 0.6)", // 청색
   "rgba(255, 127, 14, 0.6)", // 주황색

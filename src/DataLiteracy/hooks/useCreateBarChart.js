@@ -2,7 +2,7 @@ import {
   useBarAxisSacleEditorStore,
   useChartMetaDataStore,
 } from "../store/drawGraphStore";
-import { colorsArray, randomColor } from "../utils/randomColor";
+import { colorsArray } from "../utils/randomColor";
 
 const useCreateBarChart = (data, qualitativeVariableIdx) => {
   const axisScale = useBarAxisSacleEditorStore(state => state.axisScale);
