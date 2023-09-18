@@ -4,7 +4,7 @@ import { useBarAxisSacleEditorStore } from "../../store/drawGraphStore";
 
 function BarAxisScaleEditor({ data, qualitativeVariableIdx }) {
   const {
-    barAxisScale: { x, y, min, max, stepSize },
+    axisScale: { x, y, min, max, stepSize },
     changeMinValue,
     changeMaxValue,
     changeStepSize,

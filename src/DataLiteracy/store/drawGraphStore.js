@@ -20,8 +20,7 @@ export const useSelectedVariable = create(set => ({
 }));
 
 export const useBarAxisSacleEditorStore = create(set => ({
-  barAxisScale: { x: [], y: [], min: 0, max: 0, stepSize: 0 },
-  // lineAxisScale: { x: [], y: [], min: 0, max: 0, stepSize: 0 },
+  axisScale: { x: [], y: [], min: 0, max: 0, stepSize: 0 },
   // bubbleAxisScale: {
   //   x: { selected: -1, min: 0, max: 0, stepSize: 0 },
   //   y: { selected: -1, min: 0, max: 0, stepSize: 0 },
@@ -41,28 +40,28 @@ export const useBarAxisSacleEditorStore = create(set => ({
 
   changeMinValue: min =>
     set(state => {
-      return { ...state, barAxisScale: { ...state.barAxisScale, min } };
+      return { ...state, axisScale: { ...state.axisScale, min } };
     }),
 
   changeMaxValue: max =>
     set(state => {
-      return { ...state, barAxisScale: { ...state.barAxisScale, max } };
+      return { ...state, axisScale: { ...state.axisScale, max } };
     }),
 
   changeStepSize: stepSize =>
     set(state => {
-      return { ...state, barAxisScale: { ...state.barAxisScale, stepSize } };
+      return { ...state, axisScale: { ...state.axisScale, stepSize } };
     }),
 
   changeSelectedX: (selectedIdx, qualitativeVariableIdx) =>
     set(state => {
-      const { x } = state.barAxisScale;
+      const { x } = state.axisScale;
 
       if (x.includes(selectedIdx)) {
         return {
           ...state,
-          barAxisScale: {
-            ...state.barAxisScale,
+          axisScale: {
+            ...state.axisScale,
             x: x.filter(s => s !== selectedIdx),
           },
         };
@@ -78,21 +77,21 @@ export const useBarAxisSacleEditorStore = create(set => ({
 
       return {
         ...state,
-        barAxisScale: {
-          ...state.barAxisScale,
+        axisScale: {
+          ...state.axisScale,
           x: [...x, selectedIdx],
         },
       };
     }),
   changeSelectedY: (selectedIdx, qualitativeVariableIdx) =>
     set(state => {
-      const { y } = state.barAxisScale;
+      const { y } = state.axisScale;
 
       if (y.includes(selectedIdx)) {
         return {
           ...state,
-          barAxisScale: {
-            ...state.barAxisScale,
+          axisScale: {
+            ...state.axisScale,
             y: y.filter(s => s !== selectedIdx),
           },
         };
@@ -108,8 +107,97 @@ export const useBarAxisSacleEditorStore = create(set => ({
 
       return {
         ...state,
-        barAxisScale: {
-          ...state.barAxisScale,
+        axisScale: {
+          ...state.axisScale,
+          y: [...y, selectedIdx],
+        },
+      };
+    }),
+}));
+
+export const useLineAxisSacleEditorStore = create(set => ({
+  axisScale: { x: [], y: [], min: 0, max: 0, stepSize: 0 },
+  changeMinValue: min =>
+    set(state => {
+      return { ...state, axisScale: { ...state.axisScale, min } };
+    }),
+
+  changeMaxValue: max =>
+    set(state => {
+      return { ...state, axisScale: { ...state.axisScale, max } };
+    }),
+
+  changeStepSize: stepSize =>
+    set(state => {
+      return { ...state, axisScale: { ...state.axisScale, stepSize } };
+    }),
+
+  changeSelectedX: (selectedIdx, qualitativeVariableIdx) =>
+    set(state => {
+      if (selectedIdx !== qualitativeVariableIdx) {
+        alert("만들 수 없는 그래프 유형입니다.");
+        return state;
+      }
+
+      const { x } = state.axisScale;
+
+      if (x.includes(selectedIdx)) {
+        return {
+          ...state,
+          axisScale: {
+            ...state.axisScale,
+            x: x.filter(s => s !== selectedIdx),
+          },
+        };
+      }
+
+      if (
+        x.includes(qualitativeVariableIdx) ||
+        (selectedIdx === qualitativeVariableIdx && x.length > 0)
+      ) {
+        alert("질적변인과 양적변인을 동시에 선택할 수 없습니다.");
+        return state;
+      }
+
+      return {
+        ...state,
+        axisScale: {
+          ...state.axisScale,
+          x: [...x, selectedIdx],
+        },
+      };
+    }),
+  changeSelectedY: (selectedIdx, qualitativeVariableIdx) =>
+    set(state => {
+      if (selectedIdx === qualitativeVariableIdx) {
+        alert("만들 수 없는 그래프 유형입니다.");
+        return;
+      }
+
+      const { y } = state.axisScale;
+
+      if (y.includes(selectedIdx)) {
+        return {
+          ...state,
+          axisScale: {
+            ...state.axisScale,
+            y: y.filter(s => s !== selectedIdx),
+          },
+        };
+      }
+
+      if (
+        y.includes(qualitativeVariableIdx) ||
+        (selectedIdx === qualitativeVariableIdx && y.length > 0)
+      ) {
+        alert("질적변인과 양적변인을 동시에 선택할 수 없습니다.");
+        return state;
+      }
+
+      return {
+        ...state,
+        axisScale: {
+          ...state.axisScale,
           y: [...y, selectedIdx],
         },
       };
