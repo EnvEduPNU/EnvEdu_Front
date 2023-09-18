@@ -163,3 +163,23 @@
     }
   }
 }
+
+.finishDrawGraph {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  h3 {
+    margin-bottom: 20px;
+  }
+  .buttons {
+    display: flex;
+    justify-content: flex-end;
+    button {
+      font-size: 18px;
+      width: fit-content;
+    }
+  }
+  .chartWrapper {
+    margin-bottom: 20px;
+  }
+}

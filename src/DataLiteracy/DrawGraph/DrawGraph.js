@@ -8,6 +8,7 @@ import { useSelectedVariable } from "../store/drawGraphStore";
 import ChartAxisScaleEditor from "./ChartAxisScaleEditor";
 import SideBar from "../common/SideBar/SideBar";
 import ChartMetadataEditor from "./ChartMetadataEditor";
+import FinishDrawGraph from "./FinishDrawGraph";
 
 function DrawGraph() {
   const localStorageData = JSON.parse(localStorage.getItem("drawGraph"));
@@ -21,6 +22,7 @@ function DrawGraph() {
     "그래프 유형 선택",
     "축 및 스케일",
     "레이블,제목 범례",
+    "저장하기",
   ];
 
   const onClickPrevButton = () => {
@@ -95,8 +97,10 @@ function DrawGraph() {
         return <GraphSelection />;
       case 3:
         return <ChartAxisScaleEditor />;
-      default:
+      case 4:
         return <ChartMetadataEditor />;
+      default:
+        return <FinishDrawGraph />;
     }
   };
 
