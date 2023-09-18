@@ -1,6 +1,6 @@
 import { FormCheck, InputGroup } from "react-bootstrap";
-import { Bar } from "react-chartjs-2";
 import { useMixChartAxisScaleEditorStore } from "../../store/drawGraphStore";
+import MixChart from "../CustomChart/MixChart";
 
 function MixChartAxisScaleEditor({ data, qualitativeVariableIdx }) {
   const {
@@ -11,69 +11,6 @@ function MixChartAxisScaleEditor({ data, qualitativeVariableIdx }) {
   } = useMixChartAxisScaleEditorStore();
 
   const variables = data[qualitativeVariableIdx];
-
-  const randomColor = (transparency = 0.5) =>
-    `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${
-      Math.random() * 255
-    }, ${transparency})`;
-
-  const createDataset = () => {
-    const datasets = data[0].slice(1).map((label, idx) => ({
-      label,
-      data: data.slice(1).map(item => item[idx + 1]),
-      backgroundColor: randomColor(),
-      borderWidth: 1,
-    }));
-
-    y1.value.forEach(v => {
-      datasets[v - 1].yAxisID = "y1";
-    });
-
-    y2.value.forEach(v => {
-      datasets[v - 1].yAxisID = "y2";
-    });
-
-    lineChart.forEach(idx => {
-      datasets[idx - 1].type = "line";
-    });
-    barChart.forEach(idx => {
-      datasets[idx - 1].type = "bar";
-    });
-
-    return datasets;
-  };
-
-  const createOption = () => {
-    return {
-      scales: {
-        y1: {
-          position: "left",
-          id: "y1",
-          min: y1.min,
-          max: y1.max,
-          ticks: {
-            stepSize: y1.stepSize,
-            autoSkip: false,
-          },
-        },
-        y2: {
-          position: "right",
-          grid: {
-            drawOnChartArea: false, // 오른쪽 y축의 그리드 라인을 숨김
-          },
-          display: true,
-          min: y2.min,
-          max: y2.max,
-          ticks: {
-            stepSize: y2.stepSize,
-            autoSkip: false,
-          },
-        },
-      },
-      responsive: true,
-      maintainAspectRatio: false,
-    };
-  };
 
   return (
     <div className="mixChartAxisScaleEditor axisScaleEditor">
@@ -264,19 +201,7 @@ function MixChartAxisScaleEditor({ data, qualitativeVariableIdx }) {
         </div>
       </div>
 
-      <div className="chart">
-        {x.value > -1 &&
-          y1.value.length + y2.value.length === variables.length - 1 && (
-            <Bar
-              style={{ height: "350px" }}
-              data={{
-                labels: data.slice(1).map(item => item[0]),
-                datasets: createDataset(),
-              }}
-              options={createOption()}
-            />
-          )}
-      </div>
+      <MixChart data={data} qualitativeVariableIdx={qualitativeVariableIdx} />
     </div>
   );
 }

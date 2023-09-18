@@ -6,6 +6,7 @@ import LineChart from "./CustomChart/LineChart";
 import BarChart from "./CustomChart/BarChart";
 import ScatterChart from "./CustomChart/ScatterChart";
 import BubbleChart from "./CustomChart/BubbleChart";
+import MixChart from "./CustomChart/MixChart";
 
 const ChartMetadataEditor = () => {
   const {
@@ -82,6 +83,9 @@ const ChartMetadataEditor = () => {
         )}
         {graph === 4 && (
           <ScatterChart data={filterData} qualitativeVariableIdx={0} />
+        )}
+        {graph === 5 && (
+          <MixChart data={filterData} qualitativeVariableIdx={0} />
         )}
       </div>
     </div>
