@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import './sample.css'
+import './sample.scss'
 import { customAxios } from "../Common/CustomAxios";
 //import UserMacList from "./UserMacList";
 import SampleSocket from "./sample_socket";
