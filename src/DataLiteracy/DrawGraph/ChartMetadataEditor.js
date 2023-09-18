@@ -3,6 +3,8 @@ import Table from "../common/Table/Table";
 import { data } from "../sampleData/sampleData";
 import { useChartMetaDataStore } from "../store/drawGraphStore";
 import LineChart from "./CustomChart/LineChart";
+import BarChart from "./CustomChart/BarChart";
+import ScatterChart from "./CustomChart/ScatterChart";
 
 const ChartMetadataEditor = () => {
   const {
@@ -11,6 +13,7 @@ const ChartMetadataEditor = () => {
     changeLegendPosition,
   } = useChartMetaDataStore();
   const localStorageData = JSON.parse(localStorage.getItem("drawGraph")) || {};
+  const graph = localStorageData?.selectedGraph;
 
   const filterData = data.map(row => {
     return row.filter((_, index) =>
@@ -67,7 +70,15 @@ const ChartMetadataEditor = () => {
             </label>
           ))}
         </div>
-        <LineChart data={filterData} qualitativeVariableIdx={0} />
+        {graph == 0 && (
+          <BarChart data={filterData} qualitativeVariableIdx={0} />
+        )}
+        {graph == 1 && (
+          <LineChart data={filterData} qualitativeVariableIdx={0} />
+        )}
+        {graph == 4 && (
+          <ScatterChart data={filterData} qualitativeVariableIdx={0} />
+        )}
       </div>
     </div>
   );

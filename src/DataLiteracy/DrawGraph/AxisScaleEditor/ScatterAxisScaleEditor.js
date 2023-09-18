@@ -1,6 +1,7 @@
 import { FormCheck, InputGroup } from "react-bootstrap";
 import { Scatter } from "react-chartjs-2";
 import { useScatterAxisScaleEditorStore } from "../../store/drawGraphStore";
+import ScatterChart from "../CustomChart/ScatterChart";
 
 function ScatterAxisScaleEditor({ data, qualitativeVariableIdx }) {
   const {
@@ -11,49 +12,6 @@ function ScatterAxisScaleEditor({ data, qualitativeVariableIdx }) {
 
   const variables = data[qualitativeVariableIdx];
 
-  const randomColor = (transparency = 0.5) =>
-    `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${
-      Math.random() * 255
-    }, ${transparency})`;
-
-  const createDataset = () => {
-    return [
-      {
-        label: "산점도 그래프",
-        data: data.slice(1).map(item => ({
-          x: item[x.value],
-          y: item[y.value],
-          label: item[qualitativeVariableIdx],
-        })),
-        backgroundColor: randomColor(),
-        borderColor: randomColor(),
-        borderWidth: 1,
-      },
-    ];
-  };
-
-  const createOptions = () => {
-    return {
-      scales: {
-        x: {
-          min: x.min,
-          max: x.max,
-          ticks: {
-            stepSize: x.stepSize,
-            autoSkip: false,
-          },
-        },
-        y: {
-          min: y.min,
-          max: y.max,
-          ticks: {
-            stepSize: y.stepSize,
-            autoSkip: false,
-          },
-        },
-      },
-    };
-  };
   return (
     <div className="scatterAxisScaleEditor axisScaleEditor">
       <div className="variables-checkBox">
@@ -169,14 +127,10 @@ function ScatterAxisScaleEditor({ data, qualitativeVariableIdx }) {
         </label>
       </InputGroup>
 
-      <div className="chart">
-        {x.value > -1 && y.value > -1 && (
-          <Scatter
-            data={{ datasets: createDataset() }}
-            options={createOptions()}
-          />
-        )}
-      </div>
+      <ScatterChart
+        data={data}
+        qualitativeVariableIdx={qualitativeVariableIdx}
+      />
     </div>
   );
 }
