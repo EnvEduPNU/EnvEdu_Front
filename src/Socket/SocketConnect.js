@@ -164,10 +164,6 @@ function SocketConnect(props) {
     console.log(decodeToken(localStorage.getItem("access_token")).user_info.username);
     console.log(props.username)
 
-    const d = ['{"dataUUID":null,"saveDate":null,"id":0,"username"…":null,"location":null,"unit":null,"period":null}', '{"dataUUID":null,"saveDate":null,"id":0,"username"…":null,"location":null,"unit":null,"period":null}', '{"dataUUID":null,"saveDate":null,"id":0,"username"…":null,"location":null,"unit":null,"period":null}', '{"dataUUID":null,"saveDate":null,"id":0,"username"…":null,"location":null,"unit":null,"period":null}', '{"dataUUID":null,"saveDate":null,"id":0,"username"…":null,"location":null,"unit":null,"period":null}'];
-    const parsedData = d.map(jsonString => JSON.parse(jsonString));
-    console.log(parsedData);
-
     return (
             <div>
                 <br/>
