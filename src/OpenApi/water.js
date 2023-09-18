@@ -22,6 +22,7 @@ function Water() {
             .then((jsonData) => {
                 setSelectedOption(null); //측정 시점 필터링 조건 바뀌면 조사 지점 필터링이 null('전체') 되게
                 jsonData = jsonData.data;
+                console.log(jsonData)
                 setData(jsonData);
                 setFilteredData(jsonData);
                 

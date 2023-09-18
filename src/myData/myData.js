@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../OpenApi/OpenApi.scss';
 import { customAxios } from '../Common/CustomAxios';
-//import MySeedData from './mySeedData';
+import * as XLSX from 'xlsx';
 
 export default function MyData() {
     const [summary, setSummary] = useState([]);
@@ -133,6 +133,24 @@ export default function MyData() {
 
     console.log(selectedItems) //데이터 삭제할 때 사용
 
+    const handleDownload = () => { 
+        //const arr = [{ age: 10, gender: 'Male' }, {age: 10, gender: 'Male'}, {age: 10, gender: 'Male'}];
+        if (selectedItems.length === 0) {
+            alert("엑셀 파일로 내보낼 데이터를 한 개 이상 선택해 주세요.")
+        }
+        else {
+            const filename = window.prompt("파일명을 입력해 주세요.");
+            if (filename !== null) {
+                const ws = XLSX.utils.json_to_sheet(selectedItems);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+                XLSX.writeFile(wb, `${filename}.xlsx`);
+            } else {
+                alert("엑셀 파일명을 입력해 주세요.");
+            }   
+        }
+    }
+
     return(
         <div id='wrap-openapi-div'>
             <h3>
@@ -143,8 +161,10 @@ export default function MyData() {
                             }}/>
                 저장한 데이터
             </h3>
-
-            <Link to="/readExcel">엑셀 파일 업로드</Link>
+            
+            <div style={{marginBottom: '0.5rem'}}>
+                <Link to="/readExcel">엑셀 파일 업로드</Link>
+            </div>
             
             {summary.length > 0 &&
                 <table className='myData-list'>
@@ -179,44 +199,54 @@ export default function MyData() {
 
             <div style={{marginTop: '1.875rem'}}>
                 {filteredData.length !== 0 && 
-                    <table border="1" className='myData-list-detail'>
-                        <thead>
-                            <tr>
-                                {headers.map((header) => (
-                                    <th key={header}>{engToKor(header)}</th>
-                                ))}
-                                {category !== "SEED" && 
-                                    <th>
-                                        <input
-                                            type="checkbox"
-                                            onChange={() => handleFullCheck()}
-                                            checked={isFull}
-                                        ></input>
-                                    </th>
-                                }
-                            </tr>
-                        </thead>
-                        
-                        <tbody>
-                            {filteredData.map((item) => (
-                                <tr key={item.id}>
+                    <>
+                        <table border="1" className='myData-list-detail'>
+                            <thead>
+                                <tr>
                                     {headers.map((header) => (
-                                        <td key={header}>{item[header]}</td>
+                                        <th key={header}>{engToKor(header)}</th>
                                     ))}
                                     {category !== "SEED" && 
-                                        <td>
+                                        <th>
                                             <input
                                                 type="checkbox"
-                                                name={item}
-                                                checked={selectedItems.includes(item)}
-                                                onChange={() => handleViewCheckBoxChange(item)}
+                                                onChange={() => handleFullCheck()}
+                                                checked={isFull}
                                             ></input>
-                                        </td>
+                                        </th>
                                     }
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            
+                            <tbody>
+                                {filteredData.map((item) => (
+                                    <tr key={item.id}>
+                                        {headers.map((header) => (
+                                            <td key={header}>{item[header]}</td>
+                                        ))}
+                                        {category !== "SEED" && 
+                                            <td>
+                                                <input
+                                                    type="checkbox"
+                                                    name={item}
+                                                    checked={selectedItems.includes(item)}
+                                                    onChange={() => handleViewCheckBoxChange(item)}
+                                                ></input>
+                                            </td>
+                                        }
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+
+                        <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '0.5rem'}}>
+                            <button 
+                                style={{border: 'none', backgroundColor: '#f3b634', fontWeight: '600', borderRadius: '1.25rem'}}
+                                onClick={() => handleDownload()}>
+                                    엑셀 파일로 저장
+                            </button>
+                        </div>
+                    </>
                 }
             </div>
 
