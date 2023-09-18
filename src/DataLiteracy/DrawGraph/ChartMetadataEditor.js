@@ -5,6 +5,7 @@ import { useChartMetaDataStore } from "../store/drawGraphStore";
 import LineChart from "./CustomChart/LineChart";
 import BarChart from "./CustomChart/BarChart";
 import ScatterChart from "./CustomChart/ScatterChart";
+import BubbleChart from "./CustomChart/BubbleChart";
 
 const ChartMetadataEditor = () => {
   const {
@@ -70,13 +71,16 @@ const ChartMetadataEditor = () => {
             </label>
           ))}
         </div>
-        {graph == 0 && (
+        {graph === 0 && (
           <BarChart data={filterData} qualitativeVariableIdx={0} />
         )}
-        {graph == 1 && (
+        {graph === 1 && (
           <LineChart data={filterData} qualitativeVariableIdx={0} />
         )}
-        {graph == 4 && (
+        {graph === 2 && (
+          <BubbleChart data={filterData} qualitativeVariableIdx={0} />
+        )}
+        {graph === 4 && (
           <ScatterChart data={filterData} qualitativeVariableIdx={0} />
         )}
       </div>

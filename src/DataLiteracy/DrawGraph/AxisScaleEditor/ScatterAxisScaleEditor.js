@@ -1,5 +1,4 @@
 import { FormCheck, InputGroup } from "react-bootstrap";
-import { Scatter } from "react-chartjs-2";
 import { useScatterAxisScaleEditorStore } from "../../store/drawGraphStore";
 import ScatterChart from "../CustomChart/ScatterChart";
 
