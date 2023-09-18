@@ -134,14 +134,28 @@ export default function MyData() {
     console.log(selectedItems) //데이터 삭제할 때 사용
 
     const handleDownload = () => { 
-        //const arr = [{ age: 10, gender: 'Male' }, {age: 10, gender: 'Male'}, {age: 10, gender: 'Male'}];
+        //const arr = [{ age: 10, gender: 'Male', name: "abc" }, {age: 10, gender: 'Male', name: "123"}, {age: 10, gender: 'Male'}];
         if (selectedItems.length === 0) {
             alert("엑셀 파일로 내보낼 데이터를 한 개 이상 선택해 주세요.")
         }
         else {
+            const modifiedSelectedItems = selectedItems.map((item) => {
+                const newItem = { ...item };
+              
+                delete newItem.dataUUID;
+                delete newItem.id;
+                delete newItem.dateString;
+
+                for (const key in item) {
+                    newItem[engToKor(key)] = item[key];
+                }
+              
+                return newItem;
+            });
+
             const filename = window.prompt("파일명을 입력해 주세요.");
             if (filename !== null) {
-                const ws = XLSX.utils.json_to_sheet(selectedItems);
+                const ws = XLSX.utils.json_to_sheet(modifiedSelectedItems);
                 const wb = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
                 XLSX.writeFile(wb, `${filename}.xlsx`);
