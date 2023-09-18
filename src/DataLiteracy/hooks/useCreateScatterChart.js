@@ -2,7 +2,7 @@ import {
   useChartMetaDataStore,
   useScatterAxisScaleEditorStore,
 } from "../store/drawGraphStore";
-import { randomColor } from "../utils/randomColor";
+import { colorsArray } from "../utils/randomColor";
 
 const useCreateScatterChart = (data, qualitativeVariableIdx) => {
   const axisScale = useScatterAxisScaleEditorStore(state => state.axisScale);
@@ -21,8 +21,7 @@ const useCreateScatterChart = (data, qualitativeVariableIdx) => {
           y: item[y.value],
           label: item[qualitativeVariableIdx],
         })),
-        backgroundColor: randomColor(),
-        borderColor: randomColor(),
+        backgroundColor: colorsArray[0],
         borderWidth: 1,
       },
     ];

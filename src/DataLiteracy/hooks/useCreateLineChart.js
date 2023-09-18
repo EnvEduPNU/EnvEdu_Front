@@ -2,7 +2,7 @@ import {
   useChartMetaDataStore,
   useLineAxisSacleEditorStore,
 } from "../store/drawGraphStore";
-import { randomColor } from "../utils/randomColor";
+import { colorsArray } from "../utils/randomColor";
 
 const useCreateLineChart = (data, qualitativeVariableIdx) => {
   const axisScale = useLineAxisSacleEditorStore(state => state.axisScale);
@@ -20,7 +20,7 @@ const useCreateLineChart = (data, qualitativeVariableIdx) => {
       return yData.map((label, idx) => ({
         label,
         data: data.slice(1).map(item => item[idx + 1]),
-        backgroundColor: randomColor(),
+        backgroundColor: colorsArray[idx],
         borderWidth: 1,
       }));
     }

@@ -2,7 +2,7 @@ import {
   useChartMetaDataStore,
   useMixChartAxisScaleEditorStore,
 } from "../store/drawGraphStore";
-import { randomColor } from "../utils/randomColor";
+import { colorsArray } from "../utils/randomColor";
 
 const useCreateMixChart = (data, qualitativeVariableIdx) => {
   const axisScale = useMixChartAxisScaleEditorStore(state => state.axisScale);
@@ -16,7 +16,7 @@ const useCreateMixChart = (data, qualitativeVariableIdx) => {
     const datasets = data[0].slice(1).map((label, idx) => ({
       label,
       data: data.slice(1).map(item => item[idx + 1]),
-      backgroundColor: randomColor(),
+      backgroundColor: colorsArray[idx],
       borderWidth: 1,
     }));
 

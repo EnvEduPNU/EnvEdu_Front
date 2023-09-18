@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Button } from "react-bootstrap";
 import "./DrawGraph.scss";
 import GraphSelectionModal from "./GraphSelectionModal";
-import SelectedGraph from "./SelectedGraph";
 import { data } from "../sampleData/sampleData";
 import Table from "../common/Table/Table";
 

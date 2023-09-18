@@ -2,7 +2,7 @@ import {
   useBarAxisSacleEditorStore,
   useChartMetaDataStore,
 } from "../store/drawGraphStore";
-import { randomColor } from "../utils/randomColor";
+import { colorsArray, randomColor } from "../utils/randomColor";
 
 const useCreateBarChart = (data, qualitativeVariableIdx) => {
   const axisScale = useBarAxisSacleEditorStore(state => state.axisScale);
@@ -20,7 +20,7 @@ const useCreateBarChart = (data, qualitativeVariableIdx) => {
       return yData.map((label, idx) => ({
         label,
         data: data.slice(1).map(item => item[idx + 1]),
-        backgroundColor: randomColor(),
+        backgroundColor: colorsArray[idx],
         borderWidth: 1,
       }));
     }
@@ -31,7 +31,7 @@ const useCreateBarChart = (data, qualitativeVariableIdx) => {
       return xData.map((label, idx) => ({
         label,
         data: data.slice(1).map(item => item[idx + 1]),
-        backgroundColor: randomColor(),
+        backgroundColor: colorsArray[idx],
         borderWidth: 1,
       }));
     }

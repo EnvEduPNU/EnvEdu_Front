@@ -2,7 +2,7 @@ import {
   useBubbleAxisScaleEditorStore,
   useChartMetaDataStore,
 } from "../store/drawGraphStore";
-import { randomColor } from "../utils/randomColor";
+import { colorsArray, randomColor } from "../utils/randomColor";
 
 const useCreateBubbleChart = (data, qualitativeVariableIdx) => {
   const axisScale = useBubbleAxisScaleEditorStore(state => state.axisScale);
@@ -32,7 +32,7 @@ const useCreateBubbleChart = (data, qualitativeVariableIdx) => {
           label: item[qualitativeVariableIdx],
           rRealData: item[r.value],
         })),
-        backgroundColor: randomColor(),
+        backgroundColor: colorsArray[9],
         borderWidth: 1,
       },
     ];
