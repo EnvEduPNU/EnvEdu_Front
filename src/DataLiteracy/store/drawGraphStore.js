@@ -89,3 +89,61 @@ const createTwoArrayAxisScaleEditorStore = (isLineChart = false) =>
 export const useBarAxisSacleEditorStore = createTwoArrayAxisScaleEditorStore();
 export const useLineAxisSacleEditorStore =
   createTwoArrayAxisScaleEditorStore(true);
+
+export const useBubbleAxisScaleEditorStore = create(set => ({
+  axisScale: {
+    x: {
+      value: -1,
+      min: 0,
+      max: 0,
+      stepSize: 0,
+    },
+    y: {
+      value: -1,
+      min: 0,
+      max: 0,
+      stepSize: 0,
+    },
+    r: { value: -1 },
+  },
+
+  changeAxisValue: (axis, value, qualitativeVariableIdx) =>
+    set(state => {
+      if (value === qualitativeVariableIdx) {
+        alert("만들 수 없는 그래프 유형입니다.");
+        return state;
+      }
+
+      if (state.axisScale[axis].value === value) {
+        return {
+          ...state,
+          axisScale: {
+            ...state.axisScale,
+            [axis]: { ...state.axisScale[axis], value: -1 },
+          },
+        };
+      }
+
+      return {
+        ...state,
+        axisScale: {
+          ...state.axisScale,
+          [axis]: { ...state.axisScale[axis], value },
+        },
+      };
+    }),
+
+  changeAxisScale: (axis, scale, newScale) =>
+    set(state => {
+      return {
+        ...state,
+        axisScale: {
+          ...state.axisScale,
+          [axis]: {
+            ...state.axisScale[axis],
+            [scale]: newScale,
+          },
+        },
+      };
+    }),
+}));

@@ -1,47 +1,16 @@
 import { useState } from "react";
 import { FormCheck, InputGroup } from "react-bootstrap";
 import { Bubble } from "react-chartjs-2";
+import { useBubbleAxisScaleEditorStore } from "../../store/drawGraphStore";
 
 function BubbleAxisScaleEditor({ data, qualitativeVariableIdx }) {
-  /* X축 관련 상태*/
-  const [selectedX, setSelectedX] = useState(-1);
-  const [minXValue, setMinXValue] = useState(0);
-  const [maxXValue, setMaxXValue] = useState(0);
-  const [xStepSize, setXStepSize] = useState(0);
-
-  /* Y축 관련 상태 */
-  const [selectedY, setSelectedY] = useState(-1);
-  const [minYValue, setMinYValue] = useState(0);
-  const [maxYValue, setMaxYValue] = useState(0);
-  const [yStepSize, setYStepSize] = useState(0);
-
-  /* 원 반지름 관련 상태 */
-  const [selectedR, setSelectedR] = useState(-1);
-  // const [minRValue, setMinRValue] = useState(0);
-  // const [maxRValue, setMaxRValue] = useState(0);
+  const {
+    axisScale: { x, y, r },
+    changeAxisValue,
+    changeAxisScale,
+  } = useBubbleAxisScaleEditorStore();
 
   const variables = data[qualitativeVariableIdx];
-
-  const onChange = (selected, setSelected, idx) => {
-    if (idx === qualitativeVariableIdx) {
-      alert("만들 수 없는 그래프 유형입니다.");
-      return;
-    }
-    if (selected === idx) setSelected(-1);
-    else setSelected(idx);
-  };
-
-  const onChangeSelectedX = idx => {
-    onChange(selectedX, setSelectedX, idx);
-  };
-
-  const onChangeSelectedY = idx => {
-    onChange(selectedY, setSelectedY, idx);
-  };
-
-  const onChangeSelectedR = idx => {
-    onChange(selectedR, setSelectedR, idx);
-  };
 
   const randomColor = (transparency = 0.5) =>
     `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${
@@ -56,18 +25,18 @@ function BubbleAxisScaleEditor({ data, qualitativeVariableIdx }) {
   }
 
   const createDataset = () => {
-    const rData = data.slice(1).map(d => d[selectedR]);
+    const rData = data.slice(1).map(d => d[r.value]);
     const rDataMin = Math.min(...rData);
     const rDataMax = Math.max(...rData);
     return [
       {
         label: "버블 그래프",
         data: data.slice(1).map(item => ({
-          x: item[selectedX],
-          y: item[selectedY],
-          r: scaleBubbleSize(item[selectedR], rDataMin, rDataMax, 10, 30),
+          x: item[x.value],
+          y: item[y.value],
+          r: scaleBubbleSize(item[r.value], rDataMin, rDataMax, 10, 30),
           label: item[qualitativeVariableIdx],
-          rRealData: item[selectedR],
+          rRealData: item[r.value],
         })),
         backgroundColor: randomColor(),
         borderWidth: 1,
@@ -79,18 +48,18 @@ function BubbleAxisScaleEditor({ data, qualitativeVariableIdx }) {
     return {
       scales: {
         x: {
-          min: minXValue,
-          max: maxXValue,
+          min: x.min,
+          max: x.max,
           ticks: {
-            stepSize: xStepSize,
+            stepSize: x.stepSize,
             autoSkip: false,
           },
         },
         y: {
-          min: minYValue,
-          max: maxYValue,
+          min: y.min,
+          max: y.max,
           ticks: {
-            stepSize: yStepSize,
+            stepSize: y.stepSize,
             autoSkip: false,
           },
         },
@@ -119,16 +88,18 @@ function BubbleAxisScaleEditor({ data, qualitativeVariableIdx }) {
           {variables.map((variable, idx) => (
             <label
               className={
-                selectedY !== idx && selectedR !== idx
+                y.value !== idx && r.value !== idx
                   ? "variable"
                   : "variable disabled"
               }
               key={variable}
             >
               <FormCheck
-                disabled={selectedY === idx || selectedR === idx}
-                checked={selectedX === idx}
-                onChange={() => onChangeSelectedX(idx)}
+                disabled={y.value === idx || r.value === idx}
+                checked={x.value === idx}
+                onChange={() =>
+                  changeAxisValue("x", idx, qualitativeVariableIdx)
+                }
               />
               <span>{variable}</span>
             </label>
@@ -141,16 +112,18 @@ function BubbleAxisScaleEditor({ data, qualitativeVariableIdx }) {
           {variables.map((variable, idx) => (
             <label
               className={
-                selectedX !== idx && selectedR !== idx
+                x.value !== idx && r.value !== idx
                   ? "variable"
                   : "variable disabled"
               }
               key={variable}
             >
               <FormCheck
-                disabled={selectedX === idx || selectedR === idx ? true : false}
-                checked={selectedY === idx}
-                onChange={() => onChangeSelectedY(idx)}
+                disabled={x.value === idx || r.value === idx ? true : false}
+                checked={y.value === idx}
+                onChange={() =>
+                  changeAxisValue("y", idx, qualitativeVariableIdx)
+                }
               />
               <span>{variable}</span>
             </label>
@@ -163,16 +136,18 @@ function BubbleAxisScaleEditor({ data, qualitativeVariableIdx }) {
           {variables.map((variable, idx) => (
             <label
               className={
-                selectedX !== idx && selectedY !== idx
+                x.value !== idx && y.value !== idx
                   ? "variable"
                   : "variable disabled"
               }
               key={variable}
             >
               <FormCheck
-                disabled={selectedX === idx || selectedY === idx ? true : false}
-                checked={selectedR === idx}
-                onChange={() => onChangeSelectedR(idx)}
+                disabled={x.value === idx || y.value === idx ? true : false}
+                checked={r.value === idx}
+                onChange={() =>
+                  changeAxisValue("r", idx, qualitativeVariableIdx)
+                }
               />
               <span>{variable}</span>
             </label>
@@ -186,7 +161,9 @@ function BubbleAxisScaleEditor({ data, qualitativeVariableIdx }) {
           <input
             // placeholder="Min Value"
             type="number"
-            onChange={e => setMinXValue(Math.round(e.target.value))}
+            onChange={e =>
+              changeAxisScale("x", "min", Math.round(e.target.value))
+            }
           />
         </label>
         <label>
@@ -194,7 +171,9 @@ function BubbleAxisScaleEditor({ data, qualitativeVariableIdx }) {
           <input
             // placeholder="Max Value"
             type="number"
-            onChange={e => setMaxXValue(Math.round(e.target.value))}
+            onChange={e =>
+              changeAxisScale("x", "max", Math.round(e.target.value))
+            }
           />
         </label>
         <label>
@@ -202,7 +181,9 @@ function BubbleAxisScaleEditor({ data, qualitativeVariableIdx }) {
           <input
             // placeholder="Step Size"
             type="number"
-            onChange={e => setXStepSize(Math.round(e.target.value))}
+            onChange={e =>
+              changeAxisScale("x", "stepSize", Math.round(e.target.value))
+            }
           />
         </label>
       </InputGroup>
@@ -213,7 +194,9 @@ function BubbleAxisScaleEditor({ data, qualitativeVariableIdx }) {
           <input
             // placeholder="Min Value"
             type="number"
-            onChange={e => setMinYValue(Math.round(e.target.value))}
+            onChange={e =>
+              changeAxisScale("y", "min", Math.round(e.target.value))
+            }
           />
         </label>
         <label>
@@ -221,7 +204,9 @@ function BubbleAxisScaleEditor({ data, qualitativeVariableIdx }) {
           <input
             // placeholder="Max Value"
             type="number"
-            onChange={e => setMaxYValue(Math.round(e.target.value))}
+            onChange={e =>
+              changeAxisScale("y", "max", Math.round(e.target.value))
+            }
           />
         </label>
         <label>
@@ -229,13 +214,15 @@ function BubbleAxisScaleEditor({ data, qualitativeVariableIdx }) {
           <input
             // placeholder="Step Size"
             type="number"
-            onChange={e => setYStepSize(Math.round(e.target.value))}
+            onChange={e =>
+              changeAxisScale("y", "stepSize", Math.round(e.target.value))
+            }
           />
         </label>
       </InputGroup>
 
       <div className="chart" style={{ minWidth: "100%", minHeight: "100%" }}>
-        {selectedX > -1 && selectedY > -1 && selectedR > -1 && (
+        {x.value > -1 && y.value > -1 && r.value > -1 && (
           <Bubble
             data={{ datasets: createDataset() }}
             options={createOptions()}
