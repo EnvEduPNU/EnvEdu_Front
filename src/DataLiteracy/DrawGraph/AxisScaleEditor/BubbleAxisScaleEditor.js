@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { FormCheck, InputGroup } from "react-bootstrap";
 import { Bubble } from "react-chartjs-2";
 import { useBubbleAxisScaleEditorStore } from "../../store/drawGraphStore";
