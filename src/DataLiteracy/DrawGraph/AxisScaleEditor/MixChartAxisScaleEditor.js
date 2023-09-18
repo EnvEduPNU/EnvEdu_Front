@@ -354,7 +354,7 @@ function MixChartAxisScaleEditor({ data, qualitativeVariableIdx }) {
           selectedY1.selected.length + selectedY2.selected.length ===
             variables.length - 1 && (
             <Bar
-              style={{ height: "400px" }}
+              style={{ height: "350px" }}
               data={{
                 labels: data.slice(1).map(item => item[0]),
                 datasets: createDataset(),

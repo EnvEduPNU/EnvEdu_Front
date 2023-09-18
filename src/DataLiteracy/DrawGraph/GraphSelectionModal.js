@@ -45,14 +45,14 @@ function GraphSelectionModal({
             {graphs.map((graph, idx) => (
               <div className="graph" key={idx + graph}>
                 <ExampleGraph type={idx} />
-                <div className="checkboxGraph">
+                <label className="checkboxGraph">
                   <FormCheckInput
                     checked={graphIdx === idx}
                     id={graph}
                     onChange={() => setGraphIdx(idx)}
                   />
                   <span>{graph}</span>
-                </div>
+                </label>
               </div>
             ))}
           </div>

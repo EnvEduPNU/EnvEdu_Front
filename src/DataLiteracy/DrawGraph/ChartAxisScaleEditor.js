@@ -39,14 +39,14 @@ function ChartAxisScaleEditor() {
             qualitativeVariableIdx={qualitativeVariableIdx}
           />
         );
-      case 1:
+      case 3:
         return (
           <BarAxisScaleEditor
             data={filterData}
             qualitativeVariableIdx={qualitativeVariableIdx}
           />
         );
-      case 1:
+      case 4:
         return (
           <ScatterAxisScaleEditor
             data={filterData}

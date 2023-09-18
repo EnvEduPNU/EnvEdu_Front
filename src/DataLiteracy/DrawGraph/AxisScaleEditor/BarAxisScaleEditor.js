@@ -1,40 +1,18 @@
-import { useState } from "react";
 import { FormCheck, InputGroup } from "react-bootstrap";
 import { Bar } from "react-chartjs-2";
+import { useBarAxisSacleEditorStore } from "../../store/drawGraphStore";
 
 function BarAxisScaleEditor({ data, qualitativeVariableIdx }) {
-  const [selectedX, setSelectedX] = useState([]);
-  const [selectedY, setSelectedY] = useState([]);
-  const [minValue, setMinValue] = useState(0);
-  const [maxValue, setMaxValue] = useState(0);
-  const [stepSize, setStepSize] = useState(0);
+  const {
+    barAxisScale: { x, y, min, max, stepSize },
+    changeMinValue,
+    changeMaxValue,
+    changeStepSize,
+    changeSelectedX,
+    changeSelectedY,
+  } = useBarAxisSacleEditorStore();
 
   const variables = data[qualitativeVariableIdx];
-
-  const onChange = (selected, setSelected, idx) => {
-    if (selected.includes(idx)) {
-      setSelected(state => state.filter(s => s !== idx));
-      return;
-    }
-
-    if (
-      selected.includes(qualitativeVariableIdx) ||
-      (idx == qualitativeVariableIdx && selected.length > 0)
-    ) {
-      alert("질적변인과 양적변인을 동시에 선택할 수 없습니다.");
-      return;
-    }
-
-    setSelected(state => [...state, idx]);
-  };
-
-  const onChangeSelectedX = idx => {
-    onChange(selectedX, setSelectedX, idx);
-  };
-
-  const onChangeSelectedY = idx => {
-    onChange(selectedY, setSelectedY, idx);
-  };
 
   const randomColor = (transparency = 0.5) =>
     `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${
@@ -42,9 +20,9 @@ function BarAxisScaleEditor({ data, qualitativeVariableIdx }) {
     }, ${transparency})`;
 
   const createDataset = () => {
-    if (selectedX.includes(qualitativeVariableIdx)) {
+    if (x.includes(qualitativeVariableIdx)) {
       //x축에 질적 변인이 있다면 y축에 양적변인이 다 있음
-      const yData = data[0].filter((label, idx) => selectedY.includes(idx));
+      const yData = data[0].filter((label, idx) => y.includes(idx));
 
       return yData.map((label, idx) => ({
         label,
@@ -53,9 +31,9 @@ function BarAxisScaleEditor({ data, qualitativeVariableIdx }) {
         borderWidth: 1,
       }));
     }
-    if (selectedY.includes(qualitativeVariableIdx)) {
+    if (y.includes(qualitativeVariableIdx)) {
       //y축에 질적 변인이 있다면 x축에 양적변인이 다 있음
-      const xData = data[0].filter((label, idx) => selectedX.includes(idx));
+      const xData = data[0].filter((label, idx) => x.includes(idx));
 
       return xData.map((label, idx) => ({
         label,
@@ -67,15 +45,15 @@ function BarAxisScaleEditor({ data, qualitativeVariableIdx }) {
   };
 
   const createOptions = () => {
-    if (selectedX.includes(qualitativeVariableIdx)) {
+    if (x.includes(qualitativeVariableIdx)) {
       return {
         indexAxis: "x",
         scales: {
           y: {
-            min: minValue,
-            max: maxValue,
+            min,
+            max,
             ticks: {
-              stepSize: stepSize,
+              stepSize,
               autoSkip: false,
             },
           },
@@ -83,15 +61,15 @@ function BarAxisScaleEditor({ data, qualitativeVariableIdx }) {
       };
     }
 
-    if (selectedY.includes(qualitativeVariableIdx)) {
+    if (y.includes(qualitativeVariableIdx)) {
       return {
         indexAxis: "y",
         scales: {
           x: {
-            min: minValue,
-            max: maxValue,
+            min,
+            max,
             ticks: {
-              stepSize: stepSize,
+              stepSize,
               autoSkip: false,
             },
           },
@@ -107,15 +85,13 @@ function BarAxisScaleEditor({ data, qualitativeVariableIdx }) {
         <div className="variables">
           {variables.map((variable, idx) => (
             <label
-              className={
-                !selectedY.includes(idx) ? "variable" : "variable disabled"
-              }
+              className={!y.includes(idx) ? "variable" : "variable disabled"}
               key={variable}
             >
               <FormCheck
-                disabled={selectedY.includes(idx)}
-                checked={selectedX.includes(idx)}
-                onChange={() => onChangeSelectedX(idx)}
+                disabled={y.includes(idx)}
+                checked={x.includes(idx)}
+                onChange={() => changeSelectedX(idx, qualitativeVariableIdx)}
               />
               <span>{variable}</span>
             </label>
@@ -127,15 +103,13 @@ function BarAxisScaleEditor({ data, qualitativeVariableIdx }) {
         <div className="variables">
           {variables.map((variable, idx) => (
             <label
-              className={
-                !selectedX.includes(idx) ? "variable" : "variable disabled"
-              }
+              className={!x.includes(idx) ? "variable" : "variable disabled"}
               key={variable}
             >
               <FormCheck
-                disabled={selectedX.includes(idx) ? true : false}
-                checked={selectedY.includes(idx)}
-                onChange={() => onChangeSelectedY(idx)}
+                disabled={x.includes(idx) ? true : false}
+                checked={y.includes(idx)}
+                onChange={() => changeSelectedY(idx, qualitativeVariableIdx)}
               />
               <span>{variable}</span>
             </label>
@@ -148,7 +122,7 @@ function BarAxisScaleEditor({ data, qualitativeVariableIdx }) {
           <input
             // placeholder="Min Value"
             type="number"
-            onChange={e => setMinValue(Math.round(e.target.value))}
+            onChange={e => changeMinValue(Math.round(e.target.value))}
           />
         </label>
         <label>
@@ -156,7 +130,7 @@ function BarAxisScaleEditor({ data, qualitativeVariableIdx }) {
           <input
             // placeholder="Max Value"
             type="number"
-            onChange={e => setMaxValue(Math.round(e.target.value))}
+            onChange={e => changeMaxValue(Math.round(e.target.value))}
           />
         </label>
         <label>
@@ -164,16 +138,16 @@ function BarAxisScaleEditor({ data, qualitativeVariableIdx }) {
           <input
             // placeholder="Step Size"
             type="number"
-            onChange={e => setStepSize(Math.round(e.target.value))}
+            onChange={e => changeStepSize(Math.round(e.target.value))}
           />
         </label>
       </InputGroup>
 
       <div className="chart">
-        {selectedX.length > 0 &&
-          selectedY.length > 0 &&
-          (selectedX.includes(qualitativeVariableIdx) ||
-            selectedY.includes(qualitativeVariableIdx)) && (
+        {x.length > 0 &&
+          y.length > 0 &&
+          (x.includes(qualitativeVariableIdx) ||
+            y.includes(qualitativeVariableIdx)) && (
             <Bar
               data={{
                 labels: data.slice(1).map(item => item[0]),
