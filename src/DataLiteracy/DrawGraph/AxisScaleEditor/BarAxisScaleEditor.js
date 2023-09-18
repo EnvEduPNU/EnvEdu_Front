@@ -1,6 +1,7 @@
 import { FormCheck, InputGroup } from "react-bootstrap";
 import { Bar } from "react-chartjs-2";
 import { useBarAxisSacleEditorStore } from "../../store/drawGraphStore";
+import { useRef } from "react";
 
 function BarAxisScaleEditor({ data, qualitativeVariableIdx }) {
   const {
@@ -78,6 +79,7 @@ function BarAxisScaleEditor({ data, qualitativeVariableIdx }) {
     }
   };
 
+  const inputRef = useRef(null);
   return (
     <div className="barAxisScaleEditor axisScaleEditor">
       <div className="variables-checkBox">
@@ -121,8 +123,12 @@ function BarAxisScaleEditor({ data, qualitativeVariableIdx }) {
           <span>최솟값</span>
           <input
             // placeholder="Min Value"
+            ref={inputRef}
             type="number"
-            onChange={e => changeMinValue(Math.round(e.target.value))}
+            onChange={e => {
+              changeMinValue(Math.round(e.target.value));
+              inputRef.current.focus();
+            }}
             value={min}
           />
         </label>

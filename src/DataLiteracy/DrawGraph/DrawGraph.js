@@ -63,11 +63,23 @@ function DrawGraph() {
       setActiveStep(state => state + 1);
       return;
     }
+    if (activeStep === 2) {
+      localStorage.setItem(
+        "drawGraph",
+        JSON.stringify({
+          ...drawGraph,
+          selectedVariable,
+          step: activeStep + 1,
+        })
+      );
+      setActiveStep(state => state + 1);
+      return;
+    }
+
     localStorage.setItem(
       "drawGraph",
       JSON.stringify({
         ...drawGraph,
-        selectedVariable,
         step: activeStep + 1,
       })
     );

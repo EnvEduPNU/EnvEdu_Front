@@ -333,3 +333,30 @@ export const useMixChartAxisScaleEditorStore = create(set => ({
       };
     }),
 }));
+
+const storeAxisScaleInLocalStorage = axisScale => {
+  const drawGraph = JSON.parse(localStorage.getItem("drawGraph"));
+  localStorage.setItem(
+    "drawGraph",
+    JSON.stringify({
+      ...drawGraph,
+      axisScale,
+    })
+  );
+};
+
+useBarAxisSacleEditorStore.subscribe(state =>
+  storeAxisScaleInLocalStorage(state.axisScale)
+);
+useLineAxisSacleEditorStore.subscribe(state =>
+  storeAxisScaleInLocalStorage(state.axisScale)
+);
+useScatterAxisScaleEditorStore.subscribe(state =>
+  storeAxisScaleInLocalStorage(state.axisScale)
+);
+useBubbleAxisScaleEditorStore.subscribe(state =>
+  storeAxisScaleInLocalStorage(state.axisScale)
+);
+useMixChartAxisScaleEditorStore.subscribe(state =>
+  storeAxisScaleInLocalStorage(state.axisScale)
+);
