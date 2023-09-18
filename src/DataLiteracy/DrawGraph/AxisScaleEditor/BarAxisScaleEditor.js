@@ -1,7 +1,7 @@
 import { FormCheck, InputGroup } from "react-bootstrap";
-import { Bar } from "react-chartjs-2";
 import { useBarAxisSacleEditorStore } from "../../store/drawGraphStore";
 import { useRef } from "react";
+import BarChart from "../CustomChart/BarChart";
 
 function BarAxisScaleEditor({ data, qualitativeVariableIdx }) {
   const {
@@ -14,70 +14,6 @@ function BarAxisScaleEditor({ data, qualitativeVariableIdx }) {
   } = useBarAxisSacleEditorStore();
 
   const variables = data[qualitativeVariableIdx];
-
-  const randomColor = (transparency = 0.5) =>
-    `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${
-      Math.random() * 255
-    }, ${transparency})`;
-
-  const createDataset = () => {
-    if (x.includes(qualitativeVariableIdx)) {
-      //x축에 질적 변인이 있다면 y축에 양적변인이 다 있음
-      const yData = data[0].filter((label, idx) => y.includes(idx));
-
-      return yData.map((label, idx) => ({
-        label,
-        data: data.slice(1).map(item => item[idx + 1]),
-        backgroundColor: randomColor(),
-        borderWidth: 1,
-      }));
-    }
-    if (y.includes(qualitativeVariableIdx)) {
-      //y축에 질적 변인이 있다면 x축에 양적변인이 다 있음
-      const xData = data[0].filter((label, idx) => x.includes(idx));
-
-      return xData.map((label, idx) => ({
-        label,
-        data: data.slice(1).map(item => item[idx + 1]),
-        backgroundColor: randomColor(),
-        borderWidth: 1,
-      }));
-    }
-  };
-
-  const createOptions = () => {
-    if (x.includes(qualitativeVariableIdx)) {
-      return {
-        indexAxis: "x",
-        scales: {
-          y: {
-            min,
-            max,
-            ticks: {
-              stepSize,
-              autoSkip: false,
-            },
-          },
-        },
-      };
-    }
-
-    if (y.includes(qualitativeVariableIdx)) {
-      return {
-        indexAxis: "y",
-        scales: {
-          x: {
-            min,
-            max,
-            ticks: {
-              stepSize,
-              autoSkip: false,
-            },
-          },
-        },
-      };
-    }
-  };
 
   const inputRef = useRef(null);
   return (
@@ -152,20 +88,7 @@ function BarAxisScaleEditor({ data, qualitativeVariableIdx }) {
         </label>
       </InputGroup>
 
-      <div className="chart">
-        {x.length > 0 &&
-          y.length > 0 &&
-          (x.includes(qualitativeVariableIdx) ||
-            y.includes(qualitativeVariableIdx)) && (
-            <Bar
-              data={{
-                labels: data.slice(1).map(item => item[0]),
-                datasets: createDataset(),
-              }}
-              options={createOptions()}
-            />
-          )}
-      </div>
+      <BarChart data={data} qualitativeVariableIdx={qualitativeVariableIdx} />
     </div>
   );
 }

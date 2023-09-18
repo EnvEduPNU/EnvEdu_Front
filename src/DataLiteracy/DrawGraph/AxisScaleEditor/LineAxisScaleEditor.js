@@ -1,6 +1,6 @@
 import { FormCheck, InputGroup } from "react-bootstrap";
-import { Line } from "react-chartjs-2";
 import { useLineAxisSacleEditorStore } from "../../store/drawGraphStore";
+import LineChart from "../CustomChart/LineChart";
 
 function LineAxisScaleEditor({ data, qualitativeVariableIdx }) {
   const {
@@ -13,40 +13,6 @@ function LineAxisScaleEditor({ data, qualitativeVariableIdx }) {
   } = useLineAxisSacleEditorStore();
 
   const variables = data[qualitativeVariableIdx];
-
-  const randomColor = (transparency = 0.5) =>
-    `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${
-      Math.random() * 255
-    }, ${transparency})`;
-
-  const datasets = () => {
-    if (x.includes(qualitativeVariableIdx)) {
-      //x축에 질적 변인이 있다면 y축에 양적변인이 다 있음
-      const yData = data[0].filter((label, idx) => y.includes(idx));
-
-      return yData.map((label, idx) => ({
-        label,
-        data: data.slice(1).map(item => item[idx + 1]),
-        backgroundColor: randomColor(),
-        borderWidth: 1,
-      }));
-    }
-  };
-
-  const createOptions = () => {
-    return {
-      scales: {
-        y: {
-          min,
-          max,
-          ticks: {
-            stepSize,
-            autoSkip: false,
-          },
-        },
-      },
-    };
-  };
 
   return (
     <div className="lineAxisScaleEditor axisScaleEditor">
@@ -116,17 +82,7 @@ function LineAxisScaleEditor({ data, qualitativeVariableIdx }) {
         </label>
       </InputGroup>
 
-      <div className="chart">
-        {x.length > 0 && y.length > 0 && x.includes(qualitativeVariableIdx) && (
-          <Line
-            data={{
-              labels: data.slice(1).map(item => item[0]),
-              datasets: datasets(),
-            }}
-            options={createOptions()}
-          />
-        )}
-      </div>
+      <LineChart data={data} qualitativeVariableIdx={qualitativeVariableIdx} />
     </div>
   );
 }

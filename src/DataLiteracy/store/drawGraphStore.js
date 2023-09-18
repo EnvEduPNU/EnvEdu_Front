@@ -360,3 +360,42 @@ useBubbleAxisScaleEditorStore.subscribe(state =>
 useMixChartAxisScaleEditorStore.subscribe(state =>
   storeAxisScaleInLocalStorage(state.axisScale)
 );
+
+export const useChartMetaDataStore = create(set => ({
+  metaData: {
+    tableTitle: "",
+    chartTitle: "",
+    legendPostion: "top",
+  },
+
+  changeTitle: (target, newTitle) =>
+    set(state => {
+      const key = target + "Title";
+      return {
+        ...state,
+        metaData: {
+          ...state.metaData,
+          [key]: newTitle,
+        },
+      };
+    }),
+
+  changeLegendPosition: positon =>
+    set(state => {
+      return {
+        ...state,
+        metaData: {
+          ...state.metaData,
+          legendPostion: positon,
+        },
+      };
+    }),
+}));
+
+export const chartScaleEditorStores = {
+  bar: useBarAxisSacleEditorStore,
+  line: useLineAxisSacleEditorStore,
+  scatter: useScatterAxisScaleEditorStore,
+  bubble: useBubbleAxisScaleEditorStore,
+  mix: useMixChartAxisScaleEditorStore,
+};

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { FormCheck, InputGroup } from "react-bootstrap";
 import { Bar } from "react-chartjs-2";
 import { useMixChartAxisScaleEditorStore } from "../../store/drawGraphStore";
@@ -71,15 +70,6 @@ function MixChartAxisScaleEditor({ data, qualitativeVariableIdx }) {
           },
         },
       },
-      // plugins: {
-      //   legend: {
-      //     position: "right", // 'top', 'left', 'bottom', 'right' 중 하나를 선택
-      //   },
-      //   tooltip: {
-      //     position: "average", // 'average', 'nearest' 중 하나를 선택
-      //     // 다른 툴팁 설정
-      //   },
-      // },
       responsive: true,
       maintainAspectRatio: false,
     };

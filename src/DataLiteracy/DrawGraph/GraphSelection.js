@@ -4,6 +4,7 @@ import "./DrawGraph.scss";
 import GraphSelectionModal from "./GraphSelectionModal";
 import SelectedGraph from "./SelectedGraph";
 import { data } from "../sampleData/sampleData";
+import Table from "../common/Table/Table";
 
 function GraphSelection() {
   const localStorageData = JSON.parse(localStorage.getItem("drawGraph")) || {};
@@ -32,24 +33,7 @@ function GraphSelection() {
         <Button onClick={onClickGraphSelectionBtn}>그래프 선택하기</Button>
       </div>
       <div className={selectedGraph !== -1 ? "data-list grid" : "data-list"}>
-        <table className="myData-list">
-          <thead>
-            <tr>
-              {filterData[0].map((key, idx) => (
-                <th key={key}>{key}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {filterData.slice(1).map((d, idx) => (
-              <tr key={idx}>
-                {d.map(key => (
-                  <td key={key}>{key}</td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <Table head={filterData[0]} body={filterData.slice(1)} />
 
         {selectedGraph !== -1 && (
           <div className="graph">

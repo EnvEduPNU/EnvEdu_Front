@@ -7,6 +7,7 @@ import { Button } from "react-bootstrap";
 import { useSelectedVariable } from "../store/drawGraphStore";
 import ChartAxisScaleEditor from "./ChartAxisScaleEditor";
 import SideBar from "../common/SideBar/SideBar";
+import ChartMetadataEditor from "./ChartMetadataEditor";
 
 function DrawGraph() {
   const localStorageData = JSON.parse(localStorage.getItem("drawGraph"));
@@ -95,7 +96,7 @@ function DrawGraph() {
       case 3:
         return <ChartAxisScaleEditor />;
       default:
-        return;
+        return <ChartMetadataEditor />;
     }
   };
 
