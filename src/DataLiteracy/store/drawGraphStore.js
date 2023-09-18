@@ -204,3 +204,132 @@ export const useBubbleAxisScaleEditorStore = create(set => ({
       };
     }),
 }));
+
+export const useMixChartAxisScaleEditorStore = create(set => ({
+  axisScale: {
+    x: {
+      value: -1,
+    },
+    y1: {
+      value: [],
+      min: 0,
+      max: 0,
+      stepSize: 0,
+    },
+    y2: {
+      value: [],
+      min: 0,
+      max: 0,
+      stepSize: 0,
+    },
+    barChart: [],
+    lineChart: [],
+  },
+
+  changeAxisValue: (axis, newValue, qualitativeVariableIdx) =>
+    set(state => {
+      const { axisScale } = state;
+      const currentAxis = axisScale[axis];
+
+      if (axis === "x") {
+        if (newValue !== qualitativeVariableIdx) {
+          alert("만들 수 없는 그래프 유형입니다.");
+          return state;
+        }
+
+        if (newValue === currentAxis.value)
+          return {
+            ...state,
+            axisScale: {
+              ...state.axisScale,
+              [axis]: {
+                ...currentAxis,
+                value: -1,
+              },
+            },
+          };
+
+        return {
+          ...state,
+          axisScale: {
+            ...state.axisScale,
+            [axis]: {
+              ...currentAxis,
+              value: newValue,
+            },
+          },
+        };
+      }
+
+      if (newValue === qualitativeVariableIdx) {
+        alert("만들 수 없는 그래프 유형입니다.");
+        return;
+      }
+
+      if (currentAxis.value.includes(newValue)) {
+        return {
+          ...state,
+          axisScale: {
+            ...state.axisScale,
+            [axis]: {
+              ...currentAxis,
+              value: currentAxis.value.filter(s => s !== newValue),
+            },
+          },
+        };
+      }
+
+      return {
+        ...state,
+        axisScale: {
+          ...state.axisScale,
+          [axis]: {
+            ...currentAxis,
+            value: [...currentAxis.value, newValue],
+          },
+        },
+      };
+    }),
+
+  changeAxisScale: (axis, scale, newScale) =>
+    set(state => {
+      return {
+        ...state,
+        axisScale: {
+          ...state.axisScale,
+          [axis]: {
+            ...state.axisScale[axis],
+            [scale]: newScale,
+          },
+        },
+      };
+    }),
+
+  changeChart: (chart, newValue, qualitativeVariableIdx) =>
+    set(state => {
+      const key = chart === "bar" ? "barChart" : "lineChart";
+      const currChart = state.axisScale[key];
+      if (currChart.includes(newValue)) {
+        return {
+          ...state,
+          axisScale: {
+            ...state.axisScale,
+            [key]: currChart.filter(v => v !== newValue),
+          },
+        };
+      }
+
+      if (newValue === qualitativeVariableIdx) {
+        alert("만들 수 없는 그래프 유형입니다.");
+        return;
+      }
+
+      return {
+        ...state,
+        axisScale: {
+          ...state.axisScale,
+          [key]: [...currChart, newValue],
+        },
+      };
+    }),
+}));

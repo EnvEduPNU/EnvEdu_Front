@@ -106,6 +106,7 @@ function ScatterAxisScaleEditor({ data, qualitativeVariableIdx }) {
             onChange={e =>
               changeAxisScale("x", "min", Math.round(e.target.value))
             }
+            value={x.min}
           />
         </label>
         <label>
@@ -116,6 +117,7 @@ function ScatterAxisScaleEditor({ data, qualitativeVariableIdx }) {
             onChange={e =>
               changeAxisScale("x", "max", Math.round(e.target.value))
             }
+            value={x.max}
           />
         </label>
         <label>
@@ -126,6 +128,7 @@ function ScatterAxisScaleEditor({ data, qualitativeVariableIdx }) {
             onChange={e =>
               changeAxisScale("x", "stepSize", Math.round(e.target.value))
             }
+            value={x.stepSize}
           />
         </label>
       </InputGroup>
@@ -139,6 +142,7 @@ function ScatterAxisScaleEditor({ data, qualitativeVariableIdx }) {
             onChange={e =>
               changeAxisScale("y", "min", Math.round(e.target.value))
             }
+            value={y.min}
           />
         </label>
         <label>
@@ -149,6 +153,7 @@ function ScatterAxisScaleEditor({ data, qualitativeVariableIdx }) {
             onChange={e =>
               changeAxisScale("y", "max", Math.round(e.target.value))
             }
+            value={y.max}
           />
         </label>
         <label>
@@ -159,6 +164,7 @@ function ScatterAxisScaleEditor({ data, qualitativeVariableIdx }) {
             onChange={e =>
               changeAxisScale("y", "stepSize", Math.round(e.target.value))
             }
+            value={y.stepSize}
           />
         </label>
       </InputGroup>

@@ -1,80 +1,17 @@
 import { useState } from "react";
 import { FormCheck, InputGroup } from "react-bootstrap";
 import { Bar } from "react-chartjs-2";
+import { useMixChartAxisScaleEditorStore } from "../../store/drawGraphStore";
 
 function MixChartAxisScaleEditor({ data, qualitativeVariableIdx }) {
-  const [selectedX, setSelectedX] = useState(-1);
-
-  const [selectedY1, setSelectedY1] = useState({
-    selected: [],
-    min: 0,
-    max: 0,
-    stepSize: 0,
-  });
-  const [selectedY2, setSelectedY2] = useState({
-    selected: [],
-    min: 0,
-    max: 0,
-    stepSize: 0,
-  });
-
-  const [selectedBar, setSelectedBar] = useState([]);
-  const [selectedLine, setSelectedLine] = useState([]);
+  const {
+    axisScale: { x, y1, y2, barChart, lineChart },
+    changeAxisValue,
+    changeAxisScale,
+    changeChart,
+  } = useMixChartAxisScaleEditorStore();
 
   const variables = data[qualitativeVariableIdx];
-
-  const onChangeSelectedX = idx => {
-    if (idx !== qualitativeVariableIdx) {
-      alert("만들 수 없는 그래프 유형입니다.");
-      return;
-    }
-    if (selectedX === idx) setSelectedX(-1);
-    else setSelectedX(idx);
-  };
-  const onChangeY = (selected, setSelected, idx) => {
-    if (idx === qualitativeVariableIdx) {
-      alert("만들 수 없는 그래프 유형입니다.");
-      return;
-    }
-
-    if (selected.selected.includes(idx)) {
-      setSelected(state => ({
-        ...state,
-        selected: state.selected.filter(s => s !== idx),
-      }));
-      return;
-    }
-
-    setSelected(state => ({ ...state, selected: [...state.selected, idx] }));
-  };
-  const onChangeSelectedY1 = idx => {
-    onChangeY(selectedY1, setSelectedY1, idx);
-  };
-  const onChangeSelectedY2 = idx => {
-    onChangeY(selectedY2, setSelectedY2, idx);
-  };
-
-  const onChangeSelectedChart = (selected, setSelected, idx) => {
-    if (selected.includes(idx)) {
-      setSelected(state => state.filter(s => s !== idx));
-      return;
-    }
-
-    if (idx === qualitativeVariableIdx) {
-      alert("만들 수 없는 그래프 유형입니다.");
-      return;
-    }
-
-    setSelected(state => [...state, idx]);
-  };
-
-  const onChangeSelectedBar = idx => {
-    onChangeSelectedChart(selectedBar, setSelectedBar, idx);
-  };
-
-  const onChangeSelectedLine = idx => {
-    onChangeSelectedChart(selectedLine, setSelectedLine, idx);
-  };
 
   const randomColor = (transparency = 0.5) =>
     `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${
@@ -89,18 +26,18 @@ function MixChartAxisScaleEditor({ data, qualitativeVariableIdx }) {
       borderWidth: 1,
     }));
 
-    selectedY1.selected.forEach(y1 => {
-      datasets[y1 - 1].yAxisID = "y1";
+    y1.value.forEach(v => {
+      datasets[v - 1].yAxisID = "y1";
     });
 
-    selectedY2.selected.forEach(y2 => {
-      datasets[y2 - 1].yAxisID = "y2";
+    y2.value.forEach(v => {
+      datasets[v - 1].yAxisID = "y2";
     });
 
-    selectedLine.forEach(idx => {
+    lineChart.forEach(idx => {
       datasets[idx - 1].type = "line";
     });
-    selectedBar.forEach(idx => {
+    barChart.forEach(idx => {
       datasets[idx - 1].type = "bar";
     });
 
@@ -113,10 +50,10 @@ function MixChartAxisScaleEditor({ data, qualitativeVariableIdx }) {
         y1: {
           position: "left",
           id: "y1",
-          min: selectedY1.min,
-          max: selectedY1.max,
+          min: y1.min,
+          max: y1.max,
           ticks: {
-            stepSize: selectedY1.stepSize,
+            stepSize: y1.stepSize,
             autoSkip: false,
           },
         },
@@ -126,10 +63,10 @@ function MixChartAxisScaleEditor({ data, qualitativeVariableIdx }) {
             drawOnChartArea: false, // 오른쪽 y축의 그리드 라인을 숨김
           },
           display: true,
-          min: selectedY2.min,
-          max: selectedY2.max,
+          min: y2.min,
+          max: y2.max,
           ticks: {
-            stepSize: selectedY2.stepSize,
+            stepSize: y2.stepSize,
             autoSkip: false,
           },
         },
@@ -156,20 +93,18 @@ function MixChartAxisScaleEditor({ data, qualitativeVariableIdx }) {
           {variables.map((variable, idx) => (
             <label
               className={
-                !selectedY1.selected.includes(idx) &&
-                !selectedY2.selected.includes(idx)
+                !y1.value.includes(idx) && !y2.value.includes(idx)
                   ? "variable"
                   : "variable disabled"
               }
               key={variable}
             >
               <FormCheck
-                disabled={
-                  selectedY1.selected.includes(idx) ||
-                  selectedY2.selected.includes(idx)
+                disabled={y1.value.includes(idx) || y2.value.includes(idx)}
+                checked={x.value === idx}
+                onChange={() =>
+                  changeAxisValue("x", idx, qualitativeVariableIdx)
                 }
-                checked={selectedX === idx}
-                onChange={() => onChangeSelectedX(idx)}
               />
               <span>{variable}</span>
             </label>
@@ -182,18 +117,18 @@ function MixChartAxisScaleEditor({ data, qualitativeVariableIdx }) {
           {variables.map((variable, idx) => (
             <label
               className={
-                selectedX !== idx && !selectedY2.selected.includes(idx)
+                x.value !== idx && !y2.value.includes(idx)
                   ? "variable"
                   : "variable disabled"
               }
               key={variable}
             >
               <FormCheck
-                disabled={
-                  selectedX === idx || selectedY2.selected.includes(idx)
+                disabled={x.value === idx || y2.value.includes(idx)}
+                checked={y1.value.includes(idx)}
+                onChange={() =>
+                  changeAxisValue("y1", idx, qualitativeVariableIdx)
                 }
-                checked={selectedY1.selected.includes(idx)}
-                onChange={() => onChangeSelectedY1(idx)}
               />
               <span>{variable}</span>
             </label>
@@ -206,18 +141,18 @@ function MixChartAxisScaleEditor({ data, qualitativeVariableIdx }) {
           {variables.map((variable, idx) => (
             <label
               className={
-                selectedX !== idx && !selectedY1.selected.includes(idx)
+                x.value !== idx && !y1.value.includes(idx)
                   ? "variable"
                   : "variable disabled"
               }
               key={variable}
             >
               <FormCheck
-                disabled={
-                  selectedX === idx || selectedY1.selected.includes(idx)
+                disabled={x.value === idx || y1.value.includes(idx)}
+                checked={y2.value.includes(idx)}
+                onChange={() =>
+                  changeAxisValue("y2", idx, qualitativeVariableIdx)
                 }
-                checked={selectedY2.selected.includes(idx)}
-                onChange={() => onChangeSelectedY2(idx)}
               />
               <span>{variable}</span>
             </label>
@@ -232,11 +167,9 @@ function MixChartAxisScaleEditor({ data, qualitativeVariableIdx }) {
             // placeholder="Min Value"
             type="number"
             onChange={e =>
-              setSelectedY1(state => ({
-                ...state,
-                min: Math.round(e.target.value),
-              }))
+              changeAxisScale("y1", "min", Math.round(e.target.value))
             }
+            value={y1.min}
           />
         </label>
         <label>
@@ -245,11 +178,9 @@ function MixChartAxisScaleEditor({ data, qualitativeVariableIdx }) {
             // placeholder="Max Value"
             type="number"
             onChange={e =>
-              setSelectedY1(state => ({
-                ...state,
-                max: Math.round(e.target.value),
-              }))
+              changeAxisScale("y1", "max", Math.round(e.target.value))
             }
+            value={y1.max}
           />
         </label>
         <label>
@@ -258,11 +189,9 @@ function MixChartAxisScaleEditor({ data, qualitativeVariableIdx }) {
             // placeholder="Step Size"
             type="number"
             onChange={e =>
-              setSelectedY1(state => ({
-                ...state,
-                stepSize: Math.round(e.target.value),
-              }))
+              changeAxisScale("y1", "stepSize", Math.round(e.target.value))
             }
+            value={y1.stepSize}
           />
         </label>
       </InputGroup>
@@ -274,11 +203,9 @@ function MixChartAxisScaleEditor({ data, qualitativeVariableIdx }) {
             // placeholder="Min Value"
             type="number"
             onChange={e =>
-              setSelectedY2(state => ({
-                ...state,
-                min: Math.round(e.target.value),
-              }))
+              changeAxisScale("y2", "min", Math.round(e.target.value))
             }
+            value={y2.min}
           />
         </label>
         <label>
@@ -287,11 +214,9 @@ function MixChartAxisScaleEditor({ data, qualitativeVariableIdx }) {
             // placeholder="Max Value"
             type="number"
             onChange={e =>
-              setSelectedY2(state => ({
-                ...state,
-                max: Math.round(e.target.value),
-              }))
+              changeAxisScale("y2", "max", Math.round(e.target.value))
             }
+            value={y2.max}
           />
         </label>
         <label>
@@ -300,11 +225,9 @@ function MixChartAxisScaleEditor({ data, qualitativeVariableIdx }) {
             // placeholder="Step Size"
             type="number"
             onChange={e =>
-              setSelectedY2(state => ({
-                ...state,
-                stepSize: Math.round(e.target.value),
-              }))
+              changeAxisScale("y2", "stepSize", Math.round(e.target.value))
             }
+            value={y2.stepSize}
           />
         </label>
       </InputGroup>
@@ -314,14 +237,14 @@ function MixChartAxisScaleEditor({ data, qualitativeVariableIdx }) {
           {variables.map((variable, idx) => (
             <label
               className={
-                !selectedLine.includes(idx) ? "variable" : "variable disabled"
+                !lineChart.includes(idx) ? "variable" : "variable disabled"
               }
               key={variable}
             >
               <FormCheck
-                disabled={selectedLine.includes(idx)}
-                checked={selectedBar.includes(idx)}
-                onChange={() => onChangeSelectedBar(idx)}
+                disabled={lineChart.includes(idx)}
+                checked={barChart.includes(idx)}
+                onChange={() => changeChart("bar", idx, qualitativeVariableIdx)}
               />
               <span>{variable}</span>
             </label>
@@ -334,14 +257,16 @@ function MixChartAxisScaleEditor({ data, qualitativeVariableIdx }) {
           {variables.map((variable, idx) => (
             <label
               className={
-                !selectedBar.includes(idx) ? "variable" : "variable disabled"
+                !barChart.includes(idx) ? "variable" : "variable disabled"
               }
               key={variable}
             >
               <FormCheck
-                disabled={selectedBar.includes(idx)}
-                checked={selectedLine.includes(idx)}
-                onChange={() => onChangeSelectedLine(idx)}
+                disabled={barChart.includes(idx)}
+                checked={lineChart.includes(idx)}
+                onChange={() =>
+                  changeChart("line", idx, qualitativeVariableIdx)
+                }
               />
               <span>{variable}</span>
             </label>
@@ -350,9 +275,8 @@ function MixChartAxisScaleEditor({ data, qualitativeVariableIdx }) {
       </div>
 
       <div className="chart">
-        {selectedX > -1 &&
-          selectedY1.selected.length + selectedY2.selected.length ===
-            variables.length - 1 && (
+        {x.value > -1 &&
+          y1.value.length + y2.value.length === variables.length - 1 && (
             <Bar
               style={{ height: "350px" }}
               data={{

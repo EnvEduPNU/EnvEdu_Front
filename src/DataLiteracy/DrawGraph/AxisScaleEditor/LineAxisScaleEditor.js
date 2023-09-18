@@ -92,6 +92,7 @@ function LineAxisScaleEditor({ data, qualitativeVariableIdx }) {
           <input
             // placeholder="Min Value"
             type="number"
+            value={min}
             onChange={e => changeMinValue(Math.round(e.target.value))}
           />
         </label>
@@ -100,6 +101,7 @@ function LineAxisScaleEditor({ data, qualitativeVariableIdx }) {
           <input
             // placeholder="Max Value"
             type="number"
+            value={max}
             onChange={e => changeMaxValue(Math.round(e.target.value))}
           />
         </label>
@@ -108,6 +110,7 @@ function LineAxisScaleEditor({ data, qualitativeVariableIdx }) {
           <input
             // placeholder="Step Size"
             type="number"
+            value={stepSize}
             onChange={e => changeStepSize(Math.round(e.target.value))}
           />
         </label>

@@ -123,6 +123,7 @@ function BarAxisScaleEditor({ data, qualitativeVariableIdx }) {
             // placeholder="Min Value"
             type="number"
             onChange={e => changeMinValue(Math.round(e.target.value))}
+            value={min}
           />
         </label>
         <label>
@@ -131,6 +132,7 @@ function BarAxisScaleEditor({ data, qualitativeVariableIdx }) {
             // placeholder="Max Value"
             type="number"
             onChange={e => changeMaxValue(Math.round(e.target.value))}
+            value={max}
           />
         </label>
         <label>
@@ -139,6 +141,7 @@ function BarAxisScaleEditor({ data, qualitativeVariableIdx }) {
             // placeholder="Step Size"
             type="number"
             onChange={e => changeStepSize(Math.round(e.target.value))}
+            value={stepSize}
           />
         </label>
       </InputGroup>
