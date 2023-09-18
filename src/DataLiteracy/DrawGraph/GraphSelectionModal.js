@@ -8,6 +8,7 @@ function GraphSelectionModal({
   setSelectedGraph,
   setIsVisibleModal,
   selectedGraph,
+  next,
 }) {
   const [graphIdx, setGraphIdx] = useState(selectedGraph);
   const graphs = [
@@ -31,6 +32,7 @@ function GraphSelectionModal({
 
     setSelectedGraph(graphIdx);
     setIsVisibleModal(state => !state);
+    next();
   };
   return (
     <>

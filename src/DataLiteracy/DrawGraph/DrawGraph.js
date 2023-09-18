@@ -94,7 +94,7 @@ function DrawGraph() {
       case 1:
         return <VariableSelection />;
       case 2:
-        return <GraphSelection />;
+        return <GraphSelection next={onClickNextBtn} />;
       case 3:
         return <ChartAxisScaleEditor />;
       case 4:

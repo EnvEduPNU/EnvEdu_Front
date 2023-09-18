@@ -6,7 +6,7 @@ import SelectedGraph from "./SelectedGraph";
 import { data } from "../sampleData/sampleData";
 import Table from "../common/Table/Table";
 
-function GraphSelection() {
+function GraphSelection({ next }) {
   const localStorageData = JSON.parse(localStorage.getItem("drawGraph")) || {};
 
   const filterData = data.map(row => {
@@ -32,20 +32,15 @@ function GraphSelection() {
         <Button>추천 그래프 유형</Button>
         <Button onClick={onClickGraphSelectionBtn}>그래프 선택하기</Button>
       </div>
-      <div className={selectedGraph !== -1 ? "data-list grid" : "data-list"}>
+      <div className={"data-list"}>
         <Table head={filterData[0]} body={filterData.slice(1)} />
-
-        {selectedGraph !== -1 && (
-          <div className="graph">
-            <SelectedGraph data={filterData} graph={selectedGraph} />
-          </div>
-        )}
       </div>
       {isVisibleModal && (
         <GraphSelectionModal
           selectedGraph={selectedGraph}
           setSelectedGraph={setSelectedGraph}
           setIsVisibleModal={setIsVisibleModal}
+          next={next}
         />
       )}
     </div>
