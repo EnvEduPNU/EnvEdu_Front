@@ -29,12 +29,12 @@ import OpenApi from "./OpenApi/OpenApi";
 import OpenApiPast from "./OpenApi/openAPIPast";
 import Search from "./OpenApi/search";
 import MyData from "./myData/myData";
-import ReadExcel from './myData/readExcel';
+import ReadExcel from "./myData/readExcel";
 
 import Measure from "./Education/Measure/measure";
 import Sample from "./Socket/sample";
 
-import MeasureContinuous from './Education/Measure/measure_continuous';
+import MeasureContinuous from "./Education/Measure/measure_continuous";
 import DrawGraph from "./DataLiteracy/DrawGraph/DrawGraph";
 
 function App() {
