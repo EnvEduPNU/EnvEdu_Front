@@ -146,10 +146,11 @@ function SocketConnect(props) {
              * 받은 데이터를 saveData에 추가
              * 5개가 쌓이면 한 번에 서버로 전송해 저장
              */
-            saveData.push(JSON.stringify(receiveObject));
+            saveData.push(receiveObject);
             setSaveData([...saveData]);
             if (saveData.length === 5) {
                 console.log(saveData) //확인
+
                 customAxios.post("/seed/save/continuous", {data: saveData}).then().catch(() => {
                     disconnect();
                 });
