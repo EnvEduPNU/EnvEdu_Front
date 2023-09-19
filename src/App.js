@@ -29,13 +29,13 @@ import OpenApi from "./OpenApi/OpenApi";
 import OpenApiPast from "./OpenApi/openAPIPast";
 import Search from "./OpenApi/search";
 import MyData from "./myData/myData";
+import ReadExcel from "./myData/readExcel";
 
 import Measure from "./Education/Measure/measure";
 import Sample from "./Socket/sample";
 
 import MeasureContinuous from "./Education/Measure/measure_continuous";
 import DrawGraph from "./DataLiteracy/DrawGraph/DrawGraph";
-import Fold from "./myData/folder";
 
 function App() {
   /**
@@ -61,12 +61,13 @@ function App() {
             exact={true}
             element={<RegisterStudents />}
           />
-          <Route path="/folder" exact={true} element={<Fold />} />
+
           {/*open API*/}
           <Route path="/openAPI" exact={true} element={<OpenApi />} />
           <Route path="/openAPI/past" exact={true} element={<OpenApiPast />} />
           <Route path="/search" exact={true} element={<Search />} />
           <Route path="/myData" exact={true} element={<MyData />} />
+          <Route path="/readExcel" exact={true} element={<ReadExcel />} />
 
           {/*login*/}
           <Route path="/login" exact={true} element={<LoginForm />} />
