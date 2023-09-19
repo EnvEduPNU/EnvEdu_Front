@@ -18,7 +18,7 @@ function ConnectPage() {
          * 학생의 경우, 자신에게 등록된 기기
          * 교사의 경우, 자신에게 등록된 기기 + 자신이 지도하는 모든 학생에게 등록된 기기
          */
-        customAxios.get(`/user/device`)
+        customAxios.get(`/seed/device`)
             .then((response)=>{
                 setConnectableSocket(response.data.relatedUserDeviceList);
             })

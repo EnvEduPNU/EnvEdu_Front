@@ -92,7 +92,8 @@ function SelectedGraph({ data, graph }) {
       />
     );
   };
-  console.log(createDatasets("scatter"));
+
+  console.log(createDatasets("line"));
   return (
     <>
       {graph === 0 && (
