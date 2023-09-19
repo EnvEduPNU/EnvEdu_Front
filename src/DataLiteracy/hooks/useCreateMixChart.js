@@ -9,6 +9,9 @@ const useCreateMixChart = (data, qualitativeVariableIdx) => {
   const legendPostion = useChartMetaDataStore(
     state => state.metaData.legendPostion
   );
+  const datalabelAnchor = useChartMetaDataStore(
+    state => state.metaData.datalabelAnchor
+  );
 
   const { x, y1, y2, barChart, lineChart } = axisScale;
 
@@ -67,7 +70,12 @@ const useCreateMixChart = (data, qualitativeVariableIdx) => {
       },
       plugins: {
         legend: {
+          display: legendPostion !== "no",
           position: legendPostion, // 'top', 'left', 'bottom', 'right' 중 하나를 선택
+        },
+        datalabels: {
+          display: datalabelAnchor !== "no",
+          anchor: datalabelAnchor,
         },
       },
       responsive: true,

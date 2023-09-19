@@ -10,9 +10,10 @@ import MixChart from "./CustomChart/MixChart";
 
 const ChartMetadataEditor = () => {
   const {
-    metaData: { tableTitle, chartTitle, legendPostion },
+    metaData: { tableTitle, chartTitle, legendPostion, datalabelAnchor },
     changeTitle,
     changeLegendPosition,
+    changeDatalabelAnchor,
   } = useChartMetaDataStore();
   const localStorageData = JSON.parse(localStorage.getItem("drawGraph")) || {};
   const graph = localStorageData?.selectedGraph;
@@ -31,8 +32,23 @@ const ChartMetadataEditor = () => {
         return "bottom";
       case "왼쪽":
         return "left";
-      default:
+      case "오른쪽":
         return "right";
+      default:
+        return "no";
+    }
+  };
+
+  const changeEnglishAnchor = anchor => {
+    switch (anchor) {
+      case "위":
+        return "end";
+      case "아래":
+        return "start";
+      case "중간":
+        return "center";
+      default:
+        return "no";
     }
   };
   return (
@@ -60,13 +76,27 @@ const ChartMetadataEditor = () => {
         </label>
         <div className="legend-location">
           <span>범례 위치: </span>
-          {["위", "아래", "왼쪽", "오른쪽"].map(position => (
+          {["표시안함", "위", "아래", "왼쪽", "오른쪽"].map(position => (
             <label key={position} className="location-label">
               <div>{position}</div>
               <FormCheckInput
                 checked={changeEnglishPostion(position) === legendPostion}
                 onChange={e =>
                   changeLegendPosition(changeEnglishPostion(position))
+                }
+              />
+            </label>
+          ))}
+        </div>
+        <div className="legend-location">
+          <span>레이블 위치: </span>
+          {["표시안함", "위", "중간", "아래"].map(anchor => (
+            <label key={anchor} className="location-label">
+              <div>{anchor}</div>
+              <FormCheckInput
+                checked={changeEnglishAnchor(anchor) === datalabelAnchor}
+                onChange={e =>
+                  changeDatalabelAnchor(changeEnglishAnchor(anchor))
                 }
               />
             </label>

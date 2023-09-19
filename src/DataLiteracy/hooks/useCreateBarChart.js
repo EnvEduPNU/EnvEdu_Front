@@ -3,13 +3,16 @@ import {
   useChartMetaDataStore,
 } from "../store/drawGraphStore";
 import { colorsArray } from "../utils/randomColor";
+import "chartjs-plugin-datalabels";
 
 const useCreateBarChart = (data, qualitativeVariableIdx) => {
   const axisScale = useBarAxisSacleEditorStore(state => state.axisScale);
   const legendPostion = useChartMetaDataStore(
     state => state.metaData.legendPostion
   );
-
+  const datalabelAnchor = useChartMetaDataStore(
+    state => state.metaData.datalabelAnchor
+  );
   const { x, y, min, max, stepSize } = axisScale;
 
   const createDataset = () => {
@@ -53,7 +56,12 @@ const useCreateBarChart = (data, qualitativeVariableIdx) => {
         },
         plugins: {
           legend: {
+            display: legendPostion !== "no",
             position: legendPostion, // 'top', 'left', 'bottom', 'right' 중 하나를 선택
+          },
+          datalabels: {
+            display: datalabelAnchor !== "no",
+            anchor: datalabelAnchor,
           },
         },
       };
@@ -74,7 +82,12 @@ const useCreateBarChart = (data, qualitativeVariableIdx) => {
         },
         plugins: {
           legend: {
+            display: legendPostion !== "no",
             position: legendPostion, // 'top', 'left', 'bottom', 'right' 중 하나를 선택
+          },
+          datalabels: {
+            display: datalabelAnchor !== "no",
+            anchor: datalabelAnchor,
           },
         },
       };

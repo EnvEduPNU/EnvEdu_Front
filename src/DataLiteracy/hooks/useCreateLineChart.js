@@ -9,6 +9,9 @@ const useCreateLineChart = (data, qualitativeVariableIdx) => {
   const legendPostion = useChartMetaDataStore(
     state => state.metaData.legendPostion
   );
+  const datalabelAnchor = useChartMetaDataStore(
+    state => state.metaData.datalabelAnchor
+  );
 
   const { x, y, min, max, stepSize } = axisScale;
 
@@ -40,7 +43,12 @@ const useCreateLineChart = (data, qualitativeVariableIdx) => {
       },
       plugins: {
         legend: {
+          display: legendPostion !== "no",
           position: legendPostion, // 'top', 'left', 'bottom', 'right' 중 하나를 선택
+        },
+        datalabels: {
+          display: datalabelAnchor !== "no",
+          anchor: datalabelAnchor,
         },
       },
     };

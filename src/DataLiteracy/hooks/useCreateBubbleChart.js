@@ -9,6 +9,10 @@ const useCreateBubbleChart = (data, qualitativeVariableIdx) => {
   const legendPostion = useChartMetaDataStore(
     state => state.metaData.legendPostion
   );
+  const datalabelAnchor = useChartMetaDataStore(
+    state => state.metaData.datalabelAnchor
+  );
+
   const { x, y, r } = axisScale;
 
   function scaleBubbleSize(value, minValue, maxValue, minSize, maxSize) {
@@ -60,6 +64,7 @@ const useCreateBubbleChart = (data, qualitativeVariableIdx) => {
       },
       plugins: {
         legend: {
+          display: legendPostion !== "no",
           position: legendPostion, // 'top', 'left', 'bottom', 'right' 중 하나를 선택
         },
         tooltip: {
@@ -73,6 +78,10 @@ const useCreateBubbleChart = (data, qualitativeVariableIdx) => {
               return `${label}: (${xValue}, ${yValue}, ${rValue})`;
             },
           },
+        },
+        datalabels: {
+          display: datalabelAnchor !== "no",
+          anchor: datalabelAnchor,
         },
       },
     };

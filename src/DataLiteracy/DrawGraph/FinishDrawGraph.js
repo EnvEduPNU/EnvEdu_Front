@@ -23,10 +23,6 @@ const FinishDrawGraph = () => {
 
   return (
     <div className="finishDrawGraph">
-      <div className="buttons">
-        <Button>그래프 SEEd 저장</Button>
-        <Button>PDF로 저장</Button>
-      </div>
       <div>
         <h3>{tableTitle}</h3>
         <Table head={filterData[0]} body={filterData.slice(1)} />
@@ -48,6 +44,10 @@ const FinishDrawGraph = () => {
         {graph === 5 && (
           <MixChart data={filterData} qualitativeVariableIdx={0} />
         )}
+      </div>
+      <div className="buttons">
+        <Button>그래프 SEEd 저장</Button>
+        <Button>PDF로 저장</Button>
       </div>
     </div>
   );

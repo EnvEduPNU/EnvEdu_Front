@@ -366,6 +366,7 @@ export const useChartMetaDataStore = create(set => ({
     tableTitle: "",
     chartTitle: "",
     legendPostion: "top",
+    datalabelAnchor: "no",
   },
 
   changeTitle: (target, newTitle) =>
@@ -387,6 +388,16 @@ export const useChartMetaDataStore = create(set => ({
         metaData: {
           ...state.metaData,
           legendPostion: positon,
+        },
+      };
+    }),
+  changeDatalabelAnchor: anchor =>
+    set(state => {
+      return {
+        ...state,
+        metaData: {
+          ...state.metaData,
+          datalabelAnchor: anchor,
         },
       };
     }),

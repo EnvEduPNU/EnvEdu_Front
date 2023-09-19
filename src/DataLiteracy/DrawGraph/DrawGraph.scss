@@ -173,13 +173,13 @@
   }
   .buttons {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
     button {
-      font-size: 18px;
-      width: fit-content;
+      width: 200px;
+      min-width: fit-content;
+      background-color: #4472c4;
+      color: #fff;
     }
-  }
-  .chartWrapper {
     margin-bottom: 20px;
   }
 }

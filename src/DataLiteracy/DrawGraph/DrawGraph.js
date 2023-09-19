@@ -10,6 +10,11 @@ import SideBar from "../common/SideBar/SideBar";
 import ChartMetadataEditor from "./ChartMetadataEditor";
 import FinishDrawGraph from "./FinishDrawGraph";
 
+import { Chart } from "chart.js";
+import ChartDataLabels from "chartjs-plugin-datalabels";
+
+Chart.register(ChartDataLabels);
+
 function DrawGraph() {
   const localStorageData = JSON.parse(localStorage.getItem("drawGraph"));
   const [activeStep, setActiveStep] = useState(

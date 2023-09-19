@@ -35,7 +35,7 @@ import Sample from "./Socket/sample";
 
 import MeasureContinuous from "./Education/Measure/measure_continuous";
 import DrawGraph from "./DataLiteracy/DrawGraph/DrawGraph";
-import Fold from './myData/folder';
+import Fold from "./myData/folder";
 
 function App() {
   /**
