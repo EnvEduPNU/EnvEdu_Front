@@ -36,7 +36,7 @@ import Sample from "./Socket/sample";
 
 import MeasureContinuous from "./Education/Measure/measure_continuous";
 import DrawGraph from "./DataLiteracy/DrawGraph/DrawGraph";
-import GraphInterpreter from "./DataLiteracy/GraphInterpreter/GraphInterpreter";
+import GraphInterpreterPage from "./DataLiteracy/GraphInterpreter/GraphInterpreterPage";
 
 function App() {
   /**
@@ -127,7 +127,7 @@ function App() {
           {/*DataLiteracy */}
           <Route path="/dataLiteracy">
             <Route path="drawGraph" element={<DrawGraph />} />
-            <Route path="graphInterpreter" element={<GraphInterpreter />} />
+            <Route path="graphInterpreter" element={<GraphInterpreterPage />} />
           </Route>
         </Routes>
       </div>

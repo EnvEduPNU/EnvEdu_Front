@@ -28,3 +28,22 @@
     align-self: center;
   }
 }
+
+.GraphInterpreter {
+  display: grid;
+  grid-template-columns: 0.6fr 1fr;
+  gap: 40px;
+  .label-textarea-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    h5 {
+      color: #333333;
+      font-size: 18px;
+      font-weight: 600;
+    }
+  }
+  .chart {
+    align-self: center;
+  }
+}

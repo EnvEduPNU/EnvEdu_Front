@@ -1,47 +1,35 @@
-import { Button } from "react-bootstrap";
-import SideBar from "../common/SideBar/SideBar";
-import Stepper from "../common/Stepper/Stepper";
-import "./GraphInterpreter.scss";
-import { useState } from "react";
-import GraphSummary from "./GraphSummary";
+import CustomChart from "../common/CustomChart/CustomChart";
+import Textarea from "../common/Textarea/Textarea";
+import { getFilterData } from "../utils/localStorage";
+import { useGraphInterpreterStore } from "../store/graphInterpreterStore";
 
 function GraphInterpreter() {
-  const localStorageData = JSON.parse(localStorage.getItem("graphInterpreter"));
-  const [activeStep, setActiveStep] = useState(
-    localStorageData?.step ? localStorageData?.step : 1
-  );
-  const steps = ["그래프 요약", "그래프 해석", "그래프 평가"];
-
-  const onClickPrevButton = () => {
-    if (activeStep === 1) return;
-    setActiveStep(state => state - 1);
-  };
-
-  const onClickNextBtn = () => {
-    if (activeStep === steps.length) return;
-    setActiveStep(state => state + 1);
-  };
-
-  const Step = () => {
-    switch (activeStep) {
-      case 1:
-        return <GraphSummary />;
-      default:
-        return;
-    }
-  };
+  const {
+    userData: { purpose, infomation },
+    changeUserData,
+  } = useGraphInterpreterStore();
+  const data = getFilterData();
 
   return (
-    <div className="graphInterpreter">
-      <SideBar activeIdx={3} />
-      <div>
-        <Stepper steps={steps} activeStep={activeStep} />
-        <Step />
-        <div className="buttonWrapper">
-          <Button onClick={onClickPrevButton}>이전</Button>
-          <Button onClick={onClickNextBtn}>다음</Button>
+    <div className="GraphInterpreter">
+      <div className="label-textarea-wrapper">
+        <div className="label-textarea">
+          <h5>1. 그래프가 목적에 맞게 잘 그려졌는지 설명해봅시다.</h5>
+          <Textarea
+            value={purpose}
+            onChange={e => changeUserData("purpose", e.target.value)}
+          />
+        </div>
+        <div className="label-textarea">
+          <h5>2. 그래프를 보고 알 수 있는 정보를 써봅시다.</h5>
+          <Textarea
+            value={infomation}
+            onChange={e => changeUserData("infomation", e.target.value)}
+          />
         </div>
       </div>
+
+      <CustomChart data={data} />
     </div>
   );
 }
