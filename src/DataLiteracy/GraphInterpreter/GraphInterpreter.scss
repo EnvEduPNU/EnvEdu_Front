@@ -1,0 +1,13 @@
+.graphInterpreter {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 0.2fr 1fr;
+  gap: 30px;
+
+  .buttonWrapper {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+}

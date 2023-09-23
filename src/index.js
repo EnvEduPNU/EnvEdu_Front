@@ -11,8 +11,6 @@ import ChartDataLabels from "chartjs-plugin-datalabels";
 
 Chart.register(ChartDataLabels);
 
-Chart.register(ChartDataLabels);
-
 // 전역 설정
 Chart.defaults.plugins.datalabels.display = false;
 

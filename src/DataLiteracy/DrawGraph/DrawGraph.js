@@ -106,7 +106,7 @@ function DrawGraph() {
 
   return (
     <div className="draw-graph">
-      <SideBar />
+      <SideBar activeIdx={2} />
       <div>
         <Stepper steps={steps} activeStep={activeStep} />
         <Step />
