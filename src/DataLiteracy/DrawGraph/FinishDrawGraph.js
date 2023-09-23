@@ -2,11 +2,11 @@ import { Button } from "react-bootstrap";
 import Table from "../common/Table/Table";
 import { data } from "../sampleData/sampleData";
 import { useChartMetaDataStore } from "../store/drawGraphStore";
-import BarChart from "./CustomChart/BarChart";
-import BubbleChart from "./CustomChart/BubbleChart";
-import LineChart from "./CustomChart/LineChart";
-import MixChart from "./CustomChart/MixChart";
-import ScatterChart from "./CustomChart/ScatterChart";
+import BarChart from "../common/CustomChart/BarChart";
+import BubbleChart from "../common/CustomChart/BubbleChart";
+import LineChart from "../common/CustomChart/LineChart";
+import MixChart from "../common/CustomChart/MixChart";
+import ScatterChart from "../common/CustomChart/ScatterChart";
 
 const FinishDrawGraph = () => {
   const { tableTitle, chartTitle } = useChartMetaDataStore(

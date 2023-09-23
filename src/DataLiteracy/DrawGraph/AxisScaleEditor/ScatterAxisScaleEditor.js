@@ -1,6 +1,6 @@
 import { FormCheck, InputGroup } from "react-bootstrap";
 import { useScatterAxisScaleEditorStore } from "../../store/drawGraphStore";
-import ScatterChart from "../CustomChart/ScatterChart";
+import ScatterChart from "../../common/CustomChart/ScatterChart";
 
 function ScatterAxisScaleEditor({ data, qualitativeVariableIdx }) {
   const {

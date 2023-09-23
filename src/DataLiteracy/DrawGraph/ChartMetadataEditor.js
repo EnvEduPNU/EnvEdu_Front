@@ -2,11 +2,11 @@ import FormCheckInput from "react-bootstrap/esm/FormCheckInput";
 import Table from "../common/Table/Table";
 import { data } from "../sampleData/sampleData";
 import { useChartMetaDataStore } from "../store/drawGraphStore";
-import LineChart from "./CustomChart/LineChart";
-import BarChart from "./CustomChart/BarChart";
-import ScatterChart from "./CustomChart/ScatterChart";
-import BubbleChart from "./CustomChart/BubbleChart";
-import MixChart from "./CustomChart/MixChart";
+import LineChart from "../common/CustomChart/LineChart";
+import BarChart from "../common/CustomChart/BarChart";
+import ScatterChart from "../common/CustomChart/ScatterChart";
+import BubbleChart from "../common/CustomChart/BubbleChart";
+import MixChart from "../common/CustomChart/MixChart";
 
 const ChartMetadataEditor = () => {
   const {

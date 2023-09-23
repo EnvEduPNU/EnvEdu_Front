@@ -1,6 +1,6 @@
 import { FormCheck, InputGroup } from "react-bootstrap";
 import { useMixChartAxisScaleEditorStore } from "../../store/drawGraphStore";
-import MixChart from "../CustomChart/MixChart";
+import MixChart from "../../common/CustomChart/MixChart";
 
 function MixChartAxisScaleEditor({ data, qualitativeVariableIdx }) {
   const {

@@ -1,6 +1,6 @@
 import { FormCheck, InputGroup } from "react-bootstrap";
 import { useLineAxisSacleEditorStore } from "../../store/drawGraphStore";
-import LineChart from "../CustomChart/LineChart";
+import LineChart from "../../common/CustomChart/LineChart";
 
 function LineAxisScaleEditor({ data, qualitativeVariableIdx }) {
   const {

@@ -1,6 +1,6 @@
 import { FormCheck, InputGroup } from "react-bootstrap";
 import { useBubbleAxisScaleEditorStore } from "../../store/drawGraphStore";
-import BubbleChart from "../CustomChart/BubbleChart";
+import BubbleChart from "../../common/CustomChart/BubbleChart";
 
 function BubbleAxisScaleEditor({ data, qualitativeVariableIdx }) {
   const {

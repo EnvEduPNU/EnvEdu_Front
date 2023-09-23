@@ -1,7 +1,7 @@
 import { FormCheck, InputGroup } from "react-bootstrap";
 import { useBarAxisSacleEditorStore } from "../../store/drawGraphStore";
 import { useRef } from "react";
-import BarChart from "../CustomChart/BarChart";
+import BarChart from "../../common/CustomChart/BarChart";
 
 function BarAxisScaleEditor({ data, qualitativeVariableIdx }) {
   const {
