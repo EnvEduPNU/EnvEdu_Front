@@ -1,3 +1,5 @@
+import { data } from "../sampleData/sampleData";
+
 export const DRAW_GRAPH = "drawGraph";
 
 export const storeLocalStorage = (localStorageKey, key, value) => {
@@ -23,4 +25,13 @@ export const getAxisScale = graph => {
   const selectedGraph = drawGraph?.selectedGraph;
   if (selectedGraph === null || selectedGraph !== graph) return null;
   return drawGraph.axisScale;
+};
+
+export const getFilterData = () => {
+  const localStorageData = JSON.parse(localStorage.getItem(DRAW_GRAPH)) || {};
+  return data.map(row => {
+    return row.filter((_, index) =>
+      localStorageData.selectedVariable?.includes(index)
+    );
+  });
 };

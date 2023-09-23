@@ -11,3 +11,20 @@
     justify-content: flex-end;
   }
 }
+
+.graphSummary {
+  display: flex;
+  gap: 15px;
+  .summary {
+    min-width: 200px;
+  }
+  .table {
+    min-width: 400px;
+    max-width: 400px;
+    overflow: scroll;
+  }
+  .chart {
+    min-width: 500px;
+    align-self: center;
+  }
+}

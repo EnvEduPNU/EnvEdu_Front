@@ -21,7 +21,8 @@ function GraphSelectionModal({
   ];
   const onClickCreateGraphBtn = () => {
     const drawGraph = JSON.parse(localStorage.getItem("drawGraph"));
-
+    // delete drawGraph.axisScale;
+    // delete drawGraph.metaData;
     localStorage.setItem(
       "drawGraph",
       JSON.stringify({
