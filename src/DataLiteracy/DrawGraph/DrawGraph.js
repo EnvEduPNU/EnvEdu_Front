@@ -99,8 +99,10 @@ function DrawGraph() {
         return <ChartAxisScaleEditor />;
       case 4:
         return <ChartMetadataEditor />;
-      default:
+      case 5:
         return <FinishDrawGraph />;
+      default:
+        return;
     }
   };
 

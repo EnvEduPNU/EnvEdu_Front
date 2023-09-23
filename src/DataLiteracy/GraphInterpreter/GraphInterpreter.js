@@ -3,6 +3,7 @@ import SideBar from "../common/SideBar/SideBar";
 import Stepper from "../common/Stepper/Stepper";
 import "./GraphInterpreter.scss";
 import { useState } from "react";
+import GraphSummary from "./GraphSummary";
 
 function GraphInterpreter() {
   const localStorageData = JSON.parse(localStorage.getItem("graphInterpreter"));
@@ -21,11 +22,21 @@ function GraphInterpreter() {
     setActiveStep(state => state + 1);
   };
 
+  const Step = () => {
+    switch (activeStep) {
+      case 1:
+        return <GraphSummary />;
+      default:
+        return;
+    }
+  };
+
   return (
     <div className="graphInterpreter">
       <SideBar activeIdx={3} />
       <div>
         <Stepper steps={steps} activeStep={activeStep} />
+        <Step />
         <div className="buttonWrapper">
           <Button onClick={onClickPrevButton}>이전</Button>
           <Button onClick={onClickNextBtn}>다음</Button>
