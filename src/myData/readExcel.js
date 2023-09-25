@@ -17,9 +17,9 @@ export default function ReadExcel() {
             const workbook = XLSX.read(bufferArray, { type: 'buffer' });
             const sheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
+
             const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
             setExcelData(data);
-            console.log(data)
         };
     };
   
@@ -44,7 +44,7 @@ export default function ReadExcel() {
     const navigate = useNavigate('');
     const handleSave = () => {
         customAxios.post('/dataupload', {
-            "data": [excelData], 
+            "data": excelData, 
             "label": label,
             "memo": memo
         })
