@@ -31,7 +31,7 @@
 
 .GraphInterpreter {
   display: grid;
-  grid-template-columns: 0.6fr 1fr;
+  grid-template-columns: minmax(350px, 0.6fr) 1fr;
   gap: 40px;
   .label-textarea-wrapper {
     display: flex;
@@ -55,6 +55,9 @@
   .resultWrapper {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    .chart {
+      max-width: 550px;
+    }
     gap: 30px;
   }
 }
