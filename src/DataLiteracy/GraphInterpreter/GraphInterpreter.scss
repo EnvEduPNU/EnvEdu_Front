@@ -59,5 +59,14 @@
       max-width: 550px;
     }
     gap: 30px;
+    .writeWrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      textarea {
+        max-height: 100px;
+        margin-top: 10px;
+      }
+    }
   }
 }

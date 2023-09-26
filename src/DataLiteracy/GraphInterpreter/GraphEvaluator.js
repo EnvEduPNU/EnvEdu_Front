@@ -1,6 +1,7 @@
 import SelectedGraph from "../DrawGraph/SelectedGraph";
 import CustomChart from "../common/CustomChart/CustomChart";
 import Table from "../common/Table/Table";
+import Textarea from "../common/Textarea/Textarea";
 import { useGraphInterpreterStore } from "../store/graphInterpreterStore";
 import { getFilterData, getSelectedGraph } from "../utils/localStorage";
 
@@ -21,14 +22,30 @@ function GraphEvaluator() {
         <div className="result">
           <h5>자동생성 그래프</h5>
           <SelectedGraph data={data} graph={graph} />
-          <div>{researcher.purpose}</div>
-          <div>{researcher.infomation}</div>
+          <div className="writeWrapper">
+            <div>
+              <div>그래프 목적</div>
+              <Textarea disabled placeholder={researcher.purpose} />
+            </div>
+            <div>
+              <div>그래프 정보</div>
+              <Textarea disabled placeholder={researcher.infomation} />
+            </div>
+          </div>
         </div>
         <div className="result">
           <h5>나의 그래프</h5>
           <CustomChart data={data} />
-          <div>{purpose}</div>
-          <div>{infomation}</div>
+          <div className="writeWrapper">
+            <div>
+              <div>그래프 목적</div>
+              <Textarea disabled placeholder={purpose} />
+            </div>
+            <div>
+              <div>그래프 정보</div>
+              <Textarea disabled placeholder={infomation} />
+            </div>
+          </div>
         </div>
       </div>
       <Table head={data[0]} body={data.slice(1)} />
