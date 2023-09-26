@@ -5,6 +5,7 @@ import "./GraphInterpreter.scss";
 import { useState } from "react";
 import GraphSummary from "./GraphSummary";
 import GraphInterpreter from "./GraphInterpreter";
+import GraphEvaluator from "./GraphEvaluator";
 
 function GraphInterpreterPage() {
   const localStorageData = JSON.parse(localStorage.getItem("graphInterpreter"));
@@ -29,6 +30,8 @@ function GraphInterpreterPage() {
         return <GraphSummary />;
       case 2:
         return <GraphInterpreter />;
+      case 3:
+        return <GraphEvaluator />;
       default:
         return;
     }

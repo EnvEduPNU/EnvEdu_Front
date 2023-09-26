@@ -88,75 +88,115 @@ function MixChartAxisScaleEditor({ data, qualitativeVariableIdx }) {
       </div>
       <InputGroup className="scale-input-group">
         <span className="subTitle">Y1축 스케일: </span>
-        <label>
-          <span>최솟값</span>
-          <input
-            // placeholder="Min Value"
-            type="number"
-            onChange={e =>
-              changeAxisScale("y1", "min", Math.round(e.target.value))
-            }
-            value={y1.min}
-          />
-        </label>
-        <label>
-          <span>최댓값</span>
-          <input
-            // placeholder="Max Value"
-            type="number"
-            onChange={e =>
-              changeAxisScale("y1", "max", Math.round(e.target.value))
-            }
-            value={y1.max}
-          />
-        </label>
-        <label>
-          <span>간격</span>
-          <input
-            // placeholder="Step Size"
-            type="number"
-            onChange={e =>
-              changeAxisScale("y1", "stepSize", Math.round(e.target.value))
-            }
-            value={y1.stepSize}
-          />
-        </label>
+        <div className="scale">
+          <label>
+            <span>최솟값</span>
+            <input
+              // placeholder="Min Value"
+              type="number"
+              onChange={e =>
+                changeAxisScale("y1", "min", Math.round(e.target.value))
+              }
+              value={y1.min}
+            />
+            <input
+              min={0}
+              max={1000}
+              type="range"
+              onChange={e => {
+                changeAxisScale("y1", "min", Math.round(e.target.value));
+              }}
+              value={y1.min}
+            />
+          </label>
+          <label>
+            <span>최댓값</span>
+            <input
+              // placeholder="Max Value"
+              type="number"
+              onChange={e =>
+                changeAxisScale("y1", "max", Math.round(e.target.value))
+              }
+              value={y1.max}
+            />
+            <input
+              min={0}
+              max={1000}
+              type="range"
+              onChange={e => {
+                changeAxisScale("y1", "max", Math.round(e.target.value));
+              }}
+              value={y1.max}
+            />
+          </label>
+          <label>
+            <span>간격</span>
+            <input
+              // placeholder="Step Size"
+              type="number"
+              onChange={e =>
+                changeAxisScale("y1", "stepSize", Math.round(e.target.value))
+              }
+              value={y1.stepSize}
+            />
+          </label>
+        </div>
       </InputGroup>
       <InputGroup className="scale-input-group">
         <span className="subTitle">Y2축 스케일: </span>
-        <label>
-          <span>최솟값</span>
-          <input
-            // placeholder="Min Value"
-            type="number"
-            onChange={e =>
-              changeAxisScale("y2", "min", Math.round(e.target.value))
-            }
-            value={y2.min}
-          />
-        </label>
-        <label>
-          <span>최댓값</span>
-          <input
-            // placeholder="Max Value"
-            type="number"
-            onChange={e =>
-              changeAxisScale("y2", "max", Math.round(e.target.value))
-            }
-            value={y2.max}
-          />
-        </label>
-        <label>
-          <span>간격</span>
-          <input
-            // placeholder="Step Size"
-            type="number"
-            onChange={e =>
-              changeAxisScale("y2", "stepSize", Math.round(e.target.value))
-            }
-            value={y2.stepSize}
-          />
-        </label>
+        <div className="scale">
+          <label>
+            <span>최솟값</span>
+            <input
+              // placeholder="Min Value"
+              type="number"
+              onChange={e =>
+                changeAxisScale("y2", "min", Math.round(e.target.value))
+              }
+              value={y2.min}
+            />
+            <input
+              min={0}
+              max={1000}
+              type="range"
+              onChange={e => {
+                changeAxisScale("y2", "min", Math.round(e.target.value));
+              }}
+              value={y2.min}
+            />
+          </label>
+          <label>
+            <span>최댓값</span>
+            <input
+              // placeholder="Max Value"
+              type="number"
+              onChange={e =>
+                changeAxisScale("y2", "max", Math.round(e.target.value))
+              }
+              value={y2.max}
+            />
+            <input
+              min={0}
+              max={1000}
+              type="range"
+              onChange={e => {
+                changeAxisScale("y2", "max", Math.round(e.target.value));
+              }}
+              value={y2.max}
+            />
+          </label>
+          <label>
+            <span>간격</span>
+            <input
+              // placeholder="Step Size"
+              type="number"
+              onChange={e =>
+                changeAxisScale("y2", "stepSize", Math.round(e.target.value))
+              }
+              value={y2.stepSize}
+            />
+          </label>
+        </div>
       </InputGroup>
       <div className="variables-checkBox">
         <span className="title">막대 그래프: </span>

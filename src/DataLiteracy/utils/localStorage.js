@@ -35,3 +35,8 @@ export const getFilterData = () => {
     );
   });
 };
+
+export const getSelectedGraph = () => {
+  const localStorageData = JSON.parse(localStorage.getItem("drawGraph")) || {};
+  return localStorageData?.selectedGraph;
+};

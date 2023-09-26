@@ -120,16 +120,18 @@
   gap: 10px;
   .scale-input-group {
     display: flex;
-    align-items: center;
+    // align-items: center;
     gap: 20px;
     label {
       display: flex;
       align-items: center;
       gap: 10px;
-      input {
-        width: 100px;
-        font-size: 16px;
-      }
+      white-space: nowrap;
+
+      // input {
+      //   width: 100px;
+      //   font-size: 16px;
+      // }
     }
   }
 }
@@ -181,5 +183,25 @@
       color: #fff;
     }
     margin-bottom: 20px;
+  }
+}
+
+.bubbleAxisScaleEditor,
+.scatterAxisScaleEditor,
+.mixChartAxisScaleEditor {
+  .scale {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
+      input {
+        max-width: 200px;
+        font-size: 16px;
+      }
+    }
   }
 }

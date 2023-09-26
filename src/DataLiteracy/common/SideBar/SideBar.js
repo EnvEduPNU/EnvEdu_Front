@@ -16,7 +16,7 @@ function SideBar({ activeIdx }) {
             key={menu + idx}
             className={activeIdx === idx ? "active" : "no-active"}
           >
-            {idx}. {menu}
+            {idx + 1}. {menu}
           </li>
         ))}
       </ul>

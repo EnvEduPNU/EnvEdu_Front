@@ -47,3 +47,14 @@
     align-self: center;
   }
 }
+
+.graphEvaluator {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  .resultWrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+  }
+}

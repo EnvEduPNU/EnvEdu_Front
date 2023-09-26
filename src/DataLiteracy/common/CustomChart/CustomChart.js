@@ -1,3 +1,4 @@
+import { getSelectedGraph } from "../../utils/localStorage";
 import BarChart from "./BarChart";
 import BubbleChart from "./BubbleChart";
 import LineChart from "./LineChart";
@@ -5,8 +6,7 @@ import MixChart from "./MixChart";
 import ScatterChart from "./ScatterChart";
 
 function CustomChart({ data }) {
-  const localStorageData = JSON.parse(localStorage.getItem("drawGraph")) || {};
-  const graph = localStorageData?.selectedGraph;
+  const graph = getSelectedGraph();
 
   return (
     <>

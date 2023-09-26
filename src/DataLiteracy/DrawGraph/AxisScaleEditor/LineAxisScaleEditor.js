@@ -61,6 +61,15 @@ function LineAxisScaleEditor({ data, qualitativeVariableIdx }) {
             value={min}
             onChange={e => changeMinValue(Math.round(e.target.value))}
           />
+          <input
+            min={0}
+            max={1000}
+            type="range"
+            onChange={e => {
+              changeMinValue(Math.round(e.target.value));
+            }}
+            value={min}
+          />
         </label>
         <label>
           <span>최댓값</span>
@@ -69,6 +78,15 @@ function LineAxisScaleEditor({ data, qualitativeVariableIdx }) {
             type="number"
             value={max}
             onChange={e => changeMaxValue(Math.round(e.target.value))}
+          />
+          <input
+            min={0}
+            max={1000}
+            type="range"
+            onChange={e => {
+              changeMaxValue(Math.round(e.target.value));
+            }}
+            value={max}
           />
         </label>
         <label>
