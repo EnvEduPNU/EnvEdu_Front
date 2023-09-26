@@ -1,6 +1,8 @@
 import * as XLSX from 'xlsx';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './readExcel.scss';
+import { customAxios } from '../Common/CustomAxios';
 
 export default function ReadExcel() {
     // excel 파일 읽기
@@ -15,9 +17,9 @@ export default function ReadExcel() {
             const workbook = XLSX.read(bufferArray, { type: 'buffer' });
             const sheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
+
             const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
             setExcelData(data);
-            console.log(data)
         };
     };
   
@@ -27,12 +29,41 @@ export default function ReadExcel() {
             readExcel(file);
         }
     };
-console.log(excelData)
+
+    const [memo, setMemo] = useState('');
+    const [label, setLabel] = useState('AIRQUALITY');
+
+    const handleMemoChange = (e) => {
+        setMemo(e.target.value);
+    };
+
+    const handleChangeLabel = (e) => {
+        setLabel(e.target.value);
+    }
+    
+    const navigate = useNavigate('');
+    const handleSave = () => {
+        customAxios.post('/dataupload', {
+            "data": excelData, 
+            "label": label,
+            "memo": memo
+        })
+            .then(() => {
+                alert("데이터가 저장되었습니다.");
+                navigate('/myData');
+            })
+            .catch((err) => console.log(err));
+    }
+
     return(
         <div className='read-excel-container'>
             <div style={{display: 'flex', marginBottom: '2rem'}}>
                 <label>데이터 종류</label>
-                <input className='dataLabel'></input>
+                <select className='dataLabel' onChange={handleChangeLabel}>
+                    <option value="AIRQUALITY">대기질 데이터</option>
+                    <option value="OCEANQUALITY">수질 데이터</option>
+                    <option value="SEED">SEED 데이터</option>
+                </select>
             </div>
 
             <div style={{display: 'flex', marginBottom: '2rem'}}>
@@ -71,12 +102,12 @@ console.log(excelData)
 
             <div style={{display: 'flex', marginTop: '1rem', marginBottom: '0.5rem'}}>
                 <label>메모</label>   
-                <textarea />
+                <textarea onChange={handleMemoChange}/>
             </div>
             
 
             <div style={{display: 'flex', justifyContent: 'center', marginTop: '3rem'}}>
-                <button className='save-file-btn'>저장하기</button>
+                <button className='save-file-btn' onClick={handleSave}>저장하기</button>
             </div>
             
         </div>
