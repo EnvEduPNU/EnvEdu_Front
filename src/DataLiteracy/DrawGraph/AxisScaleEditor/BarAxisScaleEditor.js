@@ -1,7 +1,8 @@
 import { FormCheck, InputGroup } from "react-bootstrap";
 import { useBarAxisSacleEditorStore } from "../../store/drawGraphStore";
-import { useRef } from "react";
-import BarChart from "../CustomChart/BarChart";
+import { useCallback, useRef } from "react";
+import BarChart from "../../common/CustomChart/BarChart";
+import MultiRangeSlider from "../../common/MultiRangeSlider/MultiRangeSlider";
 
 function BarAxisScaleEditor({ data, qualitativeVariableIdx }) {
   const {
@@ -15,7 +16,6 @@ function BarAxisScaleEditor({ data, qualitativeVariableIdx }) {
 
   const variables = data[qualitativeVariableIdx];
 
-  const inputRef = useRef(null);
   return (
     <div className="barAxisScaleEditor axisScaleEditor">
       <div className="variables-checkBox">
@@ -58,12 +58,18 @@ function BarAxisScaleEditor({ data, qualitativeVariableIdx }) {
         <label>
           <span>최솟값</span>
           <input
-            // placeholder="Min Value"
-            ref={inputRef}
             type="number"
             onChange={e => {
               changeMinValue(Math.round(e.target.value));
-              inputRef.current.focus();
+            }}
+            value={min}
+          />
+          <input
+            min={0}
+            max={1000}
+            type="range"
+            onChange={e => {
+              changeMinValue(Math.round(e.target.value));
             }}
             value={min}
           />
@@ -74,6 +80,15 @@ function BarAxisScaleEditor({ data, qualitativeVariableIdx }) {
             // placeholder="Max Value"
             type="number"
             onChange={e => changeMaxValue(Math.round(e.target.value))}
+            value={max}
+          />
+          <input
+            min={0}
+            max={1000}
+            type="range"
+            onChange={e => {
+              changeMaxValue(Math.round(e.target.value));
+            }}
             value={max}
           />
         </label>

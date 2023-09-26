@@ -1,14 +1,24 @@
 import "./SideBar.scss";
 
-function SideBar() {
+function SideBar({ activeIdx }) {
+  const menus = [
+    "데이터 입력하기",
+    "데이터 전처리",
+    "그래프 그리기",
+    "그래프 해석하기",
+  ];
   return (
     <div className="sidebar">
       <span className="subtitle">Data Literacy</span>
       <ul>
-        <li>1. 데이터 입력하기</li>
-        <li>2. 데이터 전처리</li>
-        <li className="active">3. 그래프 그리기</li>
-        <li>4. 그래프 해석하기</li>
+        {menus.map((menu, idx) => (
+          <li
+            key={menu + idx}
+            className={activeIdx === idx ? "active" : "no-active"}
+          >
+            {idx + 1}. {menu}
+          </li>
+        ))}
       </ul>
     </div>
   );

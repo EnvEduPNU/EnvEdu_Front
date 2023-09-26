@@ -65,31 +65,34 @@ function SelectedGraph({ data, graph }) {
     }
 
     return (
-      <Bar
-        data={{
-          labels,
-          datasets,
-        }}
-        options={{
-          scales: {
-            y1: {
-              beginAtZero: true,
-              position: "left",
-              id: "y1",
-            },
-            y2: {
-              beginAtZero: true,
-              position: "right",
-              grid: {
-                drawOnChartArea: false, // 오른쪽 y축의 그리드 라인을 숨김
+      <div className="chart">
+        <Bar
+          style={{ height: "350px" }}
+          data={{
+            labels,
+            datasets,
+          }}
+          options={{
+            scales: {
+              y1: {
+                beginAtZero: true,
+                position: "left",
+                id: "y1",
               },
-              display: true,
+              y2: {
+                beginAtZero: true,
+                position: "right",
+                grid: {
+                  drawOnChartArea: false, // 오른쪽 y축의 그리드 라인을 숨김
+                },
+                display: true,
+              },
             },
-          },
-          responsive: true,
-          maintainAspectRatio: false,
-        }}
-      />
+            responsive: true,
+            maintainAspectRatio: false,
+          }}
+        />
+      </div>
     );
   };
 

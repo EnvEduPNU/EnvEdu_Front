@@ -8,7 +8,7 @@ const BubbleChart = ({ data, qualitativeVariableIdx }) => {
   );
 
   return (
-    <div className="chart" style={{ minWidth: "100%", minHeight: "100%" }}>
+    <div className="chart">
       {isShowChart && (
         <Bubble
           data={{ datasets: createDataset() }}

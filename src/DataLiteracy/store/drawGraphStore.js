@@ -1,4 +1,10 @@
 import { create } from "zustand";
+import {
+  DRAW_GRAPH,
+  getAxisScale,
+  getLocalStorage,
+  storeLocalStorage,
+} from "../utils/localStorage";
 
 export const useSelectedVariable = create(set => ({
   selectedVariable: JSON.parse(localStorage.getItem("drawGraph"))
@@ -78,7 +84,13 @@ const changeSelected =
 // 상태 관리 훅 생성 함수
 const createTwoArrayAxisScaleEditorStore = (isLineChart = false) =>
   create(set => ({
-    axisScale: { x: [], y: [], min: 0, max: 0, stepSize: 0 },
+    axisScale: getAxisScale(!isLineChart ? 0 : 1) ?? {
+      x: [],
+      y: [],
+      min: 0,
+      max: 0,
+      stepSize: 0,
+    },
     changeMinValue: changeValue(set, "min"),
     changeMaxValue: changeValue(set, "max"),
     changeStepSize: changeValue(set, "stepSize"),
@@ -91,7 +103,7 @@ export const useLineAxisSacleEditorStore =
   createTwoArrayAxisScaleEditorStore(true);
 
 export const useScatterAxisScaleEditorStore = create(set => ({
-  axisScale: {
+  axisScale: getAxisScale(4) ?? {
     x: {
       value: -1,
       min: 0,
@@ -148,7 +160,7 @@ export const useScatterAxisScaleEditorStore = create(set => ({
 }));
 
 export const useBubbleAxisScaleEditorStore = create(set => ({
-  axisScale: {
+  axisScale: getAxisScale(2) ?? {
     x: {
       value: -1,
       min: 0,
@@ -206,7 +218,7 @@ export const useBubbleAxisScaleEditorStore = create(set => ({
 }));
 
 export const useMixChartAxisScaleEditorStore = create(set => ({
-  axisScale: {
+  axisScale: getAxisScale(5) ?? {
     x: {
       value: -1,
     },
@@ -334,35 +346,24 @@ export const useMixChartAxisScaleEditorStore = create(set => ({
     }),
 }));
 
-const storeAxisScaleInLocalStorage = axisScale => {
-  const drawGraph = JSON.parse(localStorage.getItem("drawGraph"));
-  localStorage.setItem(
-    "drawGraph",
-    JSON.stringify({
-      ...drawGraph,
-      axisScale,
-    })
-  );
-};
-
 useBarAxisSacleEditorStore.subscribe(state =>
-  storeAxisScaleInLocalStorage(state.axisScale)
+  storeLocalStorage(DRAW_GRAPH, "axisScale", state.axisScale)
 );
 useLineAxisSacleEditorStore.subscribe(state =>
-  storeAxisScaleInLocalStorage(state.axisScale)
+  storeLocalStorage(DRAW_GRAPH, "axisScale", state.axisScale)
 );
 useScatterAxisScaleEditorStore.subscribe(state =>
-  storeAxisScaleInLocalStorage(state.axisScale)
+  storeLocalStorage(DRAW_GRAPH, "axisScale", state.axisScale)
 );
 useBubbleAxisScaleEditorStore.subscribe(state =>
-  storeAxisScaleInLocalStorage(state.axisScale)
+  storeLocalStorage(DRAW_GRAPH, "axisScale", state.axisScale)
 );
 useMixChartAxisScaleEditorStore.subscribe(state =>
-  storeAxisScaleInLocalStorage(state.axisScale)
+  storeLocalStorage(DRAW_GRAPH, "axisScale", state.axisScale)
 );
 
 export const useChartMetaDataStore = create(set => ({
-  metaData: {
+  metaData: getLocalStorage(DRAW_GRAPH, "metaData") ?? {
     tableTitle: "",
     chartTitle: "",
     legendPostion: "top",
@@ -402,6 +403,10 @@ export const useChartMetaDataStore = create(set => ({
       };
     }),
 }));
+
+useChartMetaDataStore.subscribe(state =>
+  storeLocalStorage(DRAW_GRAPH, "metaData", state.metaData)
+);
 
 export const chartScaleEditorStores = {
   bar: useBarAxisSacleEditorStore,
