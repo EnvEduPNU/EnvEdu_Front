@@ -9,8 +9,10 @@ import ChartAxisScaleEditor from "./ChartAxisScaleEditor";
 import SideBar from "../common/SideBar/SideBar";
 import ChartMetadataEditor from "./ChartMetadataEditor";
 import FinishDrawGraph from "./FinishDrawGraph";
+import { useNavigate } from "react-router-dom";
 
 function DrawGraph() {
+  const navigate = useNavigate();
   const localStorageData = JSON.parse(localStorage.getItem("drawGraph"));
   const [activeStep, setActiveStep] = useState(
     localStorageData?.step ? localStorageData?.step : 1
@@ -41,7 +43,10 @@ function DrawGraph() {
   };
 
   const onClickNextBtn = () => {
-    if (activeStep === steps.length) return;
+    if (activeStep === steps.length) {
+      navigate("/dataLiteracy/graphInterpreter");
+      return;
+    }
     const drawGraph = JSON.parse(localStorage.getItem("drawGraph"));
     if (activeStep === 1) {
       if (drawGraph) {
