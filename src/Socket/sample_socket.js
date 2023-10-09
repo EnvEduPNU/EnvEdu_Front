@@ -139,26 +139,6 @@ function SampleSocket(props) {
         if (receivedData.length > 10) {
             receivedData.splice(0, 1);
         }
-
-        if (save === true) {
-            /**
-             * 저장이 활성화된 경우
-             * 받은 데이터를 saveData에 추가
-             * 5개가 쌓이면 한 번에 서버로 전송해 저장
-             */
-            saveData.push(JSON.stringify(receiveObject));
-            console.log(saveData)
-            setSaveData([...saveData]);
-            if (saveData.length === 5) {
-                console.log(saveData);
-                customAxios.post("/seed/save/continuous", {data: saveData, memo: "메모 테스트"})
-                    .then((res) => console.log(res.data))
-                    .catch((err) => console.log(err));
-                saveData.splice(0, saveData.length);
-                setSaveData([...saveData]);
-            }
-        }
-        setReceivedData([...receivedData]);
     }
 
     /*데이터 저장하기*/
@@ -169,13 +149,16 @@ function SampleSocket(props) {
              * 5개가 쌓이면 한 번에 서버로 전송해 저장
              */
          saveData.push(JSON.stringify(receiveObject));
+         console.log(saveData)
          setSaveData([...saveData]);
          if (saveData.length === 5) {
-             customAxios.post("/seed/save/continuous", {data: saveData}).then().catch(() => {
-                 disconnect();
-             });
-             saveData.splice(0, saveData.length);
-             setSaveData([...saveData]);
+            console.log(saveData)
+            customAxios.post("/seed/save/continuous", {data: saveData, memo: "memo test123"})
+            .then((res) => console.log(res))
+            .catch((err) => console.log(err));
+            
+            saveData.splice(0, saveData.length);
+            setSaveData([...saveData]);
          }
          setReceivedData([...receivedData]);
     }
