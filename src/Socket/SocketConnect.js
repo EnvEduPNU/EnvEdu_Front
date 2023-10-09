@@ -140,8 +140,10 @@ function SocketConnect(props) {
         if (receivedData.length > 10) {
             receivedData.splice(0, 1);
         }
+        console.log(receiveObject)
 
         if (save === true) {
+            console.log(receiveObject)
             /**
              * 저장이 활성화된 경우
              * 받은 데이터를 saveData에 추가
