@@ -144,18 +144,20 @@ function SocketConnect(props) {
 
         if (save === true) {
             console.log(receiveObject)
+            receiveObject.dateString = "2023-09-04T22:20:10";
+            console.log(receiveObject)
             console.log(JSON.stringify(receiveObject))
-            console.dir(saveData)
+            console.log(saveData)
             /**
              * 저장이 활성화된 경우
              * 받은 데이터를 saveData에 추가
              * 5개가 쌓이면 한 번에 서버로 전송해 저장
              */
             saveData.push(JSON.stringify(receiveObject));
-            console.dir(saveData)
+            console.log(saveData)
             setSaveData([...saveData]);
             if (saveData.length === 5) {
-                console.dir(saveData) //확인
+                console.log(saveData) //확인
 
                 customAxios.post("/seed/save/continuous", {data: saveData, memo: "memo test"}).then().catch(() => {
                     disconnect();
