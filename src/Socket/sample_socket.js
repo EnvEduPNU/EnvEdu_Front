@@ -193,17 +193,17 @@ function SampleSocket(props) {
             <div>
                 <div>
                     <div style={{padding: '1rem 2rem'}}>
-                        <span onClick={() => register()} style={{cursor: 'pointer', background: '#FAE4FF', padding: '0.5rem', fontSize: '1.2rem', fontWeight: '600', borderRadius: '0.625rem', marginRight: '0.5rem'}}>
+                        <span onClick={() => register()} style={{cursor: 'pointer', background: '#FFF', padding: '0.5rem', fontSize: '1.2rem', fontWeight: '600', borderRadius: '0.625rem', marginRight: '0.5rem'}}>
                             <img src="/assets/img/start.png" style={{marginRight: '0.3rem'}} />
                             측정 시작
                         </span>
 
-                        <span onClick={() => register()} style={{cursor: 'pointer', background: '#FAE4FF', padding: '0.5rem', fontSize: '1.2rem', fontWeight: '600', borderRadius: '0.625rem', marginRight: '0.5rem'}}>
+                        <span onClick={() => disconnect()} style={{cursor: 'pointer', background: '#FFF', padding: '0.5rem', fontSize: '1.2rem', fontWeight: '600', borderRadius: '0.625rem', marginRight: '0.5rem'}}>
                             <img src="/assets/img/stop.png" style={{marginRight: '0.3rem'}} />
                             측정 중지
                         </span>
 
-                        <span onClick={() => register()} style={{padding: '0.5rem', fontSize: '1.2rem', fontWeight: '600', borderRadius: '0.625rem'}}>
+                        <span style={{padding: '0.5rem', fontSize: '1.2rem', fontWeight: '600', borderRadius: '0.625rem'}}>
                             {connected ? (isConnectionDropped ? "전송 중단" : "연결됨") : "연결 해제"}
                         </span>
                     </div>
@@ -244,11 +244,7 @@ function SampleSocket(props) {
                         }
                     </div>
                 </div>
-                <div style={{
-                    fontSize: "0.6em",
-                    color: "red"
-                }}>{connected && isConnectionDropped ? "전송 중단됨" : ""}</div>
-                {/*</div><div className={connected === true ? "border pt-2 ps-2 pe-2" : ""}>*/}
+              
                 <div style={{ padding: '0 2rem 2rem 2rem' }} >
                     {
                         dataTypes.map((elem) =>
