@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {Button, OverlayTrigger, Popover} from "react-bootstrap";
-import {Line} from 'react-chartjs-2';
+import {Bubble, Line} from 'react-chartjs-2';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -11,6 +11,7 @@ import {
     Tooltip,
     Legend,
 } from 'chart.js';
+import { getDropdownMenuPlacement } from "react-bootstrap/esm/DropdownMenu";
 
 ChartJS.register(
     CategoryScale,
@@ -191,7 +192,9 @@ function SingleDataContainer(props) {
         display: "inline-block",
         fontSize: "0.9em",
         width: "8em",
-        backgroundColor: `${value === -99999 ? "rgb(192,192,192)" : "rgb(102,255,102)"}`
+        backgroundColor: `${value === -99999 ? "#fff" : "#FAE4FF"}`,
+        borderRadius: '1.25rem',
+        textAlign: 'center'
     }
 
     return (
