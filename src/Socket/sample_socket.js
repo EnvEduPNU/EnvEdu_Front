@@ -141,13 +141,13 @@ function SampleSocket(props) {
             dataTypes.forEach((dataType) => {
                 if (!checkedDataTypes.includes(dataType)) {
                     if (dataType === 'pH') {
-                        receiveObject['ph'] = null;
+                        updatedReceiveObject['ph'] = null;
                     }
                     else if (dataType === 'hum_earth') {
-                        receiveObject['hum_EARTH'] = null;
+                        updatedReceiveObject['hum_EARTH'] = null;
                     }
                     else {
-                        receiveObject[dataType] = null;
+                        updatedReceiveObject[dataType] = null;
                     }
                 }
             });
