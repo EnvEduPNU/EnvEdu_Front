@@ -136,6 +136,7 @@ function SampleSocket(props) {
         if (save === true) {
             // receiveObject를 복제
             const updatedReceiveObject = { ...receiveObject };
+            console.log(updatedReceiveObject)
 
             //선택하지 않은 센서의 값은 null로 만들기
             dataTypes.forEach((dataType) => {
@@ -152,7 +153,8 @@ function SampleSocket(props) {
                 }
             });
             //
-
+            console.log(updatedReceiveObject)
+            
             updatedReceiveObject.username = props.username;
 
             const now = new Date();
