@@ -125,6 +125,7 @@ function SocketConnect(props) {
          * 받은 데이터 파싱 
          */
         receiveObject = JSON.parse(payload.body);
+        console.log(receiveObject)
         if (location !== "") {
             receiveObject.location = location;
         }
