@@ -145,6 +145,7 @@ function SocketConnect(props) {
         if (save === true) {
             console.log(receiveObject)
             receiveObject.dateString = "2023-09-04T22:20:10";
+            receiveObject.username = props.username;
             console.log(receiveObject)
             console.log(JSON.stringify(receiveObject))
             console.log(saveData)
