@@ -144,6 +144,8 @@ function SocketConnect(props) {
 
         if (save === true) {
             console.log(receiveObject)
+            console.log(JSON.stringify(receiveObject))
+            console.log(saveData)
             /**
              * 저장이 활성화된 경우
              * 받은 데이터를 saveData에 추가
@@ -151,11 +153,11 @@ function SocketConnect(props) {
              */
             saveData.push(JSON.stringify(receiveObject));
             console.log(saveData)
-            setSaveData([...saveData]);
+            //setSaveData([...saveData]);
             if (saveData.length === 5) {
                 console.log(saveData) //확인
 
-                customAxios.post("/seed/save/continuous", {data: saveData, memo: "memo test"}).then().catch(() => {
+                customAxios.post("/seed/save/continuous", {data: saveData}).then().catch(() => {
                     disconnect();
                 });
                 saveData.splice(0, saveData.length);
