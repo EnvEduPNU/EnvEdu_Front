@@ -16,17 +16,17 @@ export default function Sample() {
         }
     };
 
-    //const [connectableSocket, setConnectableSocket] = useState([]);
+    /*const [connectableSocket, setConnectableSocket] = useState([]);
 
-    /*
     useEffect(()=>{
         customAxios.get(`/seed/device`)
             .then((response)=>{
                 setConnectableSocket(response.data.relatedUserDeviceList);
                 console.log(response.data.relatedUserDeviceList);
             })
-    },[]);*/
-    
+    },[]);
+    */
+   
     const [connectableSocket, setConnectableSocket] = useState([
         { username: "user1", elements: [{ deviceName: 'device1', mac: 'AA:BB:CC:DD:EE:FF' }] },
         { username: "user2", elements: [{ deviceName: 'device2', mac: 'AA:BB:CC:DD:EE:FF' }] },
