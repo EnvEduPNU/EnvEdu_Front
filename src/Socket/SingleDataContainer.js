@@ -271,7 +271,7 @@ function SingleDataContainer(props) {
                 {
                     seeGraph === true && props.data.length !== 0 ?
                         (
-                            <Line options={option} data={dataElem} style={{width: '80%'}}/>
+                            <Line options={option} data={dataElem} width="700" height="500"/>
                         )
                         : (<></>)
 
