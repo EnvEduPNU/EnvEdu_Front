@@ -7,7 +7,7 @@ function Scaling() {
 
   return (
     <div className="scaling">
-      <div className="missingValueButtonWrapper">
+      <div className="scalingButtonWrapper">
         <DropdownButton
           title="스케일링"
           onSelect={eventKey => changeByScaling(eventKey)}

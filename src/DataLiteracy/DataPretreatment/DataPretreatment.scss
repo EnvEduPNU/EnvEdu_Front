@@ -31,3 +31,13 @@
     }
   }
 }
+
+.scaling {
+  .scalingButtonWrapper {
+    display: flex;
+    justify-content: flex-end;
+    button {
+      width: fit-content;
+    }
+  }
+}
