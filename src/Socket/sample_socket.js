@@ -28,7 +28,6 @@ let save = false;
 let lastReceivedDate = null;
 
 function SampleSocket(props) {
-    console.log(props.clickedIndexes)
     /**
      * 센서 기기에서 전송하는 데이터 종류
      */
@@ -148,11 +147,13 @@ function SampleSocket(props) {
              * 5개가 쌓이면 한 번에 서버로 전송해 저장
              */
             saveData.push(JSON.stringify(receiveObject));
+            console.log(saveData)
             setSaveData([...saveData]);
             if (saveData.length === 5) {
-                customAxios.post("/seed/save/continuous", {data: saveData, memo: "메모 테스트"}).then().catch(() => {
-                    disconnect();
-                });
+                console.log(saveData);
+                customAxios.post("/seed/save/continuous", {data: saveData, memo: "메모 테스트"})
+                    .then((res) => console.log(res.data))
+                    .catch((err) => console.log(err));
                 saveData.splice(0, saveData.length);
                 setSaveData([...saveData]);
             }
@@ -228,18 +229,15 @@ function SampleSocket(props) {
                 {/*</div><div className={connected === true ? "border pt-2 ps-2 pe-2" : ""}>*/}
                 <div style={{ padding: '2rem' }} >
                     {
-                        connected && 
+                        dataTypes.map((elem) =>
+                            (//props.clickedIndexes.includes(index) &&
                             
-                            dataTypes.map((elem) =>
-                                (//props.clickedIndexes.includes(index) &&
-                                
-                                <div key={elem} style={{ }}>
-                                    <SingleDataContainer type={elem} data={receivedData}
-                                                         current={receivedData[receivedData.length - 1]} stomp={stompClient}
-                                                         sendFunction={sendCalibrationMsg}/>
-                                </div>)
-                            )
-                            //: (<></>)
+                            <div key={elem} style={{ }}>
+                                <SingleDataContainer type={elem} data={receivedData}
+                                                        current={receivedData[receivedData.length - 1]} stomp={stompClient}
+                                                        sendFunction={sendCalibrationMsg}/>
+                            </div>)
+                        )
                     }
                     
                     <div style={{
