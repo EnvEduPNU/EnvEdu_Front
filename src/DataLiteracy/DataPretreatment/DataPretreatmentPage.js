@@ -6,6 +6,7 @@ import { useState } from "react";
 import "./DataPretreatment.scss";
 import MissingValue from "./MissingValue";
 import OutlierRemoval from "./OutlierRemoval";
+import Scaling from "./Scaling";
 
 function DataPretreatmentPage() {
   const navigate = useNavigate();
@@ -36,6 +37,8 @@ function DataPretreatmentPage() {
         return <MissingValue />;
       case 2:
         return <OutlierRemoval />;
+      case 3:
+        return <Scaling />;
     }
   };
   return (

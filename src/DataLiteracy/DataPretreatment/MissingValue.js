@@ -15,7 +15,7 @@ function MissingValue() {
   const onSelect = eventKey => {
     changeMissingValue(eventKey);
   };
-  console.log(data);
+
   return (
     <div className="missingValue">
       <div className="missingValueButtonWrapper">

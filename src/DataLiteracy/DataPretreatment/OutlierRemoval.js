@@ -4,9 +4,8 @@ import classNames from "classnames";
 
 function OutlierRemoval() {
   const {
-    data,
     isFindOutliers,
-    resultData,
+    dataWithoutOutliers,
     isRemoveOutliers,
     findOutliers,
     outliersIndices,
@@ -51,13 +50,13 @@ function OutlierRemoval() {
       <table className="table">
         <thead>
           <tr>
-            {resultData[0].map((key, idx) => (
+            {dataWithoutOutliers[0].map((key, idx) => (
               <th key={key + idx}>{key}</th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {resultData.slice(1).map((d, row) => (
+          {dataWithoutOutliers.slice(1).map((d, row) => (
             <tr key={row}>
               {d.map((key, col) => (
                 <td

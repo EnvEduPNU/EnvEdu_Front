@@ -15,10 +15,17 @@ import {
   replaceOutliersWithMedian,
   replaceOutliersWithMode,
 } from "../utils/outlier";
+import {
+  logTransformForDataset,
+  minMaxScalingForDataset,
+  sqrtTransformForDataset,
+  zScoreNormalizationForDataset,
+} from "../utils/scaling";
 
 export const useDataPretreatmentStore = create(set => ({
   data: data1,
   imputedData: data1,
+  dataWithoutOutliers: data1,
   resultData: data1,
 
   isFindMissingValue: false,
@@ -56,7 +63,7 @@ export const useDataPretreatmentStore = create(set => ({
       return {
         ...state,
         imputedData: newData,
-        resultData: newData,
+        dataWithoutOutliers: newData,
         isImputed: true,
         isFindMissingValue: false,
       };
@@ -67,18 +74,19 @@ export const useDataPretreatmentStore = create(set => ({
       let outlierIndices;
       switch (method) {
         case "z-score":
-          outlierIndices = findOutliersIndicesByZScore(state.resultData);
+          outlierIndices = findOutliersIndicesByZScore(
+            state.dataWithoutOutliers
+          );
           break;
         case "iqr":
-          outlierIndices = findOutliersIndicesByIQR(state.resultData);
+          outlierIndices = findOutliersIndicesByIQR(state.dataWithoutOutliers);
           break;
         case "mad":
-          outlierIndices = findOutliersIndicesByMAD(state.resultData);
+          outlierIndices = findOutliersIndicesByMAD(state.dataWithoutOutliers);
           break;
         default:
           return;
       }
-      console.log(`${method} Indices:`, outlierIndices);
 
       return {
         ...state,
@@ -120,9 +128,35 @@ export const useDataPretreatmentStore = create(set => ({
       }
       return {
         ...state,
+        dataWithoutOutliers: newData,
         resultData: newData,
         isRemoveOutliers: true,
         isFindOutliers: false,
+      };
+    }),
+
+  changeByScaling: way =>
+    set(state => {
+      let newData;
+      switch (way) {
+        case "minmax":
+          newData = minMaxScalingForDataset(state.dataWithoutOutliers);
+          break;
+        case "zscore":
+          newData = zScoreNormalizationForDataset(state.dataWithoutOutliers);
+          break;
+        case "log":
+          newData = logTransformForDataset(state.dataWithoutOutliers);
+          break;
+        case "sqrt":
+          newData = sqrtTransformForDataset(state.dataWithoutOutliers);
+          break;
+        default:
+          newData = [...state.dataWithoutOutliers];
+      }
+      return {
+        ...state,
+        resultData: newData,
       };
     }),
 }));
