@@ -84,6 +84,7 @@ function SampleSocket(props) {
     function register() {
         const sock = new SockJS(`${process.env.REACT_APP_API_URL}/client/socket`);
         stompClient = stomp.over(sock);
+        stompClient.connect({authorization: localStorage.getItem("refresh")}, onConnected, onError)
     }
 
     function disconnect() {
@@ -149,7 +150,7 @@ function SampleSocket(props) {
             saveData.push(JSON.stringify(receiveObject));
             setSaveData([...saveData]);
             if (saveData.length === 5) {
-                customAxios.post("/user/save", {data: saveData}).then().catch(() => {
+                customAxios.post("/seed/save/continuous", {data: saveData, memo: "메모 테스트"}).then().catch(() => {
                     disconnect();
                 });
                 saveData.splice(0, saveData.length);
@@ -160,31 +161,30 @@ function SampleSocket(props) {
     }
 
     /*데이터 저장하기*/
-    const [loc, setLoc] = useState('');
-
     const handleSaveData = () => {
-        if (loc === '') {
-            alert("측정 위치를 입력해주세요.")
-        } else {
-            const myData = {
-                mac: props.mac,
-                ...receivedData,
-                location: loc
-            }
-            console.log(myData)
-            customAxios.post(`/seed/save`)
-            .then(()=> alert("데이터가 저장되었습니다.")
-            )
-            .catch(() => alert("데이터 저장을 실패했습니다."))
-            
-        }
+         /**
+             * 저장이 활성화된 경우
+             * 받은 데이터를 saveData에 추가
+             * 5개가 쌓이면 한 번에 서버로 전송해 저장
+             */
+         saveData.push(JSON.stringify(receiveObject));
+         setSaveData([...saveData]);
+         if (saveData.length === 5) {
+             customAxios.post("/seed/save/continuous", {data: saveData}).then().catch(() => {
+                 disconnect();
+             });
+             saveData.splice(0, saveData.length);
+             setSaveData([...saveData]);
+         }
+         setReceivedData([...receivedData]);
     }
-
-    console.log(loc)
 
     return (
             <div>
                 <div>
+                    <div onClick={() => register()}>start</div>
+                    <div onClick={() => disconnect()}>disconnect</div>
+                    <div>{connected ? "연결됨" : "연결 안됨"}</div>
                     <div>
                         {/*
                         <span className="border p-2" style={{
@@ -224,12 +224,11 @@ function SampleSocket(props) {
                 <div style={{
                     fontSize: "0.6em",
                     color: "red"
-                }}>{connected === true && isConnectionDropped === true ? "전송 중단됨" : ""}</div>
+                }}>{connected && isConnectionDropped ? "전송 중단됨" : ""}</div>
                 {/*</div><div className={connected === true ? "border pt-2 ps-2 pe-2" : ""}>*/}
-                <div style={{ padding: '2rem' }}>
+                <div style={{ padding: '2rem' }} >
                     {
-                        //connected === true
-                            //? 
+                        connected && 
                             
                             dataTypes.map((elem) =>
                                 (//props.clickedIndexes.includes(index) &&
@@ -246,7 +245,7 @@ function SampleSocket(props) {
                     <div style={{
                         display: 'flex',
                         justifyContent: 'center',
-                        marginTop: '1rem'
+                        marginTop: '2.5rem',
                     }}>
                         <div style={{
                                 display: 'flex',
@@ -266,14 +265,14 @@ function SampleSocket(props) {
                             width: '30%',
                             height: '2rem',
                             borderRadius: '0.625rem',
-                            background: '#FFF',
+                            background: '#fff',
                             border: 'none',
                             outline: 'none',
                             fontSize: '1.25rem',
                             padding: '0 1rem',
                             marginRight: '1rem'
-                        }}
-                            onChange={(e) => setLoc(e.target.value)}/>
+                        }} />
+                            {/*onChange={(e) => setLoc(e.target.value)}*/}
 
                         <div style={{
                                 display: 'flex',
@@ -283,7 +282,7 @@ function SampleSocket(props) {
                                 width: '14rem',
                                 height: '2rem',
                                 borderRadius: '1.25rem',
-                                background: '#FAE4FF',
+                                background: '#F7F6F6',
                                 fontSize: '1.25rem',
                                 cursor: 'pointer',
                                 
