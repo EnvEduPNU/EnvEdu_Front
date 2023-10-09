@@ -32,6 +32,7 @@ function SampleSocket(props) {
      * 센서 기기에서 전송하는 데이터 종류
      */
     const dataTypes = ["temp", "pH", "hum", "hum_earth", "tur", "dust", "dox", "co2", "lux", "pre"];
+    const dataTypes_ko = ["기온", "pH", "습도", "토양 습도", "탁도", "미세먼지", "용존산소량", "이산화탄소", "조도", "기압"];
 
     /**
      * 현재 웹 소켓 연결 여부
@@ -133,6 +134,22 @@ function SampleSocket(props) {
         }
 
         if (save === true) {
+            //선택하지 않은 센서의 값은 null로 만들기
+            dataTypes.forEach((dataType) => {
+                if (!checkedDataTypes.includes(dataType)) {
+                    if (dataType === 'pH') {
+                        receiveObject['ph'] = null;
+                    }
+                    else if (dataType === 'hum_earth') {
+                        receiveObject['hum_EARTH'] = null;
+                    }
+                    else {
+                        receiveObject[dataType] = null;
+                    }
+                }
+            });
+            //
+
             receiveObject.username = props.username;
 
             const now = new Date();
@@ -161,10 +178,10 @@ function SampleSocket(props) {
             saveData.push(JSON.stringify(receiveObject));
             setSaveData([...saveData]);
             if (saveData.length === 5) {
-                console.log(memo)
-                customAxios.post("/seed/save/continuous", {data: saveData, memo: memo}).then().catch(() => {
-                    disconnect();
-                });
+                console.log(saveData);
+                customAxios.post("/seed/save/continuous", {data: saveData, memo: memo})
+                    .then(() => alert("저장한 데이터는 My data에서 확인할 수 있습니다."))
+                    .catch((err) => console.log(err))
                 saveData.splice(0, saveData.length);
                 setSaveData([...saveData]);
             }
@@ -172,86 +189,41 @@ function SampleSocket(props) {
         setReceivedData([...receivedData]);
     }
 
-    /*데이터 저장하기
-    const handleSaveData = () => {
-        receiveObject.username = props.username;
-        receiveObject.location = location;
-        saveData.push(JSON.stringify(receiveObject));
-        setSaveData([...saveData]);
-        if (saveData.length === 5) {
-            customAxios.post("/seed/save/continuous", {data: saveData, memo: memo}).then().catch(() => {
-                disconnect();
-            });
-            saveData.splice(0, saveData.length);
-            setSaveData([...saveData]);
-        }
+    /*checkbox*/
+    const [checkedDataTypes, setCheckedDataTypes] = useState(dataTypes); //제일 처음에 모두 체크된 상태로
 
-        setReceivedData([...receivedData]);
-    }
-    */
+    const handleCheckboxChange = (dataType) => {
+        if (checkedDataTypes.includes(dataType)) {
+            setCheckedDataTypes(checkedDataTypes.filter(item => item !== dataType));
+        } else {
+            setCheckedDataTypes([...checkedDataTypes, dataType]);
+        }
+    };
+    console.log(checkedDataTypes)
     return (
             <div>
                 <div>
                     <div style={{padding: '1rem 2rem'}}>
-                        <span onClick={() => register()} style={{cursor: 'pointer', background: '#FAE4FF', padding: '0.5rem', fontSize: '1.2rem', fontWeight: '600', borderRadius: '0.625rem', marginRight: '0.5rem'}}>
+                        <span onClick={() => register()} style={{cursor: 'pointer', background: '#FFF', padding: '0.5rem', fontSize: '1.2rem', fontWeight: '600', borderRadius: '0.625rem', marginRight: '0.5rem'}}>
                             <img src="/assets/img/start.png" style={{marginRight: '0.3rem'}} />
                             측정 시작
                         </span>
 
-                        <span onClick={() => register()} style={{cursor: 'pointer', background: '#FAE4FF', padding: '0.5rem', fontSize: '1.2rem', fontWeight: '600', borderRadius: '0.625rem', marginRight: '0.5rem'}}>
+                        <span onClick={() => disconnect()} style={{cursor: 'pointer', background: '#FFF', padding: '0.5rem', fontSize: '1.2rem', fontWeight: '600', borderRadius: '0.625rem', marginRight: '0.5rem'}}>
                             <img src="/assets/img/stop.png" style={{marginRight: '0.3rem'}} />
                             측정 중지
                         </span>
 
-                        <span onClick={() => register()} style={{padding: '0.5rem', fontSize: '1.2rem', fontWeight: '600', borderRadius: '0.625rem'}}>
+                        <span style={{padding: '0.5rem', fontSize: '1.2rem', fontWeight: '600', borderRadius: '0.625rem'}}>
                             {connected ? (isConnectionDropped ? "전송 중단" : "연결됨") : "연결 해제"}
                         </span>
                     </div>
 
-                    <div>
-                        {/*
-                        <span className="border p-2" style={{
-                            cursor: "pointer",
-                            backgroundColor: '#D9DCFF'//`${connected === false ? "rgb(192,192,192)" : "rgb(102,255,102)"}`
-                        }} onClick={() => {
-                            if (connected === false) {
-                                
-                                if (props.username === decodeToken(localStorage.getItem("access_token"))) {
-                                    location = prompt("위치 정보를 입력하세요(optional)");
-                                }
-                                
-                                register();
-                            } else {
-                                disconnect();
-                            }
-                        }}>{props.mac}</span>
-                    */}
-                    
-                        {
-                            /*
-                            props.username === decodeToken(localStorage.getItem("access_token")).username ? (
-                                <span className="p-2" style={{fontSize: "0.7em"}}><input type="checkbox"
-                                                                                         checked={checked}
-                                                                                         onChange={() => {
-                                                                                             save = !save;
-                                                                                             setChecked(!checked)
-                                                                                         }}/>&nbsp;데이터 저장하기</span>
-
-                                                                                        ) : 
-                                                                                         
-                                                                                        (<div></div>)
-                            */
-                        }
-                    </div>
                 </div>
-                <div style={{
-                    fontSize: "0.6em",
-                    color: "red"
-                }}>{connected && isConnectionDropped ? "전송 중단됨" : ""}</div>
-                {/*</div><div className={connected === true ? "border pt-2 ps-2 pe-2" : ""}>*/}
+              
                 <div style={{ padding: '0 2rem 2rem 2rem' }} >
                     {
-                        dataTypes.map((elem) =>
+                        checkedDataTypes.map((elem) =>
                             (//props.clickedIndexes.includes(index) &&
                             
                             <div key={elem} style={{ }}>
@@ -265,7 +237,6 @@ function SampleSocket(props) {
                     <div style={{
                         marginTop: '2.5rem',
                     }}>
-
                         {/*저장 간격*/}
                         <div style={{display: 'flex'}}>
                             <div style={{
@@ -356,6 +327,22 @@ function SampleSocket(props) {
                             }} 
                                 onChange={(e) => setMemo(e.target.value)} />
                         </div>
+
+                        <div style={{display: 'flex', justifyContent: 'center', marginTop: '1rem'}}>
+                            <div>
+                                {dataTypes_ko.map((dataType) => (
+                                    <label style={{fontSize: '1.2rem', fontWeight: '600'}}>
+                                        <input
+                                            style={{accentColor: '#000'}}
+                                            type="checkbox"
+                                            checked={checkedDataTypes.includes(dataTypes[dataTypes_ko.indexOf(dataType)])}
+                                            onChange={() => handleCheckboxChange(dataTypes[dataTypes_ko.indexOf(dataType)])}
+                                        />
+                                        {dataType}
+                                    </label>
+                                ))}
+                            </div>
+                        </div>
                         
                         <div style={{display: 'flex', justifyContent: 'center', marginTop: '2rem'}}>
                             <div style={{
@@ -371,7 +358,12 @@ function SampleSocket(props) {
                                     fontSize: '1.25rem',
                                     cursor: 'pointer',
                                 }}
-                                onClick={() => { save = !save; }}>
+                                onClick={() => { 
+                                    save = !save; 
+                                    if (checkedDataTypes.length === 0) {
+                                        alert("저장할 센서를 한 개 이상 선택해주세요.")
+                                    }
+                                }}>
                                 {save === true ? "저장 중지하기": "데이터 저장하기"}
                             </div>
                         </div>
