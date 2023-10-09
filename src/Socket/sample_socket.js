@@ -161,6 +161,7 @@ function SampleSocket(props) {
             saveData.push(JSON.stringify(receiveObject));
             setSaveData([...saveData]);
             if (saveData.length === 5) {
+                console.log(memo)
                 customAxios.post("/seed/save/continuous", {data: saveData, memo: memo}).then().catch(() => {
                     disconnect();
                 });
@@ -188,13 +189,25 @@ function SampleSocket(props) {
         setReceivedData([...receivedData]);
     }
     */
-
     return (
             <div>
                 <div>
-                    <div onClick={() => register()}>start</div>
-                    <div onClick={() => disconnect()}>disconnect</div>
-                    <div>{connected ? "연결됨" : "연결 안됨"}</div>
+                    <div style={{padding: '1rem 2rem'}}>
+                        <span onClick={() => register()} style={{cursor: 'pointer', background: '#FAE4FF', padding: '0.5rem', fontSize: '1.2rem', fontWeight: '600', borderRadius: '0.625rem', marginRight: '0.5rem'}}>
+                            <img src="/assets/img/start.png" style={{marginRight: '0.3rem'}} />
+                            측정 시작
+                        </span>
+
+                        <span onClick={() => register()} style={{cursor: 'pointer', background: '#FAE4FF', padding: '0.5rem', fontSize: '1.2rem', fontWeight: '600', borderRadius: '0.625rem', marginRight: '0.5rem'}}>
+                            <img src="/assets/img/stop.png" style={{marginRight: '0.3rem'}} />
+                            측정 중지
+                        </span>
+
+                        <span onClick={() => register()} style={{padding: '0.5rem', fontSize: '1.2rem', fontWeight: '600', borderRadius: '0.625rem'}}>
+                            {connected ? (isConnectionDropped ? "전송 중단" : "연결됨") : "연결 해제"}
+                        </span>
+                    </div>
+
                     <div>
                         {/*
                         <span className="border p-2" style={{
@@ -236,7 +249,7 @@ function SampleSocket(props) {
                     color: "red"
                 }}>{connected && isConnectionDropped ? "전송 중단됨" : ""}</div>
                 {/*</div><div className={connected === true ? "border pt-2 ps-2 pe-2" : ""}>*/}
-                <div style={{ padding: '2rem' }} >
+                <div style={{ padding: '0 2rem 2rem 2rem' }} >
                     {
                         dataTypes.map((elem) =>
                             (//props.clickedIndexes.includes(index) &&
@@ -250,110 +263,117 @@ function SampleSocket(props) {
                     }
                     
                     <div style={{
-                        display: 'flex',
-                        justifyContent: 'center',
                         marginTop: '2.5rem',
                     }}>
+
                         {/*저장 간격*/}
-                        <div style={{
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                fontSize: '1.25rem',
-                                width: '11rem',
-                                height:' 2rem',
-                                borderRadius: '1.25rem',
+                        <div style={{display: 'flex'}}>
+                            <div style={{
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    fontSize: '1.25rem',
+                                    width: '11rem',
+                                    height:' 2rem',
+                                    borderRadius: '1.25rem',
+                                    background: '#CBE0FF',
+                                    marginRight: '1.5rem'
+                                }}>
+                                저장 간격
+                            </div>
+
+                            <input style={{
+                                width: '30%',
+                                height: '2rem',
+                                borderRadius: '0.625rem',
                                 background: '#fff',
-                                marginRight: '1.5rem'
-                            }}>
-                            저장 간격
+                                border: 'none',
+                                outline: 'none',
+                                fontSize: '1.25rem',
+                                padding: '0 1rem',
+                                marginRight: '1rem',
+                            }} 
+                                onChange={(e) => setPeriod(e.target.value)} 
+                                placeholder='단위는 초' />
                         </div>
 
-                        <input style={{
-                            width: '30%',
-                            height: '2rem',
-                            borderRadius: '0.625rem',
-                            background: '#fff',
-                            border: 'none',
-                            outline: 'none',
-                            fontSize: '1.25rem',
-                            padding: '0 1rem',
-                            marginRight: '1rem',
-                        }} 
-                            onChange={(e) => setPeriod(e.target.value)} 
-                            placeholder='단위는 초' />
-                        
                         {/*측정 위치*/}
-                        <div style={{
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                fontSize: '1.25rem',
-                                width: '11rem',
-                                height:' 2rem',
-                                borderRadius: '1.25rem',
-                                background: '#fff',
-                                marginRight: '1.5rem'
-                            }}>
-                            측정 위치
-                        </div>
+                        <div style={{display: 'flex', marginTop: '1rem'}}>
+                            <div style={{
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    fontSize: '1.25rem',
+                                    width: '11rem',
+                                    height:' 2rem',
+                                    borderRadius: '1.25rem',
+                                    background: '#CBE0FF',
+                                    marginRight: '1.5rem'
+                                }}>
+                                측정 위치
+                            </div>
 
-                        <input style={{
-                            width: '30%',
-                            height: '2rem',
-                            borderRadius: '0.625rem',
-                            background: '#fff',
-                            border: 'none',
-                            outline: 'none',
-                            fontSize: '1.25rem',
-                            padding: '0 1rem',
-                            marginRight: '1rem'
-                        }} 
-                            onChange={(e) => setLocation(e.target.value)} />
+                            <input style={{
+                                width: '30%',
+                                height: '2rem',
+                                borderRadius: '0.625rem',
+                                background: '#fff',
+                                border: 'none',
+                                outline: 'none',
+                                fontSize: '1.25rem',
+                                padding: '0 1rem',
+                                marginRight: '1rem'
+                            }} 
+                                onChange={(e) => setLocation(e.target.value)} />
+                        </div>
 
                         {/*메모*/}
-                        <div style={{
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                fontSize: '1.25rem',
-                                width: '11rem',
-                                height:' 2rem',
-                                borderRadius: '1.25rem',
-                                background: '#fff',
-                                marginRight: '1.5rem'
-                            }}>
-                            메모
-                        </div>
+                        <div style={{display: 'flex', marginTop: '1rem'}}>
+                            <div style={{
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    fontSize: '1.25rem',
+                                    width: '11rem',
+                                    height:' 2rem',
+                                    borderRadius: '1.25rem',
+                                    background: '#CBE0FF',
+                                    marginRight: '1.5rem'
+                                }}>
+                                메모
+                            </div>
 
-                        <input style={{
-                            width: '30%',
-                            height: '2rem',
-                            borderRadius: '0.625rem',
-                            background: '#fff',
-                            border: 'none',
-                            outline: 'none',
-                            fontSize: '1.25rem',
-                            padding: '0 1rem',
-                            marginRight: '1rem'
-                        }} 
-                            onChange={(e) => setMemo(e.target.value)} />
-
-                        <div style={{
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                padding: '0 1.5rem',
-                                width: '14rem',
+                            <input style={{
+                                width: '30%',
                                 height: '2rem',
-                                borderRadius: '1.25rem',
-                                background: '#F7F6F6',
+                                borderRadius: '0.625rem',
+                                background: '#fff',
+                                border: 'none',
+                                outline: 'none',
                                 fontSize: '1.25rem',
-                                cursor: 'pointer',
-                                
-                            }}
-                            onClick={() => { save = !save; }}>
-                            {save === true ? "저장 중지하기": "데이터 저장하기"}
+                                padding: '0 1rem',
+                                marginRight: '1rem'
+                            }} 
+                                onChange={(e) => setMemo(e.target.value)} />
+                        </div>
+                        
+                        <div style={{display: 'flex', justifyContent: 'center', marginTop: '2rem'}}>
+                            <div style={{
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    padding: '0 1.5rem',
+                                    width: '14rem',
+                                    height: '2rem',
+                                    borderRadius: '1.25rem',
+                                    background: '#666666',
+                                    color: '#fff',
+                                    fontSize: '1.25rem',
+                                    cursor: 'pointer',
+                                }}
+                                onClick={() => { save = !save; }}>
+                                {save === true ? "저장 중지하기": "데이터 저장하기"}
+                            </div>
                         </div>
                     </div>
                         

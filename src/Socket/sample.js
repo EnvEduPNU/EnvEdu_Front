@@ -19,26 +19,13 @@ export default function Sample() {
     const [connectableSocket, setConnectableSocket] = useState([]);
 
     useEffect(()=>{
-        /**
-         * 자신과 연관된 기기의 정보를 가져옴
-         * 학생의 경우, 자신에게 등록된 기기
-         * 교사의 경우, 자신에게 등록된 기기 + 자신이 지도하는 모든 학생에게 등록된 기기
-         */
         customAxios.get(`/seed/device`)
             .then((response)=>{
                 setConnectableSocket(response.data.relatedUserDeviceList);
                 console.log(response.data.relatedUserDeviceList);
             })
     },[]);
-    /*
-    const [connectableSocket, setConnectableSocket] = useState([
-        { username: "user1", elements: [{ name: 'device1', mac: 'AA:BB:CC:DD:EE:FF' }] },
-        { username: "user2", elements: [{ name: 'device2', mac: 'AA:BB:CC:DD:EE:FF' }] },
-        { username: "user3", elements: [{ name: 'device3', mac: 'AA:BB:CC:DD:EE:FF' }] },
-        { username: "user4", elements: [{ name: 'device4', mac: 'AA:BB:CC:DD:EE:FF' }] }
-    ]);
-    */
-   
+    
     return(
         <div style={{fontSize: "1.5em"}} className="sample">
             <div className="row d-flex justify-content-center">

@@ -267,13 +267,11 @@ function SingleDataContainer(props) {
                 </div>
             </div>
 
-            <div>
+            <div style={{display: 'flex', justifyContent: 'center', borderRadius: '1.875rem', background: '#fff', marginBottom: '1rem'}}>
                 {
                     seeGraph === true && props.data.length !== 0 ?
                         (
-                            <div>
-                                <Line options={option} data={dataElem} width="700" height="500"/>
-                            </div>
+                            <Line options={option} data={dataElem}/>
                         )
                         : (<></>)
 
