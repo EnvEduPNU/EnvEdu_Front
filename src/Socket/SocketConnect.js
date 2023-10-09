@@ -125,7 +125,6 @@ function SocketConnect(props) {
          * 받은 데이터 파싱 
          */
         receiveObject = JSON.parse(payload.body);
-        console.log(receiveObject)
         if (location !== "") {
             receiveObject.location = location;
         }
@@ -140,26 +139,17 @@ function SocketConnect(props) {
         if (receivedData.length > 10) {
             receivedData.splice(0, 1);
         }
-        console.log(receiveObject)
 
         if (save === true) {
-            console.log(receiveObject)
-            receiveObject.dateString = "2023-09-04T22:20:10";
             receiveObject.username = props.username;
-            console.log(receiveObject)
-            console.log(JSON.stringify(receiveObject))
-            console.log(saveData)
             /**
              * 저장이 활성화된 경우
              * 받은 데이터를 saveData에 추가
              * 5개가 쌓이면 한 번에 서버로 전송해 저장
              */
             saveData.push(JSON.stringify(receiveObject));
-            console.log(saveData)
             setSaveData([...saveData]);
             if (saveData.length === 5) {
-                console.log(saveData) //확인
-
                 customAxios.post("/seed/save/continuous", {data: saveData, memo: "memo test"}).then().catch(() => {
                     disconnect();
                 });
@@ -170,8 +160,8 @@ function SocketConnect(props) {
         setReceivedData([...receivedData]);
     }
     
-    console.log(decodeToken(localStorage.getItem("access_token")).user_info.username);
-    console.log(props.username)
+    //console.log(decodeToken(localStorage.getItem("access_token")).user_info.username);
+    //console.log(props.username)
 
     return (
             <div>

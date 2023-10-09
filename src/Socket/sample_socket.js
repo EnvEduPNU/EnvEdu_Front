@@ -33,9 +33,6 @@ function SampleSocket(props) {
      */
     const dataTypes = ["temp", "pH", "hum", "hum_earth", "tur", "dust", "dox", "co2", "lux", "pre"];
 
-
-    const [checked, setChecked] = useState(false);
-
     /**
      * 현재 웹 소켓 연결 여부
      */
@@ -50,12 +47,6 @@ function SampleSocket(props) {
      * 저장할 데이터
      */
     const [saveData, setSaveData] = useState([]);
-
-    /**
-     * 위치 정보
-     * 웹 소켓을 연결할 때만 설정 가능
-     */
-    let location = "";
 
     /**
      * 연결 끊김 여부
@@ -110,6 +101,10 @@ function SampleSocket(props) {
         stompClient.send("/topic/" + props.mac, {}, message);
     }
 
+    const [period, setPeriod] = useState(null);
+    const [location, setLocation] = useState(null);
+    const [memo, setMemo] = useState("");
+
     /** 
      * 데이터 수신 시, 실행되는 핸들러
      */
@@ -139,29 +134,47 @@ function SampleSocket(props) {
         if (receivedData.length > 10) {
             receivedData.splice(0, 1);
         }
-    }
 
-    /*데이터 저장하기*/
-    const handleSaveData = () => {
-         /**
+        if (save === true) {
+            receiveObject.username = props.username;
+            receiveObject.period = period;
+            /**
              * 저장이 활성화된 경우
              * 받은 데이터를 saveData에 추가
              * 5개가 쌓이면 한 번에 서버로 전송해 저장
              */
-         saveData.push(JSON.stringify(receiveObject));
-         console.log(saveData)
-         setSaveData([...saveData]);
-         if (saveData.length === 5) {
-            console.log(saveData)
-            customAxios.post("/seed/save/continuous", {data: saveData, memo: "memo test123"})
-            .then((res) => console.log(res))
-            .catch((err) => console.log(err));
-            
+            saveData.push(JSON.stringify(receiveObject));
+            setSaveData([...saveData]);
+            if (saveData.length === 5) {
+                customAxios.post("/seed/save/continuous", {data: saveData, memo: memo}).then().catch(() => {
+                    disconnect();
+                });
+                saveData.splice(0, saveData.length);
+                setSaveData([...saveData]);
+            }
+        }
+        setReceivedData([...receivedData]);
+    }
+
+    
+
+    /*데이터 저장하기
+    const handleSaveData = () => {
+        receiveObject.username = props.username;
+        receiveObject.location = location;
+        saveData.push(JSON.stringify(receiveObject));
+        setSaveData([...saveData]);
+        if (saveData.length === 5) {
+            customAxios.post("/seed/save/continuous", {data: saveData, memo: memo}).then().catch(() => {
+                disconnect();
+            });
             saveData.splice(0, saveData.length);
             setSaveData([...saveData]);
-         }
-         setReceivedData([...receivedData]);
+        }
+
+        setReceivedData([...receivedData]);
     }
+    */
 
     return (
             <div>
@@ -228,6 +241,36 @@ function SampleSocket(props) {
                         justifyContent: 'center',
                         marginTop: '2.5rem',
                     }}>
+                        {/*저장 간격*/}
+                        <div style={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                fontSize: '1.25rem',
+                                width: '11rem',
+                                height:' 2rem',
+                                borderRadius: '1.25rem',
+                                background: '#fff',
+                                marginRight: '1.5rem'
+                            }}>
+                            저장 간격
+                        </div>
+
+                        <input style={{
+                            width: '30%',
+                            height: '2rem',
+                            borderRadius: '0.625rem',
+                            background: '#fff',
+                            border: 'none',
+                            outline: 'none',
+                            fontSize: '1.25rem',
+                            padding: '0 1rem',
+                            marginRight: '1rem',
+                        }} 
+                            onChange={(e) => setPeriod(e.target.value)} 
+                            placeholder='단위는 초' />
+                        
+                        {/*측정 위치*/}
                         <div style={{
                                 display: 'flex',
                                 justifyContent: 'center',
@@ -252,8 +295,36 @@ function SampleSocket(props) {
                             fontSize: '1.25rem',
                             padding: '0 1rem',
                             marginRight: '1rem'
-                        }} />
-                            {/*onChange={(e) => setLoc(e.target.value)}*/}
+                        }} 
+                            onChange={(e) => setLocation(e.target.value)} />
+
+                        {/*메모*/}
+                        <div style={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                fontSize: '1.25rem',
+                                width: '11rem',
+                                height:' 2rem',
+                                borderRadius: '1.25rem',
+                                background: '#fff',
+                                marginRight: '1.5rem'
+                            }}>
+                            메모
+                        </div>
+
+                        <input style={{
+                            width: '30%',
+                            height: '2rem',
+                            borderRadius: '0.625rem',
+                            background: '#fff',
+                            border: 'none',
+                            outline: 'none',
+                            fontSize: '1.25rem',
+                            padding: '0 1rem',
+                            marginRight: '1rem'
+                        }} 
+                            onChange={(e) => setMemo(e.target.value)} />
 
                         <div style={{
                                 display: 'flex',
@@ -268,8 +339,8 @@ function SampleSocket(props) {
                                 cursor: 'pointer',
                                 
                             }}
-                            onClick={handleSaveData}>
-                            데이터 저장하기
+                            onClick={() => { save = !save; }}>
+                            {save === true ? "저장 중지하기": "데이터 저장하기"}
                         </div>
                     </div>
                         
