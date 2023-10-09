@@ -101,8 +101,8 @@ function SampleSocket(props) {
         stompClient.send("/topic/" + props.mac, {}, message);
     }
 
-    const [period, setPeriod] = useState(null);
-    const [location, setLocation] = useState(null);
+    const [period, setPeriod] = useState("");
+    const [location, setLocation] = useState("");
     const [memo, setMemo] = useState("");
 
     /** 
@@ -120,9 +120,6 @@ function SampleSocket(props) {
          * 받은 데이터 파싱 
          */
         receiveObject = JSON.parse(payload.body);
-        if (location !== "") {
-            receiveObject.location = location;
-        }
 
         //lastReceivedDate = receiveObject.dateString;
 
@@ -137,7 +134,25 @@ function SampleSocket(props) {
 
         if (save === true) {
             receiveObject.username = props.username;
-            receiveObject.period = period;
+
+            const now = new Date();
+            const year = now.getFullYear().toString().padStart(4, '0');
+            const month = (now.getMonth() + 1).toString().padStart(2, '0'); // 월은 0부터 시작하므로 1을 더해줍니다.
+            const day = now.getDate().toString().padStart(2, '0');
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+
+            const formattedDateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+            receiveObject.dateString = formattedDateTime;
+            
+            if (period !== "") {
+                receiveObject.period = period;
+            }
+            if (location !== "") {
+                receiveObject.location = location;
+            }
+            
             /**
              * 저장이 활성화된 경우
              * 받은 데이터를 saveData에 추가
@@ -155,8 +170,6 @@ function SampleSocket(props) {
         }
         setReceivedData([...receivedData]);
     }
-
-    
 
     /*데이터 저장하기
     const handleSaveData = () => {
