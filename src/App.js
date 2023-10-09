@@ -74,8 +74,8 @@ function App() {
           <Route path="/login" exact={true} element={<LoginForm />} />
 
           {/*socket*/}
-          <Route path="/socket" exact={true} element={<ConnectPage />} />
-          <Route path="/sample" exact={true} element={<Sample />} />
+          <Route path="/socket" exact={true} element={<Sample />} />
+          {/*<Route path="/sample" exact={true} element={<Sample />} />*}
 
           {/*test*/}
           <Route path="/test/socket" exact={true} element={<TestSocket />} />
