@@ -7,18 +7,26 @@ import {
   modeImputation,
 } from "../utils/missingValue";
 import {
-  findOutliersByIQR,
-  findOutliersByMAD,
-  findOutliersByZScore,
-  processDatasetByMethod,
+  findOutliersIndicesByIQR,
+  findOutliersIndicesByMAD,
+  findOutliersIndicesByZScore,
+  replaceOutliersWithLinearInterpolation,
+  replaceOutliersWithMean,
+  replaceOutliersWithMedian,
+  replaceOutliersWithMode,
 } from "../utils/outlier";
 
 export const useDataPretreatmentStore = create(set => ({
   data: data1,
+  imputedData: data1,
+  resultData: data1,
+
   isFindMissingValue: false,
   isImputed: false,
-  resultData: data1,
+
   isFindOutliers: false,
+  isRemoveOutliers: false,
+  outliersIndices: [], // 이상치 인덱스를 저장할 배열
 
   findMissingValue: () =>
     set(state => ({
@@ -47,30 +55,65 @@ export const useDataPretreatmentStore = create(set => ({
       }
       return {
         ...state,
+        imputedData: newData,
         resultData: newData,
         isImputed: true,
         isFindMissingValue: false,
       };
     }),
 
-  findOutliers: () =>
-    set(state => ({
-      ...state,
-      isFindOutliers: true,
-    })),
-
-  changeOutliers: method =>
+  findOutliers: method =>
     set(state => {
-      let newData;
+      let outlierIndices;
       switch (method) {
         case "z-score":
-          newData = processDatasetByMethod(state.data, findOutliersByZScore);
+          outlierIndices = findOutliersIndicesByZScore(state.resultData);
           break;
         case "iqr":
-          newData = processDatasetByMethod(state.data, findOutliersByIQR);
+          outlierIndices = findOutliersIndicesByIQR(state.resultData);
           break;
         case "mad":
-          newData = processDatasetByMethod(state.data, findOutliersByMAD);
+          outlierIndices = findOutliersIndicesByMAD(state.resultData);
+          break;
+        default:
+          return;
+      }
+      console.log(`${method} Indices:`, outlierIndices);
+
+      return {
+        ...state,
+        isFindOutliers: true,
+        outliersIndices: outlierIndices, // 각 방법별로 찾은 이상치 인덱스 저장
+      };
+    }),
+
+  changOutliers: way =>
+    set(state => {
+      let newData;
+      switch (way) {
+        case "mean":
+          newData = replaceOutliersWithMean(
+            state.imputedData,
+            state.outliersIndices
+          );
+          break;
+        case "median":
+          newData = replaceOutliersWithMedian(
+            state.imputedData,
+            state.outliersIndices
+          );
+          break;
+        case "mode":
+          newData = replaceOutliersWithMode(
+            state.imputedData,
+            state.outliersIndices
+          );
+          break;
+        case "linear":
+          newData = replaceOutliersWithLinearInterpolation(
+            state.imputedData,
+            state.outliersIndices
+          );
           break;
         default:
           newData = state.data;
@@ -78,6 +121,7 @@ export const useDataPretreatmentStore = create(set => ({
       return {
         ...state,
         resultData: newData,
+        isRemoveOutliers: true,
         isFindOutliers: false,
       };
     }),

@@ -8,7 +8,7 @@ function MissingValue() {
     isFindMissingValue,
     findMissingValue,
     changeMissingValue,
-    resultData,
+    imputedData,
     isImputed,
   } = useDataPretreatmentStore();
 
@@ -38,13 +38,13 @@ function MissingValue() {
       <table className="table">
         <thead>
           <tr>
-            {resultData[0].map((key, idx) => (
+            {imputedData[0].map((key, idx) => (
               <th key={key + idx}>{key}</th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {resultData.slice(1).map((d, row) => (
+          {imputedData.slice(1).map((d, row) => (
             <tr key={row}>
               {d.map((key, col) => (
                 <td

@@ -5,6 +5,7 @@ import { Button } from "react-bootstrap";
 import { useState } from "react";
 import "./DataPretreatment.scss";
 import MissingValue from "./MissingValue";
+import OutlierRemoval from "./OutlierRemoval";
 
 function DataPretreatmentPage() {
   const navigate = useNavigate();
@@ -33,6 +34,8 @@ function DataPretreatmentPage() {
     switch (activeStep) {
       case 1:
         return <MissingValue />;
+      case 2:
+        return <OutlierRemoval />;
     }
   };
   return (
