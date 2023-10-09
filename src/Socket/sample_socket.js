@@ -134,6 +134,9 @@ function SampleSocket(props) {
         }
 
         if (save === true) {
+            // receiveObject를 복제
+            const updatedReceiveObject = { ...receiveObject };
+
             //선택하지 않은 센서의 값은 null로 만들기
             dataTypes.forEach((dataType) => {
                 if (!checkedDataTypes.includes(dataType)) {
@@ -150,7 +153,7 @@ function SampleSocket(props) {
             });
             //
 
-            receiveObject.username = props.username;
+            updatedReceiveObject.username = props.username;
 
             const now = new Date();
             const year = now.getFullYear().toString().padStart(4, '0');
@@ -161,13 +164,13 @@ function SampleSocket(props) {
             const seconds = now.getSeconds().toString().padStart(2, '0');
 
             const formattedDateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
-            receiveObject.dateString = formattedDateTime;
+            updatedReceiveObject.dateString = formattedDateTime;
             
             if (period !== "") {
-                receiveObject.period = period;
+                updatedReceiveObject.period = period;
             }
             if (location !== "") {
-                receiveObject.location = location;
+                updatedReceiveObject.location = location;
             }
             
             /**
@@ -175,12 +178,12 @@ function SampleSocket(props) {
              * 받은 데이터를 saveData에 추가
              * 5개가 쌓이면 한 번에 서버로 전송해 저장
              */
-            saveData.push(JSON.stringify(receiveObject));
+            saveData.push(JSON.stringify(updatedReceiveObject));
             setSaveData([...saveData]);
             if (saveData.length === 5) {
                 console.log(saveData);
                 customAxios.post("/seed/save/continuous", {data: saveData, memo: memo})
-                    .then(() => alert("저장한 데이터는 My data에서 확인할 수 있습니다."))
+                    .then()
                     .catch((err) => console.log(err))
                 saveData.splice(0, saveData.length);
                 setSaveData([...saveData]);
