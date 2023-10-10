@@ -14,6 +14,12 @@
     padding: 0.3125rem;
     text-align: center;
   }
+  td.red {
+    background-color: rgb(245, 106, 106);
+  }
+  td.green {
+    background-color: greenyellow;
+  }
   tbody tr:hover {
     cursor: pointer;
     background-color: #bae9ff;
