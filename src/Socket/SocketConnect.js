@@ -141,17 +141,16 @@ function SocketConnect(props) {
         }
 
         if (save === true) {
+            receiveObject.username = props.username;
             /**
              * 저장이 활성화된 경우
              * 받은 데이터를 saveData에 추가
              * 5개가 쌓이면 한 번에 서버로 전송해 저장
              */
-            saveData.push(receiveObject);
+            saveData.push(JSON.stringify(receiveObject));
             setSaveData([...saveData]);
             if (saveData.length === 5) {
-                console.log(saveData) //확인
-
-                customAxios.post("/seed/save/continuous", {data: saveData}).then().catch(() => {
+                customAxios.post("/seed/save/continuous", {data: saveData, memo: "memo test"}).then().catch(() => {
                     disconnect();
                 });
                 saveData.splice(0, saveData.length);
@@ -161,8 +160,8 @@ function SocketConnect(props) {
         setReceivedData([...receivedData]);
     }
     
-    console.log(decodeToken(localStorage.getItem("access_token")).user_info.username);
-    console.log(props.username)
+    //console.log(decodeToken(localStorage.getItem("access_token")).user_info.username);
+    //console.log(props.username)
 
     return (
             <div>
