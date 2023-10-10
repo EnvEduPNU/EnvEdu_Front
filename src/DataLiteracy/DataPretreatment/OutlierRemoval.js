@@ -16,7 +16,7 @@ function OutlierRemoval() {
     // changeMissingValue(eventKey);
     findOutliers(eventKey);
   };
-  console.log(outliersIndices);
+
   return (
     <div className="outlierRemoval">
       <div className="outlierRemovalButtonWrapper">
@@ -29,23 +29,25 @@ function OutlierRemoval() {
             MAD (Median Absolute Deviation)
           </Dropdown.Item>
         </DropdownButton>
-        <DropdownButton
-          title="이상치 처리하기"
-          onSelect={eventKey => changOutliers(eventKey)}
-        >
-          <Dropdown.Item eventKey="mean">
-            데이터셋의 평균 값을 사용하여 누락된 값을 대체
-          </Dropdown.Item>
-          <Dropdown.Item eventKey="median">
-            데이터셋의 중앙값(median)을 사용하여 누락된 값을 대체
-          </Dropdown.Item>
-          <Dropdown.Item eventKey="mode">
-            데이터셋의 최빈값(mode)을 사용하여 누락된 값을 대체
-          </Dropdown.Item>
-          <Dropdown.Item eventKey="linear">
-            선형 보간법을 사용하여 누락된 값을 대체
-          </Dropdown.Item>
-        </DropdownButton>
+        {outliersIndices.length > 0 && (
+          <DropdownButton
+            title="이상치 처리하기"
+            onSelect={eventKey => changOutliers(eventKey)}
+          >
+            <Dropdown.Item eventKey="mean">
+              데이터셋의 평균 값을 사용하여 누락된 값을 대체
+            </Dropdown.Item>
+            <Dropdown.Item eventKey="median">
+              데이터셋의 중앙값(median)을 사용하여 누락된 값을 대체
+            </Dropdown.Item>
+            <Dropdown.Item eventKey="mode">
+              데이터셋의 최빈값(mode)을 사용하여 누락된 값을 대체
+            </Dropdown.Item>
+            <Dropdown.Item eventKey="linear">
+              선형 보간법을 사용하여 누락된 값을 대체
+            </Dropdown.Item>
+          </DropdownButton>
+        )}
       </div>
       <table className="table">
         <thead>

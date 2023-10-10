@@ -65,7 +65,6 @@ export const useDataPretreatmentStore = create(set => ({
         imputedData: newData,
         dataWithoutOutliers: newData,
         isImputed: true,
-        isFindMissingValue: false,
       };
     }),
 
