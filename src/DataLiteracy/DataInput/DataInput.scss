@@ -26,6 +26,9 @@
   grid-template-columns: 0.2fr 1fr;
   gap: 30px;
   .newDataInput-buttonWrapper {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
     button {
       width: fit-content;
     }
@@ -63,7 +66,11 @@
     }
     .head {
       background-color: #4472c4;
-      color: #fff;
+
+      input {
+        color: #fff;
+        font-weight: 700;
+      }
     }
     .body:hover {
       cursor: pointer;
