@@ -38,6 +38,8 @@ import MeasureContinuous from "./Education/Measure/measure_continuous";
 import DrawGraph from "./DataLiteracy/DrawGraph/DrawGraph";
 import GraphInterpreterPage from "./DataLiteracy/GraphInterpreter/GraphInterpreterPage";
 import DataPretreatmentPage from "./DataLiteracy/DataPretreatment/DataPretreatmentPage";
+import DataInputPage from "./DataLiteracy/DataInput/DataInputPage";
+import NewDataInput from "./DataLiteracy/DataInput/NewDataInput";
 
 function App() {
   /**
@@ -130,6 +132,11 @@ function App() {
             <Route path="drawGraph" element={<DrawGraph />} />
             <Route path="graphInterpreter" element={<GraphInterpreterPage />} />
             <Route path="pretreatment" element={<DataPretreatmentPage />} />
+
+            <Route path="dataInput">
+              <Route path="" element={<DataInputPage />} />
+              <Route path="new" element={<NewDataInput />} />
+            </Route>
           </Route>
         </Routes>
       </div>

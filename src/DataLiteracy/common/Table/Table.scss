@@ -1,8 +1,9 @@
 .table {
   min-width: 300px;
   width: 100%;
-  // height: ;
   max-height: 500px;
+  overflow-x: auto;
+  overflow-y: auto;
   border-collapse: collapse;
   th {
     background-color: #4472c4;
