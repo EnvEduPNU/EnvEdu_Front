@@ -38,17 +38,26 @@ function Air() {
     {/*선택한 데이터 저장하기*/}
     const handleSaveMyData = async (e) => {
         e.preventDefault();
-        customAxios.post('/air-quality', selectedItems)
-        .then( () => {
-            alert("데이터 저장을 성공했습니다!");
-        })
-        .catch((err) => {
-            if (err.response.status === 500) {
-                alert("이미 저장한 데이터입니다.");
-            } else {
+
+        const memoInput = prompt("(선택) 메모를 입력하세요.");
+        let memo;
+        if ((memoInput === null) || memoInput.trim() === "") {
+            memo = "";
+        }
+        else {
+            memo = memoInput;
+            customAxios.post('/air-quality', {
+                data: selectedItems,
+                memo: memo
+            })
+            .then(() => {
+                alert("데이터 저장을 성공했습니다!");
+            })
+            .catch((err) => {
+                console.log(err);
                 alert("데이터 저장을 실패했습니다.");
-            }
-        });
+            });
+        }
     };
 
     {/* 필터링을 위해 addr 선택 */}

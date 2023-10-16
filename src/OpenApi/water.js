@@ -29,7 +29,7 @@ function Water() {
                 // Set the table headers dynamically
                 const headers = Object.keys(jsonData[0]).filter((key) => key !== 'id');
                 setHeaders(headers);
-                const checkedHeaders = Object.keys(jsonData[0]).filter((key) => key !== 'id');
+                const checkedHeaders = Object.keys(jsonData[0]).filter((key) => key !== 'id' && key != 'dataUUID' && key != 'saveDate');
                 setCheckedHeaders(checkedHeaders);
             })
             .catch((err) => console.log(err));
@@ -43,17 +43,30 @@ function Water() {
     {/*선택한 데이터 저장하기*/}
     const handleSaveMyData = async (e) => {
         e.preventDefault();
-        customAxios.post('/ocean-quality', selectedItems)
-        .then( () => {
-            alert("데이터 저장을 성공했습니다!");
-        })
-        .catch((err) => {
-            if (err.response.status === 500) {
-                alert("이미 저장한 데이터입니다.");
-            } else {
+
+        const memoInput = prompt("(선택) 메모를 입력하세요.");
+        let memo;
+        if ((memoInput === null) || memoInput.trim() === "") {
+            memo = "";
+        }
+        else {
+            memo = memoInput;
+            customAxios.post('/ocean-quality', {
+                data: selectedItems,
+                memo: memo
+            })
+            .then(() => {
+                alert("데이터 저장을 성공했습니다!");
+            })
+            .catch((err) => {
+                console.log(err);
                 alert("데이터 저장을 실패했습니다.");
-            }
-        });
+                console.log({
+                    data: selectedItems,
+                    memo: memo
+                })
+            });
+        }
     };
 
     {/* 필터링을 위해 addr 선택 */}
@@ -151,6 +164,8 @@ function Water() {
         const month = (index + 1).toString().padStart(2, '0');
         return month;
     });
+
+    console.log(selectedItems); 
 
     return (
         <div>
