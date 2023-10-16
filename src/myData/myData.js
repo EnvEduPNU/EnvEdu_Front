@@ -220,15 +220,14 @@ export default function MyData() {
                                     {headers.map((header) => (
                                         <th key={header}>{engToKor(header)}</th>
                                     ))}
-                                    {category !== "SEED" && 
-                                        <th>
-                                            <input
-                                                type="checkbox"
-                                                onChange={() => handleFullCheck()}
-                                                checked={isFull}
-                                            ></input>
-                                        </th>
-                                    }
+                                    {/*{category !== "SEED" && */}
+                                    <th>
+                                        <input
+                                            type="checkbox"
+                                            onChange={() => handleFullCheck()}
+                                            checked={isFull}
+                                        ></input>
+                                    </th>
                                 </tr>
                             </thead>
                             
@@ -238,16 +237,15 @@ export default function MyData() {
                                         {headers.map((header) => (
                                             <td key={header}>{item[header]}</td>
                                         ))}
-                                        {category !== "SEED" && 
-                                            <td>
-                                                <input
-                                                    type="checkbox"
-                                                    name={item}
-                                                    checked={selectedItems.includes(item)}
-                                                    onChange={() => handleViewCheckBoxChange(item)}
-                                                ></input>
-                                            </td>
-                                        }
+                                        {/*{category !== "SEED" && */}
+                                        <td>
+                                            <input
+                                                type="checkbox"
+                                                name={item}
+                                                checked={selectedItems.includes(item)}
+                                                onChange={() => handleViewCheckBoxChange(item)}
+                                            ></input>
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
