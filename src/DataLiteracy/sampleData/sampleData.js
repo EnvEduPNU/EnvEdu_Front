@@ -1,4 +1,4 @@
-export const data = [
+export const data = JSON.parse(localStorage.getItem("data")) || [
   ["농업지대", "평균기온", "강수량", "일조시간"],
   ["태백고냉", 21.9, 181.9, 149.7],
   ["소백간산", 25.3, 675.6, 140],
