@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import RegisterForm from "./User/Register/RegisterForm";
 import HomePage from "./HomePage";
 import AddMACForm from "./Device/Manager/AddMACForm";
+import AddDevice from "./Admin/Device/addDevice";
 import LoginForm from "./User/Login/LoginForm";
 import ConnectPage from "./Socket/ConnectPage";
 import Header from "./Header/Header";
@@ -116,11 +117,12 @@ function App() {
           {/*Admin*/}
           <Route path="/admin/login" exact={true} element={<AdminLogin />} />
           <Route path="/admin/devices" exact={true} element={<DeviceList />} />
-          <Route
+          <Route path="/admin/add/device" exact={true} element={<AddDevice />} />
+          {/*<Route
             path="/admin/add/device"
             exact={true}
             element={<AddMACForm />}
-          />
+          />*/}
 
           {/*ContactUs*/}
           <Route path="/contactus" exact={true} element={<ContactUs />} />
