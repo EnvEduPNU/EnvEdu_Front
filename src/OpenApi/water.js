@@ -27,7 +27,7 @@ function Water() {
                 setFilteredData(jsonData);
                 
                 // Set the table headers dynamically
-                const headers = Object.keys(jsonData[0]).filter((key) => key !== 'id');
+                const headers = Object.keys(jsonData[0]).filter((key) => key !== 'id' && key != 'dataUUID' && key != 'saveDate');
                 setHeaders(headers);
                 const checkedHeaders = Object.keys(jsonData[0]).filter((key) => key !== 'id' && key != 'dataUUID' && key != 'saveDate');
                 setCheckedHeaders(checkedHeaders);
@@ -166,6 +166,8 @@ function Water() {
     });
 
     console.log(selectedItems); 
+    console.log(checkedHeaders);
+    console.log(headers);
 
     return (
         <div>
