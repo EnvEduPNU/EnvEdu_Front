@@ -44,9 +44,9 @@ export default function ReadExcel() {
     const navigate = useNavigate('');
     const handleSave = () => {
         customAxios.post('/dataupload', {
-            "data": excelData, 
-            "label": label,
-            "memo": memo
+            data: excelData, 
+            label: label,
+            memo: memo
         })
             .then(() => {
                 alert("데이터가 저장되었습니다.");
