@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {Button, OverlayTrigger, Popover} from "react-bootstrap";
-import {Line} from 'react-chartjs-2';
+import {Bubble, Line} from 'react-chartjs-2';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -11,6 +11,7 @@ import {
     Tooltip,
     Legend,
 } from 'chart.js';
+import { getDropdownMenuPlacement } from "react-bootstrap/esm/DropdownMenu";
 
 ChartJS.register(
     CategoryScale,
@@ -191,7 +192,9 @@ function SingleDataContainer(props) {
         display: "inline-block",
         fontSize: "0.9em",
         width: "8em",
-        backgroundColor: `${value === -99999 ? "rgb(192,192,192)" : "rgb(102,255,102)"}`
+        backgroundColor: `${value === -99999 ? "#fff" : "#FAE4FF"}`,
+        borderRadius: '1.25rem',
+        textAlign: 'center'
     }
 
     return (
@@ -209,7 +212,7 @@ function SingleDataContainer(props) {
                     {props.type === 'lux' && <span className="border pe-2 ps-2 mb-2" style={style}>조도</span>}
                     {props.type === 'pre' && <span className="border pe-2 ps-2 mb-2" style={style}>기압</span>}
                     &nbsp;&nbsp;
-
+                    
                     {
                         /**
                          * 유효하지 않은 값의 처리
@@ -264,13 +267,11 @@ function SingleDataContainer(props) {
                 </div>
             </div>
 
-            <div>
+            <div style={{display: 'flex', justifyContent: 'center', borderRadius: '1.875rem', background: '#fff', marginBottom: '1rem'}}>
                 {
                     seeGraph === true && props.data.length !== 0 ?
                         (
-                            <div>
-                                <Line options={option} data={dataElem} width="700" height="500"/>
-                            </div>
+                            <Line options={option} data={dataElem} width="700" height="500"/>
                         )
                         : (<></>)
 

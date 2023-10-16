@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import './sample.css'
+import './sample.scss'
 import { customAxios } from "../Common/CustomAxios";
 //import UserMacList from "./UserMacList";
 import SampleSocket from "./sample_socket";
@@ -16,23 +16,25 @@ export default function Sample() {
         }
     };
 
-    const [connectableSocket, setConnectableSocket] = useState([
-        { username: "user1", elements: [{ name: 'device1', mac: 'AA:BB:CC:DD:EE:FF' }] },
-        { username: "user2", elements: [{ name: 'device2', mac: 'AA:BB:CC:DD:EE:FF' }] },
-        { username: "user3", elements: [{ name: 'device3', mac: 'AA:BB:CC:DD:EE:FF' }] },
-        { username: "user4", elements: [{ name: 'device4', mac: 'AA:BB:CC:DD:EE:FF' }] }
-    ]);
+    const [connectableSocket, setConnectableSocket] = useState([]);
+
+    useEffect(()=>{
+        customAxios.get(`/seed/device`)
+            .then((response)=>{
+                setConnectableSocket(response.data.relatedUserDeviceList);
+                console.log(response.data.relatedUserDeviceList);
+            })
+    },[]);
     
-    const style = {
-        border: '1px solid black',
-        margin: "2em", 
-        paddingLeft: "5em", 
-        paddingRight: "5em",
-        borderRadius: '0.625rem'
-    }
-
-    console.log(clickedIndexes)
-
+    /*
+    const [connectableSocket, setConnectableSocket] = useState([
+        { username: "user1", elements: [{ deviceName: 'device1', mac: 'AA:BB:CC:DD:EE:FF' }] },
+        { username: "user2", elements: [{ deviceName: 'device2', mac: 'AA:BB:CC:DD:EE:FF' }] },
+        { username: "user3", elements: [{ deviceName: 'device3', mac: 'AA:BB:CC:DD:EE:FF' }] },
+        { username: "user4", elements: [{ deviceName: 'device4', mac: 'AA:BB:CC:DD:EE:FF' }] }
+    ]);
+    */
+   
     return(
         <div style={{fontSize: "1.5em"}} className="sample">
             <div className="row d-flex justify-content-center">
@@ -87,7 +89,7 @@ export default function Sample() {
                                                     borderRadius: '1.25rem',
                                                     background: '#D9DCFF'
                                                 }}>
-                                                    {element.name}
+                                                    {element.deviceName}
                                             </div>
                                             
                                             <div style={{display: 'flex'}}>
@@ -111,7 +113,7 @@ export default function Sample() {
                                         </div>
                                         
                                     {clickedIndexes.includes(index) &&
-                                        <SampleSocket mac={element.mac} name={element.name} username={item.username} clickedIndexes={clickedIndexes} />
+                                        <SampleSocket mac={element.mac} name={element.deviceName} username={item.username} clickedIndexes={clickedIndexes} />
                                     }   
 
                                     {/*

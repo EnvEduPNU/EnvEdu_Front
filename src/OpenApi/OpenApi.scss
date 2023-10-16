@@ -62,7 +62,8 @@
         }
     }
 
-    /* table - my data */
+    /*
+    table - my data 
     .myData-table {
         width: 100%;
         border-collapse: collapse;
@@ -86,6 +87,45 @@
 
         tbody tr:nth-child(even) {
             background-color: rgb(228, 228, 228);
+        }
+    }
+    */
+
+    /* table - my data */
+    .myData-list {
+        width: 100%;
+        border-collapse: collapse;
+        th {
+            background-color: #f3b634;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 0.3125rem;
+            text-align: center;
+        }
+        tbody tr:hover {
+            cursor: pointer;
+            background-color: #ffe9ba;
+        }
+        tbody tr:nth-child(even) {
+            background-color: rgb(228, 228, 228);
+        }
+        tbody tr:nth-child(even):hover {
+            background-color: #ffe9ba;
+        }
+    }
+
+    /* table - my data 상세 */
+    .myData-list-detail {
+        width: 100%;
+        border-collapse: collapse;
+        th {
+            background-color: #F39034;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 0.3125rem;
+            text-align: center;
         }
     }
 }

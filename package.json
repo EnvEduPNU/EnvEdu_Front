@@ -13,6 +13,8 @@
     "bootstrap": "^5.2.3",
     "buffer": "^6.0.3",
     "chart.js": "^4.0.1",
+    "chartjs-plugin-datalabels": "^2.2.0",
+    "classnames": "^2.3.2",
     "crypto-js": "^4.1.1",
     "net": "^1.0.2",
     "node-sass": "^9.0.0",
@@ -24,6 +26,7 @@
     "react-cookie": "^4.1.1",
     "react-datepicker": "^4.8.0",
     "react-dom": "^18.2.0",
+    "react-file-reader": "^1.1.4",
     "react-helmet-async": "^1.3.0",
     "react-hook-form": "^7.36.1",
     "react-html-parser": "^2.0.2",
@@ -38,6 +41,7 @@
     "sockjs-client": "^1.6.1",
     "stompjs": "^2.3.3",
     "web-vitals": "^2.1.4",
+    "xlsx": "^0.18.5",
     "zustand": "^4.3.8"
   },
   "scripts": {
