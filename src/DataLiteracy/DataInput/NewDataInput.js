@@ -4,14 +4,18 @@ import SideBar from "../common/SideBar/SideBar";
 import classNames from "classnames";
 import "./DataInput.scss";
 import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDataPretreatmentStore } from "../store/dataPretreatmentStroe";
 
 function NewDataInput() {
+  const setDatas = useDataPretreatmentStore(state => state.setDatas);
   const [type, setType] = useState("manual");
   const [data, setData] = useState(
     Array(5)
       .fill(0)
       .map(row => Array(5).fill(""))
   );
+  const navigate = useNavigate();
   const inputFileRef = useRef(null);
 
   const readExcel = file => {
@@ -37,7 +41,7 @@ function NewDataInput() {
   };
   const onClickButton = type => {
     setType(type);
-    if (type == "excel") {
+    if (type === "excel") {
       inputFileRef.current.click();
     }
   };
@@ -57,7 +61,19 @@ function NewDataInput() {
     const newData = data.map(row => [...row, ""]);
     setData(newData);
   };
-
+  const onClickNextBtn = () => {
+    for (let i = 0; i < data.length; i++) {
+      for (let j = 0; j < data[i].length; j++) {
+        if (data[i][j].length <= 0) {
+          alert("데이터를 다 입력해 주세요");
+          return;
+        }
+      }
+    }
+    localStorage.setItem("data", JSON.stringify(data));
+    setDatas(data);
+    navigate("/dataLiteracy/pretreatment");
+  };
   return (
     <div className="newDataInput">
       <SideBar activeIdx={0} />
@@ -115,7 +131,7 @@ function NewDataInput() {
                   { head: row === 0 },
                   { body: row > 0 },
                   {
-                    even: row % 2 == 0,
+                    even: row % 2 === 0,
                   }
                 )}
                 key={`${row} ${col}`}
@@ -132,6 +148,7 @@ function NewDataInput() {
         <div className="newDataInput-buttonWrapper">
           <Button onClick={onClickColAddBtn}>열 추가하기</Button>
           <Button onClick={onClickRowAddBtn}>행 추가하기</Button>
+          <Button onClick={onClickNextBtn}>다음</Button>
         </div>
       </div>
     </div>

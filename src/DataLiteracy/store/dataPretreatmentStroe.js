@@ -34,6 +34,14 @@ export const useDataPretreatmentStore = create(set => ({
   isFindOutliers: false,
   isRemoveOutliers: false,
   outliersIndices: [], // 이상치 인덱스를 저장할 배열
+  setDatas: newData =>
+    set(state => ({
+      ...state,
+      data: newData,
+      imputedData: newData,
+      dataWithoutOutliers: newData,
+      resultData: newData,
+    })),
 
   findMissingValue: () =>
     set(state => ({

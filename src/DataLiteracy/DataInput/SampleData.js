@@ -2,9 +2,12 @@ import classNames from "classnames";
 import { useState } from "react";
 import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { useDataPretreatmentStore } from "../store/dataPretreatmentStroe";
 
 function SampleData() {
+  const setDatas = useDataPretreatmentStore(state => state.setDatas);
   const [selected, setSelected] = useState(-1);
+  const [data, setData] = useState([[]]);
   const navigate = useNavigate();
   const sampleDatas = {
     "지역별 장마 분석": [
@@ -112,10 +115,12 @@ function SampleData() {
   };
 
   const onClickBtn = (key, idx) => {
-    localStorage.setItem("data", JSON.stringify(sampleDatas[key]));
     setSelected(idx);
+    setData(sampleDatas[key]);
   };
   const onClickNextBtn = () => {
+    setDatas(data);
+    localStorage.setItem("data", JSON.stringify(data));
     navigate("/dataLiteracy/pretreatment");
   };
 
