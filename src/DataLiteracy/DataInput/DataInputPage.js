@@ -4,6 +4,7 @@ import "./DataInput.scss";
 import classNames from "classnames";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import SampleData from "./SampleData";
 
 function DataInputPage() {
   const navigate = useNavigate();
@@ -16,9 +17,9 @@ function DataInputPage() {
   };
   return (
     <div className="dataInputPage">
-      <SideBar activeIdx={1} />
+      <SideBar activeIdx={0} />
       <div>
-        <div>
+        <div className="dataInputPage-header">
           <Button
             className={classNames("dataInputPage-button", {
               click: type === "new",
@@ -36,7 +37,8 @@ function DataInputPage() {
             Sample
           </Button>
         </div>
-        {type.length > 0 && (
+        {type === "sample" && <SampleData />}
+        {type === "new" && (
           <div className="dataInputPage-nextBtn">
             <Button onClick={onClickNextBtn}>다음</Button>
           </div>
