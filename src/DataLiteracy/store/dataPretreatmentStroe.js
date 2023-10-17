@@ -44,10 +44,22 @@ export const useDataPretreatmentStore = create(set => ({
     })),
 
   findMissingValue: () =>
-    set(state => ({
-      ...state,
-      isFindMissingValue: true,
-    })),
+    set(state => {
+      let isok = true;
+      for (let i = 0; i < state.data.length; i++) {
+        for (let j = 0; j < state.data[i].length; j++) {
+          if (state.data[i][j] == null || state.data[i][j].length === 0) {
+            isok = false;
+          }
+        }
+      }
+      if (isok) alert("결측치가 없습니다.");
+
+      return {
+        ...state,
+        isFindMissingValue: !isok,
+      };
+    }),
 
   changeMissingValue: way =>
     set(state => {
@@ -94,6 +106,7 @@ export const useDataPretreatmentStore = create(set => ({
         default:
           return;
       }
+      if (outlierIndices.length === 0) alert("이상치가 없습니다.");
 
       return {
         ...state,
