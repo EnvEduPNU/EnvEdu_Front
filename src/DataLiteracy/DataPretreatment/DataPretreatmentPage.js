@@ -7,9 +7,11 @@ import "./DataPretreatment.scss";
 import MissingValue from "./MissingValue";
 import OutlierRemoval from "./OutlierRemoval";
 import Scaling from "./Scaling";
+import { useDataPretreatmentStore } from "../store/dataPretreatmentStroe";
 
 function DataPretreatmentPage() {
   const navigate = useNavigate();
+  const resultData = useDataPretreatmentStore(state => state.resultData);
   const localStorageData = JSON.parse(
     localStorage.getItem("dataPretreatmentPage")
   );
@@ -27,7 +29,12 @@ function DataPretreatmentPage() {
   };
 
   const onClickNextBtn = () => {
-    if (activeStep === steps.length) return;
+    if (activeStep === steps.length) {
+      console.log(resultData);
+      localStorage.setItem("data", JSON.stringify(resultData));
+      navigate("/dataLiteracy/drawGraph");
+      return;
+    }
     setActiveStep(state => state + 1);
   };
 

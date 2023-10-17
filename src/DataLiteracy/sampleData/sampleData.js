@@ -14,7 +14,7 @@ export const data = JSON.parse(localStorage.getItem("data")) || [
   ["동해안남부", 26.2, 235.6, 167.3],
 ];
 
-export const data1 = JSON.parse(localStorage.getItem("data")) || [
+export const data1 = [
   ["농업지대", "평균기온", "강수량", "일조시간"],
   ["태백고냉", 21.9, 181.9, 149.7],
   ["소백간산", 25.3, null, 140],
