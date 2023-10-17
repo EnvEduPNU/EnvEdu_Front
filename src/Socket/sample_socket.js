@@ -207,37 +207,21 @@ function SampleSocket(props) {
     console.log(checkedDataTypes)
     return (
             <div>
-                <div>
-                    <div style={{padding: '1rem 2rem'}}>
-                        <span onClick={() => register()} style={{cursor: 'pointer', background: '#FFF', padding: '0.5rem', fontSize: '1.2rem', fontWeight: '600', borderRadius: '0.625rem', marginRight: '0.5rem'}}>
-                            <img src="/assets/img/start.png" style={{marginRight: '0.3rem'}} />
-                            측정 시작
-                        </span>
-
-                        <span onClick={() => disconnect()} style={{cursor: 'pointer', background: '#FFF', padding: '0.5rem', fontSize: '1.2rem', fontWeight: '600', borderRadius: '0.625rem', marginRight: '0.5rem'}}>
-                            <img src="/assets/img/stop.png" style={{marginRight: '0.3rem'}} />
-                            측정 중지
-                        </span>
-
+                <div style={{padding: '1rem 2rem'}}>
+                    {connected  && isConnectionDropped && 
                         <span style={{padding: '0.5rem', fontSize: '1.2rem', fontWeight: '600', borderRadius: '0.625rem'}}>
-                            {connected ? (isConnectionDropped ? "전송 중단" : "연결됨") : "연결 해제"}
-                        </span>
-                    </div>
-
+                            전송 중단                    
+                        </span>}
                 </div>
-              
+
                 <div style={{ padding: '0 2rem 2rem 2rem' }} >
-                    {
-                        checkedDataTypes.map((elem) =>
-                            (//props.clickedIndexes.includes(index) &&
-                            
-                            <div key={elem} style={{ }}>
+                    {checkedDataTypes.map((elem) => (
+                            <div key={elem}>
                                 <SingleDataContainer type={elem} data={receivedData}
                                                         current={receivedData[receivedData.length - 1]} stomp={stompClient}
                                                         sendFunction={sendCalibrationMsg}/>
-                            </div>)
-                        )
-                    }
+                            </div>
+                        ))}
                     
                     <div style={{
                         marginTop: '2.5rem',
