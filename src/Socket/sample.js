@@ -11,7 +11,7 @@ export default function Sample() {
     const handleShowing = (index) => {
         if (clickedIndexes.includes(index)) {
             setClickedIndexes(clickedIndexes.filter((i) => i !== index));
-            SampleSocket.disconnect();
+            //SampleSocket.disconnect();
         } else {
             setClickedIndexes([...clickedIndexes, index]);
         }
