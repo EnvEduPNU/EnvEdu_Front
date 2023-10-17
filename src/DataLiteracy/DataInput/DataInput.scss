@@ -27,15 +27,24 @@
   display: grid;
   grid-template-columns: 0.2fr 1fr;
   gap: 30px;
+  .newDataInput-row_col_btn_wrapper {
+    display: flex;
+    button {
+      font-size: 16px;
+      width: fit-content;
+    }
+  }
   .newDataInput-buttonWrapper {
     margin-top: 20px;
     display: flex;
     justify-content: flex-end;
     button {
+      min-width: 70px;
       width: fit-content;
     }
   }
   .newDataInput-header {
+    width: 100%;
     display: flex;
     justify-content: center;
     .newDataInput-button {
@@ -54,7 +63,7 @@
     display: grid;
     // grid-template-columns: repeat(5, 1fr);
     gap: 1px; // 셀 간의 간격
-    max-width: 1000px;
+    max-width: 1100px;
     max-height: 500px;
     overflow-x: scroll;
     overflow-y: scroll;
@@ -136,5 +145,35 @@
     width: 100%;
     display: flex;
     justify-content: flex-end;
+  }
+}
+
+.cell-selection-modal {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -30%);
+  .block {
+    background-color: #fff;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
+    border-radius: 20px;
+    padding: 20px 30px;
+    display: flex;
+    flex-direction: column;
+    .header {
+      font-size: 21px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .cell-selection-modal_body {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      .cell-selection-modal_input {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+    }
   }
 }

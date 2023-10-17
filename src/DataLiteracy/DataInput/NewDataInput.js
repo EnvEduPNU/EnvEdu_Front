@@ -6,9 +6,11 @@ import "./DataInput.scss";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDataPretreatmentStore } from "../store/dataPretreatmentStroe";
+import CellSelectModal from "./CellSelectModal";
 
 function NewDataInput() {
   const setDatas = useDataPretreatmentStore(state => state.setDatas);
+  const [issVisibleModal, setIsVisibleModal] = useState(true);
   const [type, setType] = useState("manual");
   const [data, setData] = useState(
     Array(5)
@@ -41,7 +43,9 @@ function NewDataInput() {
   };
   const onClickButton = type => {
     setType(type);
-    if (type === "excel") {
+    if (type === "manual") {
+      setIsVisibleModal(state => !state);
+    } else if (type === "excel") {
       inputFileRef.current.click();
     }
   };
@@ -99,7 +103,7 @@ function NewDataInput() {
               accept=".xlsx"
               onChange={handleExcelFileChange}
               ref={inputFileRef}
-              style={{ visibility: "hidden", position: "absolute" }} // input을 숨깁니다.
+              style={{ display: "none" }} // input을 숨깁니다.
             />
           </Button>
           <Button
@@ -118,6 +122,10 @@ function NewDataInput() {
           >
             공공 데이터 불러오기
           </Button>
+        </div>
+        <div className="newDataInput-row_col_btn_wrapper">
+          <Button onClick={onClickColAddBtn}>열 추가하기</Button>
+          <Button onClick={onClickRowAddBtn}>행 추가하기</Button>
         </div>
         <div
           className="newDataInput-table"
@@ -146,11 +154,15 @@ function NewDataInput() {
           )}
         </div>
         <div className="newDataInput-buttonWrapper">
-          <Button onClick={onClickColAddBtn}>열 추가하기</Button>
-          <Button onClick={onClickRowAddBtn}>행 추가하기</Button>
           <Button onClick={onClickNextBtn}>다음</Button>
         </div>
       </div>
+      {issVisibleModal && (
+        <CellSelectModal
+          setData={setData}
+          setIsVisibleModal={setIsVisibleModal}
+        />
+      )}
     </div>
   );
 }
