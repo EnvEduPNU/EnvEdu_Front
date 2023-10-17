@@ -208,6 +208,10 @@ function SampleSocket(props) {
     return (
             <div>
                 <div style={{padding: '1rem 2rem'}}>
+                    <span onClick={() => register()} style={{cursor: 'pointer', background: '#FFF', padding: '0.5rem', fontSize: '1.2rem', fontWeight: '600', borderRadius: '0.625rem', marginRight: '0.5rem'}}>
+                            <img src="/assets/img/start.png" style={{marginRight: '0.3rem'}} />
+                            측정 시작
+                    </span>
                     {connected  && isConnectionDropped && 
                         <span style={{padding: '0.5rem', fontSize: '1.2rem', fontWeight: '600', borderRadius: '0.625rem'}}>
                             전송 중단                    
