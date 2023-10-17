@@ -94,7 +94,11 @@ function BubbleAxisScaleEditor({ data, qualitativeVariableIdx }) {
               // placeholder="Min Value"
               type="number"
               onChange={e =>
-                changeAxisScale("x", "min", Math.round(e.target.value))
+                changeAxisScale(
+                  "x",
+                  "min",
+                  Math.round(e.target.value * 10) / 10
+                )
               }
               value={x.min}
             />
@@ -103,7 +107,11 @@ function BubbleAxisScaleEditor({ data, qualitativeVariableIdx }) {
               max={1000}
               type="range"
               onChange={e => {
-                changeAxisScale("x", "min", Math.round(e.target.value));
+                changeAxisScale(
+                  "x",
+                  "min",
+                  Math.round(e.target.value * 10) / 10
+                );
               }}
               value={x.min}
             />
@@ -114,7 +122,11 @@ function BubbleAxisScaleEditor({ data, qualitativeVariableIdx }) {
               // placeholder="Max Value"
               type="number"
               onChange={e =>
-                changeAxisScale("x", "max", Math.round(e.target.value))
+                changeAxisScale(
+                  "x",
+                  "max",
+                  Math.round(e.target.value * 10) / 10
+                )
               }
               value={x.max}
             />
@@ -123,7 +135,11 @@ function BubbleAxisScaleEditor({ data, qualitativeVariableIdx }) {
               max={1000}
               type="range"
               onChange={e => {
-                changeAxisScale("x", "max", Math.round(e.target.value));
+                changeAxisScale(
+                  "x",
+                  "max",
+                  Math.round(e.target.value * 10) / 10
+                );
               }}
               value={x.max}
             />
@@ -134,7 +150,11 @@ function BubbleAxisScaleEditor({ data, qualitativeVariableIdx }) {
               // placeholder="Step Size"
               type="number"
               onChange={e =>
-                changeAxisScale("x", "stepSize", Math.round(e.target.value))
+                changeAxisScale(
+                  "x",
+                  "stepSize",
+                  Math.round(e.target.value * 10) / 10
+                )
               }
               value={x.stepSize}
             />
@@ -150,7 +170,11 @@ function BubbleAxisScaleEditor({ data, qualitativeVariableIdx }) {
               // placeholder="Min Value"
               type="number"
               onChange={e =>
-                changeAxisScale("y", "min", Math.round(e.target.value))
+                changeAxisScale(
+                  "y",
+                  "min",
+                  Math.round(e.target.value * 10) / 10
+                )
               }
               value={y.min}
             />
@@ -159,7 +183,11 @@ function BubbleAxisScaleEditor({ data, qualitativeVariableIdx }) {
               max={1000}
               type="range"
               onChange={e => {
-                changeAxisScale("y", "min", Math.round(e.target.value));
+                changeAxisScale(
+                  "y",
+                  "min",
+                  Math.round(e.target.value * 10) / 10
+                );
               }}
               value={y.min}
             />
@@ -170,7 +198,11 @@ function BubbleAxisScaleEditor({ data, qualitativeVariableIdx }) {
               // placeholder="Max Value"
               type="number"
               onChange={e =>
-                changeAxisScale("y", "max", Math.round(e.target.value))
+                changeAxisScale(
+                  "y",
+                  "max",
+                  Math.round(e.target.value * 10) / 10
+                )
               }
               value={y.max}
             />
@@ -179,7 +211,11 @@ function BubbleAxisScaleEditor({ data, qualitativeVariableIdx }) {
               max={1000}
               type="range"
               onChange={e => {
-                changeAxisScale("y", "max", Math.round(e.target.value));
+                changeAxisScale(
+                  "y",
+                  "max",
+                  Math.round(e.target.value * 10) / 10
+                );
               }}
               value={y.max}
             />
@@ -190,7 +226,11 @@ function BubbleAxisScaleEditor({ data, qualitativeVariableIdx }) {
               // placeholder="Step Size"
               type="number"
               onChange={e =>
-                changeAxisScale("y", "stepSize", Math.round(e.target.value))
+                changeAxisScale(
+                  "y",
+                  "stepSize",
+                  Math.round(e.target.value * 10) / 10
+                )
               }
               value={y.stepSize}
             />
