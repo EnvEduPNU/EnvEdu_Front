@@ -55,6 +55,8 @@ export default function ReadExcel() {
             .catch((err) => console.log(err));
     }
 
+    console.log(excelData);
+
     return(
         <div className='read-excel-container'>
             <div style={{display: 'flex', marginBottom: '2rem'}}>
