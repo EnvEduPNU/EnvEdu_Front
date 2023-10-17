@@ -200,7 +200,8 @@ function SingleDataContainer(props) {
     return (
         <div>
             <div className="d-flex justify-content-between">
-                <div>
+                <div style={{display: 'flex', alignItems: 'center'}}>
+                    
                     {props.type === 'temp' && <span className="border pe-2 ps-2 mb-2" style={style}>기온</span>}
                     {props.type === 'pH' && <span className="border pe-2 ps-2 mb-2" style={style}>pH</span>}
                     {props.type === 'hum' && <span className="border pe-2 ps-2 mb-2" style={style}>습도</span>}

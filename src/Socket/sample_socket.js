@@ -215,8 +215,14 @@ function SampleSocket(props) {
                 </div>
 
                 <div style={{ padding: '0 2rem 2rem 2rem' }} >
-                    {checkedDataTypes.map((elem) => (
+                    {dataTypes.map((elem) => (
                             <div key={elem}>
+                                <input 
+                                    type="checkbox" 
+                                    style={{width: '1rem', height: '1rem', accentColor: '#000'}}
+                                    checked={checkedDataTypes.includes(elem)}
+                                    onChange={() => handleCheckboxChange(elem)}/>
+                                  
                                 <SingleDataContainer type={elem} data={receivedData}
                                                         current={receivedData[receivedData.length - 1]} stomp={stompClient}
                                                         sendFunction={sendCalibrationMsg}/>
@@ -316,7 +322,7 @@ function SampleSocket(props) {
                             }} 
                                 onChange={(e) => setMemo(e.target.value)} />
                         </div>
-
+                        {/*
                         <div style={{display: 'flex', justifyContent: 'center', marginTop: '1rem'}}>
                             <div>
                                 {dataTypes_ko.map((dataType) => (
@@ -332,7 +338,7 @@ function SampleSocket(props) {
                                 ))}
                             </div>
                         </div>
-                        
+                        */}
                         <div style={{display: 'flex', justifyContent: 'center', marginTop: '2rem'}}>
                             <div style={{
                                     display: 'flex',
