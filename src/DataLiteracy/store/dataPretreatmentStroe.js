@@ -153,13 +153,27 @@ export const useDataPretreatmentStore = create(set => ({
           newData = zScoreNormalizationForDataset(state.dataWithoutOutliers);
           break;
         case "log":
-          newData = logTransformForDataset(state.dataWithoutOutliers);
+          const [data, isOk] = logTransformForDataset(
+            state.dataWithoutOutliers
+          );
+          if (isOk) newData = data;
+          else {
+            alert("스케일링이 불가합니다.");
+            newData = state.dataWithoutOutliers.map(v => [...v]);
+          }
           break;
         case "sqrt":
-          newData = sqrtTransformForDataset(state.dataWithoutOutliers);
+          const [data2, isOk2] = sqrtTransformForDataset(
+            state.dataWithoutOutliers
+          );
+          if (isOk2) newData = data2;
+          else {
+            alert("스케일링이 불가합니다.");
+            newData = state.dataWithoutOutliers.map(v => [...v]);
+          }
           break;
         default:
-          newData = [...state.dataWithoutOutliers];
+          newData = state.dataWithoutOutliers.map(v => [...v]);
       }
       return {
         ...state,

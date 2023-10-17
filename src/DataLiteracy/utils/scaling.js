@@ -52,27 +52,31 @@ export function zScoreNormalizationForDataset(dataset) {
 }
 
 export function logTransformForDataset(dataset) {
+  let isOk = true;
   const logDataset = dataset.map(v => [...v]);
   for (let colIndex = 0; colIndex < logDataset[0].length; colIndex++) {
     if (!isNumericColumn(logDataset, colIndex)) continue;
     for (let rowIndex = 1; rowIndex < logDataset.length; rowIndex++) {
       const value = logDataset[rowIndex][colIndex];
+      if (value <= 0) isOk = false;
       logDataset[rowIndex][colIndex] =
         value > 0 ? roundToOneDecimalPlace(log10(value)) : value;
     }
   }
-  return logDataset;
+  return [logDataset, isOk];
 }
 
 export function sqrtTransformForDataset(dataset) {
+  let isOk = true;
   const sqrtDataset = dataset.map(v => [...v]);
   for (let colIndex = 0; colIndex < sqrtDataset[0].length; colIndex++) {
     if (!isNumericColumn(sqrtDataset, colIndex)) continue;
     for (let rowIndex = 1; rowIndex < sqrtDataset.length; rowIndex++) {
       const value = sqrtDataset[rowIndex][colIndex];
+      if (value < 0) isOk = false;
       sqrtDataset[rowIndex][colIndex] =
         value >= 0 ? roundToOneDecimalPlace(Math.sqrt(value)) : value;
     }
   }
-  return sqrtDataset;
+  return [sqrtDataset, isOk];
 }
