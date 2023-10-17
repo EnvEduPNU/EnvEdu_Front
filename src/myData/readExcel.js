@@ -18,7 +18,8 @@ export default function ReadExcel() {
             const sheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
 
-            const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+            const data = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+            console.log(data)
             setExcelData(data);
         };
     };
@@ -78,6 +79,7 @@ export default function ReadExcel() {
             </label>
             <table className='excelData-list'>
                 <thead>
+                    {/*
                     <tr>
                         {excelData[0] && excelData[0].map((header, index) => {
                             if (header !== "empty") {
@@ -86,9 +88,10 @@ export default function ReadExcel() {
                             return null
                         })}
                     </tr>
+                    */}
                 </thead>
                 <tbody>
-                    {excelData.slice(1).map((row, rowIndex) => (
+                    {excelData.map((row, rowIndex) => (
                         <tr key={rowIndex}>
                             {row.map((cell, cellIndex) => (
                                 <td key={cellIndex}>{cell}</td>
@@ -99,7 +102,7 @@ export default function ReadExcel() {
             </table>
             
             <div style={{display: 'flex', justifyContent: 'flex-end', fontWeight: '600', marginTop: '0.5rem'}}>
-                {excelData.length > 0 && <span>데이터 크기 : {excelData.length - 1}</span>}
+                {excelData.length > 0 && <span>데이터 크기 : {excelData.length}</span>}
             </div>
 
             <div style={{display: 'flex', marginTop: '1rem', marginBottom: '0.5rem'}}>
