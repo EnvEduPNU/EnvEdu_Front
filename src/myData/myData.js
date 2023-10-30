@@ -73,7 +73,7 @@ export default function MyData() {
                 setData(res.data);
                 setFilteredData(res.data);
 
-                const headers = Object.keys(res.data[0]).filter(
+                let headers = Object.keys(res.data[0]).filter(
                     (key) => key !== "id" && key !== "dataUUID" && key !== "saveDate" && key !== "dateString"
                 );
 
