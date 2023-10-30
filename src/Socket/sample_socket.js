@@ -22,6 +22,9 @@ let receiveObject = null;
  */
 let save = false;
 
+/*데이터 저장 중지 여부*/
+let isFinished = false;
+
 /**
  * 마지막으로 데이터를 받은 날짜
  */
@@ -182,7 +185,7 @@ function SampleSocket(props) {
              */
             saveData.push(JSON.stringify(updatedReceiveObject));
             setSaveData([...saveData]);
-            if (saveData.length === 5) {
+            if (isFinished) {
                 console.log(saveData);
                 customAxios.post("/seed/save/continuous", {data: saveData, memo: memo})
                     .then()
@@ -344,7 +347,8 @@ function SampleSocket(props) {
                         </div>
                         */}
                         <div style={{display: 'flex', justifyContent: 'center', marginTop: '2rem'}}>
-                            <div style={{
+                            {!save && 
+                                <div style={{
                                     display: 'flex',
                                     justifyContent: 'center',
                                     alignItems: 'center',
@@ -358,13 +362,35 @@ function SampleSocket(props) {
                                     cursor: 'pointer',
                                 }}
                                 onClick={() => { 
-                                    save = !save; 
+                                    save = true; 
                                     if (checkedDataTypes.length === 0) {
                                         alert("저장할 센서를 한 개 이상 선택해주세요.")
                                     }
                                 }}>
-                                {save === true ? "저장 중지하기": "데이터 저장하기"}
-                            </div>
+                                    데이터 저장하기
+                                </div>
+                            }
+
+                            {save && <div style={{
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    padding: '0 1.5rem',
+                                    width: '14rem',
+                                    height: '2rem',
+                                    borderRadius: '1.25rem',
+                                    background: '#666666',
+                                    color: '#fff',
+                                    fontSize: '1.25rem',
+                                    cursor: 'pointer',
+                                }}
+                                onClick={() => {
+                                    isFinished = true;
+                                }}>
+                                    저장 중지하기
+                                </div>
+                            }
+                            
                         </div>
                     </div>
                         
