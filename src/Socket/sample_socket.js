@@ -34,8 +34,8 @@ function SampleSocket(props) {
     /**
      * 센서 기기에서 전송하는 데이터 종류
      */
-    const dataTypes = ["temp", "pH", "hum", "hum_earth", "tur", "dust", "dox", "co2", "lux", "pre"];
-    const dataTypes_ko = ["기온", "pH", "습도", "토양 습도", "탁도", "미세먼지", "용존산소량", "이산화탄소", "조도", "기압"];
+    const dataTypes = ['temp', 'pH', 'hum', 'hum_earth', 'tur', 'dust', 'dox', 'co2', 'lux', 'pre'];
+    //const dataTypes_ko = ["기온", "pH", "습도", "토양 습도", "탁도", "미세먼지", "용존산소량", "이산화탄소", "조도", "기압"];
 
     /**
      * 현재 웹 소켓 연결 여부
@@ -142,6 +142,8 @@ function SampleSocket(props) {
             console.log(updatedReceiveObject)
 
             //선택하지 않은 센서의 값은 null로 만들기
+            console.log("체크한 것 확인")
+            console.log(checkedDataTypes)
             dataTypes.forEach((dataType) => {
                 if (!checkedDataTypes.includes(dataType)) {
                     if (dataType === 'pH') {
@@ -189,7 +191,9 @@ function SampleSocket(props) {
                
                 console.log(saveData);
                 customAxios.post("/seed/save/continuous", {data: saveData, memo: memo})
-                    .then()
+                    .then(() => {
+                        console.log(saveData) //location, period 확인
+                    })
                     .catch((err) => console.log(err))
 
                 save = false; //수정
@@ -213,6 +217,7 @@ function SampleSocket(props) {
         }
     };
     console.log(checkedDataTypes)
+    console.log(location)
     return (
             <div>
                 <div style={{padding: '1rem 2rem'}}>
