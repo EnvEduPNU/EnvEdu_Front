@@ -79,14 +79,15 @@ export default function MyData() {
 
                 const attributesToCheck = [
                     "co2",
-                    "temp",
-                    "tur",
-                    "ph",
-                    "dust",
                     "dox",
-                    "lux",
+                    "dust",
+                    "hum",
                     "hum_EARTH",
-                    "pre"
+                    "lux",
+                    "ph",
+                    "pre",
+                    "temp",
+                    "tur"  
                 ];
                 
                 for (const attribute of attributesToCheck) {
