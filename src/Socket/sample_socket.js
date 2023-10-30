@@ -109,6 +109,17 @@ function SampleSocket(props) {
     const [location, setLocation] = useState("");
     const [memo, setMemo] = useState("");
 
+    /*checkbox*/
+    const [checkedDataTypes, setCheckedDataTypes] = useState(dataTypes); //제일 처음에 모두 체크된 상태로
+
+    const handleCheckboxChange = (dataType) => {
+        if (checkedDataTypes.includes(dataType)) {
+            setCheckedDataTypes(checkedDataTypes.filter(item => item !== dataType));
+        } else {
+            setCheckedDataTypes([...checkedDataTypes, dataType]);
+        }
+    };
+
     /** 
      * 데이터 수신 시, 실행되는 핸들러
      */
@@ -206,16 +217,6 @@ function SampleSocket(props) {
         setReceivedData([...receivedData]);
     }
 
-    /*checkbox*/
-    const [checkedDataTypes, setCheckedDataTypes] = useState(dataTypes); //제일 처음에 모두 체크된 상태로
-
-    const handleCheckboxChange = (dataType) => {
-        if (checkedDataTypes.includes(dataType)) {
-            setCheckedDataTypes(checkedDataTypes.filter(item => item !== dataType));
-        } else {
-            setCheckedDataTypes([...checkedDataTypes, dataType]);
-        }
-    };
     console.log(checkedDataTypes)
     console.log(location)
     return (
