@@ -1,3 +1,7 @@
+function roundToOneDecimalPlace(value) {
+  return Math.round(value * 10) / 10;
+}
+
 function isNumericColumn(data, colIndex) {
   for (let i = 1; i < data.length; i++) {
     if (typeof data[i][colIndex] !== "number") {
@@ -104,7 +108,8 @@ export function replaceOutliersWithMean(data, outliersIndices) {
           count++;
         }
       }
-      columnMeans[col] = count !== 0 ? sum / count : null;
+      columnMeans[col] =
+        count !== 0 ? roundToOneDecimalPlace(sum / count) : null;
     } else {
       columnMeans[col] = null;
     }
@@ -142,7 +147,7 @@ export function replaceOutliersWithMedian(data, outliersIndices) {
       } else {
         median = sorted[Math.floor(sorted.length / 2)];
       }
-      columnMedians[col] = median;
+      columnMedians[col] = roundToOneDecimalPlace(median);
     }
   }
 
@@ -225,7 +230,9 @@ export function replaceOutliersWithLinearInterpolation(data, outliersIndices) {
             nextIndex < newData.length ? newData[nextIndex][col] : null;
 
           if (prevValue !== null && nextValue !== null) {
-            newData[row][col] = (prevValue + nextValue) / 2;
+            newData[row][col] = roundToOneDecimalPlace(
+              (prevValue + nextValue) / 2
+            );
           } else if (prevValue !== null) {
             newData[row][col] = prevValue;
           } else if (nextValue !== null) {

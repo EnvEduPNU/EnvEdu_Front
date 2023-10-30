@@ -1,3 +1,7 @@
+function roundToOneDecimalPlace(num) {
+  return Math.round(num * 10) / 10;
+}
+
 function isNumericColumn(data, colIndex) {
   for (let i = 1; i < data.length; i++) {
     // Start from 1 to skip header row
@@ -21,7 +25,8 @@ export function meanImputation(data) {
           count++;
         }
       }
-      columnMeans[col] = count !== 0 ? sum / count : null;
+      columnMeans[col] =
+        count !== 0 ? roundToOneDecimalPlace(sum / count) : null;
     } else {
       columnMeans[col] = null;
     }
@@ -50,10 +55,11 @@ export function medianImputation(data) {
         .sort((a, b) => a - b);
       let median;
       if (sorted.length % 2 === 0) {
-        median =
-          (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2;
+        median = roundToOneDecimalPlace(
+          (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2
+        );
       } else {
-        median = sorted[Math.floor(sorted.length / 2)];
+        median = roundToOneDecimalPlace(sorted[Math.floor(sorted.length / 2)]);
       }
       columnMedians[col] = median;
     }
@@ -124,11 +130,13 @@ export function linearInterpolation(data) {
             nextIndex < newData.length ? newData[nextIndex][col] : null;
 
           if (prevValue !== null && nextValue !== null) {
-            newData[row][col] = (prevValue + nextValue) / 2;
+            newData[row][col] = roundToOneDecimalPlace(
+              (prevValue + nextValue) / 2
+            );
           } else if (prevValue !== null) {
-            newData[row][col] = prevValue;
+            newData[row][col] = roundToOneDecimalPlace(prevValue);
           } else if (nextValue !== null) {
-            newData[row][col] = nextValue;
+            newData[row][col] = roundToOneDecimalPlace(nextValue);
           }
         }
       }
