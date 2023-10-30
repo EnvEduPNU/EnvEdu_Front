@@ -95,7 +95,11 @@ function MixChartAxisScaleEditor({ data, qualitativeVariableIdx }) {
               // placeholder="Min Value"
               type="number"
               onChange={e =>
-                changeAxisScale("y1", "min", Math.round(e.target.value))
+                changeAxisScale(
+                  "y1",
+                  "min",
+                  Math.round(e.target.value * 10) / 10
+                )
               }
               value={y1.min}
             />
@@ -104,7 +108,11 @@ function MixChartAxisScaleEditor({ data, qualitativeVariableIdx }) {
               max={1000}
               type="range"
               onChange={e => {
-                changeAxisScale("y1", "min", Math.round(e.target.value));
+                changeAxisScale(
+                  "y1",
+                  "min",
+                  Math.round(e.target.value * 10) / 10
+                );
               }}
               value={y1.min}
             />
@@ -115,7 +123,11 @@ function MixChartAxisScaleEditor({ data, qualitativeVariableIdx }) {
               // placeholder="Max Value"
               type="number"
               onChange={e =>
-                changeAxisScale("y1", "max", Math.round(e.target.value))
+                changeAxisScale(
+                  "y1",
+                  "max",
+                  Math.round(e.target.value * 10) / 10
+                )
               }
               value={y1.max}
             />
@@ -124,7 +136,11 @@ function MixChartAxisScaleEditor({ data, qualitativeVariableIdx }) {
               max={1000}
               type="range"
               onChange={e => {
-                changeAxisScale("y1", "max", Math.round(e.target.value));
+                changeAxisScale(
+                  "y1",
+                  "max",
+                  Math.round(e.target.value * 10) / 10
+                );
               }}
               value={y1.max}
             />
@@ -135,7 +151,11 @@ function MixChartAxisScaleEditor({ data, qualitativeVariableIdx }) {
               // placeholder="Step Size"
               type="number"
               onChange={e =>
-                changeAxisScale("y1", "stepSize", Math.round(e.target.value))
+                changeAxisScale(
+                  "y1",
+                  "stepSize",
+                  Math.round(e.target.value * 10) / 10
+                )
               }
               value={y1.stepSize}
             />
@@ -151,7 +171,11 @@ function MixChartAxisScaleEditor({ data, qualitativeVariableIdx }) {
               // placeholder="Min Value"
               type="number"
               onChange={e =>
-                changeAxisScale("y2", "min", Math.round(e.target.value))
+                changeAxisScale(
+                  "y2",
+                  "min",
+                  Math.round(e.target.value * 10) / 10
+                )
               }
               value={y2.min}
             />
@@ -160,7 +184,11 @@ function MixChartAxisScaleEditor({ data, qualitativeVariableIdx }) {
               max={1000}
               type="range"
               onChange={e => {
-                changeAxisScale("y2", "min", Math.round(e.target.value));
+                changeAxisScale(
+                  "y2",
+                  "min",
+                  Math.round(e.target.value * 10) / 10
+                );
               }}
               value={y2.min}
             />
@@ -171,7 +199,11 @@ function MixChartAxisScaleEditor({ data, qualitativeVariableIdx }) {
               // placeholder="Max Value"
               type="number"
               onChange={e =>
-                changeAxisScale("y2", "max", Math.round(e.target.value))
+                changeAxisScale(
+                  "y2",
+                  "max",
+                  Math.round(e.target.value * 10) / 10
+                )
               }
               value={y2.max}
             />
@@ -180,7 +212,11 @@ function MixChartAxisScaleEditor({ data, qualitativeVariableIdx }) {
               max={1000}
               type="range"
               onChange={e => {
-                changeAxisScale("y2", "max", Math.round(e.target.value));
+                changeAxisScale(
+                  "y2",
+                  "max",
+                  Math.round(e.target.value * 10) / 10
+                );
               }}
               value={y2.max}
             />
@@ -191,7 +227,11 @@ function MixChartAxisScaleEditor({ data, qualitativeVariableIdx }) {
               // placeholder="Step Size"
               type="number"
               onChange={e =>
-                changeAxisScale("y2", "stepSize", Math.round(e.target.value))
+                changeAxisScale(
+                  "y2",
+                  "stepSize",
+                  Math.round(e.target.value * 10) / 10
+                )
               }
               value={y2.stepSize}
             />

@@ -34,12 +34,32 @@ export const useDataPretreatmentStore = create(set => ({
   isFindOutliers: false,
   isRemoveOutliers: false,
   outliersIndices: [], // 이상치 인덱스를 저장할 배열
-
-  findMissingValue: () =>
+  setDatas: newData =>
     set(state => ({
       ...state,
-      isFindMissingValue: true,
+      data: newData,
+      imputedData: newData,
+      dataWithoutOutliers: newData,
+      resultData: newData,
     })),
+
+  findMissingValue: () =>
+    set(state => {
+      let isok = true;
+      for (let i = 0; i < state.data.length; i++) {
+        for (let j = 0; j < state.data[i].length; j++) {
+          if (state.data[i][j] == null || state.data[i][j].length === 0) {
+            isok = false;
+          }
+        }
+      }
+      if (isok) alert("결측치가 없습니다.");
+
+      return {
+        ...state,
+        isFindMissingValue: !isok,
+      };
+    }),
 
   changeMissingValue: way =>
     set(state => {
@@ -86,6 +106,7 @@ export const useDataPretreatmentStore = create(set => ({
         default:
           return;
       }
+      if (outlierIndices.length === 0) alert("이상치가 없습니다.");
 
       return {
         ...state,
@@ -145,13 +166,27 @@ export const useDataPretreatmentStore = create(set => ({
           newData = zScoreNormalizationForDataset(state.dataWithoutOutliers);
           break;
         case "log":
-          newData = logTransformForDataset(state.dataWithoutOutliers);
+          const [data, isOk] = logTransformForDataset(
+            state.dataWithoutOutliers
+          );
+          if (isOk) newData = data;
+          else {
+            alert("스케일링이 불가합니다.");
+            newData = state.dataWithoutOutliers.map(v => [...v]);
+          }
           break;
         case "sqrt":
-          newData = sqrtTransformForDataset(state.dataWithoutOutliers);
+          const [data2, isOk2] = sqrtTransformForDataset(
+            state.dataWithoutOutliers
+          );
+          if (isOk2) newData = data2;
+          else {
+            alert("스케일링이 불가합니다.");
+            newData = state.dataWithoutOutliers.map(v => [...v]);
+          }
           break;
         default:
-          newData = [...state.dataWithoutOutliers];
+          newData = state.dataWithoutOutliers.map(v => [...v]);
       }
       return {
         ...state,

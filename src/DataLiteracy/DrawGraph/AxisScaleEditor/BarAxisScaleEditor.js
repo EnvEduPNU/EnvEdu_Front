@@ -60,7 +60,7 @@ function BarAxisScaleEditor({ data, qualitativeVariableIdx }) {
           <input
             type="number"
             onChange={e => {
-              changeMinValue(Math.round(e.target.value));
+              changeMinValue(Math.round(e.target.value * 10) / 10);
             }}
             value={min}
           />
@@ -69,7 +69,7 @@ function BarAxisScaleEditor({ data, qualitativeVariableIdx }) {
             max={1000}
             type="range"
             onChange={e => {
-              changeMinValue(Math.round(e.target.value));
+              changeMinValue(Math.round(e.target.value * 10) / 10);
             }}
             value={min}
           />
@@ -79,7 +79,7 @@ function BarAxisScaleEditor({ data, qualitativeVariableIdx }) {
           <input
             // placeholder="Max Value"
             type="number"
-            onChange={e => changeMaxValue(Math.round(e.target.value))}
+            onChange={e => changeMaxValue(Math.round(e.target.value * 10) / 10)}
             value={max}
           />
           <input
@@ -87,7 +87,7 @@ function BarAxisScaleEditor({ data, qualitativeVariableIdx }) {
             max={1000}
             type="range"
             onChange={e => {
-              changeMaxValue(Math.round(e.target.value));
+              changeMaxValue(Math.round(e.target.value * 10) / 10);
             }}
             value={max}
           />
@@ -97,7 +97,7 @@ function BarAxisScaleEditor({ data, qualitativeVariableIdx }) {
           <input
             // placeholder="Step Size"
             type="number"
-            onChange={e => changeStepSize(Math.round(e.target.value))}
+            onChange={e => changeStepSize(Math.round(e.target.value * 10) / 10)}
             value={stepSize}
           />
         </label>
