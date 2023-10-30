@@ -186,10 +186,15 @@ function SampleSocket(props) {
             saveData.push(JSON.stringify(updatedReceiveObject));
             setSaveData([...saveData]);
             if (isFinished) {
+               
                 console.log(saveData);
                 customAxios.post("/seed/save/continuous", {data: saveData, memo: memo})
                     .then()
                     .catch((err) => console.log(err))
+
+                save = false; //수정
+                isFinished = false;
+
                 saveData.splice(0, saveData.length);
                 setSaveData([...saveData]);
             }
