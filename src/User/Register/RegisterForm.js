@@ -89,25 +89,7 @@ function RegisterForm() {
                         value={state.email}
                     />
                 </div>
-                <div className="input-box">
-                    {/**
-                     * MALE, FEMALE 중 하나
-                     * todo: <select> 방식으로 수정
-                     */}
-                    <input
-                        className="registerInput"
-                        placeholder="성별"
-                        type="text"
-                        {...register('gender', {
-                            required: { value: true, message: '성별을 입력하세요' },
-                        })}
-                    />
-                    {errors.gender && (
-                        <span style={{ color: 'red', fontSize: '13px' }}>
-                            {errors.gender.message}
-                        </span>
-                    )}
-                </div>
+                
                 <div className="input-box">
                     {/**
                      * yyyy-mm-dd 형식 준수

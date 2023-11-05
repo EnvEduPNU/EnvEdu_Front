@@ -46,18 +46,18 @@ function Air() {
         }
         else {
             memo = memoInput;
-            customAxios.post('/air-quality', {
-                data: selectedItems,
-                memo: memo
-            })
-            .then(() => {
-                alert("데이터 저장을 성공했습니다!");
-            })
-            .catch((err) => {
-                console.log(err);
-                alert("데이터 저장을 실패했습니다.");
-            });
         }
+        customAxios.post('/air-quality', {
+            data: selectedItems,
+            memo: memo
+        })
+        .then(() => {
+            alert("데이터 저장을 성공했습니다!");
+        })
+        .catch((err) => {
+            console.log(err);
+            alert("데이터 저장을 실패했습니다.");
+        });  
     };
 
     {/* 필터링을 위해 addr 선택 */}

@@ -22,6 +22,9 @@ let receiveObject = null;
  */
 let save = false;
 
+/*데이터 저장 중지 여부*/
+let isFinished = false;
+
 /**
  * 마지막으로 데이터를 받은 날짜
  */
@@ -31,8 +34,8 @@ function SampleSocket(props) {
     /**
      * 센서 기기에서 전송하는 데이터 종류
      */
-    const dataTypes = ["temp", "pH", "hum", "hum_earth", "tur", "dust", "dox", "co2", "lux", "pre"];
-    const dataTypes_ko = ["기온", "pH", "습도", "토양 습도", "탁도", "미세먼지", "용존산소량", "이산화탄소", "조도", "기압"];
+    const dataTypes = ['temp', 'pH', 'hum', 'hum_earth', 'tur', 'dust', 'dox', 'co2', 'lux', 'pre'];
+    //const dataTypes_ko = ["기온", "pH", "습도", "토양 습도", "탁도", "미세먼지", "용존산소량", "이산화탄소", "조도", "기압"];
 
     /**
      * 현재 웹 소켓 연결 여부
@@ -106,6 +109,17 @@ function SampleSocket(props) {
     const [location, setLocation] = useState("");
     const [memo, setMemo] = useState("");
 
+    /*checkbox*/
+    const [checkedDataTypes, setCheckedDataTypes] = useState(dataTypes); //제일 처음에 모두 체크된 상태로
+
+    const handleCheckboxChange = (dataType) => {
+        if (checkedDataTypes.includes(dataType)) {
+            setCheckedDataTypes(checkedDataTypes.filter(item => item !== dataType));
+        } else {
+            setCheckedDataTypes([...checkedDataTypes, dataType]);
+        }
+    };
+
     /** 
      * 데이터 수신 시, 실행되는 핸들러
      */
@@ -139,6 +153,8 @@ function SampleSocket(props) {
             console.log(updatedReceiveObject)
 
             //선택하지 않은 센서의 값은 null로 만들기
+            console.log("체크한 것 확인")
+            console.log(checkedDataTypes)
             dataTypes.forEach((dataType) => {
                 if (!checkedDataTypes.includes(dataType)) {
                     if (dataType === 'pH') {
@@ -182,11 +198,18 @@ function SampleSocket(props) {
              */
             saveData.push(JSON.stringify(updatedReceiveObject));
             setSaveData([...saveData]);
-            if (saveData.length === 5) {
+            if (isFinished) {
+               
                 console.log(saveData);
                 customAxios.post("/seed/save/continuous", {data: saveData, memo: memo})
-                    .then()
+                    .then(() => {
+                        console.log(saveData) //location, period 확인
+                    })
                     .catch((err) => console.log(err))
+
+                save = false; //수정
+                isFinished = false;
+
                 saveData.splice(0, saveData.length);
                 setSaveData([...saveData]);
             }
@@ -194,17 +217,8 @@ function SampleSocket(props) {
         setReceivedData([...receivedData]);
     }
 
-    /*checkbox*/
-    const [checkedDataTypes, setCheckedDataTypes] = useState(dataTypes); //제일 처음에 모두 체크된 상태로
-
-    const handleCheckboxChange = (dataType) => {
-        if (checkedDataTypes.includes(dataType)) {
-            setCheckedDataTypes(checkedDataTypes.filter(item => item !== dataType));
-        } else {
-            setCheckedDataTypes([...checkedDataTypes, dataType]);
-        }
-    };
     console.log(checkedDataTypes)
+    console.log(location)
     return (
             <div>
                 <div style={{padding: '1rem 2rem'}}>
@@ -344,7 +358,8 @@ function SampleSocket(props) {
                         </div>
                         */}
                         <div style={{display: 'flex', justifyContent: 'center', marginTop: '2rem'}}>
-                            <div style={{
+                            {!save && 
+                                <div style={{
                                     display: 'flex',
                                     justifyContent: 'center',
                                     alignItems: 'center',
@@ -358,13 +373,35 @@ function SampleSocket(props) {
                                     cursor: 'pointer',
                                 }}
                                 onClick={() => { 
-                                    save = !save; 
+                                    save = true; 
                                     if (checkedDataTypes.length === 0) {
                                         alert("저장할 센서를 한 개 이상 선택해주세요.")
                                     }
                                 }}>
-                                {save === true ? "저장 중지하기": "데이터 저장하기"}
-                            </div>
+                                    데이터 저장하기
+                                </div>
+                            }
+
+                            {save && <div style={{
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    padding: '0 1.5rem',
+                                    width: '14rem',
+                                    height: '2rem',
+                                    borderRadius: '1.25rem',
+                                    background: '#666666',
+                                    color: '#fff',
+                                    fontSize: '1.25rem',
+                                    cursor: 'pointer',
+                                }}
+                                onClick={() => {
+                                    isFinished = true;
+                                }}>
+                                    저장 중지하기
+                                </div>
+                            }
+                            
                         </div>
                     </div>
                         

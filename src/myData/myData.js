@@ -73,9 +73,36 @@ export default function MyData() {
                 setData(res.data);
                 setFilteredData(res.data);
 
-                const headers = Object.keys(res.data[0]).filter(
+                let headers = Object.keys(res.data[0]).filter(
                     (key) => key !== "id" && key !== "dataUUID" && key !== "saveDate" && key !== "dateString"
                 );
+
+                const attributesToCheck = [
+                    "co2",
+                    "dox",
+                    "dust",
+                    "hum",
+                    "hum_EARTH",
+                    "lux",
+                    "ph",
+                    "pre",
+                    "temp",
+                    "tur"  
+                ];
+                
+                for (const attribute of attributesToCheck) {
+                    const isAllZero = res.data.every(item => item[attribute] === 0);
+                
+                    if (isAllZero) {
+                        headers = headers.filter(
+                            (header) => header !== attribute
+                        );
+                        // 해당 속성이 모두 0일 때, headers에서 제거
+                        //setHeaders(prevHeaders => prevHeaders.filter(header => header !== attribute));
+                    }
+                }
+                
+                
                 setHeaders(headers);
             })
             .catch((err) => console.log(err));

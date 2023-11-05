@@ -51,22 +51,22 @@ function Water() {
         }
         else {
             memo = memoInput;
-            customAxios.post('/ocean-quality', {
+        }   
+        customAxios.post('/ocean-quality', {
+            data: selectedItems,
+            memo: memo
+        })
+        .then(() => {
+            alert("데이터 저장을 성공했습니다!");
+        })
+        .catch((err) => {
+            console.log(err);
+            alert("데이터 저장을 실패했습니다.");
+            console.log({
                 data: selectedItems,
                 memo: memo
             })
-            .then(() => {
-                alert("데이터 저장을 성공했습니다!");
-            })
-            .catch((err) => {
-                console.log(err);
-                alert("데이터 저장을 실패했습니다.");
-                console.log({
-                    data: selectedItems,
-                    memo: memo
-                })
-            });
-        }
+        }); 
     };
 
     {/* 필터링을 위해 addr 선택 */}
