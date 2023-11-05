@@ -91,13 +91,29 @@ export const Data = styled.div`
   line-height: 2;
   background-color: #fff;
   font-size: 14px;
+  font-weight: 500;
   border-bottom: 1px solid rgba(34, 36, 38, 0.15);
+
+  ${props =>
+    props.$isEditCell &&
+    css`
+      /* padding: 0px; */
+      background-color: #d9d9d9;
+    `}
 `;
 
 export const Input = styled.input`
-  background-color: inherit;
+  user-select: none; /* standard syntax */
+  -webkit-user-select: none; /* webkit (safari, chrome) browsers */
+  -moz-user-select: none; /* mozilla browsers */
+  -khtml-user-select: none; /* webkit (konqueror) browsers */
+  -ms-user-select: none; /* IE10+ */
+
   width: 100%;
   height: 100%;
+  background-color: #d9d9d9;
+  font-size: 14px;
+  font-weight: 500;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -108,6 +124,12 @@ export const Input = styled.input`
 `;
 
 export const InputDiv = styled.div`
+  user-select: none; /* standard syntax */
+  -webkit-user-select: none; /* webkit (safari, chrome) browsers */
+  -moz-user-select: none; /* mozilla browsers */
+  -khtml-user-select: none; /* webkit (konqueror) browsers */
+  -ms-user-select: none; /* IE10+ */
+
   background-color: inherit;
   width: 100%;
   height: 100%;

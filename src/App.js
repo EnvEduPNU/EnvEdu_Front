@@ -41,8 +41,9 @@ import GraphInterpreterPage from "./DataLiteracy/GraphInterpreter/GraphInterpret
 import DataPretreatmentPage from "./DataLiteracy/DataPretreatment/DataPretreatmentPage";
 import DataInputPage from "./DataLiteracy/DataInput/DataInputPage";
 import NewDataInput from "./DataLiteracy/DataInput/NewDataInput";
-import CustomTableHeader from "./DataLiteracy/common/CustomTableHeader/CustomTableHeader";
-import CustomTable from "./DataLiteracy/common/CustomTableHeader/CustomTable";
+import CustomTableHeader from "./DataLiteracy/common/CustomTable/CustomTableHeader";
+import CustomTable from "./DataLiteracy/common/CustomTable/CustomTable";
+import DrawGraphV2Page from "./DataLiteracy/DrawGraph/page/DrawGraphV2Page";
 
 function App() {
   /**
@@ -146,7 +147,7 @@ function App() {
               <Route path="new" element={<NewDataInput />} />
             </Route>
 
-            <Route path="ex" element={<CustomTable />} />
+            <Route path="ex" element={<DrawGraphV2Page />} />
           </Route>
         </Routes>
       </div>

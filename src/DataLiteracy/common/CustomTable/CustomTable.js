@@ -8,7 +8,7 @@ function CustomTable() {
   const { data, changeValue } = useGraphDataStore();
   const [editableCell, setEditableCell] = useState(null);
 
-  const tableData = data.map((d, idx) => {
+  const tableNumberData = data.map((d, idx) => {
     if (idx == 0) return "Rows#";
     return `${idx}`;
   });
@@ -43,9 +43,9 @@ function CustomTable() {
     <Styled.Wrapper>
       <Styled.FirstColumn key={"starter"} $isNotEnd>
         <Styled.HeaderWrapper>
-          <Styled.HeaderStartar>{tableData[0]}</Styled.HeaderStartar>
+          <Styled.HeaderStartar>{tableNumberData[0]}</Styled.HeaderStartar>
         </Styled.HeaderWrapper>
-        {tableData.slice(1).map((d, idx) => (
+        {tableNumberData.slice(1).map((d, idx) => (
           <Styled.RowNumber disabled key={idx}>
             {d}
           </Styled.RowNumber>
@@ -70,12 +70,20 @@ function CustomTable() {
             </Styled.Header>
           </Styled.HeaderWrapper>
           {data.slice(1).map((d, row) => (
-            <Styled.Data key={row}>
+            <Styled.Data
+              key={row}
+              $isEditCell={
+                editableCell &&
+                editableCell.row === row + 1 &&
+                editableCell.col === col
+              }
+            >
               {editableCell &&
               editableCell.row === row + 1 &&
               editableCell.col === col ? (
                 <Styled.Input
                   value={d[col]}
+                  spellCheck={false}
                   onChange={e => handleInputChange(e, row + 1, col)}
                   onBlur={() => setEditableCell(null)}
                   onKeyDown={e => onClickEnter(e)}
