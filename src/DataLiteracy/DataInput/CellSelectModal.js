@@ -5,8 +5,12 @@ function CellSelectModal({ setData, setIsVisibleModal }) {
   const [row, setRow] = useState(0);
   const [col, setCol] = useState(0);
   const onClickBtn = () => {
+    if (row == 0 || col == 0) {
+      alert("0보다 큰 수만 가능합니다.");
+      return;
+    }
     setData(
-      Array(row)
+      Array(row + 1)
         .fill(0)
         .map(row => Array(col).fill(""))
     );
