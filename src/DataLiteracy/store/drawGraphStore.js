@@ -384,6 +384,9 @@ export const useChartMetaDataStore = create(set => ({
 
   changeLegendPosition: positon =>
     set(state => {
+      if (state.metaData.legendPostion === positon) {
+        positon = "no";
+      }
       return {
         ...state,
         metaData: {
@@ -394,6 +397,9 @@ export const useChartMetaDataStore = create(set => ({
     }),
   changeDatalabelAnchor: anchor =>
     set(state => {
+      if (state.metaData.datalabelAnchor === anchor) {
+        anchor = "no";
+      }
       return {
         ...state,
         metaData: {
