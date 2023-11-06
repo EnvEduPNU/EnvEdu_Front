@@ -1,6 +1,5 @@
 .myData-container {
     display: flex;
-    //justify-content: space-between;
 
     .myData-left {
         /*folder*/
@@ -60,7 +59,40 @@
     .myData-right {
         flex: 1;
         overflow-y: scroll;
-        background-color: pink;
+        margin-left: 2rem;
+        .excel-download {
+            border: none;
+            border-radius: 0.3125rem;
+            width: 10rem;
+            background: #F3B634;
+            font-weight: 600;
+        }
+        .myData-detail {
+            //font-size: 0.8em;
+            margin-top: 0.5rem;
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #ddd;
+            th, td {
+                border: 1px solid #ddd;
+                padding: 8px;
+                text-align: center;
+            }
+            th {
+                background-color: #fdeecf;
+            }
+            tr:nth-child(even) {
+                background-color: #f2f2f2;
+            }
+            tr:hover {
+                background-color: #ccc;
+                cursor: pointer;
+            }  
+            input[type='checkbox'] {
+                accent-color: #F3B634;
+            }
+        }
+        
     }
 }
 

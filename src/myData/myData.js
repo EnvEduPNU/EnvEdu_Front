@@ -108,8 +108,9 @@ const MyData = () => {
     }, []);
 
     const [details, setDetails] = useState([]);
+
     let headers = [];
-    const getTable = ({ type, id }) => {
+    const getTable = (type, id) => {
         let path = ''
         if (type === "수질 데이터") {
             path = `/ocean-quality/mine/chunk?dataUUID=${id}`;
@@ -285,6 +286,13 @@ const MyData = () => {
         <div className='myData-right'>
             {details.length !== 0 && 
                 <>
+                    <div style={{display: 'flex', justifyContent: 'flex-end'}}>
+                        <button 
+                            className='excel-download'
+                            onClick={() => handleDownload()}>
+                            엑셀 파일로 저장
+                        </button>
+                    </div>
                     <table border="1" className='myData-detail'>
                         <thead>
                             <tr>
@@ -319,12 +327,6 @@ const MyData = () => {
                             ))}
                         </tbody>
                     </table>
-
-                    <div>
-                        <button onClick={() => handleDownload()}>
-                            엑셀 파일로 저장
-                        </button>
-                    </div>
                 </>
             }
         </div>
