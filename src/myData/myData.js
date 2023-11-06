@@ -108,8 +108,6 @@ const MyData = () => {
     }, []);
 
     const [details, setDetails] = useState([]);
-
-    let headers = [];
     const getTable = (type, id) => {
         let path = ''
         if (type === "수질 데이터") {
@@ -119,10 +117,6 @@ const MyData = () => {
         } else if (type === "SEED") {
             path = `/seed/mine/chunk?dataUUID=${id}`;
         }
-
-        console.log(path);
-        console.log(type);
-        console.log(id);
 
         customAxios.get(path)
         .then((res)=>{
@@ -153,10 +147,12 @@ const MyData = () => {
                     );
                 }
             }
+            setHeaders(headers);
         })
         .catch((err) => console.log(err));
     };
 
+    const [headers, setHeaders] = useState([]);
     const [selectedItems, setSelectedItems] = useState([]);
     const [isFull, setIsFull] = useState(false);
     function handleFullCheck(){
