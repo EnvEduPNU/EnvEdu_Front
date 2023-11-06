@@ -6,13 +6,12 @@ function ButtonSelector({ value, axisLength, onChange }) {
 
   const axisArr = axisLength === 2 ? ["X", "Y"] : ["X", "Y", "Z"];
   const onClickButton = v => {
+    onChange(v);
+
     if (axis === v) {
       setAxis(null);
-      onChange(v);
       return;
     }
-
-    onChange(v);
     setAxis(v);
   };
   return (

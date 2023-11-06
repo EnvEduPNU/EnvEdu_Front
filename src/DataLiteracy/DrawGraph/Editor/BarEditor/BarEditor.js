@@ -2,6 +2,7 @@ import ButtonSelector from "../../../common/ButtonSelector/ButtonSelector";
 import { useGraphDataStore } from "../../../store/graphStore";
 import { useBarStore } from "../../../store/barStore";
 import * as Styled from "./Styled";
+import LabelInput from "../../../common/Labellnput/LabelInput";
 
 function BarEditor() {
   const axisNames = useGraphDataStore(state => state.data)[0];
@@ -10,7 +11,10 @@ function BarEditor() {
     if (axis === "X") changeXAxis(axisName);
     if (axis === "Y") changeYAxis(axisName);
   };
-  console.log(x, y);
+  const onChangeMin = value => {
+    console.log(value);
+  };
+
   return (
     <Styled.Wrapper>
       <Styled.Box>
@@ -25,6 +29,21 @@ function BarEditor() {
             />
           ))}
         </Styled.ButtonSelectorWrapper>
+      </Styled.Box>
+      <Styled.Box>
+        <Styled.Title>범위 선택</Styled.Title>
+        <Styled.LabelInputWrapper>
+          <LabelInput
+            labelName={"최솟값"}
+            defaultValue={0}
+            onChange={onChangeMin}
+          />
+          <LabelInput
+            labelName={"최댓값"}
+            defaultValue={0}
+            onChange={onChangeMin}
+          />
+        </Styled.LabelInputWrapper>
       </Styled.Box>
     </Styled.Wrapper>
   );
