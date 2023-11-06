@@ -43,14 +43,17 @@ function BarEditor() {
       <Styled.Box>
         <Styled.Title>축 선택</Styled.Title>
         <Styled.ButtonSelectorWrapper>
-          {variables.map((variable, index) => (
-            <ButtonSelector
-              key={index}
-              value={variable.getName}
-              selectList={["X", "Y"]}
-              onChange={axis => changeAxis(index, axis)}
-            />
-          ))}
+          {variables
+            .filter(variable => variable.getIsSelected)
+            .map((variable, index) => (
+              <ButtonSelector
+                key={index}
+                value={variable.getName}
+                defaultValue={variable.getAxis}
+                selectList={["X", "Y"]}
+                onChange={axis => changeAxis(index, axis)}
+              />
+            ))}
         </Styled.ButtonSelectorWrapper>
       </Styled.Box>
       <Styled.Box>
@@ -58,12 +61,12 @@ function BarEditor() {
         <Styled.LabelInputWrapper>
           <LabelInput
             labelName={"최솟값"}
-            defaultValue={0}
+            defaultValue={min}
             onChange={value => onChangeMinMax("MIN", value)}
           />
           <LabelInput
             labelName={"최댓값"}
-            defaultValue={0}
+            defaultValue={max}
             onChange={value => onChangeMinMax("MAX", value)}
           />
         </Styled.LabelInputWrapper>
@@ -73,7 +76,7 @@ function BarEditor() {
         <Styled.LabelInputWrapper>
           <LabelInput
             labelName={"간격"}
-            defaultValue={0}
+            defaultValue={stepSize}
             onChange={onChangeStepSize}
           />
         </Styled.LabelInputWrapper>

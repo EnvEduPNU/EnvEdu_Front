@@ -17,7 +17,6 @@ function MetadataEditor() {
     changeDatalabelAnchor(labelAnchor);
   };
 
-  console.log(legendPostion, datalabelAnchor);
   return (
     <Styled.Wrapper>
       <Styled.Box>

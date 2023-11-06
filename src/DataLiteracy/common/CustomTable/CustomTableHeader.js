@@ -33,7 +33,7 @@ function CustomTableHeader() {
               <Styled.Box $isNotEnd>
                 <Select
                   defaultValue={variables[col].getType}
-                  items={["Cateogorical", "Numeric"]}
+                  items={["Categorical", "Numeric"]}
                   onChange={type => onChangeType(col, type)}
                 />
               </Styled.Box>
