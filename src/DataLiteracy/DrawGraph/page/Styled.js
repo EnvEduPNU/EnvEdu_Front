@@ -13,6 +13,18 @@ export const Wrapper = styled.div`
   box-sizing: border-box;
 `;
 
+export const TableTabWrapper = styled.div`
+  box-sizing: border-box;
+  padding: 0 30px;
+  width: 100%;
+  /* padding: 0px 30px; */
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 46px - 15px);
+  gap: 10px;
+  justify-content: space-between;
+`;
+
 export const GraphTapWrapper = styled.div`
   padding: 0px 30px;
   height: 100%;

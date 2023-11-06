@@ -7,13 +7,12 @@ export const TableHeaderWrapper = styled.div`
 `;
 
 export const Wrapper = styled.div`
-  position: absolute;
-  bottom: 0;
   width: 100%;
+  justify-self: flex-end;
   display: flex;
   border: 1px solid rgba(34, 36, 38, 0.15);
   max-height: 600px;
-  overflow: scroll;
+  overflow-y: scroll;
 `;
 
 export const Column = styled.div`

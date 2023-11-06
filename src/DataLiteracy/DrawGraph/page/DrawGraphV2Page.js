@@ -7,13 +7,19 @@ import Header from "../../common/Header/Header";
 import BarEditor from "../Editor/BarEditor/BarEditor";
 import CustomTableHeader from "../../common/CustomTable/CustomTableHeader";
 import CustomBarChart from "../../common/CustomChart/CustomBarChart/CustomBarChart";
+import Description from "../../common/Description/Description";
 
 function DrawGraphV2Page() {
   const tab = ustTabStore(state => state.tab);
   return (
     <Styled.Wrapper>
       <Header />
-      {tab === "table" && <CustomTable />}
+      {tab === "table" && (
+        <Styled.TableTabWrapper>
+          <Description />
+          <CustomTable />
+        </Styled.TableTabWrapper>
+      )}
       {tab === "graph" && (
         <Styled.GraphTapWrapper>
           <CustomTableHeader />

@@ -3,7 +3,6 @@ import * as Styled from "./Styled";
 import { ReactComponent as PencilIcon } from "../../image/Pencil.svg";
 import Select from "../Select/Select";
 import { useGraphDataStore } from "../../store/graphStore";
-import { Button } from "react-bootstrap";
 
 function CustomTableHeader() {
   const { data, variables, changeSelectedVariable, changeVariableType } =
