@@ -2,16 +2,20 @@ import * as Styled from "./Styled";
 import { useState } from "react";
 import CustomTable from "../../common/CustomTable/CustomTable";
 import Tab from "../../common/Tab/Tab";
-// import Tab from "../../common/Tab/Tab";
+import { ustTabStore } from "../../store/tabStore";
+import Header from "../../common/Header/Header";
+import BarEditor from "../Editor/BarEditor/BarEditor";
 
 function DrawGraphV2Page() {
-  const [tab, setTab] = useState("table");
-
+  const tab = ustTabStore(state => state.tab);
   return (
-    <Styled.Wrapper>
-      <Tab tab={tab} setTab={setTab} />
-      {tab === "table" && <CustomTable />}
-    </Styled.Wrapper>
+    <>
+      <Styled.Wrapper>
+        <Header />
+        {tab === "table" && <CustomTable />}
+        {tab === "graph" && <BarEditor />}
+      </Styled.Wrapper>
+    </>
   );
 }
 

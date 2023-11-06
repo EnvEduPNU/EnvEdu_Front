@@ -1,7 +1,7 @@
 import * as Styled from "./Styled";
 import { ReactComponent as PencilIcon } from "../../image/Pencil.svg";
 import Select from "../Select/Select";
-import { useGraphDataStore } from "../../store/graphStroe";
+import { useGraphDataStore } from "../../store/graphStore";
 import { useState } from "react";
 
 function CustomTable() {

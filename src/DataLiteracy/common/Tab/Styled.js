@@ -33,5 +33,6 @@ export const Box = styled.div`
       background-color: #f0f0f0;
       border-bottom: 6px solid #7f3f99;
       transform: translateY(1px); /* 클릭 시 아래로 이동 효과 */
+      box-shadow: 0 5px 5px hsla(0, 0%, 100%, 0.35);
     `}
 `;

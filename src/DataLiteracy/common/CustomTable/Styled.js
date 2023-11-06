@@ -1,14 +1,19 @@
 import styled, { css } from "styled-components";
 
 export const Wrapper = styled.div`
+  position: absolute;
+  bottom: 0;
   width: 100%;
   display: flex;
   border: 1px solid rgba(34, 36, 38, 0.15);
+  max-height: 600px;
+  overflow: scroll;
 `;
 
 export const Column = styled.div`
   width: 100%;
   background-color: #f8f8f8;
+
   /* padding: 0px 10px; */
   display: flex;
   flex-direction: column;
@@ -35,7 +40,7 @@ export const HeaderWrapper = styled.div`
 
 export const Header = styled.div`
   border-bottom: 1px solid rgba(34, 36, 38, 0.15);
-  height: 100%;
+  height: 80px;
 `;
 
 export const HeaderStartar = styled(Header)`
