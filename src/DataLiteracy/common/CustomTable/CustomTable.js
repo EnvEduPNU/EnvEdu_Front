@@ -5,7 +5,8 @@ import { useGraphDataStore } from "../../store/graphStore";
 import { useState } from "react";
 
 function CustomTable() {
-  const { data, changeValue } = useGraphDataStore();
+  const { data, variables, changeValue, changeVariableType } =
+    useGraphDataStore();
   const [editableCell, setEditableCell] = useState(null);
 
   const tableNumberData = data.map((d, idx) => {
@@ -16,6 +17,10 @@ function CustomTable() {
   const headers = data[0];
 
   const onClickPencil = () => {};
+
+  const onChangeType = (index, type) => {
+    changeVariableType(index, type);
+  };
 
   const onDoubleClickData = (row, col) => {
     console.log(row, col);
@@ -63,8 +68,9 @@ function CustomTable() {
               </Styled.Th>
               <Styled.Box>
                 <Select
-                  defaultValue={"Cateogorical"}
-                  items={["Cateogorical", "Numeric", "Identifier"]}
+                  defaultValue={variables[col].getType}
+                  items={["Categorical", "Numeric"]}
+                  onChange={type => onChangeType(col, type)}
                 />
               </Styled.Box>
             </Styled.Header>
