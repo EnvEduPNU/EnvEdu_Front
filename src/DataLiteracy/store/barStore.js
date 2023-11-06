@@ -66,4 +66,22 @@ export const useBarStore = create((set, get) => ({
         y: newY,
       };
     }),
+
+  changeMinValue: min =>
+    set(state => ({
+      ...state,
+      min,
+    })),
+
+  changeMaxValue: max =>
+    set(state => ({
+      ...state,
+      max,
+    })),
+
+  changeStepSize: stepSize =>
+    set(state => ({
+      ...state,
+      stepSize,
+    })),
 }));

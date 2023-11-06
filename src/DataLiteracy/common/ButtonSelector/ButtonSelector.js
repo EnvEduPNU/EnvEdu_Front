@@ -1,28 +1,27 @@
 import { useState } from "react";
 import * as Styled from "./Styled";
 
-function ButtonSelector({ value, axisLength, onChange }) {
-  const [axis, setAxis] = useState(null);
+function ButtonSelector({ value, selectList, onChange, defaultValue = null }) {
+  const [selected, setSelected] = useState(defaultValue);
 
-  const axisArr = axisLength === 2 ? ["X", "Y"] : ["X", "Y", "Z"];
   const onClickButton = v => {
     onChange(v);
 
-    if (axis === v) {
-      setAxis(null);
+    if (selected === v) {
+      setSelected(null);
       return;
     }
-    setAxis(v);
+    setSelected(v);
   };
   return (
     <Styled.Wrapper>
       <span>{value}</span>
       <Styled.ButtonWrapper>
-        {axisArr.map(v => (
+        {selectList.map(v => (
           <Styled.Button
             key={v}
             onClick={() => onClickButton(v)}
-            $isSelected={axis === v}
+            $isSelected={selected === v}
           >
             {v}
           </Styled.Button>
