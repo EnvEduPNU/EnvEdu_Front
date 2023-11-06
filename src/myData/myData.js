@@ -118,11 +118,15 @@ const MyData = () => {
         } else if (type === "SEED") {
             path = `/seed/mine/chunk?dataUUID=${id}`;
         }
-    
+
+        console.log(path);
+        console.log(type);
+        console.log(id);
+
         customAxios.get(path)
         .then((res)=>{
             setDetails(res.data);
-                headers = Object.keys(res.data[0]).filter(
+                let headers = Object.keys(res.data[0]).filter(
                 (key) => key !== "id" && key !== "dataUUID" && key !== "saveDate" && key !== "dateString"
             );
 
@@ -159,7 +163,7 @@ const MyData = () => {
         if (isFull)
             setSelectedItems([])
         else
-            setSelectedItems(data)
+            setSelectedItems(details)
     }
 
     function handleViewCheckBoxChange(item) {
