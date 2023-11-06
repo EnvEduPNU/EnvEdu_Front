@@ -5,6 +5,7 @@ import Tab from "../../common/Tab/Tab";
 import { ustTabStore } from "../../store/tabStore";
 import Header from "../../common/Header/Header";
 import BarEditor from "../Editor/BarEditor/BarEditor";
+import CustomTableHeader from "../../common/CustomTable/CustomTableHeader";
 
 function DrawGraphV2Page() {
   const tab = ustTabStore(state => state.tab);
@@ -13,7 +14,12 @@ function DrawGraphV2Page() {
       <Styled.Wrapper>
         <Header />
         {tab === "table" && <CustomTable />}
-        {tab === "graph" && <BarEditor />}
+        {tab === "graph" && (
+          <>
+            <CustomTableHeader />
+            <BarEditor />
+          </>
+        )}
       </Styled.Wrapper>
     </>
   );

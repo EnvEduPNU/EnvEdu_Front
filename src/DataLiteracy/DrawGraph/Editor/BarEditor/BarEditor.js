@@ -6,7 +6,7 @@ import LabelInput from "../../../common/Labellnput/LabelInput";
 import MetadataEditor from "../MetadataEditor/MetadataEditor";
 
 function BarEditor() {
-  const variableNames = useGraphDataStore(state => state.data)[0];
+  const { variables, changeAxis } = useGraphDataStore();
   const {
     x,
     y,
@@ -43,12 +43,12 @@ function BarEditor() {
       <Styled.Box>
         <Styled.Title>축 선택</Styled.Title>
         <Styled.ButtonSelectorWrapper>
-          {variableNames.map(axisName => (
+          {variables.map((variable, index) => (
             <ButtonSelector
-              key={axisName}
-              value={axisName}
+              key={index}
+              value={variable.getName}
               selectList={["X", "Y"]}
-              onChange={axis => onChangeAxis(axisName, axis)}
+              onChange={axis => changeAxis(index, axis)}
             />
           ))}
         </Styled.ButtonSelectorWrapper>

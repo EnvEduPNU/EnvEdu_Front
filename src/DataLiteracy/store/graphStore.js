@@ -1,6 +1,58 @@
 import { create } from "zustand";
 
-export const useGraphDataStore = create(set => ({
+class Variable {
+  constructor(name) {
+    this.name = name;
+    this.type = "Cateogorical";
+    this.isSelected = true;
+    this.axis = null;
+  }
+
+  get getIsSelected() {
+    return this.isSelected;
+  }
+  get getName() {
+    return this.name;
+  }
+  get getType() {
+    return this.type;
+  }
+  get getAxis() {
+    return this.axis;
+  }
+
+  setName(name) {
+    this.name = name;
+  }
+
+  setType(type) {
+    this.type = type;
+  }
+
+  toggleSelected() {
+    this.isSelected = !this.isSelected;
+  }
+
+  setIsSelected(isSelected) {
+    this.isSelected = isSelected;
+  }
+  setAxis(axis) {
+    if (this.axis === axis) {
+      axis = null;
+    }
+    this.axis = axis;
+  }
+
+  copy() {
+    const newVariable = new Variable(this.name);
+    newVariable.setIsSelected(this.getIsSelected);
+    newVariable.setType(this.type);
+    newVariable.setAxis(this.axis);
+    return newVariable;
+  }
+}
+
+export const useGraphDataStore = create((set, get) => ({
   data: [
     ["농업지대", "평균기온", "강수량", "일조시간"],
     ["태백고냉", 21.9, 181.9, 149.7],
@@ -16,6 +68,11 @@ export const useGraphDataStore = create(set => ({
     ["남부해안", 25.2, 623.4, 113.6],
     ["동해안남부", 26.2, 235.6, 167.3],
   ],
+
+  variables: ["농업지대", "평균기온", "강수량", "일조시간"].map(
+    name => new Variable(name)
+  ),
+
   changeValue: (row, col, newValue) =>
     set(state => {
       const newData = state.data.map(d => [...d]);
@@ -23,6 +80,36 @@ export const useGraphDataStore = create(set => ({
       return {
         ...state,
         data: newData,
+      };
+    }),
+
+  changeSelectedVariable: variableIdx =>
+    set(state => {
+      const newVariables = state.variables.map(variable => variable.copy());
+      newVariables[variableIdx].toggleSelected();
+      return {
+        ...state,
+        variables: newVariables,
+      };
+    }),
+
+  changeVariableType: (variableIdx, type) =>
+    set(state => {
+      const newVariables = state.variables.map(variable => variable.copy());
+      newVariables[variableIdx].setType(type);
+      return {
+        ...state,
+        variables: newVariables,
+      };
+    }),
+
+  changeAxis: (variableIdx, axis) =>
+    set(state => {
+      const newVariables = state.variables.map(variable => variable.copy());
+      newVariables[variableIdx].setAxis(axis);
+      return {
+        ...state,
+        variables: newVariables,
       };
     }),
 }));

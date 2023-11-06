@@ -34,6 +34,7 @@ export const Button = styled.button`
   /* Corrects font smoothing for webkit */
   -webkit-font-smoothing: inherit;
   -moz-osx-font-smoothing: inherit;
+
   padding: 0 5px;
   min-width: fit-content;
   width: 35px;

@@ -1,5 +1,11 @@
 import styled, { css } from "styled-components";
 
+export const TableHeaderWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  border: 1px solid rgba(34, 36, 38, 0.15);
+`;
+
 export const Wrapper = styled.div`
   position: absolute;
   bottom: 0;
@@ -41,6 +47,10 @@ export const HeaderWrapper = styled.div`
 export const Header = styled.div`
   border-bottom: 1px solid rgba(34, 36, 38, 0.15);
   height: 80px;
+`;
+
+export const TableHeader = styled.div`
+  border-bottom: 1px solid rgba(34, 36, 38, 0.15);
 `;
 
 export const HeaderStartar = styled(Header)`
@@ -158,4 +168,39 @@ export const RowNumber = styled.div`
   line-height: 2;
   background-color: #fff;
   border-bottom: 1px solid rgba(34, 36, 38, 0.15);
+`;
+
+export const Button = styled.button`
+  border: none;
+  margin: 0;
+  padding: 0;
+  width: auto;
+  overflow: visible;
+
+  background: transparent;
+
+  /* inherit font & color from ancestor */
+  color: inherit;
+  font: inherit;
+
+  line-height: normal;
+
+  /* Corrects font smoothing for webkit */
+  -webkit-font-smoothing: inherit;
+  -moz-osx-font-smoothing: inherit;
+
+  font-weight: 600;
+  font-size: 14px;
+  color: #21ba45;
+  border: 1px solid #21ba45;
+  width: 55px;
+  padding: 3px 5px;
+  border-radius: 5px;
+  margin: 5px 0;
+  ${props =>
+    props.$isSelected &&
+    css`
+      color: #fff;
+      background-color: #21ba45;
+    `}
 `;
