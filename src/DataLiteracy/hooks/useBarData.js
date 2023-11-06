@@ -7,6 +7,7 @@ import { colorsArray } from "../utils/randomColor";
 const useBarData = () => {
   // const [errorMessage, setErrorMessage] = useState(null);
   let errorMessage = null;
+  let labels = null;
   const { variables, data } = useGraphDataStore();
   const { min, max, stepSize } = useBarStore();
   const { legendPostion, datalabelAnchor } = useChartMetaDataStore(
@@ -38,6 +39,9 @@ const useBarData = () => {
           "Categorical 변인이 들어간 축에는 하나의 변인만 올 수 있습니다.";
       } else {
         errorMessage = null;
+        labels = data
+          .slice(1)
+          .map(item => item[data[0].indexOf(categorycalList[0].getName)]);
       }
     }
   }
@@ -86,9 +90,7 @@ const useBarData = () => {
     createOptions,
     errorMessage,
     isError: errorMessage !== null,
-    labels: data
-      .slice(1)
-      .map(item => item[data[0].indexOf(categorycalList[0].getName)]),
+    labels,
   };
 };
 

@@ -70,18 +70,18 @@ export const useBarStore = create((set, get) => ({
   changeMinValue: min =>
     set(state => ({
       ...state,
-      min,
+      min: Math.round(min * 10) / 10,
     })),
 
   changeMaxValue: max =>
     set(state => ({
       ...state,
-      max,
+      max: Math.round(max * 10) / 10,
     })),
 
   changeStepSize: stepSize =>
     set(state => ({
       ...state,
-      stepSize,
+      stepSize: Math.round(stepSize * 10) / 10,
     })),
 }));

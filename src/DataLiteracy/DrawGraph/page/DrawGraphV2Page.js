@@ -15,13 +15,13 @@ function DrawGraphV2Page() {
       <Header />
       {tab === "table" && <CustomTable />}
       {tab === "graph" && (
-        <>
+        <Styled.GraphTapWrapper>
           <CustomTableHeader />
           <Styled.GraphWrapper>
             <CustomBarChart />
             <BarEditor />
           </Styled.GraphWrapper>
-        </>
+        </Styled.GraphTapWrapper>
       )}
     </Styled.Wrapper>
   );

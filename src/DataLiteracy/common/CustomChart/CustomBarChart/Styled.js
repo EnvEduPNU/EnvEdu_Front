@@ -5,7 +5,6 @@ export const Wrapper = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
-
   border-radius: 5px;
   border: 1px solid rgba(34, 36, 38, 0.15);
   box-shadow: 0 1px 2px 0 rgba(34, 36, 38, 0.15);
@@ -25,5 +24,5 @@ export const ErrorMessage = styled.div`
 
 export const Graph = styled.div`
   width: 100%;
-  height: 100%;
+  /* height: 100%; */
 `;

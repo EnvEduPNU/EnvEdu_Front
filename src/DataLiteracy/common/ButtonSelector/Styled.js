@@ -20,7 +20,6 @@ export const Button = styled.button`
   border: none;
   margin: 0;
   padding: 0;
-  width: auto;
   overflow: visible;
 
   background: transparent;
@@ -36,8 +35,8 @@ export const Button = styled.button`
   -moz-osx-font-smoothing: inherit;
 
   padding: 0 5px;
-  min-width: fit-content;
-  width: 35px;
+  min-width: 35px;
+  width: fit-content;
   height: 25px;
   border-radius: 5px;
   font-weight: 700;

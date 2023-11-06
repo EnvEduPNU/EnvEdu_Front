@@ -9,7 +9,7 @@ export const Wrapper = styled.div`
   border-bottom: 1px solid #ccc;
   background-color: #fff;
   display: flex;
-  margin-bottom: 30px;
+  margin-bottom: 15px;
   & > * {
     width: 33%;
   }

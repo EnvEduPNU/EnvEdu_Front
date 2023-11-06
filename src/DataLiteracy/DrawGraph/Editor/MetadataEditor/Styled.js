@@ -1,10 +1,11 @@
 import styled from "styled-components";
 
-export const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-`;
+// export const Wrapper = styled.div`
+//   display: flex;
+//   flex-direction: column;
+//   gap: 30px;
+//   width: 100%;
+// `;
 
 export const Box = styled.div`
   display: flex;
