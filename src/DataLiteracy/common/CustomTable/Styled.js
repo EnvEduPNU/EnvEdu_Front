@@ -13,6 +13,7 @@ export const Wrapper = styled.div`
   border: 1px solid rgba(34, 36, 38, 0.15);
   max-height: 600px;
   overflow-y: scroll;
+  border-radius: 5px;
 `;
 
 export const Column = styled.div`

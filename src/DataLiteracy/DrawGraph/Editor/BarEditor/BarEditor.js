@@ -43,9 +43,9 @@ function BarEditor() {
       <Styled.Box>
         <Styled.Title>축 선택</Styled.Title>
         <Styled.ButtonSelectorWrapper>
-          {variables
-            .filter(variable => variable.getIsSelected)
-            .map((variable, index) => (
+          {variables.map((variable, index) => {
+            if (!variable.getIsSelected) return;
+            return (
               <ButtonSelector
                 key={index}
                 value={variable.getName}
@@ -53,7 +53,8 @@ function BarEditor() {
                 selectList={["X", "Y"]}
                 onChange={axis => changeAxis(index, axis)}
               />
-            ))}
+            );
+          })}
         </Styled.ButtonSelectorWrapper>
       </Styled.Box>
       <Styled.Box>
