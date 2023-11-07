@@ -18,10 +18,16 @@ const useBarData = () => {
   // y축에 category가 있으면 y축엔 변인이 하나만 와야하고 x축에는 다 number가 되야함
 
   const categorycalList = variables.filter(
-    variable => variable.getIsSelected && variable.getType === "Categorical"
+    variable =>
+      variable.getIsSelected &&
+      variable.getType === "Categorical" &&
+      variable.getAxis !== null
   );
   const numericList = variables.filter(
-    variable => variable.getIsSelected && variable.getType === "Numeric"
+    variable =>
+      variable.getIsSelected &&
+      variable.getType === "Numeric" &&
+      variable.getAxis !== null
   );
 
   if (categorycalList.length === 0) {
@@ -30,7 +36,6 @@ const useBarData = () => {
     errorMessage = "Categorical 변인을 하나만 선택해주세요.";
   } else if (categorycalList.length === 1) {
     if (categorycalList[0].getAxis === null) {
-      console.log(categorycalList);
       errorMessage = "축을 선택해 주세요";
     } else {
       const numerLicAxisList = numericList.map(variable => variable.getAxis);
