@@ -1,14 +1,15 @@
 import ButtonSelector from "../../../common/ButtonSelector/ButtonSelector";
-import { useGraphDataStore } from "../../../store/graphStore";
-import { useBarStore } from "../../../store/barStore";
-import * as Styled from "./Styled";
 import LabelInput from "../../../common/Labellnput/LabelInput";
+import { useGraphDataStore } from "../../../store/graphStore";
+import { useLineStore } from "../../../store/lineStore";
 import MetadataEditor from "../MetadataEditor/MetadataEditor";
 
-function BarEditor() {
+import * as Styled from "./Styled";
+
+function LineEditor() {
   const { variables, changeAxis } = useGraphDataStore();
   const { min, max, stepSize, changeMinValue, changeMaxValue, changeStepSize } =
-    useBarStore();
+    useLineStore();
 
   const onChangeMinMax = (type, value) => {
     if (type === "MIN") {
@@ -72,4 +73,4 @@ function BarEditor() {
   );
 }
 
-export default BarEditor;
+export default LineEditor;

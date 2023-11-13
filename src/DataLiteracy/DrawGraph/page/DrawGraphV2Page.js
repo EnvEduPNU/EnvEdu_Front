@@ -8,6 +8,8 @@ import BarEditor from "../Editor/BarEditor/BarEditor";
 import CustomTableHeader from "../../common/CustomTable/CustomTableHeader";
 import CustomBarChart from "../../common/CustomChart/CustomBarChart/CustomBarChart";
 import Description from "../../common/Description/Description";
+import CustomLineChart from "../../common/CustomChart/CustomBarChart/CustomLineChart";
+import LineEditor from "../Editor/LineEditor/LineEditor";
 
 function DrawGraphV2Page() {
   const tab = ustTabStore(state => state.tab);
@@ -24,8 +26,8 @@ function DrawGraphV2Page() {
         <Styled.GraphTapWrapper>
           <CustomTableHeader />
           <Styled.GraphWrapper>
-            <CustomBarChart />
-            <BarEditor />
+            <CustomLineChart />
+            <LineEditor />
           </Styled.GraphWrapper>
         </Styled.GraphTapWrapper>
       )}

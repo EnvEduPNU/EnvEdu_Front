@@ -1,13 +1,13 @@
-import { useBarStore } from "../store/barStore";
 import { useChartMetaDataStore } from "../store/drawGraphStore";
 import { useGraphDataStore } from "../store/graphStore";
+import { useLineStore } from "../store/lineStore";
 import { colorsArray } from "../utils/randomColor";
 
-const useBarData = () => {
+const useLineData = () => {
   let errorMessage = null;
   let labels = null;
   const { variables, data } = useGraphDataStore();
-  const { min, max, stepSize } = useBarStore();
+  const { min, max, stepSize } = useLineStore();
   const { legendPostion, datalabelAnchor } = useChartMetaDataStore(
     state => state.metaData
   );
@@ -35,6 +35,8 @@ const useBarData = () => {
   } else if (categorycalList.length === 1) {
     if (categorycalList[0].getAxis === null) {
       errorMessage = "축을 선택해 주세요";
+    } else if (categorycalList[0].getAxis === "Y") {
+      errorMessage = "Categorical 변인은 X축만 가능합니다.";
     } else {
       const numerLicAxisList = numericList.map(variable => variable.getAxis);
       if (numerLicAxisList.includes(categorycalList[0].getAxis)) {
@@ -59,13 +61,10 @@ const useBarData = () => {
   };
 
   const createOptions = () => {
-    if (categorycalList.length === 1 && categorycalList[0].getAxis !== null) {
-      const axis = categorycalList[0].getAxis.toLowerCase();
-      const oppositeAxis = axis === "x" ? "y" : "x";
+    if (categorycalList.length === 1 && categorycalList[0].getAxis === "X") {
       return {
-        indexAxis: axis,
         scales: {
-          [oppositeAxis]: {
+          y: {
             min,
             max,
             ticks: {
@@ -97,4 +96,4 @@ const useBarData = () => {
   };
 };
 
-export default useBarData;
+export default useLineData;

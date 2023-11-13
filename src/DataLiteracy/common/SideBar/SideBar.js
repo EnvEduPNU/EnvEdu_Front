@@ -1,4 +1,3 @@
-import { useState } from "react";
 import "./SideBar.scss";
 import * as Styled from "./Styled";
 
