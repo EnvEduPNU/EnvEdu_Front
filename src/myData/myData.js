@@ -57,22 +57,45 @@ const engToKor = (name) => {
 }
 
 const MyData = () => {
+    const [selectedFolderId, setSelectedFolderId] = useState(null);
+    const handleFolderSelect = (folderId) => {
+        setSelectedFolderId(folderId);
+    };
+    console.log(selectedFolderId)
+
     /*데이터 요약 정보*/
     const [summary, setSummary] = useState([]);
     
     useEffect(() => {
-        customAxios.get('/mydata/list')
-            .then((res) => {
-                const formattedData = res.data.map(data => ({
-                    ...data,
-                    saveDate: data.saveDate.split('T')[0],
-                    dataLabel: data.dataLabel === "AIRQUALITY" ? "대기질 데이터" : (
-                        data.dataLabel === "OCEANQUALITY" ? "수질 데이터" : data.dataLabel
-                    )
-                }));
-                setSummary(formattedData);
-            })
-            .catch((err) => console.log(err));
+        if (selectedFolderId === null) {
+            customAxios.get('/mydata/list')
+                .then((res) => {
+                    const formattedData = res.data.map(data => ({
+                        ...data,
+                        saveDate: data.saveDate.split('T')[0],
+                        dataLabel: data.dataLabel === "AIRQUALITY" ? "대기질 데이터" : (
+                            data.dataLabel === "OCEANQUALITY" ? "수질 데이터" : data.dataLabel
+                        )
+                    }));
+                    setSummary(formattedData);
+                })
+                .catch((err) => console.log(err));
+        }
+        else {
+            console.log(selectedFolderId);
+            customAxios.get(`/datafolder/items?id=${selectedFolderId}`)
+                .then((res) => {
+                    const formattedData = res.data.map(data => ({
+                        ...data,
+                        saveDate: data.saveDate.split('T')[0],
+                        dataLabel: data.dataLabel === "AIRQUALITY" ? "대기질 데이터" : (
+                            data.dataLabel === "OCEANQUALITY" ? "수질 데이터" : data.dataLabel
+                        )
+                    }));
+                    setSummary(formattedData);
+                })
+                .catch((err) => console.log(err));
+        }
     }, []);
 
     const [details, setDetails] = useState([]);
@@ -179,7 +202,7 @@ const MyData = () => {
                     <AddFolderModal />
                     <MoveFolderModal />
                     <RemoveFolderModal />
-                    <FolderList />
+                    <FolderList onSelectFolder={handleFolderSelect} onClicked={selectedFolderId} />
                 </div>
                 
                 {/*데이터 요약 정보*/}
