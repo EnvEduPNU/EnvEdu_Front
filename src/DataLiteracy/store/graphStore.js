@@ -84,6 +84,26 @@ export const useGraphDataStore = create((set, get) => ({
     name => new Variable(name)
   ),
 
+  graphIdx: 0,
+
+  changeGraphIndex: index =>
+    set(state => {
+      if (index === get().graphIdx) {
+        return { ...state };
+      }
+
+      const newVariable = get().data[0].map(name => new Variable(name));
+      newVariable.forEach((variable, idx) => {
+        variable.setIsSelected(get().variables[idx].getIsSelected);
+        variable.setType(get().variables[idx].getType);
+      });
+      return {
+        ...state,
+        graphIdx: index,
+        variables: newVariable,
+      };
+    }),
+
   changeValue: (row, col, newValue) =>
     set(state => {
       const newData = state.data.map(d => [...d]);

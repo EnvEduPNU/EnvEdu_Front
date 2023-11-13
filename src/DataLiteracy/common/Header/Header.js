@@ -3,6 +3,8 @@ import * as Styled from "./Styled";
 import { ReactComponent as MenuBarIcon } from "../../image/MenuBarIcon.svg";
 import SideBar from "../SideBar/SideBar";
 import { useState } from "react";
+import { Button } from "react-bootstrap";
+import GraphSelector from "../GraphSelector/GraphSelector";
 
 function Header() {
   const [isShow, setisShow] = useState(false);
@@ -19,7 +21,9 @@ function Header() {
         <Styled.Middle>
           <Tab />
         </Styled.Middle>
-        <Styled.LastBox>{""}</Styled.LastBox>
+        <Styled.LastBox>
+          <GraphSelector />
+        </Styled.LastBox>
       </Styled.Wrapper>
       <SideBar activeIdx={1} isShow={isShow} setisShow={setisShow} />
     </>

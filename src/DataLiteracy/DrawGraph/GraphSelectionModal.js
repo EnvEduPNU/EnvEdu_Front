@@ -20,20 +20,8 @@ function GraphSelectionModal({
     "막대와 꺽은선의 혼합 그래프",
   ];
   const onClickCreateGraphBtn = () => {
-    const drawGraph = JSON.parse(localStorage.getItem("drawGraph"));
-    // delete drawGraph.axisScale;
-    // delete drawGraph.metaData;
-    localStorage.setItem(
-      "drawGraph",
-      JSON.stringify({
-        ...drawGraph,
-        selectedGraph: graphIdx,
-      })
-    );
-
     setSelectedGraph(graphIdx);
     setIsVisibleModal(state => !state);
-    next();
   };
   return (
     <>
@@ -59,7 +47,7 @@ function GraphSelectionModal({
               </div>
             ))}
           </div>
-          <Button onClick={onClickCreateGraphBtn}>그래프 생성하기</Button>
+          <Button onClick={onClickCreateGraphBtn}>그래프 선택</Button>
         </div>
       </div>
       ;
