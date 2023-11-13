@@ -57,38 +57,64 @@ const useScatterData = () => {
       ];
     }
   };
-  console.log(createDataset());
+
   const createOptions = () => {
-    return {
-      scales: {
-        x: {
-          min: xAxis.min,
-          max: xAxis.max,
-          ticks: {
-            stepSize: xAxis.stepSize,
-            autoSkip: false,
+    if (xVariavleList.length === 1 && yVariavleList.length === 1) {
+      return {
+        scales: {
+          x: {
+            min: xAxis.min,
+            max: xAxis.max,
+            ticks: {
+              stepSize: xAxis.stepSize,
+              autoSkip: false,
+            },
+            title: {
+              // 이 축의 단위 또는 이름도 title 속성을 이용하여 표시할 수 있습니다.
+              display: true,
+              align: "end",
+              color: "#808080",
+              font: {
+                size: 18,
+                family: "'Noto Sans KR', sans-serif",
+                weight: 300,
+              },
+              text: xVariavleList[0].getName,
+            },
+          },
+          y: {
+            min: yAxis.min,
+            max: yAxis.max,
+            ticks: {
+              stepSize: yAxis.stepSize,
+              autoSkip: false,
+            },
+            title: {
+              // 이 축의 단위 또는 이름도 title 속성을 이용하여 표시할 수 있습니다.
+              display: true,
+              align: "end",
+              color: "#808080",
+              font: {
+                size: 18,
+                family: "'Noto Sans KR', sans-serif",
+                weight: 300,
+              },
+              text: yVariavleList[0].getName,
+            },
           },
         },
-        y: {
-          min: yAxis.min,
-          max: yAxis.max,
-          ticks: {
-            stepSize: yAxis.stepSize,
-            autoSkip: false,
+        plugins: {
+          legend: {
+            display: legendPostion !== "no",
+            position: legendPostion, // 'top', 'left', 'bottom', 'right' 중 하나를 선택
+          },
+          datalabels: {
+            display: datalabelAnchor !== "no",
+            anchor: datalabelAnchor,
           },
         },
-      },
-      plugins: {
-        legend: {
-          display: legendPostion !== "no",
-          position: legendPostion, // 'top', 'left', 'bottom', 'right' 중 하나를 선택
-        },
-        datalabels: {
-          display: datalabelAnchor !== "no",
-          anchor: datalabelAnchor,
-        },
-      },
-    };
+      };
+    }
   };
   return {
     createDataset,

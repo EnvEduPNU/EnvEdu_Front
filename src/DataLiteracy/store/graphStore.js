@@ -7,6 +7,7 @@ class Variable {
     this.isSelected = true;
     this.axis = null;
     this.graph = null;
+    this.unit = "";
   }
 
   get getIsSelected() {
@@ -23,6 +24,9 @@ class Variable {
   }
   get getGraph() {
     return this.graph;
+  }
+  get getUnit() {
+    return this.unit;
   }
 
   setName(name) {
@@ -52,6 +56,9 @@ class Variable {
     }
     this.graph = graph;
   }
+  setUnit(unit) {
+    this.unit = unit;
+  }
 
   copy() {
     const newVariable = new Variable(this.name);
@@ -59,6 +66,7 @@ class Variable {
     newVariable.setType(this.type);
     newVariable.setAxis(this.axis);
     newVariable.setGraph(this.graph);
+    newVariable.setUnit(this.unit);
     return newVariable;
   }
 }
@@ -96,6 +104,7 @@ export const useGraphDataStore = create((set, get) => ({
       newVariable.forEach((variable, idx) => {
         variable.setIsSelected(get().variables[idx].getIsSelected);
         variable.setType(get().variables[idx].getType);
+        variable.setUnit(get().variables[idx].getUnit);
       });
       return {
         ...state,

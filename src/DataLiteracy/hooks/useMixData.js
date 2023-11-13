@@ -35,12 +35,12 @@ const useMixData = () => {
       variable.getAxis !== null
   );
 
-  if (numericList.length !== graphSelectedList.length) {
-    errorMessage = "변인의 그래프를 선택해 주세요.";
-  } else if (categorycalList.length === 0) {
+  if (categorycalList.length === 0) {
     errorMessage = "Categorical 변인을 선택해주세요.";
   } else if (categorycalList.length > 1) {
     errorMessage = "Categorical 변인을 하나만 선택해주세요.";
+  } else if (numericList.length !== graphSelectedList.length) {
+    errorMessage = "변인의 그래프를 선택해 주세요.";
   } else if (categorycalList.length === 1) {
     if (categorycalList[0].getAxis === null) {
       errorMessage = "축을 선택해 주세요";
@@ -74,8 +74,37 @@ const useMixData = () => {
   };
 
   const createOptions = () => {
+    const y1AxisList = variables.filter(
+      variable =>
+        variable.getIsSelected &&
+        variable.getAxis === "Y1" &&
+        variable.getGraph !== null &&
+        variable.getType === "Numeric"
+    );
+
+    const y2AxisList = variables.filter(
+      variable =>
+        variable.getIsSelected &&
+        variable.getAxis === "Y2" &&
+        variable.getGraph !== null &&
+        variable.getType === "Numeric"
+    );
     return {
       scales: {
+        x: {
+          title: {
+            // 이 축의 단위 또는 이름도 title 속성을 이용하여 표시할 수 있습니다.
+            display: true,
+            align: "end",
+            color: "#808080",
+            font: {
+              size: 12,
+              family: "'Noto Sans KR', sans-serif",
+              weight: 300,
+            },
+            text: categorycalList.length > 0 ? categorycalList[0].getName : "",
+          },
+        },
         y1: {
           position: "left",
           id: "y1",
@@ -84,6 +113,18 @@ const useMixData = () => {
           ticks: {
             stepSize: y1Axis.stepSize,
             autoSkip: false,
+          },
+          title: {
+            // 이 축의 단위 또는 이름도 title 속성을 이용하여 표시할 수 있습니다.
+            display: true,
+            align: "end",
+            color: "#808080",
+            font: {
+              size: 12,
+              family: "'Noto Sans KR', sans-serif",
+              weight: 300,
+            },
+            text: y1AxisList.length > 0 ? y1AxisList[0].getName : "",
           },
         },
         y2: {
@@ -95,6 +136,18 @@ const useMixData = () => {
           ticks: {
             stepSize: y2Axis.stepSize,
             autoSkip: false,
+          },
+          title: {
+            // 이 축의 단위 또는 이름도 title 속성을 이용하여 표시할 수 있습니다.
+            display: true,
+            align: "end",
+            color: "#808080",
+            font: {
+              size: 12,
+              family: "'Noto Sans KR', sans-serif",
+              weight: 300,
+            },
+            text: y2AxisList.length > 0 ? y2AxisList[0].getName : "",
           },
         },
       },
