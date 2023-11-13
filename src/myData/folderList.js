@@ -56,9 +56,9 @@ export default function FolderList({ onSelectFolder }) {
     const [data, setData] = useState([]);
     useEffect(() => {
         customAxios.get('/datafolder/list')
-            .then((res) => setData(res.data))
+            .then((res) => {console.log(res.data); setData(res.data);})
             .catch((err) => console.log(err));
-    }, [data])
+    }, [])
 
     return (
         <>

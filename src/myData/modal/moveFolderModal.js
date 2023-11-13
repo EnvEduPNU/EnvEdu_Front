@@ -13,7 +13,7 @@ export default function MoveFolderModal() {
         customAxios.get('/datafolder/list')
             .then((res) => setFolderData(res.data))
             .catch((err) => console.log(err));
-    }, [folderData]);
+    }, []);
     
     function extractFolderNames(folders) {
         let folderInfo = [];
@@ -32,7 +32,7 @@ export default function MoveFolderModal() {
     const handleFolderSelect = (folderId) => {
         setSelectedFolderId(folderId);
     };
-    console.log(selectedFolderId)
+    //console.log(selectedFolderId)
     const [modalIsOpen, setModalIsOpen] = useState(false);
 
     const openModal = () => {
