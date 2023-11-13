@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { customAxios } from '../Common/CustomAxios';
 
 const Folder = ({ folder, onSelectFolder, selectedFolderId, onClicked }) => {
     //const [isExpanded, setIsExpanded] = useState(false);
@@ -54,38 +55,12 @@ const FolderStructure = ({ data, selectedFolderId, onSelectFolder, onClicked }) 
 };
 
 export default function FolderListForDelete({ onSelectFolder, onClicked }) {
-    const data = [
-        {
-            "id": 1,
-            "folderName": "dataFolder1",
-            "createDate": "2023-11-13T14:15:48.292167",
-            "updateDate": "2023-11-13T14:15:48.292167",
-            "child": [
-                {
-                    "id": 2,
-                    "folderName": "dataFolder2",
-                    "createDate": "2023-11-13T14:15:48.292167",
-                    "updateDate": "2023-11-13T14:15:48.292167",
-                    "child": [
-                        {
-                            "id": 4,
-                            "folderName": "dataFolder4",
-                            "createDate": "2023-11-13T14:15:48.292167",
-                            "updateDate": "2023-11-13T14:15:48.292167",
-                            "child": []
-                        }
-                    ]
-                },
-                {
-                    "id": 3,
-                    "folderName": "dataFolder3",
-                    "createDate": "2023-11-13T14:15:48.292167",
-                    "updateDate": "2023-11-13T14:15:48.292167",
-                    "child": []
-                }
-            ]
-        }
-    ];
+    const [data, setData] = useState([]);
+    useEffect(() => {
+        customAxios.get('/datafolder/list')
+            .then((res) => setData(res.data))
+            .catch((err) => console.log(err));
+    }, [data]);
 
     return (
         <>

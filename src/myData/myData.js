@@ -193,6 +193,16 @@ const MyData = () => {
         }
     }
 
+    /*
+    const handleMoveFolder = () => {
+        customAxios.post('/datafolder/item/store', {
+            folderId : 1,
+            dataId : 3,
+            label : "AIRQUALITY"
+        })
+    }
+    */
+
     return (
         <div className="myData-container">
             {/*folder + 데이터 요약 정보*/}
@@ -232,7 +242,7 @@ const MyData = () => {
                     </div>
                 </div>
             </div>
-
+                  
             <div className='myData-right'>
                 {details.length !== 0 && 
                     <>
@@ -279,7 +289,7 @@ const MyData = () => {
                         </table>
                     </>
                 }
-            </div>
+            </div> 
         </div>
     );
 };

@@ -4,53 +4,30 @@ import { useState, useEffect } from 'react';
 import FolderList from '../folderList';
 import './modal.scss';
 
-const folderData = [
-    {
-        "id": 1,
-        "folderName": "dataFolder1",
-        "createDate": "2023-11-13T14:15:48.292167",
-        "updateDate": "2023-11-13T14:15:48.292167",
-        "child": [
-            {
-                "id": 2,
-                "folderName": "dataFolder2",
-                "createDate": "2023-11-13T14:15:48.292167",
-                "updateDate": "2023-11-13T14:15:48.292167",
-                "child": [
-                    {
-                        "id": 4,
-                        "folderName": "dataFolder4",
-                        "createDate": "2023-11-13T14:15:48.292167",
-                        "updateDate": "2023-11-13T14:15:48.292167",
-                        "child": []
-                    }
-                ]
-            },
-            {
-                "id": 3,
-                "folderName": "dataFolder3",
-                "createDate": "2023-11-13T14:15:48.292167",
-                "updateDate": "2023-11-13T14:15:48.292167",
-                "child": []
-            }
-        ]
-    }
-];
 
-function extractFolderNames(folders) {
-    let folderInfo = [];
-    folders.forEach(folder => {
-        folderInfo.push({ id: folder.id, name: folder.folderName });
-        if (folder.child && folder.child.length > 0) {
-            folderInfo = folderInfo.concat(extractFolderNames(folder.child));
-        }
-    });
-    return folderInfo;
-}
-
-const folderNamesAndIds = extractFolderNames(folderData);
 
 export default function MoveFolderModal() {
+    const [folderData, setFolderData] = useState([]);
+
+    useEffect(() => {
+        customAxios.get('/datafolder/list')
+            .then((res) => setFolderData(res.data))
+            .catch((err) => console.log(err));
+    }, [folderData]);
+    
+    function extractFolderNames(folders) {
+        let folderInfo = [];
+        folders.forEach(folder => {
+            folderInfo.push({ id: folder.id, name: folder.folderName });
+            if (folder.child && folder.child.length > 0) {
+                folderInfo = folderInfo.concat(extractFolderNames(folder.child));
+            }
+        });
+        return folderInfo;
+    }
+    
+    const folderNamesAndIds = extractFolderNames(folderData);
+
     const [selectedFolderId, setSelectedFolderId] = useState(null);
     const handleFolderSelect = (folderId) => {
         setSelectedFolderId(folderId);
