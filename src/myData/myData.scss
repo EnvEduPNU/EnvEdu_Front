@@ -2,6 +2,15 @@
     display: flex;
 
     .myData-left {
+        .yellow-btn {
+            font-weight: 600;
+            background: #F3B634;
+            padding: 0.3rem;
+            border-radius: 0.3125rem;
+            margin-bottom: 0.5rem;
+            width: 10rem;
+            //border: none;
+        }
         /*folder*/
         .myData-folder {
             //overflow-y: scroll;
@@ -23,16 +32,10 @@
             //width: 20%;
             //height: 20rem;
             padding: 1rem 0.5rem;
-            span {
-                font-weight: 600;
-                background: #F3B634;
-                padding: 0.3rem;
-                border-radius: 0.3125rem;
-            }
+
             /*table*/
             .summary-table {
                 //font-size: 0.8em;
-                margin-top: 0.5rem;
                 width: 100%;
                 border-collapse: collapse;
                 border: 1px solid #ddd;
@@ -93,7 +96,7 @@
             }
         }
         
-    }
+    }  
 }
 
 

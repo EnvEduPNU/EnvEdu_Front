@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import * as XLSX from 'xlsx';
 import { customAxios } from '../Common/CustomAxios';
 import './myData.scss';
+import AddFolderModal from './modal/addFolderModal';
+import RemoveFolderModal from './modal/removeFolderModal';
 
 /*folder*/
 const Folder = ({ folder }) => {
@@ -206,128 +208,125 @@ const MyData = () => {
     // 주어진 JSON 데이터
     const data = [
         {
-        "id": 1,
-        "folderName": "dataFolder1",
-        "parent": null,
-        "createDate": null,
-        "updateDate": null,
-        "child": [
-            {
-            "id": 2,
-            "folderName": "dataFolder2",
-            "parent": null,
-            "createDate": null,
-            "updateDate": null,
+            "id": 1,
+            "folderName": "dataFolder1",
+            "createDate": "2023-11-13T14:15:48.292167",
+            "updateDate": "2023-11-13T14:15:48.292167",
             "child": [
                 {
-                "id": 3,
-                "folderName": "dataFolder3",
-                "parent": null,
-                "createDate": null,
-                "updateDate": null,
-                "child": [
-                    {
-                    "id": 4,
-                    "folderName": "dataFolder4",
-                    "parent": null,
-                    "createDate": null,
-                    "updateDate": null,
+                    "id": 2,
+                    "folderName": "dataFolder2",
+                    "createDate": "2023-11-13T14:15:48.292167",
+                    "updateDate": "2023-11-13T14:15:48.292167",
+                    "child": [
+                        {
+                            "id": 4,
+                            "folderName": "dataFolder4",
+                            "createDate": "2023-11-13T14:15:48.292167",
+                            "updateDate": "2023-11-13T14:15:48.292167",
+                            "child": []
+                        }
+                    ]
+                },
+                {
+                    "id": 3,
+                    "folderName": "dataFolder3",
+                    "createDate": "2023-11-13T14:15:48.292167",
+                    "updateDate": "2023-11-13T14:15:48.292167",
                     "child": []
-                    }
-                ]
                 }
             ]
-            }
-        ]
         }
     ];
 
-  return (
-    <div className="myData-container">
-        {/*folder + 데이터 요약 정보*/}
-        <div className="myData-left">
-            {/*folder*/}
-            <div className='myData-folder'>
-                <FolderStructure data={data} />
-            </div>
-            
-            {/*데이터 요약 정보*/}
-            <div className='myData-summary'>
-                <div style={{ overflowY: 'scroll', height: '20rem' }}>
-                    <span>데이터 요약 정보</span>
-                    {summary.length > 0 && (
-                    <table className='summary-table'>
-                        <thead>
-                            <tr>
-                                <th key="saveDate">저장 일시</th>
-                                <th key="dataLabel">데이터 종류</th>
-                                <th key="memo">메모</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {summary.map((item, index) => (
-                                <tr key={index} onClick={() => getTable(item.dataLabel, item.dataUUID)}>
-                                    <td>{item.saveDate}</td>
-                                    <td>{item.dataLabel}</td>
-                                    <td>{item.memo}</td>
+    return (
+        <div className="myData-container">
+            {/*folder + 데이터 요약 정보*/}
+            <div className="myData-left">
+                {/*folder*/}
+                <div className='myData-folder'>
+                    <AddFolderModal />
+                    <RemoveFolderModal />
+                    <FolderStructure data={data} />
+                </div>
+                
+                {/*데이터 요약 정보*/}
+                <div className='myData-summary'>
+                    <div style={{ overflowY: 'scroll', height: '20rem' }}>
+                        <span className='yellow-btn'>데이터 요약 정보</span>
+                        {summary.length > 0 && (
+                        <table className='summary-table'>
+                            <thead>
+                                <tr>
+                                    <th key="saveDate">저장 일시</th>
+                                    <th key="dataLabel">데이터 종류</th>
+                                    <th key="memo">메모</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                    )}
+                            </thead>
+                            <tbody>
+                                {summary.map((item, index) => (
+                                    <tr key={index} onClick={() => getTable(item.dataLabel, item.dataUUID)}>
+                                        <td>{item.saveDate}</td>
+                                        <td>{item.dataLabel}</td>
+                                        <td>{item.memo}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                        )}
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div className='myData-right'>
-            {details.length !== 0 && 
-                <>
-                    <div style={{display: 'flex', justifyContent: 'flex-end'}}>
-                        <button 
-                            className='excel-download'
-                            onClick={() => handleDownload()}>
-                            엑셀 파일로 저장
-                        </button>
-                    </div>
-                    <table border="1" className='myData-detail'>
-                        <thead>
-                            <tr>
-                                {headers.map((header) => (
-                                    <th key={header}>{engToKor(header)}</th>
-                                ))}
-                                <th>
-                                    <input
-                                        type="checkbox"
-                                        onChange={() => handleFullCheck()}
-                                        checked={isFull}
-                                    ></input>
-                                </th>
-                            </tr>
-                        </thead>
-                        
-                        <tbody>
-                            {details.map((item) => (
-                                <tr key={item.id}>
+            <div className='myData-right'>
+                {details.length !== 0 && 
+                    <>
+                        <div style={{display: 'flex', justifyContent: 'flex-end'}}>
+                            <button 
+                                className='excel-download'
+                                onClick={() => handleDownload()}>
+                                엑셀 파일로 저장
+                            </button>
+                        </div>
+                        <table border="1" className='myData-detail'>
+                            <thead>
+                                <tr>
                                     {headers.map((header) => (
-                                        <td key={header}>{item[header]}</td>
+                                        <th key={header}>{engToKor(header)}</th>
                                     ))}
-                                    <td>
+                                    <th>
                                         <input
                                             type="checkbox"
-                                            name={item}
-                                            checked={selectedItems.includes(item)}
-                                            onChange={() => handleViewCheckBoxChange(item)}
+                                            onChange={() => handleFullCheck()}
+                                            checked={isFull}
                                         ></input>
-                                    </td>
+                                    </th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </>
-            }
+                            </thead>
+                            
+                            <tbody>
+                                {details.map((item) => (
+                                    <tr key={item.id}>
+                                        {headers.map((header) => (
+                                            <td key={header}>{item[header]}</td>
+                                        ))}
+                                        <td>
+                                            <input
+                                                type="checkbox"
+                                                name={item}
+                                                checked={selectedItems.includes(item)}
+                                                onChange={() => handleViewCheckBoxChange(item)}
+                                            ></input>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </>
+                }
+            </div>
         </div>
-    </div>
-  );
+    );
 };
 
 export default MyData;
