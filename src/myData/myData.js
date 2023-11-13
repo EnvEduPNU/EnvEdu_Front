@@ -2,42 +2,10 @@ import { useState, useEffect } from 'react';
 import * as XLSX from 'xlsx';
 import { customAxios } from '../Common/CustomAxios';
 import './myData.scss';
-
-/*folder*/
-const Folder = ({ folder }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  const toggleFolder = () => {
-    setIsExpanded(!isExpanded);
-  };
-
-  return (
-    <div>
-      <div onClick={toggleFolder}>
-        {isExpanded ? 'ㄴ' : '+'} 
-        <img src="/assets/img/folder-icon.png" style={{ width: '1.5rem', margin: '0.5rem' }} />
-        {folder.folderName}
-      </div>
-      {isExpanded && folder.child.length > 0 && (
-        <div style={{ marginLeft: '1.25rem' }}>
-          {folder.child.map((subfolder) => (
-            <Folder key={subfolder.id} folder={subfolder} />
-          ))}
-        </div>
-      )}
-    </div>
-  );
-};
-
-const FolderStructure = ({ data }) => {
-  return (
-    <div>
-      {data.map((folder) => (
-        <Folder key={folder.id} folder={folder} />
-      ))}
-    </div>
-  );
-};
+import AddFolderModal from './modal/addFolderModal';
+import MoveFolderModal from './modal/moveFolderModal';
+import RemoveFolderModal from './modal/removeFolderModal';
+import FolderList from './folderList';
 
 //항목 이름 (한국어 -> 영어)
 const engToKor = (name) => {
@@ -89,22 +57,45 @@ const engToKor = (name) => {
 }
 
 const MyData = () => {
+    const [selectedFolderId, setSelectedFolderId] = useState(null);
+    const handleFolderSelect = (folderId) => {
+        setSelectedFolderId(folderId);
+    };
+    console.log(selectedFolderId)
+
     /*데이터 요약 정보*/
     const [summary, setSummary] = useState([]);
     
     useEffect(() => {
-        customAxios.get('/mydata/list')
-            .then((res) => {
-                const formattedData = res.data.map(data => ({
-                    ...data,
-                    saveDate: data.saveDate.split('T')[0],
-                    dataLabel: data.dataLabel === "AIRQUALITY" ? "대기질 데이터" : (
-                        data.dataLabel === "OCEANQUALITY" ? "수질 데이터" : data.dataLabel
-                    )
-                }));
-                setSummary(formattedData);
-            })
-            .catch((err) => console.log(err));
+        if (selectedFolderId === null) {
+            customAxios.get('/mydata/list')
+                .then((res) => {
+                    const formattedData = res.data.map(data => ({
+                        ...data,
+                        saveDate: data.saveDate.split('T')[0],
+                        dataLabel: data.dataLabel === "AIRQUALITY" ? "대기질 데이터" : (
+                            data.dataLabel === "OCEANQUALITY" ? "수질 데이터" : data.dataLabel
+                        )
+                    }));
+                    setSummary(formattedData);
+                })
+                .catch((err) => console.log(err));
+        }
+        else {
+            console.log(selectedFolderId);
+            customAxios.get(`/datafolder/items?id=${selectedFolderId}`)
+                .then((res) => {
+                    const formattedData = res.data.map(data => ({
+                        ...data,
+                        saveDate: data.saveDate.split('T')[0],
+                        dataLabel: data.dataLabel === "AIRQUALITY" ? "대기질 데이터" : (
+                            data.dataLabel === "OCEANQUALITY" ? "수질 데이터" : data.dataLabel
+                        )
+                    }));
+                    setSummary(formattedData);
+                })
+                .catch((err) => console.log(err));
+        }
     }, []);
 
     const [details, setDetails] = useState([]);
@@ -172,7 +163,6 @@ const MyData = () => {
     }
 
     const handleDownload = () => { 
-        //const arr = [{ age: 10, gender: 'Male', name: "abc" }, {age: 10, gender: 'Male', name: "123"}, {age: 10, gender: 'Male'}];
         if (selectedItems.length === 0) {
             alert("엑셀 파일로 내보낼 데이터를 한 개 이상 선택해 주세요.")
         }
@@ -203,131 +193,105 @@ const MyData = () => {
         }
     }
 
-    // 주어진 JSON 데이터
-    const data = [
-        {
-        "id": 1,
-        "folderName": "dataFolder1",
-        "parent": null,
-        "createDate": null,
-        "updateDate": null,
-        "child": [
-            {
-            "id": 2,
-            "folderName": "dataFolder2",
-            "parent": null,
-            "createDate": null,
-            "updateDate": null,
-            "child": [
-                {
-                "id": 3,
-                "folderName": "dataFolder3",
-                "parent": null,
-                "createDate": null,
-                "updateDate": null,
-                "child": [
-                    {
-                    "id": 4,
-                    "folderName": "dataFolder4",
-                    "parent": null,
-                    "createDate": null,
-                    "updateDate": null,
-                    "child": []
-                    }
-                ]
-                }
-            ]
-            }
-        ]
-        }
-    ];
+    /*
+    const handleMoveFolder = () => {
+        customAxios.post('/datafolder/item/store', {
+            folderId : 1,
+            dataId : 3,
+            label : "AIRQUALITY"
+        })
+    }
+    */
 
-  return (
-    <div className="myData-container">
-        {/*folder + 데이터 요약 정보*/}
-        <div className="myData-left">
-            {/*folder*/}
-            <div className='myData-folder'>
-                <FolderStructure data={data} />
-            </div>
-            
-            {/*데이터 요약 정보*/}
-            <div className='myData-summary'>
-                <div style={{ overflowY: 'scroll', height: '20rem' }}>
-                    <span>데이터 요약 정보</span>
-                    {summary.length > 0 && (
-                    <table className='summary-table'>
-                        <thead>
-                            <tr>
-                                <th key="saveDate">저장 일시</th>
-                                <th key="dataLabel">데이터 종류</th>
-                                <th key="memo">메모</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {summary.map((item, index) => (
-                                <tr key={index} onClick={() => getTable(item.dataLabel, item.dataUUID)}>
-                                    <td>{item.saveDate}</td>
-                                    <td>{item.dataLabel}</td>
-                                    <td>{item.memo}</td>
+    return (
+        <div className="myData-container">
+            {/*folder + 데이터 요약 정보*/}
+            <div className="myData-left">
+                {/*folder*/}
+                <div className='myData-folder'>
+                    <AddFolderModal />
+                    <MoveFolderModal />
+                    <RemoveFolderModal />
+                    <FolderList onSelectFolder={handleFolderSelect} onClicked={selectedFolderId} />
+                </div>
+                
+                {/*데이터 요약 정보*/}
+                <div className='myData-summary'>
+                    <div style={{ overflowY: 'scroll', height: '20rem' }}>
+                        <span className='yellow-btn'>데이터 요약 정보</span>
+                        {summary.length > 0 && (
+                        <table className='summary-table'>
+                            <thead>
+                                <tr>
+                                    <th key="saveDate">저장 일시</th>
+                                    <th key="dataLabel">데이터 종류</th>
+                                    <th key="memo">메모</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                    )}
+                            </thead>
+                            <tbody>
+                                {summary.map((item, index) => (
+                                    <tr key={index} onClick={() => getTable(item.dataLabel, item.dataUUID)}>
+                                        <td>{item.saveDate}</td>
+                                        <td>{item.dataLabel}</td>
+                                        <td>{item.memo}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                        )}
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <div className='myData-right'>
-            {details.length !== 0 && 
-                <>
-                    <div style={{display: 'flex', justifyContent: 'flex-end'}}>
-                        <button 
-                            className='excel-download'
-                            onClick={() => handleDownload()}>
-                            엑셀 파일로 저장
-                        </button>
-                    </div>
-                    <table border="1" className='myData-detail'>
-                        <thead>
-                            <tr>
-                                {headers.map((header) => (
-                                    <th key={header}>{engToKor(header)}</th>
-                                ))}
-                                <th>
-                                    <input
-                                        type="checkbox"
-                                        onChange={() => handleFullCheck()}
-                                        checked={isFull}
-                                    ></input>
-                                </th>
-                            </tr>
-                        </thead>
-                        
-                        <tbody>
-                            {details.map((item) => (
-                                <tr key={item.id}>
+                  
+            <div className='myData-right'>
+                {details.length !== 0 && 
+                    <>
+                        <div style={{display: 'flex', justifyContent: 'flex-end'}}>
+                            <button 
+                                className='excel-download'
+                                onClick={() => handleDownload()}>
+                                엑셀 파일로 저장
+                            </button>
+                        </div>
+                        <table border="1" className='myData-detail'>
+                            <thead>
+                                <tr>
                                     {headers.map((header) => (
-                                        <td key={header}>{item[header]}</td>
+                                        <th key={header}>{engToKor(header)}</th>
                                     ))}
-                                    <td>
+                                    <th>
                                         <input
                                             type="checkbox"
-                                            name={item}
-                                            checked={selectedItems.includes(item)}
-                                            onChange={() => handleViewCheckBoxChange(item)}
+                                            onChange={() => handleFullCheck()}
+                                            checked={isFull}
                                         ></input>
-                                    </td>
+                                    </th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </>
-            }
+                            </thead>
+                            
+                            <tbody>
+                                {details.map((item) => (
+                                    <tr key={item.id}>
+                                        {headers.map((header) => (
+                                            <td key={header}>{item[header]}</td>
+                                        ))}
+                                        <td>
+                                            <input
+                                                type="checkbox"
+                                                name={item}
+                                                checked={selectedItems.includes(item)}
+                                                onChange={() => handleViewCheckBoxChange(item)}
+                                            ></input>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </>
+                }
+            </div> 
         </div>
-    </div>
-  );
+    );
 };
 
 export default MyData;
