@@ -60,7 +60,7 @@ export default function FolderListForDelete({ onSelectFolder, onClicked }) {
         customAxios.get('/datafolder/list')
             .then((res) => setData(res.data))
             .catch((err) => console.log(err));
-    }, [data]);
+    }, []);
 
     return (
         <>
