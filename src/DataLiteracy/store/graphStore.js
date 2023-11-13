@@ -6,6 +6,7 @@ class Variable {
     this.type = "Categorical";
     this.isSelected = true;
     this.axis = null;
+    this.graph = null;
   }
 
   get getIsSelected() {
@@ -19,6 +20,9 @@ class Variable {
   }
   get getAxis() {
     return this.axis;
+  }
+  get getGraph() {
+    return this.graph;
   }
 
   setName(name) {
@@ -42,12 +46,19 @@ class Variable {
     }
     this.axis = axis;
   }
+  setGraph(graph) {
+    if (this.graph === graph) {
+      graph = null;
+    }
+    this.graph = graph;
+  }
 
   copy() {
     const newVariable = new Variable(this.name);
     newVariable.setIsSelected(this.getIsSelected);
     newVariable.setType(this.type);
     newVariable.setAxis(this.axis);
+    newVariable.setGraph(this.graph);
     return newVariable;
   }
 }
@@ -107,7 +118,17 @@ export const useGraphDataStore = create((set, get) => ({
     set(state => {
       const newVariables = state.variables.map(variable => variable.copy());
       newVariables[variableIdx].setAxis(axis);
-      console.log(variableIdx, axis, newVariables);
+      return {
+        ...state,
+        variables: newVariables,
+      };
+    }),
+
+  changeGraph: (variableIdx, graph) =>
+    set(state => {
+      const newVariables = state.variables.map(variable => variable.copy());
+      newVariables[variableIdx].setGraph(graph);
+      // console.log(variableIdx, axis, newVariables);
       return {
         ...state,
         variables: newVariables,

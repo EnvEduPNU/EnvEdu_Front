@@ -8,6 +8,7 @@ export const Wrapper = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
+
   background-color: #fff;
   z-index: 1031;
   box-sizing: border-box;
@@ -37,6 +38,7 @@ export const GraphWrapper = styled.div`
   grid-template-columns: 2.5fr 1fr;
   gap: 30px;
   height: 80%;
+  max-height: 80%;
   /* height: 693px;
   max-height: 693px; */
 `;
