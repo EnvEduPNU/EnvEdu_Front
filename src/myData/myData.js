@@ -3,43 +3,9 @@ import * as XLSX from 'xlsx';
 import { customAxios } from '../Common/CustomAxios';
 import './myData.scss';
 import AddFolderModal from './modal/addFolderModal';
+import MoveFolderModal from './modal/moveFolderModal';
 import RemoveFolderModal from './modal/removeFolderModal';
-
-/*folder*/
-const Folder = ({ folder }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  const toggleFolder = () => {
-    setIsExpanded(!isExpanded);
-  };
-
-  return (
-    <div>
-      <div onClick={toggleFolder}>
-        {isExpanded ? 'ㄴ' : '+'} 
-        <img src="/assets/img/folder-icon.png" style={{ width: '1.5rem', margin: '0.5rem' }} />
-        {folder.folderName}
-      </div>
-      {isExpanded && folder.child.length > 0 && (
-        <div style={{ marginLeft: '1.25rem' }}>
-          {folder.child.map((subfolder) => (
-            <Folder key={subfolder.id} folder={subfolder} />
-          ))}
-        </div>
-      )}
-    </div>
-  );
-};
-
-const FolderStructure = ({ data }) => {
-  return (
-    <div>
-      {data.map((folder) => (
-        <Folder key={folder.id} folder={folder} />
-      ))}
-    </div>
-  );
-};
+import FolderList from './folderList';
 
 //항목 이름 (한국어 -> 영어)
 const engToKor = (name) => {
@@ -174,7 +140,6 @@ const MyData = () => {
     }
 
     const handleDownload = () => { 
-        //const arr = [{ age: 10, gender: 'Male', name: "abc" }, {age: 10, gender: 'Male', name: "123"}, {age: 10, gender: 'Male'}];
         if (selectedItems.length === 0) {
             alert("엑셀 파일로 내보낼 데이터를 한 개 이상 선택해 주세요.")
         }
@@ -205,40 +170,6 @@ const MyData = () => {
         }
     }
 
-    // 주어진 JSON 데이터
-    const data = [
-        {
-            "id": 1,
-            "folderName": "dataFolder1",
-            "createDate": "2023-11-13T14:15:48.292167",
-            "updateDate": "2023-11-13T14:15:48.292167",
-            "child": [
-                {
-                    "id": 2,
-                    "folderName": "dataFolder2",
-                    "createDate": "2023-11-13T14:15:48.292167",
-                    "updateDate": "2023-11-13T14:15:48.292167",
-                    "child": [
-                        {
-                            "id": 4,
-                            "folderName": "dataFolder4",
-                            "createDate": "2023-11-13T14:15:48.292167",
-                            "updateDate": "2023-11-13T14:15:48.292167",
-                            "child": []
-                        }
-                    ]
-                },
-                {
-                    "id": 3,
-                    "folderName": "dataFolder3",
-                    "createDate": "2023-11-13T14:15:48.292167",
-                    "updateDate": "2023-11-13T14:15:48.292167",
-                    "child": []
-                }
-            ]
-        }
-    ];
-
     return (
         <div className="myData-container">
             {/*folder + 데이터 요약 정보*/}
@@ -246,8 +177,9 @@ const MyData = () => {
                 {/*folder*/}
                 <div className='myData-folder'>
                     <AddFolderModal />
+                    <MoveFolderModal />
                     <RemoveFolderModal />
-                    <FolderStructure data={data} />
+                    <FolderList />
                 </div>
                 
                 {/*데이터 요약 정보*/}

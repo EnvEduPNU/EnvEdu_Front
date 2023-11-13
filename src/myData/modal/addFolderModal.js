@@ -25,7 +25,7 @@ export default function AddFolderModal() {
             .catch((err) => console.log(err));
         }
     }
-console.log(folderName)
+
     return (
         <>
             <button 
