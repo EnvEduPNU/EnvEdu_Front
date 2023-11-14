@@ -3,6 +3,8 @@ import styled from "styled-components";
 export const Wrapper = styled.div`
   border: 1px solid rgba(34, 36, 38, 0.1);
   border-top: none;
+  border-radius: 5px;
+  overflow: hidden;
 `;
 
 export const Box = styled.div`

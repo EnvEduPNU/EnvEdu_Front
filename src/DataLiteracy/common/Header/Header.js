@@ -5,8 +5,10 @@ import SideBar from "../SideBar/SideBar";
 import { useState } from "react";
 import { Button } from "react-bootstrap";
 import GraphSelector from "../GraphSelector/GraphSelector";
+import { useGraphDataStore } from "../../store/graphStore";
 
 function Header() {
+  const { title } = useGraphDataStore();
   const [isShow, setisShow] = useState(false);
   const onClickMenu = () => {
     setisShow(state => !state);
@@ -16,7 +18,7 @@ function Header() {
       <Styled.Wrapper>
         <Styled.Box>
           <MenuBarIcon onClick={onClickMenu} />
-          <span>23년 7월 농업지대 기상</span>
+          <span>{title}</span>
         </Styled.Box>
         <Styled.Middle>
           <Tab />

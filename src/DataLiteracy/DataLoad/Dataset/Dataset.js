@@ -4,12 +4,14 @@ import { useGraphDataStore } from "../../store/graphStore";
 import * as Styled from "./Styled";
 
 function Dataset() {
-  const { setData } = useGraphDataStore();
+  const { setData, setTitle } = useGraphDataStore();
   const navigate = useNavigate();
 
   const onClickBtn = key => {
     setData(sampleDatas[key]);
+    setTitle(key);
     localStorage.setItem("data", JSON.stringify(sampleDatas[key]));
+    localStorage.setItem("title", JSON.stringify(key));
     navigate("/dataLiteracy/ex");
   };
   return (

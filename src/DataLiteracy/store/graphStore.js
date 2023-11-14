@@ -72,7 +72,9 @@ class Variable {
 }
 
 const data = JSON.parse(localStorage.getItem("data"));
+const title = JSON.parse(localStorage.getItem("title"));
 export const useGraphDataStore = create((set, get) => ({
+  title: title || "",
   data: data || [
     ["농업지대", "평균기온", "강수량", "일조시간"],
     ["태백고냉", 21.9, 181.9, 149.7],
@@ -102,6 +104,12 @@ export const useGraphDataStore = create((set, get) => ({
       ...state,
       data: newData,
       variables: newData[0].map(name => new Variable(name)),
+    })),
+
+  setTitle: title =>
+    set(state => ({
+      ...state,
+      title,
     })),
 
   changeGraphIndex: index =>
