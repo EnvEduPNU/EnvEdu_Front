@@ -44,6 +44,7 @@ import NewDataInput from "./DataLiteracy/DataInput/NewDataInput";
 import CustomTableHeader from "./DataLiteracy/common/CustomTable/CustomTableHeader";
 import CustomTable from "./DataLiteracy/common/CustomTable/CustomTable";
 import DrawGraphV2Page from "./DataLiteracy/DrawGraph/page/DrawGraphV2Page";
+import DataLoadPage from "./DataLiteracy/DataLoad/page/DataLoadPage";
 
 function App() {
   /**
@@ -147,6 +148,7 @@ function App() {
               <Route path="new" element={<NewDataInput />} />
             </Route>
 
+            <Route path="dataload" element={<DataLoadPage />} />
             <Route path="ex" element={<DrawGraphV2Page />} />
           </Route>
         </Routes>
