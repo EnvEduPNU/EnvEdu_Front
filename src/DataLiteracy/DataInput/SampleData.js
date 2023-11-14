@@ -3,9 +3,11 @@ import { useState } from "react";
 import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useDataPretreatmentStore } from "../store/dataPretreatmentStroe";
+import { useGraphDataStore } from "../store/graphStore";
 
 function SampleData() {
   const setDatas = useDataPretreatmentStore(state => state.setDatas);
+  const { setData: setGraphData } = useGraphDataStore();
   const [selected, setSelected] = useState(-1);
   const [data, setData] = useState([[]]);
   const navigate = useNavigate();
@@ -120,8 +122,9 @@ function SampleData() {
   };
   const onClickNextBtn = () => {
     setDatas(data);
+    setGraphData(data);
     localStorage.setItem("data", JSON.stringify(data));
-    navigate("/dataLiteracy/pretreatment");
+    navigate("/dataLiteracy/ex");
   };
 
   return (

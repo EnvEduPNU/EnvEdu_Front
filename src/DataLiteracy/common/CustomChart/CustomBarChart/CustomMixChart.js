@@ -1,6 +1,5 @@
 import { Bar } from "react-chartjs-2";
 import * as Styled from "./Styled";
-import useLineData from "../../../hooks/useLineData";
 import useMixData from "../../../hooks/useMixData";
 
 function CustomMixChart() {

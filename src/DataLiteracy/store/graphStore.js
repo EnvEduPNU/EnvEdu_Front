@@ -71,8 +71,9 @@ class Variable {
   }
 }
 
+const data = JSON.parse(localStorage.getItem("data"));
 export const useGraphDataStore = create((set, get) => ({
-  data: [
+  data: data || [
     ["농업지대", "평균기온", "강수량", "일조시간"],
     ["태백고냉", 21.9, 181.9, 149.7],
     ["소백간산", 25.3, 675.6, 140],
@@ -88,11 +89,20 @@ export const useGraphDataStore = create((set, get) => ({
     ["동해안남부", 26.2, 235.6, 167.3],
   ],
 
-  variables: ["농업지대", "평균기온", "강수량", "일조시간"].map(
-    name => new Variable(name)
-  ),
+  variables:
+    data[0].map(name => new Variable(name)) ||
+    ["농업지대", "평균기온", "강수량", "일조시간"].map(
+      name => new Variable(name)
+    ),
 
   graphIdx: 0,
+
+  setData: newData =>
+    set(state => ({
+      ...state,
+      data: newData,
+      variables: newData[0].map(name => new Variable(name)),
+    })),
 
   changeGraphIndex: index =>
     set(state => {
