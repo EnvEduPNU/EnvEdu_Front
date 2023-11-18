@@ -4,6 +4,7 @@ import { useBarStore } from "../../../store/barStore";
 import * as Styled from "./Styled";
 import LabelInput from "../../../common/Labellnput/LabelInput";
 import MetadataEditor from "../MetadataEditor/MetadataEditor";
+import EditorWrapper from "../EditorWrapper/EditorWrapper";
 
 function BarEditor() {
   const { variables, changeAxis } = useGraphDataStore();
@@ -24,7 +25,7 @@ function BarEditor() {
   };
 
   return (
-    <Styled.Wrapper>
+    <EditorWrapper>
       <Styled.Box>
         <Styled.Title>축 선택</Styled.Title>
         <Styled.ButtonSelectorWrapper>
@@ -68,7 +69,7 @@ function BarEditor() {
         </Styled.LabelInputWrapper>
       </Styled.Box>
       <MetadataEditor />
-    </Styled.Wrapper>
+    </EditorWrapper>
   );
 }
 

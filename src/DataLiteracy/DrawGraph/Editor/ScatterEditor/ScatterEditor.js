@@ -2,6 +2,7 @@ import ButtonSelector from "../../../common/ButtonSelector/ButtonSelector";
 import LabelInput from "../../../common/Labellnput/LabelInput";
 import { useGraphDataStore } from "../../../store/graphStore";
 import { useScatterStore } from "../../../store/scatterStore";
+import EditorWrapper from "../EditorWrapper/EditorWrapper";
 import MetadataEditor from "../MetadataEditor/MetadataEditor";
 
 import * as Styled from "./Styled";
@@ -46,7 +47,7 @@ function ScatterEditor() {
   };
 
   return (
-    <Styled.Wrapper>
+    <EditorWrapper>
       <Styled.Box>
         <Styled.Title>축 선택</Styled.Title>
         <Styled.ButtonSelectorWrapper>
@@ -105,7 +106,7 @@ function ScatterEditor() {
         </Styled.LabelInputWrapper>
       </Styled.Box>
       <MetadataEditor />
-    </Styled.Wrapper>
+    </EditorWrapper>
   );
 }
 

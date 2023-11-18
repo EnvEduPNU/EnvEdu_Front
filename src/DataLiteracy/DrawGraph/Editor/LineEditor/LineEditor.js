@@ -2,6 +2,7 @@ import ButtonSelector from "../../../common/ButtonSelector/ButtonSelector";
 import LabelInput from "../../../common/Labellnput/LabelInput";
 import { useGraphDataStore } from "../../../store/graphStore";
 import { useLineStore } from "../../../store/lineStore";
+import EditorWrapper from "../EditorWrapper/EditorWrapper";
 import MetadataEditor from "../MetadataEditor/MetadataEditor";
 
 import * as Styled from "./Styled";
@@ -25,7 +26,7 @@ function LineEditor() {
   };
 
   return (
-    <Styled.Wrapper>
+    <EditorWrapper>
       <Styled.Box>
         <Styled.Title>축 선택</Styled.Title>
         <Styled.ButtonSelectorWrapper>
@@ -69,7 +70,7 @@ function LineEditor() {
         </Styled.LabelInputWrapper>
       </Styled.Box>
       <MetadataEditor />
-    </Styled.Wrapper>
+    </EditorWrapper>
   );
 }
 
