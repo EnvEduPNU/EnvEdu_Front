@@ -1,26 +1,25 @@
 import "./SideBar.scss";
+import * as Styled from "./Styled";
 
-function SideBar({ activeIdx }) {
-  const menus = [
-    "데이터 입력하기",
-    "데이터 전처리",
-    "그래프 그리기",
-    "그래프 해석하기",
-  ];
+function SideBar({ activeIdx, isShow, setisShow }) {
+  const menus = ["데이터 불러오기", "그래프 그리기", "그래프 해석하기"];
+  const onClickOverlay = () => {
+    setisShow(state => !state);
+  };
   return (
-    <div className="sidebar">
-      <span className="subtitle">Data Literacy</span>
-      <ul>
-        {menus.map((menu, idx) => (
-          <li
-            key={menu + idx}
-            className={activeIdx === idx ? "active" : "no-active"}
-          >
-            {idx + 1}. {menu}
-          </li>
-        ))}
-      </ul>
-    </div>
+    <>
+      {isShow && <Styled.Overlay onClick={onClickOverlay} />}
+      <Styled.Wrapper $isShow={isShow}>
+        <Styled.SubTitle>그래프 그리기</Styled.SubTitle>
+        <Styled.Ul>
+          {menus.map((menu, idx) => (
+            <Styled.Li key={menu + idx} $isActive={activeIdx === idx}>
+              {idx + 1}. {menu}
+            </Styled.Li>
+          ))}
+        </Styled.Ul>
+      </Styled.Wrapper>
+    </>
   );
 }
 

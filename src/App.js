@@ -41,6 +41,10 @@ import GraphInterpreterPage from "./DataLiteracy/GraphInterpreter/GraphInterpret
 import DataPretreatmentPage from "./DataLiteracy/DataPretreatment/DataPretreatmentPage";
 import DataInputPage from "./DataLiteracy/DataInput/DataInputPage";
 import NewDataInput from "./DataLiteracy/DataInput/NewDataInput";
+import CustomTableHeader from "./DataLiteracy/common/CustomTable/CustomTableHeader";
+import CustomTable from "./DataLiteracy/common/CustomTable/CustomTable";
+import DrawGraphV2Page from "./DataLiteracy/DrawGraph/page/DrawGraphV2Page";
+import DataLoadPage from "./DataLiteracy/DataLoad/page/DataLoadPage";
 
 function App() {
   /**
@@ -119,7 +123,11 @@ function App() {
           {/*Admin*/}
           <Route path="/admin/login" exact={true} element={<AdminLogin />} />
           <Route path="/admin/devices" exact={true} element={<DeviceList />} />
-          <Route path="/admin/add/device" exact={true} element={<AddDevice />} />
+          <Route
+            path="/admin/add/device"
+            exact={true}
+            element={<AddDevice />}
+          />
           {/*<Route
             path="/admin/add/device"
             exact={true}
@@ -139,6 +147,9 @@ function App() {
               <Route path="" element={<DataInputPage />} />
               <Route path="new" element={<NewDataInput />} />
             </Route>
+
+            <Route path="dataload" element={<DataLoadPage />} />
+            <Route path="ex" element={<DrawGraphV2Page />} />
           </Route>
         </Routes>
       </div>
