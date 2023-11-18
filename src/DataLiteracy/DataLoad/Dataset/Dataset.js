@@ -18,7 +18,9 @@ function Dataset() {
     <Styled.Wrapper>
       <Styled.Box>
         <Styled.Number>Row#</Styled.Number>
-        <Styled.Data style={{ background: "#f9fafb" }}>프로젝트 명</Styled.Data>
+        <Styled.Data style={{ background: "#f9fafb" }}>
+          Dataset Name
+        </Styled.Data>
       </Styled.Box>
 
       {Object.keys(sampleDatas).map((key, idx) => (

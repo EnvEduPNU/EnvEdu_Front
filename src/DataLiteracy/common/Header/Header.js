@@ -3,7 +3,6 @@ import * as Styled from "./Styled";
 import { ReactComponent as MenuBarIcon } from "../../image/MenuBarIcon.svg";
 import SideBar from "../SideBar/SideBar";
 import { useState } from "react";
-import { Button } from "react-bootstrap";
 import GraphSelector from "../GraphSelector/GraphSelector";
 import { useGraphDataStore } from "../../store/graphStore";
 
