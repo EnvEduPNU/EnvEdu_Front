@@ -16,6 +16,8 @@
     "chartjs-plugin-datalabels": "^2.2.0",
     "classnames": "^2.3.2",
     "crypto-js": "^4.1.1",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.1",
     "net": "^1.0.2",
     "node-sass": "^9.0.0",
     "prop-types": "^15.8.1",

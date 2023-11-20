@@ -46,6 +46,7 @@ import CustomTable from "./DataLiteracy/common/CustomTable/CustomTable";
 import DrawGraphV2Page from "./DataLiteracy/DrawGraph/page/DrawGraphV2Page";
 import DataLoadPage from "./DataLiteracy/DataLoad/page/DataLoadPage";
 import GraphEvalutionRusult from "./DataLiteracy/DrawGraph/GraphEvalutionRusult/GraphEvalutionRusult";
+import ResultReport from "./DataLiteracy/DrawGraph/ResultReport/ResultReport";
 
 function App() {
   /**
@@ -142,6 +143,7 @@ function App() {
           <Route path="/dataLiteracy">
             <Route path="drawGraph" element={<DrawGraph />} />
             <Route path="graphInterpreter" element={<GraphEvalutionRusult />} />
+            <Route path="result" element={<ResultReport />} />
             <Route path="pretreatment" element={<DataPretreatmentPage />} />
 
             <Route path="dataInput">
