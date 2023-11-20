@@ -1,20 +1,20 @@
-import { getSelectedGraph } from "../../utils/localStorage";
-import BarChart from "./BarChart";
-import BubbleChart from "./BubbleChart";
-import LineChart from "./LineChart";
-import MixChart from "./MixChart";
-import ScatterChart from "./ScatterChart";
+import { useGraphDataStore } from "../../store/graphStore";
+import CustomBarChart from "./CustomBarChart/CustomBarChart";
+import CustomBubbleChart from "./CustomBarChart/CustomBubbleChart";
+import CustomLineChart from "./CustomBarChart/CustomLineChart";
+import CustomMixChart from "./CustomBarChart/CustomMixChart";
+import CustomScatterChart from "./CustomBarChart/CustomScatterChart";
 
-function CustomChart({ data }) {
-  const graph = getSelectedGraph();
+function CustomChart() {
+  const graphIdx = useGraphDataStore(state => state.graphIdx);
 
   return (
     <>
-      {graph === 0 && <BarChart data={data} qualitativeVariableIdx={0} />}
-      {graph === 1 && <LineChart data={data} qualitativeVariableIdx={0} />}
-      {graph === 2 && <BubbleChart data={data} qualitativeVariableIdx={0} />}
-      {graph === 4 && <ScatterChart data={data} qualitativeVariableIdx={0} />}
-      {graph === 5 && <MixChart data={data} qualitativeVariableIdx={0} />}
+      {graphIdx === 0 && <CustomBarChart />}
+      {graphIdx === 1 && <CustomLineChart />}
+      {graphIdx === 2 && <CustomBubbleChart />}
+      {graphIdx === 4 && <CustomScatterChart />}
+      {graphIdx === 5 && <CustomMixChart />}
     </>
   );
 }
