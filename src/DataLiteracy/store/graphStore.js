@@ -92,7 +92,7 @@ export const useGraphDataStore = create((set, get) => ({
   ],
 
   variables:
-    data[0].map(name => new Variable(name)) ||
+    (data && data[0].map(name => new Variable(name))) ||
     ["농업지대", "평균기온", "강수량", "일조시간"].map(
       name => new Variable(name)
     ),
