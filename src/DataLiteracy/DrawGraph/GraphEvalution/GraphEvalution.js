@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import Textarea from "../../common/Textarea/Textarea";
 import { useGraphInterpreterStore } from "../../store/graphInterpreterStore";
 import * as Styled from "./Styled";
@@ -7,6 +8,12 @@ function GraphEvalution() {
     userData: { purpose, infomation },
     changeUserData,
   } = useGraphInterpreterStore();
+  const naviagte = useNavigate();
+
+  const onClickNextButton = () => {
+    naviagte("/dataLiteracy/graphInterpreter");
+  };
+
   return (
     <Styled.Wrapper>
       <Styled.Box>
@@ -27,6 +34,9 @@ function GraphEvalution() {
           onChange={e => changeUserData("infomation", e.target.value)}
         />
       </Styled.Box>
+      <Styled.ButtonWrapper>
+        <Styled.Button onClick={onClickNextButton}>다음</Styled.Button>
+      </Styled.ButtonWrapper>
     </Styled.Wrapper>
   );
 }
