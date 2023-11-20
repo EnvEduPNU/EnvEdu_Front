@@ -141,7 +141,7 @@ function App() {
 
           {/*DataLiteracy */}
           <Route path="/dataLiteracy">
-            <Route path="drawGraph" element={<DrawGraph />} />
+            <Route path="drawGraph" element={<DrawGraphV2Page />} />
             <Route path="graphInterpreter" element={<GraphEvalutionRusult />} />
             <Route path="result" element={<ResultReport />} />
             <Route path="pretreatment" element={<DataPretreatmentPage />} />

@@ -12,7 +12,7 @@ function Dataset() {
     setTitle(key);
     localStorage.setItem("data", JSON.stringify(sampleDatas[key]));
     localStorage.setItem("title", JSON.stringify(key));
-    navigate("/dataLiteracy/ex");
+    navigate("/dataLiteracy/drawGraph");
   };
   return (
     <Styled.Wrapper>
