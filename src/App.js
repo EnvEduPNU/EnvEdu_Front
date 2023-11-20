@@ -47,6 +47,8 @@ import DrawGraphV2Page from "./DataLiteracy/DrawGraph/page/DrawGraphV2Page";
 import DataLoadPage from "./DataLiteracy/DataLoad/page/DataLoadPage";
 import GraphEvalutionRusult from "./DataLiteracy/DrawGraph/GraphEvalutionRusult/GraphEvalutionRusult";
 
+import InterAction from "./Education/interaction";
+
 function App() {
   /**
    * 처음에 반드시 .env 파일 생성 후 REACT_APP_API_URL = ${서버 도메인} 작성
@@ -107,6 +109,7 @@ function App() {
           <Route path="/what" exact={true} element={<What />} />
 
           {/*Education */}
+          <Route path="/interaction" exact={true} element={<InterAction />} />
           {/*<Route path="/E-Classes" exact={true} element={<Test/>} />*/}
           <Route path="/measure" exact={true} element={<Measure />} />
           <Route
