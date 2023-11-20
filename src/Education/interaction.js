@@ -39,8 +39,10 @@ export default function InterAction() {
     const handleMemoChange = (e) => {
         setMemo(e.target.value);
     };
-    
-    const handleSave = () => {
+
+
+    const [code, setCode] = useState(null);
+    const handleSharing = () => {
         customAxios.post('/dataLiteracy/inviteData', {
             properties: excelData[0], 
             data: excelData.slice(1),
@@ -48,16 +50,27 @@ export default function InterAction() {
         })
             .then((res) => {
                 alert("공유되었습니다.");
-                console.log(res);
-                console.log(res.data);
+                setCode(res.data);
             })
             .catch((err) => console.log(err));
     }
+    //console.log(excelData);
 
-    console.log(excelData);
-    console.log(excelData[0]);
-    console.log(excelData.slice(1));
-    console.log(memo)
+    const [codeInput, setCodeInput] = useState(null);
+    const handleCode = (e) => {
+        setCodeInput(e.target.value); 
+    }
+
+    const handleSharedData = () => {
+        customAxios.get(`/dataLiteracy/inviteData?inviteCode=${codeInput}`)
+            .then((res) => {
+                console.log(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
+                alert("존재하지 않는 코드입니다.");
+            })
+    }
 
     return(
         <div>
@@ -94,10 +107,6 @@ export default function InterAction() {
                     ))}
                 </tbody>
             </table>
-            
-            <div style={{display: 'flex', justifyContent: 'flex-end', fontWeight: '600', marginTop: '0.5rem'}}>
-                {excelData.length > 0 && <span>데이터 크기 : {excelData.length}</span>}
-            </div>
 
             <div style={{display: 'flex', marginTop: '1rem', marginBottom: '0.5rem'}}>
                 <label>메모</label>   
@@ -106,8 +115,27 @@ export default function InterAction() {
             
 
             <div style={{display: 'flex', justifyContent: 'center', marginTop: '3rem'}}>
-                <button className='save-file-btn' onClick={handleSave}>저장하기</button>
+                <button className='save-file-btn' onClick={handleSharing}>공유하기</button>
             </div>
+            
+            {code &&
+                <div>
+                    <span>초대 코드 : {code}</span>
+                </div>
+            }
+        
+            {/*학생*/}
+            <h4>학생 화면</h4>
+
+            <div>
+                <label>초대 코드 입력하기</label>
+                <input onChange={handleCode}/>
+                <button onClick={handleSharedData}>확인</button>
+            </div>
+
+
+
+
 
             {role == 'ROLE_EDUCATOR' && <>
                 
