@@ -3,6 +3,7 @@ import CustomChart from "../../common/CustomChart/CustomChart";
 import Textarea from "../../common/Textarea/Textarea";
 import { useGraphInterpreterStore } from "../../store/graphInterpreterStore";
 import * as Styled from "./Styled";
+import ResearcherChart from "../../common/CustomChart/ResearcherChart/ResearcherChart";
 
 function GraphEvalutionRusult() {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ function GraphEvalutionRusult() {
         <Styled.ResultWrapper>
           <Styled.Box>
             <Styled.Title>연구진 그래프</Styled.Title>
-            <CustomChart />
+            <ResearcherChart />
           </Styled.Box>
           <Styled.Box>
             <Styled.Title>그래프 목적</Styled.Title>

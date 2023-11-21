@@ -1,4 +1,5 @@
 import CustomChart from "../../common/CustomChart/CustomChart";
+import ResearcherChart from "../../common/CustomChart/ResearcherChart/ResearcherChart";
 import CustomTable from "../../common/CustomTable/CustomTable";
 import Textarea from "../../common/Textarea/Textarea";
 import { useGraphInterpreterStore } from "../../store/graphInterpreterStore";
@@ -24,7 +25,7 @@ function ResultReport() {
     <Styled.Wrapper className="div_container">
       <Styled.Paper className="div_paper">
         <Styled.Box>
-          <Styled.Title>#Report - Class1 4학년 3반 이재훈</Styled.Title>
+          <Styled.Title>#Report - Class1 이재훈</Styled.Title>
         </Styled.Box>
         <Styled.TableWrapper>
           <Styled.SutTitle>제목: {tableTitle}</Styled.SutTitle>
@@ -48,7 +49,7 @@ function ResultReport() {
       <Styled.Paper className="div_paper">
         <Styled.Box>
           <Styled.Title>3. 연구진 그래프</Styled.Title>
-          <CustomChart />
+          <ResearcherChart />
         </Styled.Box>
         <Styled.Box>
           <Styled.SutTitle>그래프 목적</Styled.SutTitle>
