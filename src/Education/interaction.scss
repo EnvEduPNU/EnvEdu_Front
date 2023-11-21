@@ -1,0 +1,108 @@
+.interaction {
+    //교사 화면
+    .labelEducator {
+        border-radius: 0.3125rem;
+        color: #FF7878;
+        font-weight: 600;
+        margin: 1rem 0 0.5rem 0;
+    }
+    .excelData-list {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: center;
+
+        thead {
+            background-color: #FF7878;
+            color: #fff;
+            th {
+                padding: 8px;
+                border: 1px solid #dddddd;
+                text-align: center;
+            }
+        }
+    
+        tbody {
+            tr {
+                &:nth-child(even) {
+                    background-color: #DCDCDC;
+                }
+        
+                td {
+                    padding: 8px;
+                    border: 1px solid #dddddd;
+                    text-align: center;
+                }
+            }
+        }
+    }
+    
+    textarea {
+        border-radius: 0.625rem;
+    }
+
+    .shareFileBtn {
+        background-color: #FF7878;
+        color: #fff;
+        border-radius: 0.625rem;
+        border: none;
+        width: 15rem;
+        height: 2rem;
+        font-weight: 600;
+    }
+
+    //학생 화면
+    .labelStudent {
+        border-radius: 0.3125rem;
+        color: #6CCC81;
+        font-weight: 600;
+        margin: 1rem 0 0.5rem 0;
+    }
+
+    .inputForCode {
+        margin: 0 0.5rem;
+        width: 15rem;
+        border-radius: 0.3125rem;
+        outline: none;
+        border: 1px solid #dddddd;
+    }
+
+    .enterCodeBtn {
+        background-color: #6CCC81;
+        color: #fff;
+        border-radius: 0.625rem;
+        border: none;
+        width: 5rem;
+        height: 2rem;
+        font-weight: 600;
+    }
+
+    .sharedData {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: center;
+
+        thead {
+            background-color: #6CCC81;
+            color: #fff;
+            th {
+                padding: 8px;
+                border: 1px solid #dddddd;
+                text-align: center;
+            }
+        }
+    
+        tbody {
+            tr {
+                &:nth-child(even) {
+                    background-color: #DCDCDC;
+                }
+        
+                td {
+                    padding: 8px;
+                    border: 1px solid #dddddd;
+                    text-align: center;
+                }
+            }
+        }
+    }
+}
