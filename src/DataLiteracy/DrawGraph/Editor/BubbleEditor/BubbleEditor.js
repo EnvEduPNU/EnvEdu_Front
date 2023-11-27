@@ -2,6 +2,7 @@ import ButtonSelector from "../../../common/ButtonSelector/ButtonSelector";
 import LabelInput from "../../../common/Labellnput/LabelInput";
 import { useBubbleStore } from "../../../store/bubbleStore";
 import { useGraphDataStore } from "../../../store/graphStore";
+import EditorWrapper from "../EditorWrapper/EditorWrapper";
 import MetadataEditor from "../MetadataEditor/MetadataEditor";
 
 import * as Styled from "./Styled";
@@ -47,7 +48,7 @@ function BubbleEditor() {
   };
 
   return (
-    <Styled.Wrapper>
+    <EditorWrapper>
       <Styled.Box>
         <Styled.Title>축 선택</Styled.Title>
         <Styled.ButtonSelectorWrapper>
@@ -106,7 +107,7 @@ function BubbleEditor() {
         </Styled.LabelInputWrapper>
       </Styled.Box>
       <MetadataEditor />
-    </Styled.Wrapper>
+    </EditorWrapper>
   );
 }
 

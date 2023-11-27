@@ -12,7 +12,7 @@ export const Wrapper = styled.div`
   display: flex;
   border: 1px solid rgba(34, 36, 38, 0.15);
   max-height: 600px;
-  overflow-y: scroll;
+  overflow-y: auto;
   border-radius: 5px;
 `;
 
