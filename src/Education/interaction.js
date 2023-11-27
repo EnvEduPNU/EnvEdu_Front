@@ -7,7 +7,7 @@ import './interaction.scss';
 export default function InterAction() {
     const [role, setRole] = useState(null);
     const [managedStudents, setManagedStudents] = useState([]);
-    const [sharedData, setSharedData] = useState(null);
+    const [sharedData, setSharedData] = useState([]);
 
     useEffect(() => {
         const user_role = localStorage.getItem("role");
@@ -83,12 +83,12 @@ export default function InterAction() {
 
     // 학생이 데이터 값 수정하기
     const [properties, setProperties] = useState(
-        sharedData ? sharedData[0].properties.split(', ') : []
+        sharedData.length > 0 ? sharedData[0].properties.split(', ') : []
     );
 
     console.log(properties)
     const [cellValues, setCellValues] = useState(
-        sharedData ? sharedData.map(row => row.data.split(', ')) : []
+        sharedData.length > 0 ? sharedData.map(row => row.data.split(', ')) : []
     );
     console.log(cellValues)
     const handleHeaderChange = (index, value) => {
