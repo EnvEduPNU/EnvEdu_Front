@@ -215,7 +215,7 @@ export default function InterAction() {
 
                 <label className='labelStudent'>공유된 데이터</label>
 
-                {sharedData && 
+                {sharedData && sharedData.length > 0 && (
                     <table border="1" className='sharedData'>
                         <thead>
                             <tr>
@@ -234,10 +234,10 @@ export default function InterAction() {
                             ))}
                         </tbody>
                     </table>
-                }
+                )}
 
                 <div>
-                    {sharedData &&
+                    {sharedData && sharedData.length > 0 && (
                         <>
                             <label className='labelStudent'>저장 일시</label>
                             <p>{sharedData[0].saveDate}</p>
@@ -249,13 +249,13 @@ export default function InterAction() {
                                 </>
                             }
                         </>
-                    }
+                    )}
                 </div>
 
                 <div>
                     <label className='labelStudent'>데이터 값 수정하기</label>
 
-                    {sharedData && 
+                    {sharedData && sharedData.length > 0 && (
                         <table border="1" className='sharedData'>
                             <thead>
                                 <tr>
@@ -284,7 +284,7 @@ export default function InterAction() {
                             ))}
                             </tbody>
                         </table>
-                    }
+                    )}
                 </div>
 
                 <div style={{display: 'flex', justifyContent: 'center', marginTop: '3rem'}}>
