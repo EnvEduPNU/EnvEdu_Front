@@ -12,7 +12,7 @@ export default function InterAction() {
         const user_role = localStorage.getItem("role");
         setRole(user_role);
         if (user_role == 'ROLE_EDUCATOR') {
-            customAxios.get('/dataLiteracy/sequenceData?classId=1&chapterId=1&sequenceId=1')
+            customAxios.get('/educator/student_educator')
                 .then((res) => setManagedStudents(res.data))
                 .catch((err) => console.log(err));
         };
