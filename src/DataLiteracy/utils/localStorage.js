@@ -23,7 +23,6 @@ export const getLocalStorage = (localStorageKey, key) => {
 export const getAxisScale = graph => {
   const drawGraph = JSON.parse(localStorage.getItem(DRAW_GRAPH));
   const selectedGraph = drawGraph?.selectedGraph;
-  console.log(selectedGraph, graph);
   if (selectedGraph === null || selectedGraph !== graph) return null;
   return drawGraph.axisScale;
 };

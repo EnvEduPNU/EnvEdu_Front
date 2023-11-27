@@ -1,14 +1,32 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom';
 import { customAxios } from '../Common/CustomAxios';
 import * as XLSX from 'xlsx';
 import './interaction.scss';
 
 export default function InterAction() {
     const [role, setRole] = useState(null);
+    const [managedStudents, setManagedStudents] = useState([]);
+
     useEffect(() => {
         const user_role = localStorage.getItem("role");
         setRole(user_role);
+        if (user_role == 'ROLE_EDUCATOR') {
+            customAxios.get('/dataLiteracy/sequenceData?classId=1&chapterId=1&sequenceId=1')
+                .then((res) => setManagedStudents(res.data))
+                .catch((err) => console.log(err));
+        };
     }, []);
+
+    // 공유할 대상(학생) 선택
+    const [selectedStudents, setSelectedStudents] = useState([]);
+    const handleCheckbox = (studentUsername, studentId) => {
+        const updatedSelectedStudents = selectedStudents.some(student => student.id === studentId)
+            ? selectedStudents.filter(student => student.id !== studentId)
+            : [...selectedStudents, { id: studentId, username: studentUsername }];
+    
+        setSelectedStudents(updatedSelectedStudents);
+    };
 
     // excel 파일 읽기
     const [excelData, setExcelData] = useState([]);
@@ -35,45 +53,80 @@ export default function InterAction() {
         }
     };
 
+    // 메모
     const [memo, setMemo] = useState('');
 
     const handleMemoChange = (e) => {
         setMemo(e.target.value);
     };
 
-    const [code, setCode] = useState(null);
     const handleSharing = () => {
-        customAxios.post('/dataLiteracy/inviteData', {
-            properties: excelData[0], 
-            data: excelData.slice(1),
-            memo: memo
+        customAxios.post('/dataLiteracy/inviteStudent', {
+            data: {
+                properties: excelData[0], 
+                data: excelData.slice(1),
+                memo: memo,
+                classId: 1, 
+                chapterId: 1,
+                sequenceId: 1
+            },
+            users: selectedStudents
         })
-            .then((res) => {
+            .then(() => {
                 alert("공유되었습니다.");
-                setCode(res.data);
             })
             .catch((err) => console.log(err));
     }
     //console.log(excelData);
 
-    const [codeInput, setCodeInput] = useState(null);
-    const handleCode = (e) => {
-        setCodeInput(e.target.value); 
-    }
-
     const [sharedData, setSharedData] = useState(null);
-    const handleSharedData = () => {
-        customAxios.get(`/dataLiteracy/inviteData?inviteCode=${codeInput}`)
+
+    const handleGetData = () => {
+        customAxios.get('/dataLiteracy/sequenceData?classId=1&chapterId=1&sequenceId=1')
             .then((res) => {
                 setSharedData(res.data);
                 console.log(res.data);
             })
             .catch((err) => {
                 console.log(err);
-                alert("존재하지 않는 코드입니다.");
             })
     }
 
+    // 학생이 데이터 값 수정하기
+    const [properties, setProperties] = useState(
+        sharedData ? sharedData[0].properties.split(', ') : []
+    );
+
+    console.log(properties)
+    const [cellValues, setCellValues] = useState(
+        sharedData ? sharedData.map(row => row.data.split(', ')) : []
+    );
+    console.log(cellValues)
+    const handleHeaderChange = (index, value) => {
+        const updatedProperties = [...properties];
+        updatedProperties[index] = value;
+        setProperties(updatedProperties);
+    };
+    
+    const handleCellChange = (rowIndex, cellIndex, value) => {
+        const updatedCellValues = [...cellValues];
+        updatedCellValues[rowIndex][cellIndex] = value;
+        setCellValues(updatedCellValues);
+    };
+
+    const handleModify = () => {
+        customAxios.put('/dataLiteracy/sequenceData', {
+            properties: properties,
+            data: cellValues,
+            memo: sharedData[0].memo,
+            classId: 1,
+            chapterId: 1,
+            sequenceId: 1
+        })
+            .then(() => alert("전송되었습니다."))
+            .catch((err) => console.log(err));
+    };
+    
     return(
         <div className='interaction'>
 
@@ -82,7 +135,26 @@ export default function InterAction() {
                 <h4>교사 화면</h4>
 
                 <div>
-                    <label className='labelEducator'>파일 업로드</label>
+                    <label className='labelEducator'>공유할 대상 선택</label>
+                    {managedStudents.length > 0 &&
+                        <div className='managedStudentContainer'>
+                            {managedStudents.elems.map((elem, index) => (
+                                <div key={index}>
+                                    <label>
+                                        <input 
+                                            type="checkbox" 
+                                            onChange={() => handleCheckbox(elem.studentUsername, elem.id)}
+                                        />
+                                        {elem.studentUsername}
+                                    </label>
+                                </div>
+                            ))}
+                        </div>
+                    }   
+                </div>
+
+                <div>
+                    <label className='labelEducator'>공유할 파일 업로드</label>
                     <input type="file" accept=".xlsx" onChange={handleExcelFileChange} />
                 </div>
 
@@ -122,11 +194,11 @@ export default function InterAction() {
                     <button className='shareFileBtn' onClick={handleSharing}>공유하기</button>
                 </div>
 
-                {code &&
-                    <div style={{display: 'flex', justifyContent: 'center', marginTop: '3rem'}}>
-                        <span style={{color: '#FF7878', fontWeight: '600'}}>초대 코드 : {code}</span>
-                    </div>
-                }
+                <div style={{display: 'flex', justifyContent: 'center', marginTop: '1rem'}}>
+                    <Link to='/interaction2'>
+                        <button className='shareFileBtn'>학생 데이터 조회하기</button>
+                    </Link>
+                </div>
             </>}
             
             {/*학생 화면*/}
@@ -134,9 +206,10 @@ export default function InterAction() {
                 <h4>학생 화면</h4>
 
                 <div>
-                    <label className='labelStudent'>초대 코드 입력하기</label>
-                    <input className='inputForCode' onChange={handleCode} />
-                    <button className='enterCodeBtn' onClick={handleSharedData}>확인</button>
+                    <button 
+                        className='shareFileBtn' 
+                        onClick={handleGetData}
+                        style={{background: '#6CCC81'}}>공유 데이터 가져오기</button>
                 </div>
 
                 <label className='labelStudent'>공유된 데이터</label>
@@ -145,15 +218,15 @@ export default function InterAction() {
                     <table border="1" className='sharedData'>
                         <thead>
                             <tr>
-                                {sharedData.properties.map((property, index) => (
+                                {sharedData[0].properties.split(', ').map((property, index) => (
                                     <th key={index}>{property}</th>
                                 ))}
                             </tr>
                         </thead>
                         <tbody>
-                            {sharedData.data.map((row, rowIndex) => (
+                            {sharedData.map((row, rowIndex) => (
                                 <tr key={rowIndex}>
-                                    {row.map((cell, cellIndex) => (
+                                    {row.data.split(', ').map((cell, cellIndex) => (
                                         <td key={cellIndex}>{cell}</td>
                                     ))}
                                 </tr>
@@ -165,17 +238,56 @@ export default function InterAction() {
                 <div>
                     {sharedData &&
                         <>
-                            {sharedData.memo &&
+                            <label className='labelStudent'>저장 일시</label>
+                            <p>{sharedData[0].saveDate}</p>
+
+                            {sharedData[0].memo &&
                                 <>
                                     <label className='labelStudent'>메모</label>
-                                    <p>{sharedData.memo}</p>
+                                    <p>{sharedData[0].memo}</p>
                                 </>
                             }
-
-                            <label className='labelStudent'>저장 일시</label>
-                            <p>{sharedData.saveDate}</p>
                         </>
                     }
+                </div>
+
+                <div>
+                    <label className='labelStudent'>데이터 값 수정하기</label>
+
+                    {sharedData && 
+                        <table border="1" className='sharedData'>
+                            <thead>
+                                <tr>
+                                    {sharedData[0].properties.split(', ').map((property, index) => (
+                                        <th key={index}>
+                                            <input
+                                                value={properties[index]}
+                                                onChange={(e) => handleHeaderChange(index, e.target.value)}
+                                            />
+                                        </th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {sharedData.map((row, rowIndex) => (
+                                <tr key={rowIndex}>
+                                {row.data.split(', ').map((cell, cellIndex) => (
+                                    <td key={cellIndex}>
+                                        <input
+                                            value={cellValues[rowIndex][cellIndex]}
+                                            onChange={(e) => handleCellChange(rowIndex, cellIndex, e.target.value)}
+                                        />
+                                    </td>
+                                ))}
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                    }
+                </div>
+
+                <div style={{display: 'flex', justifyContent: 'center', marginTop: '3rem'}}>
+                    <button className='shareFileBtn'  style={{background: '#6CCC81'}} onClick={handleModify}>전송하기</button>
                 </div>
             </>}
         </div>

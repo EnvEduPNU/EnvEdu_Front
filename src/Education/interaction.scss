@@ -6,6 +6,15 @@
         font-weight: 600;
         margin: 1rem 0 0.5rem 0;
     }
+    .managedStudentContainer {
+        display: flex;
+        border: 1.5px solid #dddddd;
+        border-radius: 0.3125rem;
+        padding: 0.5rem 1rem;
+        input[type='checkbox'] {
+            accent-color: #FF7878;
+        }
+    }
     .excelData-list {
         width: 100%;
         border-collapse: collapse;
@@ -16,7 +25,7 @@
             color: #fff;
             th {
                 padding: 8px;
-                border: 1px solid #dddddd;
+                border: 1px solid #cbcbcb;
                 text-align: center;
             }
         }
@@ -38,6 +47,7 @@
     
     textarea {
         border-radius: 0.625rem;
+        border: 1px solid #cbcbcb;
     }
 
     .shareFileBtn {
