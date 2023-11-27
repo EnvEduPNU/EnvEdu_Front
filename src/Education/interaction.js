@@ -7,6 +7,7 @@ import './interaction.scss';
 export default function InterAction() {
     const [role, setRole] = useState(null);
     const [managedStudents, setManagedStudents] = useState([]);
+    const [sharedData, setSharedData] = useState(null);
 
     useEffect(() => {
         const user_role = localStorage.getItem("role");
@@ -16,7 +17,16 @@ export default function InterAction() {
             customAxios.get('/educator/student_educator')
                 .then((res) => setManagedStudents(res.data))
                 .catch((err) => console.log(err));
-        };
+        } else if (user_role === "ROLE_STUDENT") {
+            customAxios.get('/dataLiteracy/sequenceData?classId=1&chapterId=1&sequenceId=1')
+                .then((res) => {
+                    setSharedData(res.data);
+                    console.log(res.data);
+                })
+                .catch((err) => {
+                    console.log(err);
+                })
+        }
     }, []); 
 
     // 공유할 대상(학생) 선택
@@ -80,19 +90,6 @@ export default function InterAction() {
     }
     //console.log(excelData);
 
-    const [sharedData, setSharedData] = useState(null);
-
-    const handleGetData = () => {
-        customAxios.get('/dataLiteracy/sequenceData?classId=1&chapterId=1&sequenceId=1')
-            .then((res) => {
-                setSharedData(res.data);
-                console.log(res.data);
-            })
-            .catch((err) => {
-                console.log(err);
-            })
-    }
-
     // 학생이 데이터 값 수정하기
     const [properties, setProperties] = useState(
         sharedData ? sharedData[0].properties.split(', ') : []
@@ -111,6 +108,7 @@ export default function InterAction() {
     
     const handleCellChange = (rowIndex, cellIndex, value) => {
         const updatedCellValues = [...cellValues];
+        updatedCellValues[rowIndex] = [...updatedCellValues[rowIndex]];
         updatedCellValues[rowIndex][cellIndex] = value;
         setCellValues(updatedCellValues);
     };
@@ -205,13 +203,6 @@ export default function InterAction() {
             {/*학생 화면*/}
             {role == 'ROLE_STUDENT' && <>
                 <h4>학생 화면</h4>
-
-                <div>
-                    <button 
-                        className='shareFileBtn' 
-                        onClick={handleGetData}
-                        style={{background: '#6CCC81'}}>공유 데이터 가져오기</button>
-                </div>
 
                 <label className='labelStudent'>공유된 데이터</label>
 
