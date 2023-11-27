@@ -48,6 +48,7 @@ import DataLoadPage from "./DataLiteracy/DataLoad/page/DataLoadPage";
 import GraphEvalutionRusult from "./DataLiteracy/DrawGraph/GraphEvalutionRusult/GraphEvalutionRusult";
 
 import InterAction from "./Education/interaction";
+import InterAction2 from "./Education/interaction2";
 
 function App() {
   /**
@@ -110,6 +111,7 @@ function App() {
 
           {/*Education */}
           <Route path="/interaction" exact={true} element={<InterAction />} />
+          <Route path="/interaction2" exact={true} element={<InterAction2 />} />
           {/*<Route path="/E-Classes" exact={true} element={<Test/>} />*/}
           <Route path="/measure" exact={true} element={<Measure />} />
           <Route
