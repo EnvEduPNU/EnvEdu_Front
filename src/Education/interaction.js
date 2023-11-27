@@ -11,9 +11,11 @@ export default function InterAction() {
     useEffect(() => {
         const user_role = localStorage.getItem("role");
         setRole(user_role);
-        if (user_role == 'ROLE_EDUCATOR') {
+        console.log(user_role)
+        if (user_role === "ROLE_EDUCATOR") {
+            console.log("안녕")
             customAxios.get('/educator/student_educator')
-                .then((res) => setManagedStudents(res.data))
+                .then((res) => {setManagedStudents(res.data); console.log(res.data)})
                 .catch((err) => console.log(err));
         };
     }, []);
