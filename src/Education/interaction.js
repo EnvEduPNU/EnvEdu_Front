@@ -17,15 +17,6 @@ export default function InterAction() {
             customAxios.get('/educator/student_educator')
                 .then((res) => setManagedStudents(res.data))
                 .catch((err) => console.log(err));
-        } else if (user_role === "ROLE_STUDENT") {
-            customAxios.get('/dataLiteracy/sequenceData?classId=1&chapterId=1&sequenceId=1')
-                .then((res) => {
-                    setSharedData(res.data);
-                    console.log(res.data);
-                })
-                .catch((err) => {
-                    console.log(err);
-                })
         }
     }, []); 
 
@@ -126,6 +117,17 @@ export default function InterAction() {
             .catch((err) => console.log(err));
     };
 
+    const handleGetData = () => {
+        customAxios.get('/dataLiteracy/sequenceData?classId=1&chapterId=1&sequenceId=1')
+            .then((res) => {
+                setSharedData(res.data);
+                console.log(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
+
     return(
         <div className='interaction'>
 
@@ -203,6 +205,13 @@ export default function InterAction() {
             {/*학생 화면*/}
             {role == 'ROLE_STUDENT' && <>
                 <h4>학생 화면</h4>
+
+                <div>
+                    <button 
+                        className='shareFileBtn' 
+                        onClick={handleGetData}
+                        style={{background: '#6CCC81'}}>공유 데이터 가져오기</button>
+                </div>
 
                 <label className='labelStudent'>공유된 데이터</label>
 
