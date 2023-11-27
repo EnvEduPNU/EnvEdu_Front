@@ -275,7 +275,7 @@ export default function InterAction() {
                                 {row.data.split(', ').map((cell, cellIndex) => (
                                     <td key={cellIndex}>
                                         <input
-                                            value={cellValues[rowIndex][cellIndex]}
+                                            value={(cellValues[rowIndex] && cellValues[rowIndex][cellIndex]) || ''}
                                             onChange={(e) => handleCellChange(rowIndex, cellIndex, e.target.value)}
                                         />
                                     </td>
