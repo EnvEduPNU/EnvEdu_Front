@@ -80,8 +80,8 @@ export default function InterAction() {
     }
     //console.log(excelData);
 
-    const [sharedData, setSharedData] = useState(null);
-
+    const [sharedData, setSharedData] = useState([]);
+    
     const handleGetData = () => {
         customAxios.get('/dataLiteracy/sequenceData?classId=1&chapterId=1&sequenceId=1')
             .then((res) => {
@@ -93,15 +93,22 @@ export default function InterAction() {
             })
     }
 
-    // 학생이 데이터 값 수정하기
-    const [properties, setProperties] = useState(
-        sharedData ? sharedData[0].properties.split(', ') : []
-    );
+    const [properties, setProperties] = useState([]);
+    const [cellValues, setCellValues] = useState([]);
 
-    console.log(properties)
-    const [cellValues, setCellValues] = useState(
-        sharedData ? sharedData.map(row => row.data.split(', ')) : []
-    );
+    useEffect(() => {
+        if (sharedData.length > 0) {
+            // properties 업데이트
+            const newProperties = sharedData[0].properties.split(', ');
+            setProperties(newProperties);
+    
+            // cellValues 업데이트
+            const newCellValues = sharedData.map(row => row.data.split(', '));
+            setCellValues(newCellValues);
+        }
+    }, [sharedData]);
+
+    // 학생이 데이터 값 수정하기
     console.log(cellValues)
     const handleHeaderChange = (index, value) => {
         const updatedProperties = [...properties];
@@ -275,7 +282,7 @@ export default function InterAction() {
                                 {row.data.split(', ').map((cell, cellIndex) => (
                                     <td key={cellIndex}>
                                         <input
-                                            value={(cellValues[rowIndex] && cellValues[rowIndex][cellIndex]) || ''}
+                                            value={cellValues[rowIndex][cellIndex]}
                                             onChange={(e) => handleCellChange(rowIndex, cellIndex, e.target.value)}
                                         />
                                     </td>
