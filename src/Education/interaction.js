@@ -108,7 +108,7 @@ export default function InterAction() {
     
     const handleCellChange = (rowIndex, cellIndex, value) => {
         const updatedCellValues = [...cellValues];
-        updatedCellValues[rowIndex] = [...updatedCellValues[rowIndex]];
+        updatedCellValues[rowIndex] = [...(updatedCellValues[rowIndex] || [])];
         updatedCellValues[rowIndex][cellIndex] = value;
         setCellValues(updatedCellValues);
     };
@@ -125,7 +125,7 @@ export default function InterAction() {
             .then(() => alert("전송되었습니다."))
             .catch((err) => console.log(err));
     };
-    
+
     return(
         <div className='interaction'>
 
@@ -266,7 +266,6 @@ export default function InterAction() {
                                 {row.data.split(', ').map((cell, cellIndex) => (
                                     <td key={cellIndex}>
                                         <input
-                                            value={(cellValues[rowIndex] && cellValues[rowIndex][cellIndex]) || ''}
                                             onChange={(e) => handleCellChange(rowIndex, cellIndex, e.target.value)}
                                         />
                                     </td>
