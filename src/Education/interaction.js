@@ -11,14 +11,13 @@ export default function InterAction() {
     useEffect(() => {
         const user_role = localStorage.getItem("role");
         setRole(user_role);
-        console.log(user_role)
+
         if (user_role === "ROLE_EDUCATOR") {
-            console.log("안녕")
             customAxios.get('/educator/student_educator')
-                .then((res) => {setManagedStudents(res.data); console.log(res.data)})
+                .then((res) => setManagedStudents(res.data))
                 .catch((err) => console.log(err));
         };
-    }, []);
+    }, []); 
 
     // 공유할 대상(학생) 선택
     const [selectedStudents, setSelectedStudents] = useState([]);
@@ -138,7 +137,7 @@ export default function InterAction() {
 
                 <div>
                     <label className='labelEducator'>공유할 대상 선택</label>
-                    {managedStudents.length > 0 &&
+                    {managedStudents.elems &&
                         <div className='managedStudentContainer'>
                             {managedStudents.elems.map((elem, index) => (
                                 <div key={index}>
