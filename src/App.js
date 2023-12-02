@@ -50,11 +50,15 @@ import ResultReport from "./DataLiteracy/DrawGraph/ResultReport/ResultReport";
 
 import InterAction from "./Education/interaction";
 import InterAction2 from "./Education/interaction2";
+import { usetutorialStroe } from "./DataLiteracy/store/tutorialStore";
+import Overlay from "./DataLiteracy/common/Overlay/Overlay";
 
 function App() {
   /**
    * 처음에 반드시 .env 파일 생성 후 REACT_APP_API_URL = ${서버 도메인} 작성
    */
+
+  const isTutorial = usetutorialStroe(state => state.isTutorial);
   useEffect(() => {
     //todo: check validity of refresh token(cookie)
   }, []);
@@ -162,6 +166,7 @@ function App() {
         </Routes>
       </div>
       <Footer />
+      {/* {isTutorial && <Overlay />} */}
     </>
   );
 }

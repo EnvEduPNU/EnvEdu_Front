@@ -5,8 +5,10 @@ import SideBar from "../SideBar/SideBar";
 import { useState } from "react";
 import GraphSelector from "../GraphSelector/GraphSelector";
 import { useGraphDataStore } from "../../store/graphStore";
+import { usetutorialStroe } from "../../store/tutorialStore";
 
 function Header() {
+  // const { step, isTutorial } = usetutorialStroe();
   const { title } = useGraphDataStore();
   const [isShow, setisShow] = useState(false);
   const onClickMenu = () => {
