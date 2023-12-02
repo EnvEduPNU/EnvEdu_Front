@@ -44,6 +44,11 @@
   top: 50%;
   transform: translate(-50%, -50%);
   z-index: 1092;
+  .tutorial-description {
+    position: absolute;
+    right: -330px;
+    top: 30%;
+  }
   .block {
     background-color: #fff;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);

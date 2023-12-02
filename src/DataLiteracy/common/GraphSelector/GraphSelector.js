@@ -6,12 +6,15 @@ import { usetutorialStroe } from "../../store/tutorialStore";
 import TutorialDescription from "../TutorialDescription/TutorialDescription";
 
 function GraphSelector() {
-  const { step, isTutorial } = usetutorialStroe();
+  const { step, isTutorial, addStep } = usetutorialStroe();
   const { graphIdx, changeGraphIndex, variables } = useGraphDataStore();
   const [isVisibleModal, setIsVisibleModal] = useState(false);
 
   const onClickGraphSelectionBtn = () => {
     setIsVisibleModal(state => !state);
+    if (isTutorial) {
+      addStep();
+    }
   };
 
   return (
@@ -25,6 +28,7 @@ function GraphSelector() {
             description={
               "이 데이터는 농업지대의 월별 강수량 데이터입니다. 이 데이터를 나타낼 그래프를 선택해보세요"
             }
+            nextButtonClick={() => setIsVisibleModal(state => !state)}
           />
         )}
       </Styled.Wrapper>

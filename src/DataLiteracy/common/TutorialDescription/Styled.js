@@ -82,9 +82,9 @@ export const Bottom = styled.div`
 `;
 
 export const Title = styled.div`
-  color: #263747;
-  font-size: 16px;
-  font-weight: 600;
+  color: #263747 !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
 `;
 
 export const StepDescription = styled.span`
@@ -103,6 +103,7 @@ export const LeftButton = styled.div`
   color: #fff;
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
+  cursor: pointer;
   &:hover {
     background-color: #0053f4;
   }
@@ -119,9 +120,9 @@ export const RightButton = styled.div`
   border-color: #0078ff;
   background-color: #0078ff;
   color: #fff;
-  /* border-left: 1px solid blue; */
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
+  cursor: pointer;
   &:hover {
     background-color: #0053f4;
   }
@@ -134,8 +135,8 @@ export const RightButton = styled.div`
 `;
 
 export const Text = styled.span`
-  font-size: 0.9rem;
-  line-height: 1.5rem;
+  font-size: 0.9rem !important;
+  line-height: 1.5rem !important;
 
-  color: #263747;
+  color: #263747 !important;
 `;

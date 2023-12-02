@@ -20,4 +20,7 @@ export const usetutorialStroe = create((set, get) => ({
         isTutorial: false,
       };
     }),
+
+  addStep: () => set(state => ({ ...state, step: get().step + 1 })),
+  minusStep: () => set(state => ({ ...state, step: get().step - 1 })),
 }));
