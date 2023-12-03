@@ -1,9 +1,18 @@
 import styled, { css } from "styled-components";
 
 export const TableHeaderWrapper = styled.div`
+  position: relative;
   width: 100%;
   display: flex;
   border: 1px solid rgba(34, 36, 38, 0.15);
+
+  .tutorial-description {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    top: 120px;
+    width: 400px;
+  }
 `;
 
 export const Wrapper = styled.div`

@@ -28,7 +28,7 @@ function GraphSelectionModal({
     setSelectedGraph(graphIdx);
     setIsVisibleModal(state => !state);
     changeTab("graph");
-    addStep();
+    if (isTutorial) addStep();
   };
 
   const onClickOverlay = () => {
@@ -62,10 +62,6 @@ function GraphSelectionModal({
         {isTutorial && step == 1 && (
           <TutorialDescription
             position="left"
-            title={"그래프 선택"}
-            description={
-              "시간에 따른 자료의 추세를 나타내기에 적합한 그래프는 꺾은선 그래프로, 데이터를 이용해 농업지대의 월별 강수량의 변화를 나타내려면 꺾은선 그래프를 선택해주세요."
-            }
             prevButtonClick={() => setIsVisibleModal(state => !state)}
             nextButtonClick={() => {
               setSelectedGraph(graphIdx);

@@ -1,4 +1,5 @@
 import { usetutorialStroe } from "../../store/tutorialStore";
+import { tutorials } from "../../utils/tutorials";
 import * as Styled from "./Styled";
 
 function TutorialDescription({
@@ -7,6 +8,9 @@ function TutorialDescription({
   description,
   prevButtonClick,
   nextButtonClick,
+  top,
+  left,
+  width,
 }) {
   const { step, totalStepSize, addStep, minusStep } = usetutorialStroe();
   const onClick = e => {
@@ -26,10 +30,11 @@ function TutorialDescription({
       onClick={onClick}
       className="tutorial-description"
       $position={position}
+      style={{ top, left, width }}
     >
       <Styled.Box>
-        <Styled.Title>{title}</Styled.Title>
-        <Styled.Text>{description}</Styled.Text>
+        <Styled.Title>{tutorials[step].title}</Styled.Title>
+        <Styled.Text>{tutorials[step].description}</Styled.Text>
         <Styled.Bottom>
           <Styled.StepDescription>
             {step + 1} / {totalStepSize}

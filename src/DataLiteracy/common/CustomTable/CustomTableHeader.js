@@ -3,8 +3,13 @@ import * as Styled from "./Styled";
 import { ReactComponent as PencilIcon } from "../../image/Pencil.svg";
 import Select from "../Select/Select";
 import { useGraphDataStore } from "../../store/graphStore";
+import TutorialDescription from "../TutorialDescription/TutorialDescription";
+import { usetutorialStroe } from "../../store/tutorialStore";
+import { ustTabStore } from "../../store/tabStore";
 
 function CustomTableHeader() {
+  const { changeTab } = ustTabStore();
+  const { isTutorial, step } = usetutorialStroe();
   const { data, variables, changeSelectedVariable, changeVariableType } =
     useGraphDataStore();
   const headers = data[0];
@@ -48,6 +53,13 @@ function CustomTableHeader() {
           </Styled.HeaderWrapper>
         </Styled.Column>
       ))}
+      {isTutorial && step == 2 && (
+        <TutorialDescription
+          position="top"
+          prevButtonClick={() => changeTab("graph")}
+          // nextButtonClick={}
+        />
+      )}
     </Styled.TableHeaderWrapper>
   );
 }

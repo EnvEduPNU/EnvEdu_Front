@@ -1,5 +1,9 @@
+import Portal from "../../../../Portal";
 import ButtonSelector from "../../../common/ButtonSelector/ButtonSelector";
+import TutorialDescription from "../../../common/TutorialDescription/TutorialDescription";
+import useComponentPosition from "../../../hooks/useComponentPosition";
 import { useChartMetaDataStore } from "../../../store/drawGraphStore";
+import { usetutorialStroe } from "../../../store/tutorialStore";
 import * as Styled from "./Styled";
 
 function MetadataEditor() {
@@ -8,6 +12,8 @@ function MetadataEditor() {
     changeLegendPosition,
     changeDatalabelAnchor,
   } = useChartMetaDataStore();
+  const { isTutorial, step } = usetutorialStroe();
+  const { ref, position } = useComponentPosition();
 
   const onChangeLegendPostition = postion => {
     changeLegendPosition(postion);
@@ -18,7 +24,7 @@ function MetadataEditor() {
   };
 
   return (
-    <Styled.Box>
+    <Styled.Box ref={ref}>
       <Styled.Title>범례, 레이블 위치 선택</Styled.Title>
       <Styled.ButtonSelectorWrapper>
         <ButtonSelector
@@ -34,6 +40,15 @@ function MetadataEditor() {
           defaultValue={datalabelAnchor}
         />
       </Styled.ButtonSelectorWrapper>
+      {isTutorial && step === 8 && (
+        <Portal>
+          <TutorialDescription
+            position="right"
+            top={position.top - 50}
+            left={position.left - 330}
+          />
+        </Portal>
+      )}
     </Styled.Box>
   );
 }

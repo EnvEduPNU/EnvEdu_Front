@@ -3,12 +3,19 @@ import { ReactComponent as PencilIcon } from "../../image/Pencil.svg";
 import Select from "../Select/Select";
 import { useGraphDataStore } from "../../store/graphStore";
 import { useState } from "react";
+import useComponentPosition from "../../hooks/useComponentPosition";
+import { usetutorialStroe } from "../../store/tutorialStore";
+import Portal from "../../../Portal";
+import TutorialDescription from "../TutorialDescription/TutorialDescription";
+import { ustTabStore } from "../../store/tabStore";
 
 function CustomTable() {
   const { data, variables, changeValue, changeVariableType } =
     useGraphDataStore();
   const [editableCell, setEditableCell] = useState(null);
-
+  const { ref, position } = useComponentPosition();
+  const { changeTab } = ustTabStore();
+  const { isTutorial, step } = usetutorialStroe();
   const tableNumberData = data.map((d, idx) => {
     if (idx == 0) return "Rows#";
     return `${idx}`;
@@ -46,7 +53,7 @@ function CustomTable() {
 
   return (
     <Styled.Wrapper>
-      <Styled.FirstColumn key={"starter"} $isNotEnd>
+      <Styled.FirstColumn key={"starter"} $isNotEnd ref={ref}>
         <Styled.HeaderWrapper>
           <Styled.HeaderStartar>{tableNumberData[0]}</Styled.HeaderStartar>
         </Styled.HeaderWrapper>
@@ -56,6 +63,22 @@ function CustomTable() {
           </Styled.RowNumber>
         ))}
       </Styled.FirstColumn>
+      {isTutorial && step === 5 && (
+        <Portal>
+          <TutorialDescription
+            position="bottom"
+            top={position.top - 240}
+            left={position.left + 730}
+            width={"500px"}
+            prevButtonClick={() => {
+              changeTab();
+            }}
+            nextButtonClick={() => {
+              changeTab();
+            }}
+          />
+        </Portal>
+      )}
       {headers.map((header, col) => (
         <Styled.Column key={col} $isNotEnd={col != headers.length - 1}>
           <Styled.HeaderWrapper>

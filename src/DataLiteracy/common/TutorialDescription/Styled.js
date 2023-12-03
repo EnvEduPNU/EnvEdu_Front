@@ -2,7 +2,7 @@ import styled, { css } from "styled-components";
 
 export const Wrapper = styled.div`
   text-align: start;
-  position: relative;
+  position: absolute;
   width: 300px;
   background-color: #eee;
   border-radius: 0.25rem;
@@ -74,6 +74,7 @@ export const Box = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 100%;
 `;
 
 export const Bottom = styled.div`
@@ -135,8 +136,8 @@ export const RightButton = styled.div`
 `;
 
 export const Text = styled.span`
-  font-size: 0.9rem !important;
+  font-size: 0.85rem !important;
   line-height: 1.5rem !important;
-
+  font-weight: 600;
   color: #263747 !important;
 `;

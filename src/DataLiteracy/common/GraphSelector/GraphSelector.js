@@ -4,6 +4,7 @@ import GraphSelectionModal from "../../DrawGraph/GraphSelectionModal";
 import { useGraphDataStore } from "../../store/graphStore";
 import { usetutorialStroe } from "../../store/tutorialStore";
 import TutorialDescription from "../TutorialDescription/TutorialDescription";
+import { tutorials } from "../../utils/tutorials";
 
 function GraphSelector() {
   const { step, isTutorial, addStep } = usetutorialStroe();
@@ -24,10 +25,6 @@ function GraphSelector() {
         {isTutorial && step == 0 && (
           <TutorialDescription
             position="top"
-            title={"그래프 선택"}
-            description={
-              "이 데이터는 농업지대의 월별 강수량 데이터입니다. 이 데이터를 나타낼 그래프를 선택해보세요"
-            }
             nextButtonClick={() => setIsVisibleModal(state => !state)}
           />
         )}
