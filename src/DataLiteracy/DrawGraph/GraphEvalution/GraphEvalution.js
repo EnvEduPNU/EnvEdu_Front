@@ -6,6 +6,7 @@ import Portal from "../../../Portal";
 import TutorialDescription from "../../common/TutorialDescription/TutorialDescription";
 import { usetutorialStroe } from "../../store/tutorialStore";
 import useComponentPosition from "../../hooks/useComponentPosition";
+import Overlay from "../../common/Overlay/Overlay";
 
 function GraphEvalution() {
   return (
@@ -25,19 +26,22 @@ const NextButton = () => {
     naviagte("/dataLiteracy/graphInterpreter");
   };
   return (
-    <Styled.ButtonWrapper ref={ref}>
-      <Styled.Button onClick={onClickNextButton}>다음</Styled.Button>
+    <Styled.ButtonWrapper>
+      <Styled.Button ref={ref} onClick={onClickNextButton}>
+        다음
+      </Styled.Button>
       {isTutorial && step === 12 && (
         <Portal>
           <TutorialDescription
             position="right"
-            top={position.top - 90}
-            left={position.left - 100}
+            top={position.top - 100}
+            left={position.left - 430}
             width={"400px"}
             nextButtonClick={() => {
               onClickNextButton();
             }}
           />
+          <Overlay position={position} />
         </Portal>
       )}
     </Styled.ButtonWrapper>
@@ -68,6 +72,7 @@ const GraphPurposeEvalution = () => {
             top={position.top}
             left={position.left - 330}
           />
+          <Overlay position={position} />
         </Portal>
       )}
     </Styled.Box>
@@ -96,6 +101,7 @@ const GraphInfomationEvalution = () => {
             top={position.top}
             left={position.left - 330}
           />
+          <Overlay position={position} />
         </Portal>
       )}
     </Styled.Box>

@@ -4,11 +4,14 @@ import GraphSelectionModal from "../../DrawGraph/GraphSelectionModal";
 import { useGraphDataStore } from "../../store/graphStore";
 import { usetutorialStroe } from "../../store/tutorialStore";
 import TutorialDescription from "../TutorialDescription/TutorialDescription";
-import { tutorials } from "../../utils/tutorials";
+import Portal from "../../../Portal";
+import useComponentPosition from "../../hooks/useComponentPosition";
+import Overlay from "../Overlay/Overlay";
 
 function GraphSelector() {
   const { step, isTutorial, addStep } = usetutorialStroe();
-  const { graphIdx, changeGraphIndex, variables } = useGraphDataStore();
+  const { position, ref } = useComponentPosition();
+  const { graphIdx, changeGraphIndex } = useGraphDataStore();
   const [isVisibleModal, setIsVisibleModal] = useState(false);
 
   const onClickGraphSelectionBtn = () => {
@@ -20,13 +23,18 @@ function GraphSelector() {
 
   return (
     <>
-      <Styled.Wrapper onClick={onClickGraphSelectionBtn}>
+      <Styled.Wrapper onClick={onClickGraphSelectionBtn} ref={ref}>
         그래프 선택하기
         {isTutorial && step == 0 && (
-          <TutorialDescription
-            position="top"
-            nextButtonClick={() => setIsVisibleModal(state => !state)}
-          />
+          <Portal>
+            <TutorialDescription
+              position="top"
+              nextButtonClick={() => setIsVisibleModal(state => !state)}
+              top={position.top + 60}
+              left={position.left - 140}
+            />
+            <Overlay position={position} />
+          </Portal>
         )}
       </Styled.Wrapper>
       {isVisibleModal && (

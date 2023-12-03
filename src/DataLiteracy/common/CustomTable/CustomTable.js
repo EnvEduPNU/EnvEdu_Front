@@ -8,6 +8,7 @@ import { usetutorialStroe } from "../../store/tutorialStore";
 import Portal from "../../../Portal";
 import TutorialDescription from "../TutorialDescription/TutorialDescription";
 import { ustTabStore } from "../../store/tabStore";
+import Overlay from "../Overlay/Overlay";
 
 function CustomTable() {
   const { data, variables, changeValue, changeVariableType } =
@@ -52,8 +53,8 @@ function CustomTable() {
   };
 
   return (
-    <Styled.Wrapper>
-      <Styled.FirstColumn key={"starter"} $isNotEnd ref={ref}>
+    <Styled.Wrapper ref={ref}>
+      <Styled.FirstColumn key={"starter"} $isNotEnd>
         <Styled.HeaderWrapper>
           <Styled.HeaderStartar>{tableNumberData[0]}</Styled.HeaderStartar>
         </Styled.HeaderWrapper>
@@ -77,6 +78,7 @@ function CustomTable() {
               changeTab();
             }}
           />
+          <Overlay position={position} />
         </Portal>
       )}
       {headers.map((header, col) => (

@@ -37,7 +37,7 @@ function TutorialDescription({
         <Styled.Text>{tutorials[step].description}</Styled.Text>
         <Styled.Bottom>
           <Styled.StepDescription>
-            {step + 1} / {totalStepSize}
+            {step + 1} / {tutorials.length}
           </Styled.StepDescription>
           <Styled.ButtonWrapper>
             <Styled.LeftButton onClick={onClickPrevButton}>

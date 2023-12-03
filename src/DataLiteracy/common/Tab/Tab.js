@@ -6,6 +6,7 @@ import { usetutorialStroe } from "../../store/tutorialStore";
 import useComponentPosition from "../../hooks/useComponentPosition";
 import Portal from "../../../Portal";
 import TutorialDescription from "../TutorialDescription/TutorialDescription";
+import Overlay from "../Overlay/Overlay";
 
 function Tab() {
   const { tab, changeTab } = ustTabStore();
@@ -29,6 +30,7 @@ function Tab() {
                 changeTab();
               }}
             />
+            <Overlay position={position} />
           </Portal>
         )}
       </Styled.Box>

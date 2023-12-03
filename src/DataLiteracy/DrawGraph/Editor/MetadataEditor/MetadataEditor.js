@@ -1,5 +1,6 @@
 import Portal from "../../../../Portal";
 import ButtonSelector from "../../../common/ButtonSelector/ButtonSelector";
+import Overlay from "../../../common/Overlay/Overlay";
 import TutorialDescription from "../../../common/TutorialDescription/TutorialDescription";
 import useComponentPosition from "../../../hooks/useComponentPosition";
 import { useChartMetaDataStore } from "../../../store/drawGraphStore";
@@ -47,6 +48,7 @@ function MetadataEditor() {
             top={position.top - 50}
             left={position.left - 330}
           />
+          <Overlay position={position} />
         </Portal>
       )}
     </Styled.Box>

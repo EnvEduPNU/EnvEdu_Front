@@ -7,6 +7,7 @@ import { usetutorialStroe } from "../../../store/tutorialStore";
 import useComponentPosition from "../../../hooks/useComponentPosition";
 import Portal from "../../../../Portal";
 import TutorialDescription from "../../../common/TutorialDescription/TutorialDescription";
+import Overlay from "../../../common/Overlay/Overlay";
 
 function EditorWrapper({ children }) {
   const [selectValue, setSelectValue] = useState("Editor");
@@ -34,6 +35,7 @@ function EditorWrapper({ children }) {
               top={position.top + 40}
               left={position.left + 90}
             />
+            <Overlay position={position} />
           </Portal>
         )}
       </Styled.Box>

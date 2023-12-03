@@ -1,6 +1,7 @@
 import Portal from "../../../../Portal";
 import ButtonSelector from "../../../common/ButtonSelector/ButtonSelector";
 import LabelInput from "../../../common/Labellnput/LabelInput";
+import Overlay from "../../../common/Overlay/Overlay";
 import TutorialDescription from "../../../common/TutorialDescription/TutorialDescription";
 import useComponentPosition from "../../../hooks/useComponentPosition";
 import { useGraphDataStore } from "../../../store/graphStore";
@@ -51,6 +52,7 @@ const AxisSelector = () => {
             top={position.top - 50}
             left={position.left - 330}
           />
+          <Overlay position={position} />
         </Portal>
       )}
     </Styled.Box>
@@ -96,6 +98,7 @@ const SacleSelector = () => {
               changeTab();
             }}
           />
+          <Overlay position={position} />
         </Portal>
       )}
     </Styled.Box>
@@ -128,6 +131,7 @@ const StepSizeSelector = () => {
             top={position.top - 50}
             left={position.left - 330}
           />
+          <Overlay position={position} />
         </Portal>
       )}
     </Styled.Box>
