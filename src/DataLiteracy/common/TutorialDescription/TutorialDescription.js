@@ -12,19 +12,32 @@ function TutorialDescription({
   left,
   width,
 }) {
-  const { step, totalStepSize, addStep, minusStep } = usetutorialStroe();
+  const { step, addStep, minusStep } = usetutorialStroe();
   const onClick = e => {
     e.stopPropagation();
   };
 
   const onClickPrevButton = () => {
+    if (isStart()) return;
+
     if (prevButtonClick != null) prevButtonClick();
     minusStep();
   };
   const onCliclNextButton = () => {
+    if (isEnd()) return;
+
     if (nextButtonClick != null) nextButtonClick();
     addStep();
   };
+
+  const isStart = () => {
+    return step === 0;
+  };
+
+  const isEnd = () => {
+    return step === tutorials.length - 1;
+  };
+
   return (
     <Styled.Wrapper
       onClick={onClick}
@@ -40,10 +53,16 @@ function TutorialDescription({
             {step + 1} / {tutorials.length}
           </Styled.StepDescription>
           <Styled.ButtonWrapper>
-            <Styled.LeftButton onClick={onClickPrevButton}>
+            <Styled.LeftButton
+              onClick={onClickPrevButton}
+              $isDisable={isStart()}
+            >
               {"<"} 이전
             </Styled.LeftButton>
-            <Styled.RightButton onClick={onCliclNextButton}>
+            <Styled.RightButton
+              onClick={onCliclNextButton}
+              $isDisable={isEnd()}
+            >
               다음 {">"}
             </Styled.RightButton>
           </Styled.ButtonWrapper>

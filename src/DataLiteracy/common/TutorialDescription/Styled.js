@@ -4,7 +4,7 @@ export const Wrapper = styled.div`
   text-align: start;
   position: absolute;
   width: 300px;
-  background-color: #eee;
+  background-color: #ffffff;
   border-radius: 0.25rem;
   box-shadow: 0 6px 12px rgba(50, 50, 80, 0.06);
   display: flex;
@@ -23,7 +23,7 @@ export const Wrapper = styled.div`
         border-top: 10px solid transparent;
         border-right: 10px solid transparent;
         border-bottom: 10px solid transparent;
-        border-left: 10px solid #eee;
+        border-left: 10px solid #ffffff;
       `}
 
     ${props =>
@@ -34,7 +34,7 @@ export const Wrapper = styled.div`
         bottom: -20px;
         left: 50%;
         margin-left: -10px;
-        border-top: 10px solid #eee;
+        border-top: 10px solid #ffffff;
         border-right: 10px solid transparent;
         border-bottom: 10px solid transparent;
         border-left: 10px solid transparent;
@@ -49,7 +49,7 @@ export const Wrapper = styled.div`
         top: 50%;
         margin-top: -10px;
         border-top: 10px solid transparent;
-        border-right: 10px solid #eee;
+        border-right: 10px solid #ffffff;
         border-bottom: 10px solid transparent;
         border-left: 10px solid transparent;
       `}
@@ -64,7 +64,7 @@ export const Wrapper = styled.div`
         margin-left: -10px;
         border-top: 10px solid transparent;
         border-right: 10px solid transparent;
-        border-bottom: 10px solid #eee;
+        border-bottom: 10px solid #ffffff;
         border-left: 10px solid transparent;
       `}
   }
@@ -112,6 +112,9 @@ export const LeftButton = styled.div`
     props.$isDisable &&
     css`
       background: #a6c9ff;
+      &:hover {
+        background-color: #a6c9ff;
+      }
     `}
 `;
 
@@ -132,6 +135,9 @@ export const RightButton = styled.div`
     props.$isDisable &&
     css`
       background: #a6c9ff;
+      &:hover {
+        background-color: #a6c9ff;
+      }
     `}
 `;
 
