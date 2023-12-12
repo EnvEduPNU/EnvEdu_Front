@@ -1,8 +1,11 @@
 import * as Styled from "./Styled";
 
 function Overlay({ position }) {
+  const onClickWrapper = e => {
+    e.stopPropagation();
+  };
   return (
-    <>
+    <div onClick={onClickWrapper}>
       <div
         className="top-dark"
         style={{
@@ -12,7 +15,7 @@ function Overlay({ position }) {
           top: 0,
           left: position.left,
           height: position.top,
-          width: position.width, // width 계산
+          width: position.width,
           overflow: "hidden",
         }}
       ></div>
@@ -37,7 +40,7 @@ function Overlay({ position }) {
           top: 0,
           left: position.left + position.width,
           height: position.top + position.height + position.bottom,
-          width: position.right, // width 계산
+          width: position.right,
           overflow: "hidden",
         }}
       ></div>
@@ -50,11 +53,11 @@ function Overlay({ position }) {
           top: position.top + position.height,
           left: position.left,
           height: position.bottom,
-          width: position.width, // width 계산
+          width: position.width,
           overflow: "hidden",
         }}
       ></div>
-    </>
+    </div>
   );
 }
 

@@ -68,9 +68,10 @@ const GraphPurposeEvalution = () => {
       {isTutorial && step === 10 && (
         <Portal>
           <TutorialDescription
-            position="right"
-            top={position.top}
-            left={position.left - 330}
+            position="bottom"
+            top={position.top - 220}
+            left={position.left}
+            width={"400px"}
           />
           <Overlay position={position} />
         </Portal>
@@ -97,9 +98,10 @@ const GraphInfomationEvalution = () => {
       {isTutorial && step === 11 && (
         <Portal>
           <TutorialDescription
-            position="right"
-            top={position.top}
-            left={position.left - 330}
+            position="bottom"
+            top={position.top - 150}
+            left={position.left}
+            width={"400px"}
           />
           <Overlay position={position} />
         </Portal>

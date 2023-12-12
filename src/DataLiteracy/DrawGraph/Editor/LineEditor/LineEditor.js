@@ -33,7 +33,7 @@ const AxisSelector = () => {
       <Styled.Title>축 선택</Styled.Title>
       <Styled.ButtonSelectorWrapper>
         {variables.map((variable, index) => {
-          if (!variable.getIsSelected) return;
+          if (!variable.getIsSelected) return <></>;
           return (
             <ButtonSelector
               key={index}
@@ -48,9 +48,9 @@ const AxisSelector = () => {
       {isTutorial && step === 3 && (
         <Portal>
           <TutorialDescription
-            position="right"
-            top={position.top - 50}
-            left={position.left - 330}
+            position="bottom"
+            top={position.top - 220}
+            left={position.left}
           />
           <Overlay position={position} />
         </Portal>
@@ -91,9 +91,9 @@ const SacleSelector = () => {
       {isTutorial && step === 6 && (
         <Portal>
           <TutorialDescription
-            position="right"
-            top={position.top - 50}
-            left={position.left - 330}
+            position="bottom"
+            top={position.top - 200}
+            left={position.left}
             prevButtonClick={() => {
               changeTab();
             }}
@@ -127,9 +127,9 @@ const StepSizeSelector = () => {
       {isTutorial && step === 7 && (
         <Portal>
           <TutorialDescription
-            position="right"
-            top={position.top - 50}
-            left={position.left - 330}
+            position="bottom"
+            top={position.top - 160}
+            left={position.left}
           />
           <Overlay position={position} />
         </Portal>

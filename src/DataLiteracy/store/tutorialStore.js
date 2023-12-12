@@ -4,6 +4,11 @@ export const usetutorialStroe = create((set, get) => ({
   step: 0,
   totalStepSize: 16,
   isTutorial: true,
+  activeGraphIndex: [3, 6, 7, 8, 9, 10, 11, 12],
+
+  isActiveGraph: () => {
+    return get().activeGraphIndex.includes(get().step);
+  },
 
   startTutorial: () =>
     set(state => {

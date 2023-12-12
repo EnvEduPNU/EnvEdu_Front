@@ -1,7 +1,5 @@
 import { useState } from "react";
-import ButtonSelector from "../../../common/ButtonSelector/ButtonSelector";
 import * as Styled from "./Styled";
-import Textarea from "../../../common/Textarea/Textarea";
 import GraphEvalution from "../../GraphEvalution/GraphEvalution";
 import { usetutorialStroe } from "../../../store/tutorialStore";
 import useComponentPosition from "../../../hooks/useComponentPosition";
@@ -14,26 +12,40 @@ function EditorWrapper({ children }) {
   const { isTutorial, step, addStep } = usetutorialStroe();
   const { ref, position } = useComponentPosition();
 
-  const onChange = v => {
+  const onClickButton = v => {
     setSelectValue(v);
-    if (isTutorial) addStep();
+    if (isTutorial && step === 9) {
+      addStep();
+    }
   };
 
   return (
     <Styled.Wrapper>
-      <Styled.Box ref={ref}>
-        <ButtonSelector
-          // value={"에디터 선택"}
-          defaultValue={"Editor"}
-          selectList={["Editor", "평가하기"]}
-          onChange={onChange}
-        />
+      <Styled.Box>
+        <Styled.ButtonWrapper>
+          {["Editor", "평가하기"].map(v => (
+            <Styled.Button
+              key={v}
+              onClick={() => onClickButton(v)}
+              $isSelected={selectValue === v}
+              ref={v === "평가하기" ? ref : null}
+            >
+              {v}
+            </Styled.Button>
+          ))}
+        </Styled.ButtonWrapper>
         {isTutorial && step === 9 && (
           <Portal>
             <TutorialDescription
               position="top"
               top={position.top + 40}
-              left={position.left + 90}
+              left={position.left - 120}
+              prevButtonClick={() => {
+                setSelectValue("Editor");
+              }}
+              nextButtonClick={() => {
+                setSelectValue("평가하기");
+              }}
             />
             <Overlay position={position} />
           </Portal>

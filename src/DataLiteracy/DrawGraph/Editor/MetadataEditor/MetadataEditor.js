@@ -44,9 +44,9 @@ function MetadataEditor() {
       {isTutorial && step === 8 && (
         <Portal>
           <TutorialDescription
-            position="right"
-            top={position.top - 50}
-            left={position.left - 330}
+            position="bottom"
+            top={position.top - 160}
+            left={position.left}
           />
           <Overlay position={position} />
         </Portal>

@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 
 export const Wrapper = styled.div`
   padding: 0;
@@ -53,10 +53,4 @@ export const LastBox = styled.div`
     border: 1px solid rgba(34, 36, 38, 0.15);
     border-bottom: 6px solid #7f3f99;
   }
-  /* ${props =>
-    props.$isHighlight &&
-    css`
-      z-index: 1500 !important;
-      position: relative;
-    `} */
 `;
