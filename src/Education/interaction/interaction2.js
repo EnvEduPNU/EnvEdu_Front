@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { customAxios } from "../Common/CustomAxios"
+import { customAxios } from "../../Common/CustomAxios"
 import { useEffect } from "react";
 
 export default function InterAction2() {

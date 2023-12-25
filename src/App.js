@@ -48,8 +48,16 @@ import DataLoadPage from "./DataLiteracy/DataLoad/page/DataLoadPage";
 import GraphEvalutionRusult from "./DataLiteracy/DrawGraph/GraphEvalutionRusult/GraphEvalutionRusult";
 import ResultReport from "./DataLiteracy/DrawGraph/ResultReport/ResultReport";
 
-import InterAction from "./Education/interaction";
-import InterAction2 from "./Education/interaction2";
+import InterAction from "./Education/interaction/interaction";
+import InterAction2 from "./Education/interaction/interaction2";
+import Combine from "./Education/interaction/combine";
+import Combine2 from "./Education/combin2";
+
+import DataClass from "./DataClass/DataClass";
+import CheckReadData from "./DataClass/ReadData/CheckData";
+import CheckManipulateData from "./DataClass/ManipulateData/CheckData";
+import CheckAnalyzeData from "./DataClass/AnalyzeData/CheckData";
+import CheckCompareData from "./DataClass/CompareData/CheckData";
 
 function App() {
   /**
@@ -113,6 +121,15 @@ function App() {
           {/*Education */}
           <Route path="/interaction" exact={true} element={<InterAction />} />
           <Route path="/interaction2" exact={true} element={<InterAction2 />} />
+          <Route path="/combine" exact={true} element={<Combine />} />
+          <Route path="/combine2" exact={true} element={<Combine2 />} />
+          
+          <Route path="/dataclass" exact={true}element={<DataClass />} />
+          <Route path="/checkReadData" exact={true}element={<CheckReadData />} />
+          <Route path="/checkManipulateData" exact={true}element={<CheckManipulateData />} />
+          <Route path="/checkAnalyzeData" exact={true}element={<CheckAnalyzeData />} />
+          <Route path="/checkCompareData" exact={true}element={<CheckCompareData />} />
+
           {/*<Route path="/E-Classes" exact={true} element={<Test/>} />*/}
           <Route path="/measure" exact={true} element={<Measure />} />
           <Route
