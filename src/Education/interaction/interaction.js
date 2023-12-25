@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom';
-import { customAxios } from '../Common/CustomAxios';
+import { customAxios } from '../../Common/CustomAxios';
 import * as XLSX from 'xlsx';
 import './interaction.scss';
 
@@ -134,6 +134,8 @@ export default function InterAction() {
             {/*교사 화면*/}
             {role == 'ROLE_EDUCATOR' && <>
                 <h4>교사 화면</h4>
+                <button type="button" class="btn btn-secondary">my data에서 불러오기</button>
+                <button type="button" class="btn btn-secondary">Secondary</button>
 
                 <div>
                     <label className='labelEducator'>공유할 대상 선택</label>
