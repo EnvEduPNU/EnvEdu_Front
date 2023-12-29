@@ -11,6 +11,25 @@ export const Wrapper = styled.div`
   padding: 14px;
 `;
 
+export const AcitwGraphWrapper = styled.div`
+  position: "absolute";
+  background-color: rgb(255, 255, 255);
+  z-index: 1100;
+  /* top: position.top;
+              left: position.left;
+              height: position.height;
+              width: position.width; */
+  overflow: "hidden";
+  /* display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  border-radius: 5px;
+  border: 1px solid rgba(34, 36, 38, 0.15);
+  box-shadow: 0 1px 2px 0 rgba(34, 36, 38, 0.15);
+  padding: 14px; */
+`;
+
 export const ErrorMessage = styled.div`
   width: fit-content;
   border-radius: 5px;

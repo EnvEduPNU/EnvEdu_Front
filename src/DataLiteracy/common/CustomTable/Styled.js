@@ -1,6 +1,7 @@
 import styled, { css } from "styled-components";
 
 export const TableHeaderWrapper = styled.div`
+  position: relative;
   width: 100%;
   display: flex;
   border: 1px solid rgba(34, 36, 38, 0.15);

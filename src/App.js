@@ -36,13 +36,10 @@ import Measure from "./Education/Measure/measure";
 import Sample from "./Socket/sample";
 
 import MeasureContinuous from "./Education/Measure/measure_continuous";
-import DrawGraph from "./DataLiteracy/DrawGraph/DrawGraph";
-import GraphInterpreterPage from "./DataLiteracy/GraphInterpreter/GraphInterpreterPage";
+
 import DataPretreatmentPage from "./DataLiteracy/DataPretreatment/DataPretreatmentPage";
 import DataInputPage from "./DataLiteracy/DataInput/DataInputPage";
 import NewDataInput from "./DataLiteracy/DataInput/NewDataInput";
-import CustomTableHeader from "./DataLiteracy/common/CustomTable/CustomTableHeader";
-import CustomTable from "./DataLiteracy/common/CustomTable/CustomTable";
 import DrawGraphV2Page from "./DataLiteracy/DrawGraph/page/DrawGraphV2Page";
 import DataLoadPage from "./DataLiteracy/DataLoad/page/DataLoadPage";
 import GraphEvalutionRusult from "./DataLiteracy/DrawGraph/GraphEvalutionRusult/GraphEvalutionRusult";

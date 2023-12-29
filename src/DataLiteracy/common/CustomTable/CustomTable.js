@@ -3,12 +3,20 @@ import { ReactComponent as PencilIcon } from "../../image/Pencil.svg";
 import Select from "../Select/Select";
 import { useGraphDataStore } from "../../store/graphStore";
 import { useState } from "react";
+import useComponentPosition from "../../hooks/useComponentPosition";
+import { usetutorialStroe } from "../../store/tutorialStore";
+import Portal from "../../../Portal";
+import TutorialDescription from "../TutorialDescription/TutorialDescription";
+import { ustTabStore } from "../../store/tabStore";
+import Overlay from "../Overlay/Overlay";
 
 function CustomTable() {
   const { data, variables, changeValue, changeVariableType } =
     useGraphDataStore();
   const [editableCell, setEditableCell] = useState(null);
-
+  const { ref, position } = useComponentPosition();
+  const { changeTab } = ustTabStore();
+  const { isTutorial, step, type } = usetutorialStroe();
   const tableNumberData = data.map((d, idx) => {
     if (idx == 0) return "Rows#";
     return `${idx}`;
@@ -45,7 +53,7 @@ function CustomTable() {
   };
 
   return (
-    <Styled.Wrapper>
+    <Styled.Wrapper ref={ref}>
       <Styled.FirstColumn key={"starter"} $isNotEnd>
         <Styled.HeaderWrapper>
           <Styled.HeaderStartar>{tableNumberData[0]}</Styled.HeaderStartar>
@@ -56,6 +64,40 @@ function CustomTable() {
           </Styled.RowNumber>
         ))}
       </Styled.FirstColumn>
+      {isTutorial && step === 5 && type !== "mix" && (
+        <Portal>
+          <TutorialDescription
+            position="bottom"
+            top={position.top - 260}
+            left={position.left + 730}
+            width={"500px"}
+            prevButtonClick={() => {
+              changeTab();
+            }}
+            nextButtonClick={() => {
+              changeTab();
+            }}
+          />
+          <Overlay position={position} />
+        </Portal>
+      )}
+      {isTutorial && step === 6 && type === "mix" && (
+        <Portal>
+          <TutorialDescription
+            position="bottom"
+            top={position.top - 270}
+            left={position.left + 730}
+            width={"500px"}
+            prevButtonClick={() => {
+              changeTab();
+            }}
+            nextButtonClick={() => {
+              changeTab();
+            }}
+          />
+          <Overlay position={position} />
+        </Portal>
+      )}
       {headers.map((header, col) => (
         <Styled.Column key={col} $isNotEnd={col != headers.length - 1}>
           <Styled.HeaderWrapper>
