@@ -1,3 +1,5 @@
+import CustomTable from "../DrwaGraph/CustomTable/CustomTable";
+import Header from "../DrwaGraph/Header/Header";
 import Blackboard from "../Slide/Blackboard/Blackboard";
 import BottomSilde from "../Slide/BottomSlide/BottomSilde";
 import LeftSilde from "../Slide/LeftSilde/LeftSilde";
@@ -33,14 +35,17 @@ function SlidePage() {
         </div>
       </BottomSilde>
       <TopSlide>
-        bottom입니다.
+        Top입니다.
         <div style={{ height: "200px" }}>
           Lorem ipsum, dolor sit amet consectetur adipisicing elit. Animi
           explicabo incidunt voluptates quia nam amet odit veniam, atque nulla
           tem
         </div>
       </TopSlide>
-      <Blackboard>메인화면입니다.</Blackboard>
+      <Blackboard>
+        <Header />
+        <CustomTable />
+      </Blackboard>
     </Styled.Wrapper>
   );
 }
