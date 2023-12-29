@@ -108,6 +108,21 @@ function RegisterForm() {
                         </span>
                     )}
                 </div>
+                <div className="input-box">
+                    <input
+                        className="registerInput"
+                        placeholder="닉네임: 0~20자"
+                        type="nickname"
+                        {...register('nickname', {
+                            required: { value: true, message: '닉네임을 입력하세요' },
+                        })}
+                    />
+                    {errors.nickname && (
+                        <span style={{ color: 'red', fontSize: '13px' }}>
+                            {errors.nickname.message}
+                        </span>
+                    )}
+                </div>
                 <button type="submit" className="btn btn-secondary">
                     회원가입
                 </button>
