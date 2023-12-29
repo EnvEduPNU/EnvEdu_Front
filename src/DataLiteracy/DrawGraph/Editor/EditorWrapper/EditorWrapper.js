@@ -9,7 +9,7 @@ import Overlay from "../../../common/Overlay/Overlay";
 
 function EditorWrapper({ children }) {
   const [selectValue, setSelectValue] = useState("Editor");
-  const { isTutorial, step, addStep } = usetutorialStroe();
+  const { isTutorial, step, addStep, type } = usetutorialStroe();
   const { ref, position } = useComponentPosition();
 
   const onClickButton = v => {
@@ -34,7 +34,23 @@ function EditorWrapper({ children }) {
             </Styled.Button>
           ))}
         </Styled.ButtonWrapper>
-        {isTutorial && step === 9 && (
+        {isTutorial && step === 9 && type !== "mix" && (
+          <Portal>
+            <TutorialDescription
+              position="top"
+              top={position.top + 40}
+              left={position.left - 120}
+              prevButtonClick={() => {
+                setSelectValue("Editor");
+              }}
+              nextButtonClick={() => {
+                setSelectValue("평가하기");
+              }}
+            />
+            <Overlay position={position} />
+          </Portal>
+        )}
+        {isTutorial && step === 10 && type === "mix" && (
           <Portal>
             <TutorialDescription
               position="top"

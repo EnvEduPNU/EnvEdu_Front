@@ -31,15 +31,33 @@ const useComponentPosition = () => {
       });
     };
 
+    const resizeObserver = new ResizeObserver(updatePosition);
+
     // 컴포넌트가 마운트될 때 한 번 위치를 가져오기
     updatePosition();
 
-    // 창의 크기가 변경될 때마다 위치 업데이트
-    window.addEventListener("resize", updatePosition);
+    // ResizeObserver를 사용하여 ref로 지정된 컴포넌트의 크기 변경 감지
+    if (componentRef.current) {
+      resizeObserver.observe(componentRef.current);
+    }
 
-    // 컴포넌트가 언마운트될 때 이벤트 리스너 제거
+    // Recursive function to periodically check the position of the parent element
+    const checkParentScroll = () => {
+      if (componentRef.current) {
+        updatePosition();
+      }
+      // window.requestAnimationFrame(checkParentScroll);
+    };
+
+    // Start checking the parent scroll position
+    checkParentScroll();
+
+    // Cleanup: Remove ResizeObserver and stop checking the parent scroll position
     return () => {
-      window.removeEventListener("resize", updatePosition);
+      if (componentRef.current) {
+        resizeObserver.unobserve(componentRef.current);
+      }
+      resizeObserver.disconnect();
     };
   }, []);
 

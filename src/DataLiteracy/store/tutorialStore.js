@@ -1,10 +1,14 @@
 import { create } from "zustand";
+import { tutorials2, tutorials3 } from "../utils/tutorials";
 
 export const usetutorialStroe = create((set, get) => ({
   step: 0,
   totalStepSize: 16,
-  isTutorial: true,
-  activeGraphIndex: [3, 6, 7, 8, 9, 10, 11, 12],
+  isTutorial: false,
+  // activeGraphIndex: [3, 6, 7, 8, 9, 10, 11],
+  activeGraphIndex: [3, 4, 7, 8, 9, 10, 11, 12],
+  currentTutorlal: tutorials3,
+  type: "mix",
 
   isActiveGraph: () => {
     return get().activeGraphIndex.includes(get().step);

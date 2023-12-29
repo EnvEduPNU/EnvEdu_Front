@@ -16,7 +16,7 @@ function CustomTable() {
   const [editableCell, setEditableCell] = useState(null);
   const { ref, position } = useComponentPosition();
   const { changeTab } = ustTabStore();
-  const { isTutorial, step } = usetutorialStroe();
+  const { isTutorial, step, type } = usetutorialStroe();
   const tableNumberData = data.map((d, idx) => {
     if (idx == 0) return "Rows#";
     return `${idx}`;
@@ -64,11 +64,28 @@ function CustomTable() {
           </Styled.RowNumber>
         ))}
       </Styled.FirstColumn>
-      {isTutorial && step === 5 && (
+      {isTutorial && step === 5 && type !== "mix" && (
         <Portal>
           <TutorialDescription
             position="bottom"
-            top={position.top - 240}
+            top={position.top - 260}
+            left={position.left + 730}
+            width={"500px"}
+            prevButtonClick={() => {
+              changeTab();
+            }}
+            nextButtonClick={() => {
+              changeTab();
+            }}
+          />
+          <Overlay position={position} />
+        </Portal>
+      )}
+      {isTutorial && step === 6 && type === "mix" && (
+        <Portal>
+          <TutorialDescription
+            position="bottom"
+            top={position.top - 270}
             left={position.left + 730}
             width={"500px"}
             prevButtonClick={() => {

@@ -10,7 +10,7 @@ import Overlay from "../Overlay/Overlay";
 
 function Tab() {
   const { tab, changeTab } = ustTabStore();
-  const { step, isTutorial } = usetutorialStroe();
+  const { step, isTutorial, type } = usetutorialStroe();
   const { ref, position } = useComponentPosition();
   const onClickTab = () => {
     changeTab();
@@ -20,7 +20,20 @@ function Tab() {
       <Styled.Box onClick={onClickTab} $isSelect={tab === "table"} ref={ref}>
         <TableIcon />
         <span>Table</span>
-        {isTutorial && step === 4 && (
+        {isTutorial && step === 4 && type !== "mix" && (
+          <Portal>
+            <TutorialDescription
+              position="top"
+              top={position.top + 60}
+              left={position.left - 90}
+              nextButtonClick={() => {
+                changeTab();
+              }}
+            />
+            <Overlay position={position} />
+          </Portal>
+        )}
+        {isTutorial && step === 5 && type === "mix" && (
           <Portal>
             <TutorialDescription
               position="top"

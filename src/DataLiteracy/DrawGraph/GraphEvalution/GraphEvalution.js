@@ -19,7 +19,7 @@ function GraphEvalution() {
 }
 const NextButton = () => {
   const naviagte = useNavigate();
-  const { isTutorial, step } = usetutorialStroe();
+  const { isTutorial, step, type } = usetutorialStroe();
   const { ref, position } = useComponentPosition();
 
   const onClickNextButton = () => {
@@ -30,7 +30,21 @@ const NextButton = () => {
       <Styled.Button ref={ref} onClick={onClickNextButton}>
         다음
       </Styled.Button>
-      {isTutorial && step === 12 && (
+      {isTutorial && step === 12 && type !== "mix" && (
+        <Portal>
+          <TutorialDescription
+            position="right"
+            top={position.top - 100}
+            left={position.left - 430}
+            width={"400px"}
+            nextButtonClick={() => {
+              onClickNextButton();
+            }}
+          />
+          <Overlay position={position} />
+        </Portal>
+      )}
+      {isTutorial && step === 13 && type === "mix" && (
         <Portal>
           <TutorialDescription
             position="right"
@@ -53,7 +67,7 @@ const GraphPurposeEvalution = () => {
     userData: { purpose },
     changeUserData,
   } = useGraphInterpreterStore();
-  const { isTutorial, step } = usetutorialStroe();
+  const { isTutorial, step, type } = usetutorialStroe();
   const { ref, position } = useComponentPosition();
 
   return (
@@ -65,7 +79,18 @@ const GraphPurposeEvalution = () => {
         value={purpose}
         onChange={e => changeUserData("purpose", e.target.value)}
       />
-      {isTutorial && step === 10 && (
+      {isTutorial && step === 10 && type !== "mix" && (
+        <Portal>
+          <TutorialDescription
+            position="bottom"
+            top={position.top - 220}
+            left={position.left}
+            width={"400px"}
+          />
+          <Overlay position={position} />
+        </Portal>
+      )}
+      {isTutorial && step === 11 && type === "mix" && (
         <Portal>
           <TutorialDescription
             position="bottom"
@@ -85,7 +110,7 @@ const GraphInfomationEvalution = () => {
     userData: { infomation },
     changeUserData,
   } = useGraphInterpreterStore();
-  const { isTutorial, step } = usetutorialStroe();
+  const { isTutorial, step, type } = usetutorialStroe();
   const { ref, position } = useComponentPosition();
 
   return (
@@ -95,11 +120,22 @@ const GraphInfomationEvalution = () => {
         value={infomation}
         onChange={e => changeUserData("infomation", e.target.value)}
       />
-      {isTutorial && step === 11 && (
+      {isTutorial && step === 11 && type !== "mix" && (
         <Portal>
           <TutorialDescription
             position="bottom"
             top={position.top - 150}
+            left={position.left}
+            width={"400px"}
+          />
+          <Overlay position={position} />
+        </Portal>
+      )}
+      {isTutorial && step === 12 && type === "mix" && (
+        <Portal>
+          <TutorialDescription
+            position="bottom"
+            top={position.top - 200}
             left={position.left}
             width={"400px"}
           />

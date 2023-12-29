@@ -13,7 +13,7 @@ function MetadataEditor() {
     changeLegendPosition,
     changeDatalabelAnchor,
   } = useChartMetaDataStore();
-  const { isTutorial, step } = usetutorialStroe();
+  const { isTutorial, step, type } = usetutorialStroe();
   const { ref, position } = useComponentPosition();
 
   const onChangeLegendPostition = postion => {
@@ -41,7 +41,17 @@ function MetadataEditor() {
           defaultValue={datalabelAnchor}
         />
       </Styled.ButtonSelectorWrapper>
-      {isTutorial && step === 8 && (
+      {isTutorial && step === 8 && type !== "mix" && (
+        <Portal>
+          <TutorialDescription
+            position="bottom"
+            top={position.top - 160}
+            left={position.left}
+          />
+          <Overlay position={position} />
+        </Portal>
+      )}
+      {isTutorial && step === 9 && type === "mix" && (
         <Portal>
           <TutorialDescription
             position="bottom"
