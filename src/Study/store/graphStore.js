@@ -163,6 +163,7 @@ export const useGraphDataStore = create((set, get) => ({
     set(state => {
       const newVariables = state.variables.map(variable => variable.copy());
       newVariables[variableIdx].setType(type);
+
       return {
         ...state,
         variables: newVariables,

@@ -13,7 +13,7 @@ function GraphSelector() {
 
   return (
     <>
-      <Styled.Wrapper onClick={onClickGraphSelectionBtn} ref={ref}>
+      <Styled.Wrapper onClick={onClickGraphSelectionBtn}>
         그래프 선택하기
       </Styled.Wrapper>
       {isVisibleModal && (

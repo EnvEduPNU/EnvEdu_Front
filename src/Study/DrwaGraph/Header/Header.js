@@ -1,7 +1,8 @@
 import Tab from "../Tab/Tab";
 import * as Styled from "./Styled";
-import GraphSelector from "../../../DataLiteracy/common/GraphSelector/GraphSelector";
+
 import { useGraphDataStore } from "../../store/graphStore";
+import GraphSelector from "../GraphSelector/GraphSelector";
 
 function Header() {
   const { title } = useGraphDataStore();

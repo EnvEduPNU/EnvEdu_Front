@@ -1,8 +1,7 @@
 import * as Styled from "./Styled";
-
-import { ReactComponent as PencilIcon } from "../../image/Pencil.svg";
-import Select from "../Select/Select";
 import { useGraphDataStore } from "../../store/graphStore";
+import Select from "../../../DataLiteracy/common/Select/Select";
+import { ReactComponent as PencilIcon } from "../../image/Pencil.svg";
 
 function CustomTableHeader() {
   const { data, variables, changeSelectedVariable, changeVariableType } =
@@ -31,7 +30,7 @@ function CustomTableHeader() {
               </Styled.Th>
               <Styled.Box $isNotEnd>
                 <Select
-                  defaultValue={variables[col].getType}
+                  defaultValue={variables[col].type}
                   items={["Categorical", "Numeric"]}
                   onChange={type => onChangeType(col, type)}
                 />
@@ -39,7 +38,7 @@ function CustomTableHeader() {
               <Styled.Box>
                 <Styled.Button
                   onClick={() => onClickShwoBotton(col)}
-                  $isSelected={variables[col].getIsSelected}
+                  $isSelected={variables[col].isSelected}
                 >
                   선택
                 </Styled.Button>
