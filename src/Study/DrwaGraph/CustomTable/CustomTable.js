@@ -4,7 +4,7 @@ import { ReactComponent as PencilIcon } from "../../image/Pencil.svg";
 import * as Styled from "./Styled";
 import Select from "../../../DataLiteracy/common/Select/Select";
 
-function CustomTable() {
+function CustomTable({ isChangeCategory = true }) {
   const { data, variables, changeValue, changeVariableType } =
     useGraphDataStore();
   const [editableCell, setEditableCell] = useState(null);
@@ -66,11 +66,15 @@ function CustomTable() {
                 </Styled.Circle>
               </Styled.Th>
               <Styled.Box>
-                <Select
-                  defaultValue={variables[col].type}
-                  items={["Categorical", "Numeric"]}
-                  onChange={type => onChangeType(col, type)}
-                />
+                {isChangeCategory ? (
+                  <Select
+                    defaultValue={variables[col].type}
+                    items={["Categorical", "Numeric"]}
+                    onChange={type => onChangeType(col, type)}
+                  />
+                ) : (
+                  variables[col].type
+                )}
               </Styled.Box>
             </Styled.Header>
           </Styled.HeaderWrapper>

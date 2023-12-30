@@ -1,7 +1,7 @@
 import { useState } from "react";
 import * as Styled from "./Styled";
-import GraphSelectionModal from "../../../DataLiteracy/DrawGraph/GraphSelectionModal";
 import { useGraphDataStore } from "../../store/graphStore";
+import GraphSelectionModal from "./GraphSelectionModal";
 
 function GraphSelector() {
   const { graphIdx, changeGraphIndex } = useGraphDataStore();

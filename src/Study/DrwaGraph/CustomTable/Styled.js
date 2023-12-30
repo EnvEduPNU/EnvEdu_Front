@@ -5,6 +5,7 @@ export const TableHeaderWrapper = styled.div`
   width: 100%;
   display: flex;
   border: 1px solid rgba(34, 36, 38, 0.15);
+  overflow-x: auto;
 `;
 
 export const Wrapper = styled.div`
@@ -13,7 +14,7 @@ export const Wrapper = styled.div`
   display: flex;
   border: 1px solid rgba(34, 36, 38, 0.15);
   max-height: 600px;
-  overflow-y: auto;
+  overflow: auto;
   border-radius: 5px;
 `;
 
@@ -21,7 +22,7 @@ export const Column = styled.div`
   width: 100%;
   background-color: #f8f8f8;
 
-  /* padding: 0px 10px; */
+  min-width: 130px;
   display: flex;
   flex-direction: column;
   font-size: 16px;
@@ -36,6 +37,7 @@ export const Column = styled.div`
 
 export const FirstColumn = styled(Column)`
   max-width: 150px;
+  min-width: 70px;
 `;
 
 export const HeaderWrapper = styled.div`
