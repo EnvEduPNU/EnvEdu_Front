@@ -8,7 +8,7 @@ import * as Styled from "./Styled";
 
 function DrawGraph() {
   const tab = useTabStore(state => state.tab);
-  console.log(tab);
+
   return (
     <Styled.Wrapper>
       <Header />
