@@ -3,6 +3,7 @@ import CustomTable from "../CustomTable/CustomTable";
 import CustomTableHeader from "../CustomTable/CustomTableHeader";
 import GraphAndEditor from "../GraphAndEditor/GraphAndEditor";
 import Header from "../Header/Header";
+import ResultReport from "../ResultReport/ResultReport";
 import * as Styled from "./Styled";
 
 function DrawGraph() {
@@ -19,6 +20,11 @@ function DrawGraph() {
         <>
           <CustomTableHeader />
           <GraphAndEditor />
+        </>
+      )}
+      {tab === "assignment" && (
+        <>
+          <ResultReport />
         </>
       )}
     </Styled.Wrapper>

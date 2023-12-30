@@ -2,6 +2,7 @@ import styled, { css } from "styled-components";
 
 export const Wrapper = styled.div`
   min-width: 260px;
+  max-width: 90%;
   position: absolute;
   top: 0;
   right: ${props =>

@@ -2,7 +2,7 @@ import styled, { css } from "styled-components";
 
 export const Wrapper = styled.div`
   min-width: 260px;
-  /* overflow-x: auto; */
+  max-width: 90%;
   position: absolute;
   top: 0;
   left: ${props =>

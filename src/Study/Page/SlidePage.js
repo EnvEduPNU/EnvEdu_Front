@@ -1,6 +1,4 @@
-import CustomTable from "../DrwaGraph/CustomTable/CustomTable";
 import DrawGraph from "../DrwaGraph/DrawGraph/DrawGraph";
-import Header from "../DrwaGraph/Header/Header";
 import Blackboard from "../Slide/Blackboard/Blackboard";
 import BottomSilde from "../Slide/BottomSlide/BottomSilde";
 import LeftSilde from "../Slide/LeftSilde/LeftSilde";
