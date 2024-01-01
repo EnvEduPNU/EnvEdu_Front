@@ -57,6 +57,8 @@ import CheckAnalyzeData from "./DataClass/AnalyzeData/CheckData";
 import CheckCompareData from "./DataClass/CompareData/CheckData";
 import SlidePage from "./Study/Page/SlidePage";
 
+import EClassList from "./DataClass";
+
 function App() {
   /**
    * 처음에 반드시 .env 파일 생성 후 REACT_APP_API_URL = ${서버 도메인} 작성
@@ -121,6 +123,12 @@ function App() {
           <Route path="/interaction2" exact={true} element={<InterAction2 />} />
           <Route path="/combine" exact={true} element={<Combine />} />
           <Route path="/combine2" exact={true} element={<Combine2 />} />
+          
+          <Route path="/dataclass" exact={true} element={<DataClass />} />
+          <Route path="/checkReadData" exact={true} element={<CheckReadData />} />
+          <Route path="/checkManipulateData" exact={true} element={<CheckManipulateData />} />
+          <Route path="/checkAnalyzeData" exact={true} element={<CheckAnalyzeData />} />
+          <Route path="/checkCompareData" exact={true} element={<CheckCompareData />} />
 
           <Route path="/dataclass" exact={true} element={<DataClass />} />
           <Route
@@ -144,7 +152,7 @@ function App() {
             element={<CheckCompareData />}
           />
 
-          {/*<Route path="/E-Classes" exact={true} element={<Test/>} />*/}
+          <Route path="/E-Classes" exact={true} element={<EClassList />} />
           <Route path="/measure" exact={true} element={<Measure />} />
           <Route
             path="/measureContinuous"
