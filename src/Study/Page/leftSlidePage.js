@@ -125,10 +125,10 @@ export default function LeftSlidePage() {
             filtered = summary;
         }
         else if (type == '대기질') {
-            filtered = summary.filter((data) => data.dataLabel === 'AIRQUALITY');
+            filtered = summary.filter((data) => data.dataLabel === '대기질 데이터');
         }
         else if (type == '수질') {
-            filtered = summary.filter((data) => data.dataLabel === 'OCEANQUALITY');
+            filtered = summary.filter((data) => data.dataLabel === '수질 데이터');
         }
         else if (type == 'SEED') {
             filtered = summary.filter((data) => data.dataLabel === 'SEED');
