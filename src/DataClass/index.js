@@ -13,7 +13,7 @@ export default function EClassList() {
                     <Card.Text>
                         공기질 측정 수업 (설명)
                     </Card.Text>
-                    <Link to="/">
+                    <Link to="/slide">
                         <Button variant="primary">Start</Button>
                     </Link>
                 </Card.Body>

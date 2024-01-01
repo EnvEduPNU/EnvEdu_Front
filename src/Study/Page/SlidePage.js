@@ -6,39 +6,32 @@ import RightSilde from "../Slide/RightSilde/RightSilde";
 import TopSlide from "../Slide/TopSilde/TopSilde";
 import * as Styled from "./Styled";
 
+import TopSlidePage from "./topSlidePage";
+import BottomSlidePage from "./bottomSildePage";
+import LeftSlidePage from "./leftSlidePage";
+
 function SlidePage() {
   return (
     <Styled.Wrapper>
       <LeftSilde>
-        left입니다.
-        <div style={{ width: "800px" }}>
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Animi
-          explicabo incidunt voluptates quia nam amet odit veniam, atque nulla
-          tem
+        <div style={{ width: "600px" }}>
+          <LeftSlidePage />
         </div>
       </LeftSilde>
       <RightSilde>
         right입니다.
         <div style={{ width: "400px" }}>
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Animi
-          explicabo incidunt voluptates quia nam amet odit veniam, atque nulla
-          tem
+          test
         </div>
       </RightSilde>
       <BottomSilde>
-        bottom입니다.
-        <div style={{ height: "200px" }}>
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Animi
-          explicabo incidunt voluptates quia nam amet odit veniam, atque nulla
-          tem
+        <div style={{ height: "300px" }}>
+          <BottomSlidePage />
         </div>
       </BottomSilde>
       <TopSlide>
-        Top입니다.
-        <div style={{ height: "200px" }}>
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Animi
-          explicabo incidunt voluptates quia nam amet odit veniam, atque nulla
-          tem
+        <div style={{ height: "250px" }}>
+          <TopSlidePage />
         </div>
       </TopSlide>
       <Blackboard>

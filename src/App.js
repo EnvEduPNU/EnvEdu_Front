@@ -57,8 +57,6 @@ import CheckAnalyzeData from "./DataClass/AnalyzeData/CheckData";
 import CheckCompareData from "./DataClass/CompareData/CheckData";
 import SlidePage from "./Study/Page/SlidePage";
 
-import ViewChart from "./DataClass/viewChart";
-
 import EClassList from "./DataClass";
 
 function App() {
@@ -153,8 +151,6 @@ function App() {
             exact={true}
             element={<CheckCompareData />}
           />
-
-          <Route path="/viewChart" exact={true} element ={<ViewChart />} />
 
           <Route path="/E-Classes" exact={true} element={<EClassList />} />
           <Route path="/measure" exact={true} element={<Measure />} />
