@@ -21,6 +21,7 @@ export const Box = styled.div`
   align-items: center;
   font-size: 14px;
   font-weight: 600;
+  /* background-color: rgba(0, 0, 0, 0.6); */
   svg {
     cursor: pointer;
     width: 40px;
@@ -48,7 +49,6 @@ export const LastBox = styled.div`
     font-size: 14px;
     width: 160px;
     height: 100%;
-    background-color: inherit;
     color: #000;
     border: 1px solid rgba(34, 36, 38, 0.15);
     border-bottom: 6px solid #7f3f99;

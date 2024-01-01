@@ -13,14 +13,14 @@ export const Wrapper = styled.div`
 `;
 
 export const Menu = styled.div`
-  top: calc(100% - 3px);
+  /* top: 30px; */
   border-radius: 5px;
   display: flex;
   flex-direction: column;
-  z-index: 1000;
   position: absolute;
   background-color: #fff;
   border: 1px solid rgba(34, 36, 38, 0.15);
+  z-index: 3000;
 `;
 
 export const Item = styled.div`

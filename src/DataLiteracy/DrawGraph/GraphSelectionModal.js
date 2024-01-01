@@ -3,6 +3,9 @@ import "./DrawGraph.scss";
 import FormCheckInput from "react-bootstrap/esm/FormCheckInput";
 import { useState } from "react";
 import ExampleGraph from "./ExampleGraph";
+import { usetutorialStroe } from "../store/tutorialStore";
+import TutorialDescription from "../common/TutorialDescription/TutorialDescription";
+import { ustTabStore } from "../store/tabStore";
 
 function GraphSelectionModal({
   setSelectedGraph,
@@ -10,6 +13,8 @@ function GraphSelectionModal({
   selectedGraph,
   next,
 }) {
+  const { step, isTutorial, addStep } = usetutorialStroe();
+  const { changeTab } = ustTabStore();
   const [graphIdx, setGraphIdx] = useState(selectedGraph);
   const graphs = [
     "막대 그래프",
@@ -22,13 +27,18 @@ function GraphSelectionModal({
   const onClickCreateGraphBtn = () => {
     setSelectedGraph(graphIdx);
     setIsVisibleModal(state => !state);
+    changeTab("graph");
+    if (isTutorial) addStep();
+  };
+
+  const onClickOverlay = () => {
+    if (isTutorial) return;
+
+    setIsVisibleModal(state => !state);
   };
   return (
     <>
-      <div
-        onClick={() => setIsVisibleModal(state => !state)}
-        className="overlay"
-      ></div>
+      <div onClick={onClickOverlay} className="overlay"></div>
       <div className="graph-selection-modal">
         <div className="block">
           <div className="header">그래프 유형</div>
@@ -49,6 +59,17 @@ function GraphSelectionModal({
           </div>
           <Button onClick={onClickCreateGraphBtn}>그래프 선택</Button>
         </div>
+        {isTutorial && step == 1 && (
+          <TutorialDescription
+            position="left"
+            prevButtonClick={() => setIsVisibleModal(state => !state)}
+            nextButtonClick={() => {
+              setSelectedGraph(graphIdx);
+              setIsVisibleModal(state => !state);
+              changeTab("graph");
+            }}
+          />
+        )}
       </div>
       ;
     </>

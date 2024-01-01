@@ -36,13 +36,10 @@ import Measure from "./Education/Measure/measure";
 import Sample from "./Socket/sample";
 
 import MeasureContinuous from "./Education/Measure/measure_continuous";
-import DrawGraph from "./DataLiteracy/DrawGraph/DrawGraph";
-import GraphInterpreterPage from "./DataLiteracy/GraphInterpreter/GraphInterpreterPage";
+
 import DataPretreatmentPage from "./DataLiteracy/DataPretreatment/DataPretreatmentPage";
 import DataInputPage from "./DataLiteracy/DataInput/DataInputPage";
 import NewDataInput from "./DataLiteracy/DataInput/NewDataInput";
-import CustomTableHeader from "./DataLiteracy/common/CustomTable/CustomTableHeader";
-import CustomTable from "./DataLiteracy/common/CustomTable/CustomTable";
 import DrawGraphV2Page from "./DataLiteracy/DrawGraph/page/DrawGraphV2Page";
 import DataLoadPage from "./DataLiteracy/DataLoad/page/DataLoadPage";
 import GraphEvalutionRusult from "./DataLiteracy/DrawGraph/GraphEvalutionRusult/GraphEvalutionRusult";
@@ -58,6 +55,7 @@ import CheckReadData from "./DataClass/ReadData/CheckData";
 import CheckManipulateData from "./DataClass/ManipulateData/CheckData";
 import CheckAnalyzeData from "./DataClass/AnalyzeData/CheckData";
 import CheckCompareData from "./DataClass/CompareData/CheckData";
+import SlidePage from "./Study/Page/SlidePage";
 
 import ViewChart from "./DataClass/viewChart";
 
@@ -134,6 +132,28 @@ function App() {
           <Route path="/checkAnalyzeData" exact={true} element={<CheckAnalyzeData />} />
           <Route path="/checkCompareData" exact={true} element={<CheckCompareData />} />
 
+          <Route path="/dataclass" exact={true} element={<DataClass />} />
+          <Route
+            path="/checkReadData"
+            exact={true}
+            element={<CheckReadData />}
+          />
+          <Route
+            path="/checkManipulateData"
+            exact={true}
+            element={<CheckManipulateData />}
+          />
+          <Route
+            path="/checkAnalyzeData"
+            exact={true}
+            element={<CheckAnalyzeData />}
+          />
+          <Route
+            path="/checkCompareData"
+            exact={true}
+            element={<CheckCompareData />}
+          />
+
           <Route path="/viewChart" exact={true} element ={<ViewChart />} />
 
           <Route path="/E-Classes" exact={true} element={<EClassList />} />
@@ -166,6 +186,8 @@ function App() {
 
           {/*ContactUs*/}
           <Route path="/contactus" exact={true} element={<ContactUs />} />
+
+          <Route path="/slide" exact={true} element={<SlidePage />} />
 
           {/*DataLiteracy */}
           <Route path="/dataLiteracy">
