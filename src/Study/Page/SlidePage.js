@@ -29,11 +29,13 @@ function SlidePage() {
           <BottomSlidePage />
         </div>
       </BottomSilde>
+      {/*
       <TopSlide>
         <div style={{ height: "250px" }}>
           <TopSlidePage />
         </div>
       </TopSlide>
+      */}
       <Blackboard>
         <DrawGraph />
       </Blackboard>
