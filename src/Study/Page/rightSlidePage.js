@@ -56,73 +56,74 @@ const engToKor = (name) => {
     return kor[name] || name;
 }
 
-const getTable = (type, id) => {
-    let path = ''
-    if (type === "OCEANQUALITY") {
-        path = `/ocean-quality/mine/chunk?dataUUID=${id}`;
-    } else if (type === "AIRQUALITY") {
-        path = `/air-quality/mine/chunk?dataUUID=${id}`;
-    } else if (type === "SEED") {
-        path = `/seed/mine/chunk?dataUUID=${id}`;
-    }
+export default function RightSlidePage() {
+    const { setData } = useGraphDataStore();
 
-    customAxios.get(path)
-    .then((res)=>{
-        let headers = Object.keys(res.data[0]).filter(
-            (key) => key !== "id" && key !== "dataUUID" && key !== "saveDate" && key !== "dateString"
-        );
-
-        const attributesToCheck = [
-            "co2",
-            "dox",
-            "dust",
-            "hum",
-            "hum_EARTH",
-            "lux",
-            "ph",
-            "pre",
-            "temp",
-            "tur"  
-        ];
-        
-        for (const attribute of attributesToCheck) {
-            const isAllZero = res.data.every(item => item[attribute] === 0);
-            // 해당 속성이 모두 0일 때, headers에서 제거
-            if (isAllZero) {
-                headers = headers.filter(
-                    (header) => header !== attribute
-                );
-            }
+    const getTable = (type, id) => {
+        let path = ''
+        if (type === "OCEANQUALITY") {
+            path = `/ocean-quality/mine/chunk?dataUUID=${id}`;
+        } else if (type === "AIRQUALITY") {
+            path = `/air-quality/mine/chunk?dataUUID=${id}`;
+        } else if (type === "SEED") {
+            path = `/seed/mine/chunk?dataUUID=${id}`;
         }
-
-        headers = headers.map((header) => engToKor(header));
-        
-        // 각각의 딕셔너리에서 값만 추출하여 리스트로 변환
-        const keysToExclude = ["id", "dataUUID", "saveDate", "dateString"];
-
-        const values = res.data.map(item => {
-            const filteredItem = Object.keys(item)
-                .filter(key => !keysToExclude.includes(key))
-                .reduce((obj, key) => {
-                obj[key] = item[key];
-                return obj;
-                }, {});
-            return Object.values(filteredItem);
-        });
-
-        // 최종 결과 생성 (헤더 + 값)
-        const recombined = [headers, ...values];
-
-        const { setData } = useGraphDataStore();
-        setData(recombined);
-        localStorage.setItem("data", JSON.stringify(recombined));
-        window.location.reload();
-    })
-    .catch((err) => console.log(err));
-};
-
-const getData = () => {
-    customAxios.get('/mydata/list')
+    
+        customAxios.get(path)
+        .then((res)=>{
+            let headers = Object.keys(res.data[0]).filter(
+                (key) => key !== "id" && key !== "dataUUID" && key !== "saveDate" && key !== "dateString"
+            );
+    
+            const attributesToCheck = [
+                "co2",
+                "dox",
+                "dust",
+                "hum",
+                "hum_EARTH",
+                "lux",
+                "ph",
+                "pre",
+                "temp",
+                "tur"  
+            ];
+            
+            for (const attribute of attributesToCheck) {
+                const isAllZero = res.data.every(item => item[attribute] === 0);
+                // 해당 속성이 모두 0일 때, headers에서 제거
+                if (isAllZero) {
+                    headers = headers.filter(
+                        (header) => header !== attribute
+                    );
+                }
+            }
+    
+            headers = headers.map((header) => engToKor(header));
+            
+            // 각각의 딕셔너리에서 값만 추출하여 리스트로 변환
+            const keysToExclude = ["id", "dataUUID", "saveDate", "dateString"];
+    
+            const values = res.data.map(item => {
+                const filteredItem = Object.keys(item)
+                    .filter(key => !keysToExclude.includes(key))
+                    .reduce((obj, key) => {
+                    obj[key] = item[key];
+                    return obj;
+                    }, {});
+                return Object.values(filteredItem);
+            });
+    
+            // 최종 결과 생성 (헤더 + 값)
+            const recombined = [headers, ...values];
+            setData(recombined);
+            localStorage.setItem("data", JSON.stringify(recombined));
+            window.location.reload();
+        })
+        .catch((err) => console.log(err));
+    };
+    
+    const getData = () => {
+        customAxios.get('/mydata/list')
             .then((res) => {
                 const lastElement = res.data[res.data.length - 1];
                 const type = lastElement.dataLabel;
@@ -130,9 +131,8 @@ const getData = () => {
                 getTable(type, id);
             })
             .catch((err) => console.log(err));
-}
+    }
 
-export default function RightSlidePage() {
     const settings = {
         dots: true,
         infinite: true,
@@ -145,6 +145,8 @@ export default function RightSlidePage() {
     const [opinion, setOpinion] = useState('');
 
     const submitOpinion = () => {
+        console.log(title)
+        console.log(opinion)
         customAxios.post('/dataLiteracy/sequenceData/reply', {
             title: title,
             content: opinion,
@@ -234,7 +236,7 @@ export default function RightSlidePage() {
                             <Form.Label>조 이름</Form.Label>
                             <Form.Control as="textarea" rows={1} onChange={(e) => setTitle(e.target.value)}/>
                         </Form.Group>
-                        <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea2">
                             <Form.Label>토론 내용 입력</Form.Label>
                             <Form.Control as="textarea" rows={5} onChange={(e) => setOpinion(e.target.value)}/>
                         </Form.Group>
