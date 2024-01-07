@@ -2,8 +2,10 @@ import Slider from "react-slick";
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 import { customAxios } from '../../Common/CustomAxios';
 import { useGraphDataStore } from '../store/graphStore';
+import { useState } from "react";
 
 //항목 이름 (한국어 -> 영어)
 const engToKor = (name) => {
@@ -110,10 +112,11 @@ const getTable = (type, id) => {
 
         // 최종 결과 생성 (헤더 + 값)
         const recombined = [headers, ...values];
-        
+
         const { setData } = useGraphDataStore();
         setData(recombined);
         localStorage.setItem("data", JSON.stringify(recombined));
+        window.location.reload();
     })
     .catch((err) => console.log(err));
 };
@@ -138,6 +141,23 @@ export default function RightSlidePage() {
         slidesToScroll: 1
     };
 
+    const [title, setTitle] = useState('');
+    const [opinion, setOpinion] = useState('');
+
+    const submitOpinion = () => {
+        customAxios.post('/dataLiteracy/sequenceData/reply', {
+            title: title,
+            content: opinion,
+            classId: 1,
+            chapterId: 1,
+            sequenceId: 1
+        })
+        .then((res) => {
+            alert("의견이 제출되었습니다.")
+        })
+        .catch((err) => console.log(err));
+    }
+
     return(
         <div>
             <Slider {...settings}>
@@ -148,10 +168,6 @@ export default function RightSlidePage() {
                             <span style={{ background: 'yellow' }}>1차시:  교실의 공기질 측정하기</span><br/>
                             2차시 : 학교의 여러장소 공기질 측정하기<br/>
                             3차시 : 교실과 학교의 장소별 공기질 비교하기
-                        </div>
-
-                        <div>
-
                         </div>
                     </div>
                 </div>
@@ -206,6 +222,79 @@ export default function RightSlidePage() {
                         <Button variant="dark" style={{ marginTop: '0.5rem' }} onClick={getData}>측정한 값 가져오기</Button>
                     </div>
                     
+                </div>
+
+                <div>
+                    <div style={{ margin: '1rem 3rem' }}>
+                        <strong style={{ background: 'yellow' }}>[활동 2]</strong> <br />
+                        측정된 현재 데이터와 대기환경 기준 비교하고 이유 토론하기
+                    </div>
+                    <div style={{ margin: '1rem 3rem' }}>
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+                            <Form.Label>조 이름</Form.Label>
+                            <Form.Control as="textarea" rows={1} onChange={(e) => setTitle(e.target.value)}/>
+                        </Form.Group>
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+                            <Form.Label>토론 내용 입력</Form.Label>
+                            <Form.Control as="textarea" rows={5} onChange={(e) => setOpinion(e.target.value)}/>
+                        </Form.Group>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
+                        <Button variant="dark" style={{ marginTop: '0.5rem' }} onClick={submitOpinion}>제출하기</Button>
+                    </div>
+                </div>
+
+                <div>
+                    <div style={{ margin: '1rem 3rem' }}>
+                        <strong style={{ background: 'yellow' }}>[활동 3]</strong> <br />
+                        센서를 활용하여 30분간 교실 공기질 측정하기 <br /> <br />
+                        (1) 15분은 창문을 닫은 상태로 측정하기 
+                        <a href="/socket" target="_blank">
+                            <Button variant="dark" style={{ margin: '0.5rem 0'}}>측정하러 가기</Button>
+                        </a>
+                        <Button variant="dark" style={{ marginBottom: '1rem' }} onClick={getData}>측정한 값 가져오기</Button>
+                        <br />
+                        (2) 15분은 창문을 연 상태로 측정하기 
+                        <a href="/socket" target="_blank">
+                            <Button variant="dark" style={{ margin: '0.5rem 0'}}>측정하러 가기</Button>
+                        </a>
+                        <Button variant="dark" style={{ marginBottom: '1rem' }} onClick={getData}>측정한 값 가져오기</Button>
+                        <br />
+                        (3) 측정 결과 예상하기 및 이유 작성하기
+                    </div>
+
+                    <div style={{ margin: '1rem 3rem' }}>
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+                            <Form.Label>조 이름</Form.Label>
+                            <Form.Control as="textarea" rows={1} onChange={(e) => setTitle(e.target.value)}/>
+                        </Form.Group>
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+                            <Form.Label>토론 내용 입력</Form.Label>
+                            <Form.Control as="textarea" rows={3} onChange={(e) => setOpinion(e.target.value)}/>
+                        </Form.Group>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
+                        <Button variant="dark" style={{ marginTop: '0.5rem' }} onClick={submitOpinion}>제출하기</Button>
+                    </div>
+                </div>
+
+                <div>
+                    <div style={{ margin: '1rem 3rem' }}>
+                        <strong style={{ background: 'yellow' }}>[활동 4]</strong> <br />
+                        센서를 활용하여 30분간 교실의 공기질 측정 후 자료 변환하기
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
+                        <Button variant="dark" style={{ marginTop: '0.5rem' }} onClick={getData}>측정한 값 가져오기</Button>
+                        <span style={{ marginTop: '0.5rem', color: 'blue' }}>* 측정한 값을 불러온 후 'Graph' 탭에서 해당 활동을 할 수 있습니다.</span>
+                    </div>
+                </div>
+
+                <div>
+                    <div style={{margin: '1rem 3rem' }}>
+                        <strong style={{ background: 'yellow' }}>[활동 5]</strong> <br />
+                        결과 보고서 작성하기
+                    </div>
+                    <span style={{ margin: '0 3rem', color: 'blue' }}>* 'Assignment' 탭에서 해당 활동을 할 수 있습니다.</span>
                 </div>
             </Slider>
         </div>
