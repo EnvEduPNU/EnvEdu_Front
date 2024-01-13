@@ -9,6 +9,7 @@ import * as Styled from "./Styled";
 import TopSlidePage from "./topSlidePage";
 import BottomSlidePage from "./bottomSildePage";
 import LeftSlidePage from "./leftSlidePage";
+import RightSildePage from "./rightSlidePage";
 
 function SlidePage() {
   return (
@@ -19,9 +20,8 @@ function SlidePage() {
         </div>
       </LeftSilde>
       <RightSilde>
-        right입니다.
-        <div style={{ width: "400px" }}>
-          test
+        <div style={{ width: "600px" }}>
+          <RightSildePage />
         </div>
       </RightSilde>
       <BottomSilde>
@@ -29,11 +29,13 @@ function SlidePage() {
           <BottomSlidePage />
         </div>
       </BottomSilde>
+      {/*
       <TopSlide>
         <div style={{ height: "250px" }}>
           <TopSlidePage />
         </div>
       </TopSlide>
+      */}
       <Blackboard>
         <DrawGraph />
       </Blackboard>

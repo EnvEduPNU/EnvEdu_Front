@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { customAxios } from '../../Common/CustomAxios';
 import './leftSlidePage.scss';
+import { useGraphDataStore } from '../store/graphStore';
 
-/*
 //항목 이름 (한국어 -> 영어)
 const engToKor = (name) => {
     const kor = {
@@ -51,12 +51,10 @@ const engToKor = (name) => {
     };
     return kor[name] || name;
 }
-*/
 
 export default function LeftSlidePage() {
     /*데이터 요약 정보*/
     const [summary, setSummary] = useState([]);
-    const [headers, setHeaders] = useState([]);
     
     useEffect(() => {
         customAxios.get('/mydata/list')
@@ -73,7 +71,8 @@ export default function LeftSlidePage() {
             .catch((err) => console.log(err));
     }, []);
 
-    const [details, setDetails] = useState([]);
+    const { setData } = useGraphDataStore();
+
     const getTable = (type, id) => {
         let path = ''
         if (type === "수질 데이터") {
@@ -86,8 +85,7 @@ export default function LeftSlidePage() {
 
         customAxios.get(path)
         .then((res)=>{
-            setDetails(res.data);
-                let headers = Object.keys(res.data[0]).filter(
+            let headers = Object.keys(res.data[0]).filter(
                 (key) => key !== "id" && key !== "dataUUID" && key !== "saveDate" && key !== "dateString"
             );
 
@@ -113,7 +111,28 @@ export default function LeftSlidePage() {
                     );
                 }
             }
-            setHeaders(headers);
+
+            headers = headers.map((header) => engToKor(header));
+            
+            // 각각의 딕셔너리에서 값만 추출하여 리스트로 변환
+            const keysToExclude = ["id", "dataUUID", "saveDate", "dateString"];
+
+            const values = res.data.map(item => {
+                const filteredItem = Object.keys(item)
+                    .filter(key => !keysToExclude.includes(key))
+                    .reduce((obj, key) => {
+                    obj[key] = item[key];
+                    return obj;
+                    }, {});
+                return Object.values(filteredItem);
+            });
+
+            // 최종 결과 생성 (헤더 + 값)
+            const recombined = [headers, ...values];
+            
+            setData(recombined);
+            localStorage.setItem("data", JSON.stringify(recombined));
+            window.location.reload();
         })
         .catch((err) => console.log(err));
     };
@@ -146,14 +165,14 @@ export default function LeftSlidePage() {
                     <div style={{ overflowY: 'scroll', height: '40rem' }}>
                         <h4>My Data</h4>
 
-                        <div>
+                        <div style={{ marginTop: '1rem' }}>
                             <img src="/assets/img/folder-icon.png" style={{ width: '1.5rem', margin: '0 0.5rem' }} />
                             <label onClick={()=>selectFolder('전체')}>전체</label>
                             <img src="/assets/img/folder-icon.png" style={{ width: '1.5rem', margin: '0 0.5rem' }} />
                             <label onClick={()=>selectFolder('대기질')}>대기질</label>
-                            <img src="/assets/img/folder-icon.png" style={{ width: '1.5rem', margin: '0.5rem' }} />
+                            <img src="/assets/img/folder-icon.png" style={{ width: '1.5rem', margin: '0 0.5rem' }} />
                             <label onClick={()=>selectFolder('수질')}>수질</label>
-                            <img src="/assets/img/folder-icon.png" style={{ width: '1.5rem', margin: '0.5rem' }} />
+                            <img src="/assets/img/folder-icon.png" style={{ width: '1.5rem', margin: '0 0.5rem' }} />
                             <label onClick={()=>selectFolder('SEED')}>SEED</label>
                         </div>
 
