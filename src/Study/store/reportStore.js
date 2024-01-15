@@ -5,6 +5,9 @@ import { create } from "zustand";
 const TABLE = "table";
 const GRAPH = "graph";
 const TEXT = "text";
+const SEED = "seed";
+const DISCUSSION = "discussion";
+const FILL_TABLE = "fill_table";
 
 class Activity {
   constructor(question, type) {
@@ -37,12 +40,14 @@ class Activity {
 }
 export const useReportStore = create((set, get) => ({
   activities: [
-    new Activity("활동1: 교실의 공기질 측정하기", TABLE),
+    new Activity("활동1: 센서에서 측정된 값을 읽고 현재 데이터 기록하기", SEED),
     new Activity(
       "활동2: 측정된 현재 데이터와 대기환경 기준 비교하고 이유 토론하기",
-      TEXT
+      DISCUSSION
     ),
-    new Activity("활동3: 그래프 만들어보기", GRAPH),
+    new Activity("활동3: 센서를 활용하여 30분간 교실 공기질 측정하기", "none"),
+    new Activity("활동4: 표 채워넣기", FILL_TABLE),
+    new Activity("활동5: 그래프 만들어보기", GRAPH),
   ],
 
   writeAnswer: (index, answer) =>

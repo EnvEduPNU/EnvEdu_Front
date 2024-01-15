@@ -25,7 +25,7 @@ function GraphAndEditor() {
         style={{
           position: "absolute",
           left: "30px",
-          top: "200px",
+          top: "310px",
           width: "fit-content",
         }}
       >
