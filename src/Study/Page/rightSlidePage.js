@@ -122,17 +122,6 @@ export default function RightSlidePage() {
         .catch((err) => console.log(err));
     };
     
-    const getData = () => {
-        customAxios.get('/mydata/list')
-            .then((res) => {
-                const lastElement = res.data[res.data.length - 1];
-                const type = lastElement.dataLabel;
-                const id = lastElement.dataUUID;
-                getTable(type, id);
-            })
-            .catch((err) => console.log(err));
-    }
-
     const settings = {
         dots: true,
         infinite: true,
@@ -141,23 +130,59 @@ export default function RightSlidePage() {
         slidesToScroll: 1
     };
 
-    const [title, setTitle] = useState('');
-    const [opinion, setOpinion] = useState('');
+    const [sharedData, setSharedData] = useState([]);
+    // 학생이 데이터 값 수정하기
+    const [properties, setProperties] = useState(
+        sharedData.length > 0 ? sharedData[0].properties.split(', ') : []
+    );
 
-    const submitOpinion = () => {
-        console.log(title)
-        console.log(opinion)
-        customAxios.post('/dataLiteracy/sequenceData/reply', {
-            title: title,
-            content: opinion,
+    console.log(properties)
+    const [cellValues, setCellValues] = useState(
+        sharedData.length > 0 ? sharedData.map(row => row.data.split(', ')) : []
+    );
+    console.log(cellValues)
+    const handleHeaderChange = (index, value) => {
+        const updatedProperties = [...properties];
+        updatedProperties[index] = value;
+        setProperties(updatedProperties);
+    };
+    
+    const handleCellChange = (rowIndex, cellIndex, value) => {
+        const updatedCellValues = [...cellValues];
+        updatedCellValues[rowIndex] = [...(updatedCellValues[rowIndex] || [])];
+        updatedCellValues[rowIndex][cellIndex] = value;
+        setCellValues(updatedCellValues);
+    };
+
+    const handleModify = () => {
+        customAxios.put('/dataLiteracy/sequenceData', {
+            properties: properties,
+            data: cellValues,
+            memo: sharedData[0].memo,
             classId: 1,
             chapterId: 1,
             sequenceId: 1
         })
-        .then((res) => {
-            alert("의견이 제출되었습니다.")
-        })
-        .catch((err) => console.log(err));
+            .then(() => alert("전송되었습니다."))
+            .catch((err) => console.log(err));
+    };
+
+    const handleGetData = () => {
+        customAxios.get('/dataLiteracy/sequenceData/base?classId=1&chapterId=1&sequenceId=1')
+            .then((res) => {
+                console.log(res.data);
+                const properties = res.data[0].properties.split(',').map(item => item.trim());
+                const dataRows = res.data.map(item => item.data.split(',').map(dataItem => dataItem.trim()));
+
+                // 최종 결과 생성 (헤더 + 값)
+                const recombined = [properties, ...dataRows];
+                setData(recombined);
+                localStorage.setItem("data", JSON.stringify(recombined));
+                window.location.reload();
+            })
+            .catch((err) => {
+                console.log(err);
+            })
     }
 
     return(
@@ -239,11 +264,86 @@ export default function RightSlidePage() {
                         결과 보고서 작성하기
                     </div>
                     <span style={{ margin: '0 3rem', color: 'blue' }}>* 'Assignment' 탭에서 해당 활동을 할 수 있습니다.</span>
-                </div>
 
-                <div>
-                    공유한 데이터 가져오기
+                    <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center' }}>
+                        <button 
+                            className='shareFileBtn' 
+                            onClick={handleGetData}
+                            style={{background: '#d2d2d2', border: 'none', borderRadius: '0.625rem'}}>공유 데이터 가져오기</button>
+                    </div>
                 </div>
+                
+                {/*
+                <div>
+                    <div className='interaction' style={{ margin: '1rem 3rem'}}>
+                        <h4>공유한 데이터 가져오기</h4>
+
+                        <div style={{ marginTop: '1rem' }}>
+                            <button 
+                                className='shareFileBtn' 
+                                onClick={handleGetData}
+                                style={{background: '#6CCC81'}}>공유 데이터 가져오기</button>
+                        </div>
+
+                        
+                        <div>
+                            {sharedData && sharedData.length > 0 && (
+                                <>
+                                    <label className='labelStudent'>저장 일시</label>
+                                    <p>{sharedData[0].saveDate}</p>
+
+                                    {sharedData[0].memo &&
+                                        <>
+                                            <label className='labelStudent'>메모</label>
+                                            <p>{sharedData[0].memo}</p>
+                                        </>
+                                    }
+                                </>
+                            )}
+                        </div>
+
+                        <div>
+                            <label className='labelStudent'>데이터 값 수정하기</label>
+
+                            {sharedData && sharedData.length > 0 && (
+                                <table border="1" className='sharedData'>
+                                    <thead>
+                                        <tr>
+                                            {sharedData[0].properties.split(', ').map((property, index) => (
+                                                <th key={index}>
+                                                    <input
+                                                        value={properties[index]}
+                                                        onChange={(e) => handleHeaderChange(index, e.target.value)}
+                                                    />
+                                                </th>
+                                            ))}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {sharedData.map((row, rowIndex) => (
+                                        <tr key={rowIndex}>
+                                        {row.data.split(', ').map((cell, cellIndex) => (
+                                            <td key={cellIndex}>
+                                                <input
+                                                    onChange={(e) => handleCellChange(rowIndex, cellIndex, e.target.value)}
+                                                />
+                                            </td>
+                                        ))}
+                                        </tr>
+                                    ))}
+                                    </tbody>
+                                </table>
+                            )}
+                        
+                    </div>
+
+                    <div style={{display: 'flex', justifyContent: 'center', marginTop: '3rem'}}>
+                        <button className='shareFileBtn'  style={{background: '#6CCC81'}} onClick={handleModify}>전송하기</button>
+                    </div>
+                                    
+                    </div>
+                </div>
+                */}
             </Slider>
         </div>
     )
