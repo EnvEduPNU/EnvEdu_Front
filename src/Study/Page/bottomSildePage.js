@@ -29,11 +29,11 @@ const GraphCard = ({ title, content }) => {
 const BottomSlidePage = () => {
   const [data, setData] = useState([]);
 
-  const getData = () => {
-    customAxios.get('/dataLiteracy/sequenceData/reply?classId=1&chapterId=1&sequenceId=1')
+  const getData = (sequence) => {
+    customAxios.get(`/dataLiteracy/sequenceData/reply?classId=1&chapterId=1&sequenceId=${sequence}`)
     .then((res) => {
       setData(res.data);
-      window.location.reload();
+      //window.location.reload();
     })
     .catch((err) => console.log(err));
   }
@@ -51,7 +51,10 @@ const BottomSlidePage = () => {
     <div style={{ margin: '1rem 2rem' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <h4>공유된 데이터</h4>
-        <Button variant="primary" onClick={getData}>불러오기</Button>
+        <div>
+          <Button variant="primary" onClick={() => getData(2)}>활동2</Button>
+          <Button variant="primary" onClick={() => getData(3)}>활동3</Button>
+        </div>
       </div>
       <Slider {...settings}>
         {data && data.map((item) => (

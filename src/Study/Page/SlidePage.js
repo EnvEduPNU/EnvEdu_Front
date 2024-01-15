@@ -46,7 +46,7 @@ function SlidePage() {
       </BottomSilde>
       <TopSlide>
         <div style={{ height: "200px", background: 'pink' }}>
-          <TopSlidePage/>
+          {/*<TopSlidePage/>*/}
         </div>
       </TopSlide>
       <Blackboard>
