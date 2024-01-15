@@ -164,30 +164,24 @@ export default function RightSlidePage() {
         <div>
             <Slider {...settings}>
                 <div>
-                    <h4 style={{ textAlign: 'center', marginTop: '1rem' }}>우리 학교의 공기질 측정하기</h4>
-                    <div style={{display: 'flex', justifyContent: 'center', margin: '3rem 0' }}>
+                    <h4 style={{ margin: '1rem 3rem' }}>우리 학교의 공기질 측정하기</h4>
+                    <div style={{  margin: '2rem 3rem' }}>
                         <div>
                             <span style={{ background: 'yellow' }}>1차시:  교실의 공기질 측정하기</span><br/>
                             2차시 : 학교의 여러장소 공기질 측정하기<br/>
                             3차시 : 교실과 학교의 장소별 공기질 비교하기
                         </div>
                     </div>
-                </div>
 
-                
-                <div>
-                    <h4 style={{ textAlign: 'center', marginBottom: '1rem', marginTop: '1rem' }}>1차시:  교실의 공기질 측정하기</h4>
-                    <div style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: '0.5rem' }}>학습 목표</div>
-                    <div style={{display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
+                    <div style={{ margin: '0 3rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>학습 목표</div>
+                    <div style={{ margin: '0 3rem' }}>
                         <div>
                             교실 공간의 공기질의 구성성분을 이해할 수 있다. <br/>
                             교실 공간의 공기질을 측정할 수 있다. <br/>
                             실내생활에서 공기질의 중요성을 인식한다.
                         </div>
                     </div>
-                </div>
 
-                <div>
                     <div style={{ margin: '1rem 3rem' }}>
                         <strong>[탐구]</strong> <br />
                         센서를 활용하여 교실의 공기질을 측정해 보자.
@@ -202,7 +196,7 @@ export default function RightSlidePage() {
                         [탐구 방법]
                     </div>
 
-                    <div style={{  margin: '1rem 5rem' }}>
+                    <div style={{  margin: '0 3rem' }}>
                         <div>
                             1. 센서를 준비한다. <br/>
                             2. 서버에 연결한다. <br/>
@@ -216,87 +210,39 @@ export default function RightSlidePage() {
                         <strong style={{ background: 'yellow' }}>[활동 1]</strong> <br />
                         센서에서 측정된 값을 읽고 현재 데이터 기록하기
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-                        <a href="/socket" target="_blank">
-                            <Button variant="dark" style={{ marginTop: '2rem' }}>측정하러 가기</Button>
-                        </a>
-                        
-                        <Button variant="dark" style={{ marginTop: '0.5rem' }} onClick={getData}>측정한 값 가져오기</Button>
-                    </div>
-                    
-                </div>
 
-                <div>
                     <div style={{ margin: '1rem 3rem' }}>
                         <strong style={{ background: 'yellow' }}>[활동 2]</strong> <br />
                         측정된 현재 데이터와 대기환경 기준 비교하고 이유 토론하기
                     </div>
-                    <div style={{ margin: '1rem 3rem' }}>
-                        <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
-                            <Form.Label>조 이름</Form.Label>
-                            <Form.Control as="textarea" rows={1} onChange={(e) => setTitle(e.target.value)}/>
-                        </Form.Group>
-                        <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea2">
-                            <Form.Label>토론 내용 입력</Form.Label>
-                            <Form.Control as="textarea" rows={5} onChange={(e) => setOpinion(e.target.value)}/>
-                        </Form.Group>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-                        <Button variant="dark" style={{ marginTop: '0.5rem' }} onClick={submitOpinion}>제출하기</Button>
-                    </div>
-                </div>
 
-                <div>
                     <div style={{ margin: '1rem 3rem' }}>
                         <strong style={{ background: 'yellow' }}>[활동 3]</strong> <br />
                         센서를 활용하여 30분간 교실 공기질 측정하기 <br /> <br />
                         (1) 15분은 창문을 닫은 상태로 측정하기 
-                        <a href="/socket" target="_blank">
-                            <Button variant="dark" style={{ margin: '0.5rem 0'}}>측정하러 가기</Button>
-                        </a>
-                        <Button variant="dark" style={{ marginBottom: '1rem' }} onClick={getData}>측정한 값 가져오기</Button>
                         <br />
                         (2) 15분은 창문을 연 상태로 측정하기 
-                        <a href="/socket" target="_blank">
-                            <Button variant="dark" style={{ margin: '0.5rem 0'}}>측정하러 가기</Button>
-                        </a>
-                        <Button variant="dark" style={{ marginBottom: '1rem' }} onClick={getData}>측정한 값 가져오기</Button>
                         <br />
                         (3) 측정 결과 예상하기 및 이유 작성하기
                     </div>
 
                     <div style={{ margin: '1rem 3rem' }}>
-                        <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
-                            <Form.Label>조 이름</Form.Label>
-                            <Form.Control as="textarea" rows={1} onChange={(e) => setTitle(e.target.value)}/>
-                        </Form.Group>
-                        <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
-                            <Form.Label>토론 내용 입력</Form.Label>
-                            <Form.Control as="textarea" rows={3} onChange={(e) => setOpinion(e.target.value)}/>
-                        </Form.Group>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-                        <Button variant="dark" style={{ marginTop: '0.5rem' }} onClick={submitOpinion}>제출하기</Button>
-                    </div>
-                </div>
-
-                <div>
-                    <div style={{ margin: '1rem 3rem' }}>
                         <strong style={{ background: 'yellow' }}>[활동 4]</strong> <br />
                         센서를 활용하여 30분간 교실의 공기질 측정 후 자료 변환하기
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-                        <Button variant="dark" style={{ marginTop: '0.5rem' }} onClick={getData}>측정한 값 가져오기</Button>
-                        <span style={{ marginTop: '0.5rem', color: 'blue' }}>* 측정한 값을 불러온 후 'Graph' 탭에서 해당 활동을 할 수 있습니다.</span>
+                    <div style={{ margin: '1rem 3rem' }}>
+                        <span style={{ color: 'blue' }}>* 측정한 값을 불러온 후 'Graph' 탭에서 해당 활동을 할 수 있습니다.</span>
                     </div>
-                </div>
 
-                <div>
                     <div style={{margin: '1rem 3rem' }}>
                         <strong style={{ background: 'yellow' }}>[활동 5]</strong> <br />
                         결과 보고서 작성하기
                     </div>
                     <span style={{ margin: '0 3rem', color: 'blue' }}>* 'Assignment' 탭에서 해당 활동을 할 수 있습니다.</span>
+                </div>
+
+                <div>
+                    공유한 데이터 가져오기
                 </div>
             </Slider>
         </div>

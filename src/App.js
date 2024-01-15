@@ -203,8 +203,7 @@ function App() {
         </Routes>
       </div>
         
-      {/* /slide에서는 footer 렌더링 하지 않음*/}
-      {window.location.pathname !== '/slide' && <Footer />}
+      <Footer />
     </>
   );
 }
