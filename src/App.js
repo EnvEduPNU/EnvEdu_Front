@@ -68,7 +68,9 @@ function App() {
   }, []);
   return (
     <>
-      <Header />
+      {/* /slide에서는 header 렌더링 하지 않음*/}
+      {window.location.pathname !== '/slide' && <Header />}
+      
       <div className="wrap">
         <Routes>
           {/*home*/}
@@ -203,8 +205,7 @@ function App() {
         </Routes>
       </div>
         
-      {/* /slide에서는 footer 렌더링 하지 않음*/}
-      {window.location.pathname !== '/slide' && <Footer />}
+      <Footer />
     </>
   );
 }

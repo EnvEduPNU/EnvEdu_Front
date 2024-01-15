@@ -10,8 +10,12 @@ import TopSlidePage from "./topSlidePage";
 import BottomSlidePage from "./bottomSildePage";
 import LeftSlidePage from "./leftSlidePage";
 import RightSildePage from "./rightSlidePage";
+import Header from '../../Header/Header'
+import { useSlideStore } from "../store/slideStore";
 
 function SlidePage() {
+  const { isShowTop, showTop, closeTop } = useSlideStore();
+
   return (
     <Styled.Wrapper>
       <LeftSilde>
@@ -29,13 +33,12 @@ function SlidePage() {
           <BottomSlidePage />
         </div>
       </BottomSilde>
-      {/*
       <TopSlide>
-        <div style={{ height: "250px" }}>
-          <TopSlidePage />
+        <div style={{ height: "100px" }}>
+          {/*<TopSlidePage isShowTop={isShowTop} />*/}
+          {isShowTop && <Header />}
         </div>
       </TopSlide>
-      */}
       <Blackboard>
         <DrawGraph />
       </Blackboard>

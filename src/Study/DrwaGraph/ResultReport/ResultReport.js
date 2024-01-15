@@ -151,14 +151,14 @@ function ResultReport() {
       .catch(err => console.log(err));
   };
 
-  const submitOpinion = () => {
+  const submitOpinion = (sequence) => {
     customAxios
       .post("/dataLiteracy/sequenceData/reply", {
         title: title,
         content: opinion,
         classId: 1,
         chapterId: 1,
-        sequenceId: 1,
+        sequenceId: sequence,
       })
       .then(res => {
         alert("의견이 제출되었습니다.");
@@ -265,7 +265,7 @@ function ResultReport() {
                   <Button
                     variant="dark"
                     style={{ marginTop: "0.5rem" }}
-                    onClick={submitOpinion}
+                    onClick={() => submitOpinion(2)}
                   >
                     제출하기
                   </Button>
@@ -390,7 +390,7 @@ function ResultReport() {
                   <Button
                     variant="dark"
                     style={{ marginTop: "0.5rem" }}
-                    onClick={submitOpinion}
+                    onClick={() => submitOpinion(3)}
                   >
                     제출하기
                   </Button>

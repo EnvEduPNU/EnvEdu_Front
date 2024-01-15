@@ -2,12 +2,12 @@ import styled, { css } from "styled-components";
 
 export const Wrapper = styled.div`
   width: 100%;
-  min-height: 260px;
+  min-height: 100px;
   max-height: 90%;
   position: absolute;
   left: 0;
   top: ${props =>
-    props.$height > 260 ? `${props.$height * -1 + 10}px` : "-250px"};
+    props.$height > 100 ? `${props.$height * -1 + 10}px` : "-250px"};
   z-index: 1033;
   background-color: #fff;
   border-bottom: 1px solid #ccc;

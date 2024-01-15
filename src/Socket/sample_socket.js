@@ -263,7 +263,7 @@ function SampleSocket(props) {
                                     background: '#CBE0FF',
                                     marginRight: '1.5rem'
                                 }}>
-                                저장 간격
+                                시간 간격
                             </div>
 
                             <input style={{
@@ -378,7 +378,7 @@ function SampleSocket(props) {
                                         alert("저장할 센서를 한 개 이상 선택해주세요.")
                                     }
                                 }}>
-                                    데이터 저장하기
+                                    데이터 기록하기
                                 </div>
                             }
 
