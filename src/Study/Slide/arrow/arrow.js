@@ -1,5 +1,5 @@
 import React from "react";
-import { ReactComponent as ArrowIcon } from "../../image/rightarrow.svg";
+import { ReactComponent as ArrowIcon } from "../../image/arrow.svg";
 
 function Arrow({ direction, onClick, style }) {
   // 방향에 따른 회전 각도 설정

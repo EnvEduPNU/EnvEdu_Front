@@ -8,7 +8,7 @@ export const Wrapper = styled.div`
   width: 100%;
   background-color: grey;
   z-index: 10000;
-  button {
+  .pdfBtn {
     position: fixed;
     bottom: 30px;
     right: 30px;
