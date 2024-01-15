@@ -11,21 +11,10 @@ import BottomSlidePage from "./bottomSildePage";
 import LeftSlidePage from "./leftSlidePage";
 import RightSildePage from "./rightSlidePage";
 import Header from '../../Header/Header'
-import { useEffect, useState } from "react";
+import { useSlideStore } from "../store/slideStore";
 
 function SlidePage() {
-  const [isVisible, setIsVisible] = useState(false);
-
-  const showNavbar = () => {
-    setIsVisible(true);
-  };
-
-  const hideNavbar = () => {
-    setIsVisible(false);
-  };
-  useEffect(() =>{
-    console.log(isVisible)
-  }, [isVisible])
+  const { isShowTop, showTop, closeTop } = useSlideStore();
 
   return (
     <Styled.Wrapper>
@@ -45,8 +34,9 @@ function SlidePage() {
         </div>
       </BottomSilde>
       <TopSlide>
-        <div style={{ height: "200px", background: 'pink' }}>
-          {/*<TopSlidePage/>*/}
+        <div style={{ height: "100px" }}>
+          {/*<TopSlidePage isShowTop={isShowTop} />*/}
+          {isShowTop && <Header />}
         </div>
       </TopSlide>
       <Blackboard>

@@ -1,10 +1,10 @@
 import Header from '../../Header/Header'
 
-export default function TopSlidePage() {
-
+export default function TopSlidePage({ isShowTop }) {
+    console.log(isShowTop)
     return(
         <div>
-            <Header />
+            {isShowTop && <Header />}
         </div>
     )
 }
