@@ -8,7 +8,7 @@ import Toolbar from "../../Component/ToolBar/Toolbar";
 import PaperWithToolBar from "../../Component/PaperWithToolBar/PaperWithToolBar";
 
 const EClassPage = () => {
-  const [paperCnt, setPaperCnt] = useState(3);
+  const [paperCnt, setPaperCnt] = useState(1);
 
   return (
     <Styled.Wrapper>
@@ -19,6 +19,13 @@ const EClassPage = () => {
             <PaperWithToolBar />
           </Styled.PaperWrapper>
         ))}
+
+      <button
+        className="pageCreateBtn"
+        onClick={() => setPaperCnt(cnt => cnt + 1)}
+      >
+        페이지 추가
+      </button>
     </Styled.Wrapper>
   );
 };

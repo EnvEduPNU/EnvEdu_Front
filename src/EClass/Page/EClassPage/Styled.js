@@ -14,6 +14,18 @@ export const Wrapper = styled.div`
   background-color: grey;
   z-index: 10000;
   padding-bottom: 30px;
+  .pageCreateBtn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    border: none;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 2px #e4e4e4;
+    background-color: white;
+    cursor: pointer;
+    transition: 1s;
+  }
 `;
 
 export const PaperWrapper = styled.div`
