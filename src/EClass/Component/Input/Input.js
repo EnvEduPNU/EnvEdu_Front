@@ -6,7 +6,6 @@ const Input = ({ placeholder }) => {
   return (
     <Styled.Input
       placeholder={placeholder}
-      st
       value={value}
       onChange={e => setValue(e.target.value)}
     />

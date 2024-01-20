@@ -6,24 +6,29 @@ export const Wrapper = styled.div`
   top: 0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  /* justify-content: center; */
   align-items: center;
   width: 100%;
   height: 100%;
+  overflow-y: scroll;
   background-color: grey;
   z-index: 10000;
+  padding-bottom: 30px;
+`;
+
+export const PaperWrapper = styled.div`
+  padding-top: 30px;
+  box-sizing: border-box;
 `;
 export const Paper = styled.div`
   height: 842px;
   width: 595px;
-  margin: 30px;
   background-color: white;
   /* text-align: center; */
   padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  border: 3px solid blue;
   cursor: pointer;
   overflow-y: hidden;
 `;
