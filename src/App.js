@@ -58,7 +58,6 @@ import CheckCompareData from "./DataClass/CompareData/CheckData";
 import SlidePage from "./Study/Page/SlidePage";
 
 import EClassList from "./DataClass";
-import ContextMenu from './myData/ContextMenu/ContextMenu'
 
 function App() {
   /**
@@ -75,8 +74,6 @@ function App() {
         <Routes>
           {/*home*/}
           <Route index element={<HomePage />} />
-
-          <Route path='folder'exact={true} element={<ContextMenu />} />
 
           {/*user*/}
           <Route path="/auth" exact={true} element={<EmailAuth />} />

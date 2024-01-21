@@ -2,6 +2,7 @@ import { useState } from "react";
 import ActivityDialog from "../../component/ActivityDialog/ActivityDialog";
 import Dialog from "../../component/Dialog/Dialog";
 import Modal from "../../component/Modal/Modal";
+import Sharing from "../../component/Sharing/Sharing"
 import { useTabStore } from "../../store/tabStore";
 import CustomTable from "../CustomTable/CustomTable";
 import CustomTableHeader from "../CustomTable/CustomTableHeader";
@@ -34,6 +35,9 @@ function DrawGraph() {
           >
             보고서로 내보내기
           </Button>
+
+          <Sharing />
+
           <ActivityDialog
             visible={showModal}
             onClose={() => setShowModal(false)}

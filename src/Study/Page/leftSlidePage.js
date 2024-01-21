@@ -159,7 +159,21 @@ export default function LeftSlidePage() {
     }   
 
     const [role, setRole] = useState(null);
-    const [managedStudents, setManagedStudents] = useState([]);
+    const [managedStudents, setManagedStudents] = useState({
+        "elems": [
+            {
+                "educatorUsername": "Educator1",
+                "id": 1,
+                "studentUsername": "Student1"
+            },
+            {
+                "educatorUsername": "Educator1",
+                "id": 2,
+                "studentUsername": "Student2"
+            }
+        ]
+    }
+    );
 
     useEffect(() => {
         const user_role = localStorage.getItem("role");
@@ -181,6 +195,13 @@ export default function LeftSlidePage() {
     
         setSelectedStudents(updatedSelectedStudents);
     };
+
+    useEffect(() => {
+        const allStudentsInfo = managedStudents.elems.map(elem => {
+            return { id: elem.id, username: elem.studentUsername };
+        });
+        setSelectedStudents(allStudentsInfo);
+    }, [managedStudents.elems]);
 
     // excel 파일 읽기
     const [excelData, setExcelData] = useState([]);
@@ -213,7 +234,7 @@ export default function LeftSlidePage() {
     const handleMemoChange = (e) => {
         setMemo(e.target.value);
     };
-
+    console.log(excelData)
     const handleSharing = () => {
         customAxios.post('/dataLiteracy/inviteStudent', {
             data: {
@@ -258,68 +279,6 @@ export default function LeftSlidePage() {
                             <img src="/assets/img/folder-icon.png" style={{ width: '1.5rem', margin: '0 0.5rem' }} />
                             <label onClick={handleCustom}>CUSTOM</label>
                         </div>
-
-                        {custom && <div className='interaction' style={{ margin: '1rem 0'}}>
-                            <div>
-                                <label className='labelEducator'>공유할 대상 선택</label>
-                                {managedStudents.elems &&
-                                    <div className='managedStudentContainer'>
-                                        {managedStudents.elems.map((elem, index) => (
-                                            <div key={index}>
-                                                <label>
-                                                    <input 
-                                                        type="checkbox" 
-                                                        onChange={() => handleCheckbox(elem.studentUsername, elem.id)}
-                                                    />
-                                                    {elem.studentUsername}
-                                                </label>
-                                            </div>
-                                        ))}
-                                    </div>
-                                }   
-                            </div>
-
-                            <div>
-                                <label className='labelEducator'>공유할 파일 업로드</label>
-                                <input type="file" accept=".xlsx" onChange={handleExcelFileChange} />
-                            </div>
-
-                            <label className='labelEducator'>
-                                파일 미리 보기
-                            </label>
-
-                            <table className='excelData-list'>
-                                <thead>
-                                    <tr>
-                                        {excelData[0] && excelData[0].map((header, index) => {
-                                            if (header !== "empty") {
-                                                return <th key={index}>{header}</th>
-                                            }
-                                            return null
-                                        })}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {excelData.slice(1).map((row, rowIndex) => (
-                                        <tr key={rowIndex}>
-                                            {row.map((cell, cellIndex) => (
-                                                <td key={cellIndex}>{cell}</td>
-                                            ))}
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-
-                            <div>
-                                <label className='labelEducator'>메모</label>   
-                                <textarea onChange={handleMemoChange}/>
-                            </div>
-
-
-                            <div style={{display: 'flex', justifyContent: 'center', marginTop: '3rem'}}>
-                                <button className='shareFileBtn' onClick={handleSharing}>공유하기</button>
-                            </div>
-                        </div>}
 
                         {filteredData.length > 0 && (
                         <table className='summary-table'>
