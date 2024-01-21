@@ -58,6 +58,7 @@ import CheckCompareData from "./DataClass/CompareData/CheckData";
 import SlidePage from "./Study/Page/SlidePage";
 
 import EClassList from "./DataClass";
+import EClassPage from "./EClass/Page/EClassPage/EClassPage";
 
 function App() {
   /**
@@ -124,12 +125,28 @@ function App() {
           <Route path="/interaction2" exact={true} element={<InterAction2 />} />
           <Route path="/combine" exact={true} element={<Combine />} />
           <Route path="/combine2" exact={true} element={<Combine2 />} />
-          
+
           <Route path="/dataclass" exact={true} element={<DataClass />} />
-          <Route path="/checkReadData" exact={true} element={<CheckReadData />} />
-          <Route path="/checkManipulateData" exact={true} element={<CheckManipulateData />} />
-          <Route path="/checkAnalyzeData" exact={true} element={<CheckAnalyzeData />} />
-          <Route path="/checkCompareData" exact={true} element={<CheckCompareData />} />
+          <Route
+            path="/checkReadData"
+            exact={true}
+            element={<CheckReadData />}
+          />
+          <Route
+            path="/checkManipulateData"
+            exact={true}
+            element={<CheckManipulateData />}
+          />
+          <Route
+            path="/checkAnalyzeData"
+            exact={true}
+            element={<CheckAnalyzeData />}
+          />
+          <Route
+            path="/checkCompareData"
+            exact={true}
+            element={<CheckCompareData />}
+          />
 
           <Route path="/dataclass" exact={true} element={<DataClass />} />
           <Route
@@ -201,9 +218,13 @@ function App() {
             <Route path="dataload" element={<DataLoadPage />} />
             <Route path="ex" element={<DrawGraphV2Page />} />
           </Route>
+
+          <Route path="/eclass">
+            <Route path="" element={<EClassPage />} />
+          </Route>
         </Routes>
       </div>
-        
+
       <Footer />
     </>
   );
