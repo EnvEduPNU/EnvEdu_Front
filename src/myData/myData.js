@@ -61,7 +61,7 @@ const MyData = () => {
     const handleFolderSelect = (folderId) => {
         setSelectedFolderId(folderId);
     };
-    console.log(selectedFolderId)
+    //console.log(selectedFolderId)
 
     /*데이터 요약 정보*/
     const [summary, setSummary] = useState([]);
@@ -209,9 +209,11 @@ const MyData = () => {
             <div className="myData-left">
                 {/*folder*/}
                 <div className='myData-folder'>
+                    {/*
                     <AddFolderModal />
                     <MoveFolderModal />
                     <RemoveFolderModal />
+    */}
                     <FolderList onSelectFolder={handleFolderSelect} onClicked={selectedFolderId} />
                 </div>
                 
