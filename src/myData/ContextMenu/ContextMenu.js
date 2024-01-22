@@ -163,7 +163,7 @@ export default function ContextMenu() {
         if (selectedFolderId2 === null) alert("삭제할 폴더를 선택하세요.")
         else {
             console.log(selectedFolderId2)
-            customAxios.delete(`/datafolder/list`, {
+            customAxios.delete('/datafolder/list', {
                 parentId: selectedFolderId2
             })
             .then(() => setModalIsOpen(false))
