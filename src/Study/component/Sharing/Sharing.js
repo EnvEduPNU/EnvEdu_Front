@@ -32,6 +32,13 @@ function Sharing() {
     
         setSelectedStudents(updatedSelectedStudents);
     };
+    
+    useEffect(() => {
+        const allStudentsInfo = managedStudents.elems?.map(elem => {
+            return { id: elem.id, username: elem.studentUsername };
+        });
+        setSelectedStudents(allStudentsInfo);
+    }, [managedStudents.elems]);
 
     // 메모
     const [memo, setMemo] = useState('');
@@ -89,7 +96,7 @@ function Sharing() {
                     <div>
                         <label className='labelEducator'>공유할 대상 선택</label>
                         {managedStudents.elems &&
-                            <div className='managedStudentContainer'>
+                            <div className='managedStudentContainer' style={{ overflowX: 'scroll' }}>
                                 {managedStudents.elems.map((elem, index) => (
                                     <div key={index}>
                                         <label>
