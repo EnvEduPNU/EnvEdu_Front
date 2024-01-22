@@ -20,18 +20,13 @@ const Folder = ({ folder, onSelectFolder, selectedFolderId }) => {
         setContextMenuPosition({ x: event.pageX, y: event.pageY });
     };
 
-    const isSelected = folder.id === selectedFolderId;
-    const folderStyle = {
-        background: isSelected ? '#d2d2d2' : '#fff'
-    };
-
     const handleWrapperContextMenu = (event) => {
         event.preventDefault(); // 최상위 div에서의 우클릭 기본 동작을 방지
     };
 
     return (
         <div onContextMenu={handleWrapperContextMenu}>
-            <div onClick={toggleFolder} style={folderStyle}>
+            <div onClick={toggleFolder}>
                 {isExpanded ? '-' : '+'} 
                 <img src="/assets/img/folder-icon.png" style={{ width: '1.5rem', margin: '0.5rem' }} />
                 <span onContextMenu={handleContextMenu}>{folder.folderName}</span> 
