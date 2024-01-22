@@ -145,14 +145,7 @@ export default function ContextMenu() {
     const [selectedFolderId2, setSelectedFolderId2] = useState([]);
 
     const handleFolderSelect2 = (folderId) => {
-        setSelectedFolderId2(prev => {
-            if (prev.includes(folderId)) {
-                return prev.filter(id => id !== folderId);
-            }
-            else {
-                return [...prev, folderId];
-            }
-        });
+        setSelectedFolderId2(folderId);
     };
 
     //console.log(selectedFolderId)
@@ -167,10 +160,12 @@ export default function ContextMenu() {
     };
 
     const removeFolder = () => {
-        if (selectedFolderId == []) alert("삭제할 폴더를 선택하세요.")
+        if (selectedFolderId2 === null) alert("삭제할 폴더를 선택하세요.")
         else {
-            console.log(selectedFolderId)
-            customAxios.delete(`/datafolder/item/delete/${selectedFolderId2}`)
+            console.log(selectedFolderId2)
+            customAxios.delete(`/datafolder/list`, {
+                parentId: selectedFolderId2
+            })
             .then(() => setModalIsOpen(false))
             .catch((err) => console.log(err));
         }
