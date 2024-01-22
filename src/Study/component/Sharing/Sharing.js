@@ -103,7 +103,7 @@ function Sharing() {
                                             <input 
                                                 type="checkbox" 
                                                 onChange={() => handleCheckbox(elem.studentUsername, elem.id)}
-                                                checked={selectedStudents.some(student => student.id === elem.id)}
+                                                checked={selectedStudents?.some(student => student.id === elem.id)}
                                             />
                                             {elem.studentUsername}
                                         </label>

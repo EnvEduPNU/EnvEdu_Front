@@ -8,14 +8,9 @@ const Folder = ({ folder, onSelectFolder, selectedFolderId, onClicked }) => {
         onSelectFolder(folder.id);
     };
 
-    const isSelected = onClicked.includes(folder.id);
-    const folderStyle = {
-        background: isSelected ? '#d2d2d2' : '#fff'
-    };
-
     return (
         <div>
-            <div onClick={toggleFolder} style={folderStyle}>
+            <div onClick={toggleFolder}>
                 {/*{isExpanded ? '-' : '+'}*/}
                 <img src="/assets/img/folder-icon.png" style={{ width: '1.5rem', margin: '0.5rem' }} />
                 <span>{folder.folderName}</span>
