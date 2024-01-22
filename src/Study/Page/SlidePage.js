@@ -19,7 +19,7 @@ function SlidePage() {
   return (
     <Styled.Wrapper>
       <LeftSilde>
-        <div style={{ width: "600px" }}>
+        <div style={{ width: "1000px" }}>
           <LeftSlidePage />
         </div>
       </LeftSilde>

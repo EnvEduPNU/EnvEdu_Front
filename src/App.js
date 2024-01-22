@@ -69,9 +69,8 @@ function App() {
   }, []);
   return (
     <>
-      {/* /slide에서는 header 렌더링 하지 않음*/}
-      {window.location.pathname !== "/slide" && <Header />}
-
+      <Header />
+      
       <div className="wrap">
         <Routes>
           {/*home*/}

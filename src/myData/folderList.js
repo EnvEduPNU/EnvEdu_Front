@@ -1,26 +1,43 @@
 import React, { useEffect, useState } from 'react';
 import { customAxios } from '../Common/CustomAxios';
+import ContextMenu from './ContextMenu/ContextMenu';
 
 const Folder = ({ folder, onSelectFolder, selectedFolderId }) => {
     const [isExpanded, setIsExpanded] = useState(false);
+    const [contextMenuVisible, setContextMenuVisible] = useState(false);
+    const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
 
     const toggleFolder = () => {
         setIsExpanded(!isExpanded);
         onSelectFolder(folder.id);
     };
 
-    const isSelected = folder.id === selectedFolderId;
-    const folderStyle = {
-        background: isSelected ? '#d2d2d2' : '#fff'
+    const handleContextMenu = (event) => {
+        event.preventDefault();
+        //event.stopPropagation(); // 이벤트 버블링 차단
+
+        setContextMenuVisible(true);
+        setContextMenuPosition({ x: event.pageX, y: event.pageY });
+    };
+
+    const handleWrapperContextMenu = (event) => {
+        event.preventDefault(); // 최상위 div에서의 우클릭 기본 동작을 방지
     };
 
     return (
-        <div>
-            <div onClick={toggleFolder} style={folderStyle}>
+        <div onContextMenu={handleWrapperContextMenu}>
+            <div onClick={toggleFolder}>
                 {isExpanded ? '-' : '+'} 
                 <img src="/assets/img/folder-icon.png" style={{ width: '1.5rem', margin: '0.5rem' }} />
-                <span>{folder.folderName}</span>
+                <span onContextMenu={handleContextMenu}>{folder.folderName}</span> 
             </div>
+            {contextMenuVisible && 
+                <ContextMenu
+                    x={contextMenuPosition.x}
+                    y={contextMenuPosition.y}
+                    visible={contextMenuVisible}
+                />
+            }
             {isExpanded && folder.child.length > 0 && (
                 <div style={{ marginLeft: '2rem' }}>
                     {folder.child.map((subfolder) => (
@@ -28,7 +45,7 @@ const Folder = ({ folder, onSelectFolder, selectedFolderId }) => {
                             key={subfolder.id} 
                             folder={subfolder} 
                             onSelectFolder={onSelectFolder}
-                            selectedFolderId={selectedFolderId} // 이 부분을 추가합니다
+                            selectedFolderId={selectedFolderId}
                         />
                     ))}
                 </div>
@@ -36,6 +53,7 @@ const Folder = ({ folder, onSelectFolder, selectedFolderId }) => {
         </div>
     );
 };
+
 
 const FolderStructure = ({ data, selectedFolderId, onSelectFolder }) => {
     return (
@@ -62,8 +80,8 @@ export default function FolderList({ onSelectFolder }) {
 
     return (
         <>
-            <FolderStructure 
-                data={data} 
+            <FolderStructure
+                data={data}
                 onSelectFolder={onSelectFolder}
             />
         </>

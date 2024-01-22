@@ -33,7 +33,9 @@ export default function RemoveFolderModal() {
         if (selectedFolderId == []) alert("삭제할 폴더를 선택하세요.")
         else {
             console.log(selectedFolderId)
-            customAxios.delete(`/datafolder/item/delete/${selectedFolderId}`)
+            customAxios.delete('/datafolder/item/delete', {
+                id: selectedFolderId
+            })
             .then(() => setModalIsOpen(false))
             .catch((err) => console.log(err));
         }
