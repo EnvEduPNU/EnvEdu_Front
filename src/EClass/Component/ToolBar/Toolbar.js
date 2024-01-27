@@ -7,6 +7,9 @@ import Argument from "../Argument/Argument";
 import ImageTool from "../ImageTool/ImageTool";
 import YoutubeTool from "../YoutubeTool/YoutubeTool";
 import Question from "../Question/Question";
+import TableTool from "../TableTool/TableTool";
+import GraphTool from "../GraphTool/GraphTool";
+import SubmitButton from "../SubmitButton/SubmitButton";
 
 function Toolbar({ setActivity }) {
   const onClickBtn = component => {
@@ -28,6 +31,24 @@ function Toolbar({ setActivity }) {
       <Styled.ToolGroup>
         <ImageTool setActivity={setActivity} />
         <YoutubeTool setActivity={setActivity} />
+      </Styled.ToolGroup>
+      <Styled.Bar></Styled.Bar>
+      <Styled.ToolGroup>
+        <TableTool setActivity={setActivity} />
+        <GraphTool setActivity={setActivity} />
+      </Styled.ToolGroup>
+      <Styled.Bar></Styled.Bar>
+      <Styled.ToolGroup>
+        <Styled.Tool
+          onClick={() => onClickBtn(<SubmitButton text={"제출하기"} />)}
+        >
+          제출
+        </Styled.Tool>
+        <Styled.Tool
+          onClick={() => onClickBtn(<SubmitButton text={"공유하기"} />)}
+        >
+          공유
+        </Styled.Tool>
       </Styled.ToolGroup>
     </Styled.Wrapper>
   );
