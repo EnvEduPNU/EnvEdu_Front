@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import './ContextMenu.scss';
-import AddFolderModal from '../modal/addFolderModal';
-import MoveFolderModal from '../modal/moveFolderModal';
-import RemoveFolderModal from '../modal/removeFolderModal';
+//import AddFolderModal from '../modal/addFolderModal';
+//import MoveFolderModal from '../modal/moveFolderModal';
+//import RemoveFolderModal from '../modal/removeFolderModal';
 import { customAxios } from '../../Common/CustomAxios';
 import Modal from 'react-modal';
 import FolderList from '../folderList';
-import FolderListForDelete from '../folderListForDelete';
+//import FolderListForDelete from '../folderListForDelete';
 
-export default function ContextMenu() {
+export default function ContextMenu({ x, y, folder, onClose, rightClicked }) {
     const [visible, setVisible] = useState(false);
     const rootRef = useRef(null);
 
@@ -47,8 +47,14 @@ export default function ContextMenu() {
     };
 
     const handleClick = (event) => {
+        /*
         if (visible && rootRef.current && !rootRef.current.contains(event.target)) {
             setVisible(false);
+            onClose()
+        }*/
+        if (!isAnyModalOpen && visible && rootRef.current && !rootRef.current.contains(event.target)) {
+            setVisible(false);
+            if (onClose) onClose(); // 부모 컴포넌트에게 메뉴가 닫히었다는 것을 알림
         }
     };
 
@@ -60,13 +66,16 @@ export default function ContextMenu() {
 
     //폴더 추가
     const [addModalIsOpen, setAddModalIsOpen] = useState(false);
-
+    const [isAnyModalOpen, setIsAnyModalOpen] = useState(false);
+    
     const openAddModal = () => {
         setAddModalIsOpen(true);
+        setIsAnyModalOpen(true);
     };
 
     const closeAddModal = () => {
         setAddModalIsOpen(false);
+        setIsAnyModalOpen(false);
     };
 
     const [folderName, setFolderName] = useState(null);
@@ -76,7 +85,41 @@ export default function ContextMenu() {
             customAxios.post('/datafolder/list', { 
                 folderName: folderName 
             })
-            .then(() => setAddModalIsOpen(false))
+            .then(() => {
+                setAddModalIsOpen(false);
+                window.location.reload();
+            })
+            .catch((err) => console.log(err));
+        }
+    }
+
+    //폴더 이름 변경
+    const [changeModalIsOpen, setChangeModalIsOpen] = useState(false);
+    
+    const openChangeModal = () => {
+        setChangeModalIsOpen(true);
+        setIsAnyModalOpen(true);
+    };
+
+    const closeChangeModal = () => {
+        setChangeModalIsOpen(false);
+        setIsAnyModalOpen(false);
+    };
+
+    const [modifiedFolderName, setModifiedFolderName] = useState(null);
+    const changeFolderName = () => {
+        if (modifiedFolderName == null  || modifiedFolderName == '') alert("폴더명을 입력하세요.")
+        else {
+            console.log(rightClicked);
+            console.log(modifiedFolderName)
+            customAxios.put('/datafolder/list/foldername', { 
+                parentId: rightClicked,
+                folderName: modifiedFolderName
+            })
+            .then(() => {
+                setChangeModalIsOpen(false);
+                window.location.reload();
+            })
             .catch((err) => console.log(err));
         }
     }
@@ -112,64 +155,67 @@ export default function ContextMenu() {
 
     const openMoveModal = () => {
         setMoveModalIsOpen(true);
+        setIsAnyModalOpen(true);
     };
 
     const closeMoveModal = () => {
         setMoveModalIsOpen(false);
+        setIsAnyModalOpen(false);
     };
 
     const [parentId, setParentId] = useState(null);
-    const [childId, setChildId] = useState(null);
-
-    useEffect(() => {
-        setChildId(selectedFolderId);
-        console.log(selectedFolderId)
-    }, [selectedFolderId])
+    //const [childId, setChildId] = useState(null);
 
     // 현재 선택한 폴더가 child 폴더라고 가정하고 어느 parent 폴더 아래에 위치시킬지 정함
     const moveFolder = () => {
         console.log(parentId)
-        console.log(childId)
-        if (parentId == null || childId == null) alert("폴더를 선택하세요.")
+        console.log(rightClicked)
+        if (parentId == null || rightClicked == null) alert("이동할 폴더가 제대로 선택되지 않았습니다.")
         else {
             customAxios.put('/datafolder/list', {
                 parentId : parentId,
-                childId : childId
+                childId : rightClicked
             })
-            .then(() => setMoveModalIsOpen(false))
+            .then(() => {
+                setMoveModalIsOpen(false);
+                window.location.reload();
+            })
             .catch((err) => console.log(err));
         }
     };
 
     //폴더 삭제
-    const [selectedFolderId2, setSelectedFolderId2] = useState([]);
-
-    const handleFolderSelect2 = (folderId) => {
-        setSelectedFolderId2(folderId);
-    };
 
     //console.log(selectedFolderId)
     const [modalIsOpen, setModalIsOpen] = useState(false);
 
     const openModal = () => {
         setModalIsOpen(true);
+        setIsAnyModalOpen(true);
     };
 
     const closeModal = () => {
         setModalIsOpen(false);
+        setIsAnyModalOpen(false);
     };
 
     const removeFolder = () => {
-        if (selectedFolderId2 === null) alert("삭제할 폴더를 선택하세요.")
+        if (rightClicked === null) alert("삭제할 폴더가 제대로 선택되지 않았습니다.")
         else {
-            console.log(selectedFolderId2)
+            console.log(rightClicked);
             customAxios.delete('/datafolder/list', {
-                parentId: selectedFolderId2
+                data: {
+                    parentId: rightClicked
+                }
             })
-            .then(() => setModalIsOpen(false))
+            .then(() => {
+                setModalIsOpen(false);
+                window.location.reload();
+            })
             .catch((err) => console.log(err));
         }
     };
+    
 
     useEffect(() => {
         document.addEventListener('contextmenu', handleContextMenu);
@@ -182,7 +228,7 @@ export default function ContextMenu() {
             document.removeEventListener('scroll', handleScroll);
         };
     });
-
+    
     return (
         <>
             {visible ? (
@@ -190,6 +236,7 @@ export default function ContextMenu() {
                     <div className="contextMenu--option" onClick={openAddModal}>폴더 추가</div>
                     <div className="contextMenu--option" onClick={openMoveModal}>폴더 이동</div>
                     <div className="contextMenu--option" onClick={openModal}>폴더 삭제</div>
+                    <div className="contextMenu--option" onClick={openChangeModal}>폴더 이름 변경</div>
                 </div>
             ) : null}
             
@@ -200,7 +247,7 @@ export default function ContextMenu() {
                 overlayClassName="custom-modal-overlay"
             >
                 <div className="modal-content">
-                    <h5>폴더명을 입력해주세요!</h5>
+                    <h5>폴더명을 입력해 주세요!</h5>
                     <input onChange={(e) => setFolderName(e.target.value)}/>
                     
                     <div style={{display: 'flex', justifyContent: 'space-between', width: '45%'}}>
@@ -226,14 +273,12 @@ export default function ContextMenu() {
                 overlayClassName="custom-modal-overlay"
             >
                 <div className="modal-content">
-                    <h5>폴더를 선택해 주세요!</h5> 
-
-                    <div style={{border: '1px solid #d2d2d2', width: '100%', margin: '1rem 0'}}>
+                    <div style={{border: '1px solid #d2d2d2', width: '100%', margin: '1rem 0', textAlign: 'left', height: '12rem', overflowY: 'scroll' }}>
                         <FolderList onSelectFolder={handleFolderSelect} onClicked={selectedFolderId} />
                     </div>
 
                     <span>
-                        선택한 폴더를 
+                        클릭한 폴더를 
                         <select onChange={(e) => setParentId(e.target.value)}>
                             {folderNamesAndIds.map((folder, index) => (
                                 <option key={index} value={folder.id}>{folder.name}</option>
@@ -263,11 +308,7 @@ export default function ContextMenu() {
                 overlayClassName="custom-modal-overlay"
             >
                 <div className="modal-content">
-                    <h5>폴더를 선택해주세요!</h5> 
-
-                    <div style={{border: '1px solid #d2d2d2', width: '100%', margin: '1rem 0'}}>
-                        <FolderListForDelete onSelectFolder={handleFolderSelect2} onClicked={selectedFolderId2} />
-                    </div>
+                    <h5>폴더를 삭제하시겠습니까?</h5> 
 
                     <div style={{display: 'flex', justifyContent: 'space-between', width: '45%'}}>
                         <button 
@@ -279,6 +320,32 @@ export default function ContextMenu() {
                         <button 
                             className="close-button" 
                             onClick={closeModal}>
+                            닫기
+                        </button>
+                    </div>
+                </div>
+            </Modal>
+
+            <Modal
+                isOpen={changeModalIsOpen}
+                onRequestClose={closeChangeModal}
+                className="mydata-custom-modal"
+                overlayClassName="custom-modal-overlay"
+            >
+                <div className="modal-content">
+                    <h5>수정할 폴더명을 입력해 주세요!</h5>
+                    <input onChange={(e) => setModifiedFolderName(e.target.value)}/>
+                    
+                    <div style={{display: 'flex', justifyContent: 'space-between', width: '45%'}}>
+                        <button 
+                            className="close-button" 
+                            onClick={changeFolderName}>
+                            확인
+                        </button>
+
+                        <button 
+                            className="close-button" 
+                            onClick={closeChangeModal}>
                             닫기
                         </button>
                     </div>
