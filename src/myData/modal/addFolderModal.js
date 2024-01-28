@@ -21,7 +21,10 @@ export default function AddFolderModal() {
             customAxios.post('/datafolder/list', { 
                 folderName: folderName 
             })
-            .then(() => setModalIsOpen(false))
+            .then(() => {
+                setModalIsOpen(false);
+                window.location.reload();
+            })
             .catch((err) => console.log(err));
         }
     }
