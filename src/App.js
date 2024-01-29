@@ -70,7 +70,7 @@ function App() {
   return (
     <>
       <Header />
-      
+
       <div className="wrap">
         <Routes>
           {/*home*/}
@@ -169,8 +169,11 @@ function App() {
             exact={true}
             element={<CheckCompareData />}
           />
+          <Route path="/E-Classes">
+            <Route path="" exact={true} element={<EClassList />} />
+            <Route path="new" exact={true} element={<EClassPage />} />
+          </Route>
 
-          <Route path="/E-Classes" exact={true} element={<EClassList />} />
           <Route path="/measure" exact={true} element={<Measure />} />
           <Route
             path="/measureContinuous"
@@ -217,10 +220,6 @@ function App() {
 
             <Route path="dataload" element={<DataLoadPage />} />
             <Route path="ex" element={<DrawGraphV2Page />} />
-          </Route>
-
-          <Route path="/eclass">
-            <Route path="" element={<EClassPage />} />
           </Route>
         </Routes>
       </div>
