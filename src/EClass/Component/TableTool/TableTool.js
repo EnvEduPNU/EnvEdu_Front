@@ -3,7 +3,7 @@ import * as Styled from "./Styled";
 import useComponentPosition from "../../../DataLiteracy/hooks/useComponentPosition";
 import Portal from "../../../Portal";
 import { Button } from "react-bootstrap";
-import Table from "../\bTable/Table";
+import Table from "../Table/Table";
 
 function TableTool({ setActivity }) {
   const { ref, position } = useComponentPosition();
@@ -17,7 +17,14 @@ function TableTool({ setActivity }) {
   const appendTable = e => {
     e.stopPropagation();
     setVisible(state => !state);
-    setActivity(state => [...state, <Table row={+cell.row} col={+cell.col} />]);
+
+    if (cell.row > 0 && cell.col > 0) {
+      setActivity(state => [
+        ...state,
+        <Table row={+cell.row} col={+cell.col} />,
+      ]);
+    }
+    setCell({ row: "", col: "" });
   };
 
   return (

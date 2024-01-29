@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Form } from "react-bootstrap";
-import SubmitButton from "../SubmitButton/SubmitButton";
 
 const Argument = () => {
   const [title, setTitle] = useState("");
@@ -25,7 +24,6 @@ const Argument = () => {
           onChange={e => setOpinion(e.target.value)}
         />
       </Form.Group>
-      <SubmitButton text={"제출하기"} />
     </div>
   );
 };
