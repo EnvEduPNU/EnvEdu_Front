@@ -18,8 +18,10 @@ export default function ReadExcel() {
             const sheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
 
-            const data = XLSX.utils.sheet_to_json(worksheet, {header: 1});
-            console.log(data)
+            const data = XLSX.utils.sheet_to_json(worksheet, {
+                header: 1,
+                defval: null
+            });
             setExcelData(data);
         };
     };
@@ -60,61 +62,59 @@ export default function ReadExcel() {
 
     return(
         <div className='read-excel-container'>
-            <div style={{display: 'flex', marginBottom: '2rem'}}>
-                <label>데이터 종류</label>
-                <select className='dataLabel' onChange={handleChangeLabel}>
-                    <option value="AIRQUALITY">대기질 데이터</option>
-                    <option value="OCEANQUALITY">수질 데이터</option>
-                    <option value="SEED">SEED 데이터</option>
-                </select>
-            </div>
+            <div className='read-excel-wrapper'>
+                <div style={{display: 'flex', marginBottom: '2rem'}}>
+                    <label>데이터 종류</label>
+                    <select className='dataLabel' onChange={handleChangeLabel}>
+                        <option value="AIRQUALITY">대기질 데이터</option>
+                        <option value="OCEANQUALITY">수질 데이터</option>
+                        <option value="SEED">SEED 데이터</option>
+                        <option value="CUSTOM">CUSTOM 데이터</option>
+                    </select>
+                </div>
 
-            <div style={{display: 'flex', marginBottom: '2rem'}}>
-                <label>파일 업로드</label>
-                <input type="file" accept=".xlsx" onChange={handleExcelFileChange} />
-            </div>
-            
-            <label style={{marginBottom: '0.5rem'}}>
-                파일 미리 보기
-            </label>
-            <table className='excelData-list'>
-                <thead>
-                    {/*
-                    <tr>
-                        {excelData[0] && excelData[0].map((header, index) => {
-                            if (header !== "empty") {
-                                return <th key={index}>{header}</th>
-                            }
-                            return null
-                        })}
-                    </tr>
-                    */}
-                </thead>
-                <tbody>
-                    {excelData.map((row, rowIndex) => (
-                        <tr key={rowIndex}>
-                            {row.map((cell, cellIndex) => (
-                                <td key={cellIndex}>{cell}</td>
-                            ))}
+                <div style={{display: 'flex', marginBottom: '2rem'}}>
+                    <label style={{ marginRight: '1.5rem' }}>파일 업로드</label>
+                    <input type="file" accept=".xlsx" onChange={handleExcelFileChange} />
+                </div>
+                
+                <label style={{marginBottom: '0.5rem'}}>
+                    파일 미리 보기
+                </label>
+                <table className='excelData-list'>
+                    <thead>
+                        {/*
+                        <tr>
+                            {excelData[0] && excelData[0].map((header, index) => {
+                                if (header !== "empty") {
+                                    return <th key={index}>{header}</th>
+                                }
+                                return null
+                            })}
                         </tr>
-                    ))}
-                </tbody>
-            </table>
-            
-            <div style={{display: 'flex', justifyContent: 'flex-end', fontWeight: '600', marginTop: '0.5rem'}}>
-                {excelData.length > 0 && <span>데이터 크기 : {excelData.length}</span>}
-            </div>
+                        */}
+                    </thead>
+                    <tbody>
+                        {excelData.map((row, rowIndex) => (
+                            <tr key={rowIndex}>
+                                {row.map((cell, cellIndex) => (
+                                    <td key={cellIndex}>{cell}</td>
+                                ))}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
 
-            <div style={{display: 'flex', marginTop: '1rem', marginBottom: '0.5rem'}}>
-                <label>메모</label>   
-                <textarea onChange={handleMemoChange}/>
-            </div>
-            
+                <div style={{display: 'flex', flexDirection: 'column', marginTop: '2rem', marginBottom: '0.5rem'}}>
+                    <label style={{marginBottom: '0.5rem'}}>메모</label>   
+                    <textarea onChange={handleMemoChange} style={{ width: '100%' }}/>
+                </div>
+                
 
-            <div style={{display: 'flex', justifyContent: 'center', marginTop: '3rem'}}>
-                <button className='save-file-btn' onClick={handleSave}>저장하기</button>
+                <div style={{display: 'flex', justifyContent: 'center', marginTop: '3rem'}}>
+                    <button className='save-file-btn' onClick={handleSave}>업로드</button>
+                </div>
             </div>
-            
         </div>
     )
 }

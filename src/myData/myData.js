@@ -6,6 +6,7 @@ import AddFolderModal from './modal/addFolderModal';
 import MoveFolderModal from './modal/moveFolderModal';
 import RemoveFolderModal from './modal/removeFolderModal';
 import FolderList from './folderList';
+import { Link } from 'react-router-dom';
 
 //항목 이름 (한국어 -> 영어)
 const engToKor = (name) => {
@@ -213,7 +214,11 @@ const MyData = () => {
                     <AddFolderModal />
                     <MoveFolderModal />
                     <RemoveFolderModal />
-    */}
+                    */}
+                    <Link to='/readExcel'>
+                        <button style={{ border: 'none', fontWeight: '600', borderRadius: '0.625rem'}}>데이터 직접 업로드</button>
+                    </Link>
+                    
                     <FolderList onSelectFolder={handleFolderSelect} onClicked={selectedFolderId} />
                 </div>
                 
