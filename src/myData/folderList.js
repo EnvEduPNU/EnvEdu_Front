@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { customAxios } from '../Common/CustomAxios';
 import ContextMenu from './ContextMenu/ContextMenu';
 
@@ -6,26 +6,34 @@ const Folder = ({ folder, onSelectFolder, selectedFolderId }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const [contextMenuVisible, setContextMenuVisible] = useState(false);
     const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
+    const folderRef = useRef(null);
+    const [rightClicked, setRightClicked] = useState(null);
 
     const toggleFolder = () => {
         setIsExpanded(!isExpanded);
         onSelectFolder(folder.id);
     };
 
-    const handleContextMenu = (event) => {
-        event.preventDefault();
-        //event.stopPropagation(); // 이벤트 버블링 차단
-
+    const handleContextMenu = (e) => {
+        e.preventDefault();
+        //console.log("우클릭", folder.id); // 우클릭된 폴더 정보 출력
+        setRightClicked(folder.id);
         setContextMenuVisible(true);
-        setContextMenuPosition({ x: event.pageX, y: event.pageY });
+        //setContextMenuPosition({ x: e.pageX, y: e.pageY });
+        const folderRect = folderRef.current.getBoundingClientRect(); // 폴더 DOM 요소의 위치와 크기 정보를 가져옴
+        setContextMenuPosition({ 
+            x: folderRect.right, // 폴더의 오른쪽 끝을 기준으로 x 위치 설정
+            y: folderRect.top // 폴더의 상단을 기준으로 y 위치 설정
+        });
     };
 
     const handleWrapperContextMenu = (event) => {
         event.preventDefault(); // 최상위 div에서의 우클릭 기본 동작을 방지
     };
+    //console.log("rightClicked",rightClicked)
 
     return (
-        <div onContextMenu={handleWrapperContextMenu}>
+        <div ref={folderRef} onContextMenu={handleWrapperContextMenu}>
             <div onClick={toggleFolder}>
                 {isExpanded ? '-' : '+'} 
                 <img src="/assets/img/folder-icon.png" style={{ width: '1.5rem', margin: '0.5rem' }} />
@@ -36,6 +44,9 @@ const Folder = ({ folder, onSelectFolder, selectedFolderId }) => {
                     x={contextMenuPosition.x}
                     y={contextMenuPosition.y}
                     visible={contextMenuVisible}
+                    folder={folder} // 현재 폴더 정보를 prop으로 전달
+                    onClose={() => setContextMenuVisible(false)} // ContextMenu를 닫는 함수 전달
+                    rightClicked={rightClicked}
                 />
             }
             {isExpanded && folder.child.length > 0 && (
@@ -72,9 +83,13 @@ const FolderStructure = ({ data, selectedFolderId, onSelectFolder }) => {
 
 export default function FolderList({ onSelectFolder }) {
     const [data, setData] = useState([]);
+
     useEffect(() => {
         customAxios.get('/datafolder/list')
-            .then((res) => {console.log(res.data); setData(res.data);})
+            .then((res) => {
+                //console.log(res.data); 
+                setData(res.data);
+            })
             .catch((err) => console.log(err));
     }, [])
 
