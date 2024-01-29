@@ -14,7 +14,7 @@ export default function EClassList() {
         <Card style={{ width: "18rem", height: "450px" }}>
           <div
             onClick={() => {
-              naviate("/eclass");
+              naviate("/E-Classes/new");
             }}
             style={{
               fontSize: "18px",
@@ -26,7 +26,7 @@ export default function EClassList() {
               cursor: "pointer",
             }}
           >
-            <span>E-class 생성하기</span>
+            <span>+ E-class 생성하기</span>
           </div>
         </Card>
         <Card style={{ width: "18rem" }}>

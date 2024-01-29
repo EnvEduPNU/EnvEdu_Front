@@ -2,8 +2,10 @@ import { useState } from "react";
 import * as Styled from "./Styled";
 import PaperWithToolBar from "../../Component/PaperWithToolBar/PaperWithToolBar";
 import Thumbnail from "../../Component/Thumbnail/Thumbnail";
+import { useNavigate } from "react-router-dom";
 
 const EClassPage = () => {
+  const navigate = useNavigate();
   const [paperCnt, setPaperCnt] = useState(1);
 
   return (
@@ -30,30 +32,30 @@ const EClassPage = () => {
                 ))}
             </div>
           </section>
-          <Styled.MainSectionWrapper>
-            <Styled.MainSection>
-              <Styled.SubSection>
-                <Styled.Label>설명</Styled.Label>
-                <Styled.Textarea />
-              </Styled.SubSection>
-              <Styled.SubSection>
-                <Styled.Label>썸네일</Styled.Label>
-                <Thumbnail />
-              </Styled.SubSection>
-              <Styled.SubSection>
-                <Styled.SaveButton>저장</Styled.SaveButton>
-              </Styled.SubSection>
-              <Styled.SubSection>
-                <Styled.CancelButton>취소</Styled.CancelButton>
-              </Styled.SubSection>
+          {/* <Styled.MainSectionWrapper> */}
+          <Styled.MainSection>
+            <Styled.SubSection>
+              <Styled.Label>설명</Styled.Label>
+              <Styled.Textarea />
+            </Styled.SubSection>
+            <Styled.SubSection>
+              <Styled.Label>썸네일</Styled.Label>
+              <Thumbnail />
+            </Styled.SubSection>
+            <Styled.SubSection>
+              <Styled.SaveButton>저장</Styled.SaveButton>
+            </Styled.SubSection>
+            <Styled.SubSection onClick={() => navigate(-1)}>
+              <Styled.CancelButton>취소</Styled.CancelButton>
+            </Styled.SubSection>
 
-              <Styled.SubSection style={{ marginTop: "200px" }}>
-                <Styled.SaveButton onClick={() => setPaperCnt(cnt => cnt + 1)}>
-                  + 페이지 추가
-                </Styled.SaveButton>
-              </Styled.SubSection>
-            </Styled.MainSection>
-          </Styled.MainSectionWrapper>
+            <Styled.SubSection style={{ marginTop: "30px" }}>
+              <Styled.SaveButton onClick={() => setPaperCnt(cnt => cnt + 1)}>
+                + 페이지 추가
+              </Styled.SaveButton>
+            </Styled.SubSection>
+          </Styled.MainSection>
+          {/* </Styled.MainSectionWrapper> */}
         </div>
       </div>
     </Styled.Wrapper>

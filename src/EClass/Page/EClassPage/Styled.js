@@ -31,6 +31,7 @@ export const Wrapper = styled.div`
 export const PaperWrapper = styled.div`
   margin-top: 30px;
   border: 1px solid #ced4da;
+  border-radius: 4px;
 `;
 export const Paper = styled.div`
   height: 842px;
@@ -138,7 +139,7 @@ export const Textarea = styled.textarea`
 
 export const MainSection = styled.section`
   position: sticky;
-  top: 0px;
+  top: 30px;
   width: 100%;
   height: 900px;
   display: flex;
