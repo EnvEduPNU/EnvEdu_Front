@@ -20,7 +20,7 @@ export default function ReadExcel() {
 
             const data = XLSX.utils.sheet_to_json(worksheet, {
                 header: 1,
-                defval: null
+                defval: ""
             });
             setExcelData(data);
         };
