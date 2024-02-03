@@ -11,6 +11,8 @@ import EClassPage from "../../EClass/Page/EClassPage/EClassPage";
 import Header from "../DrwaGraph/Header/Header";
 import { useEClassStore } from "../../EClass/store/eClassStore";
 import AppendActivityDialog from "../../EClass/Component/AppendActivityDialog/AppendActivityDialog";
+import CustomChart from "../DrwaGraph/CustomChart/CustomChart";
+import Table from "../../EClass/Component/Table/Table";
 
 function CreateEClass() {
   const tab = useTabStore(state => state.tab);
@@ -39,7 +41,7 @@ function CreateEClass() {
             visible={showModal}
             onClose={() => setShowModal(false)}
             onConfirm={() => setShowModal(false)}
-            answer={data}
+            answer={<Table tableData={data} />}
           />
         </>
       )}
@@ -47,6 +49,24 @@ function CreateEClass() {
         <>
           <CustomTableHeader />
           <GraphAndEditor />
+          <Button
+            style={{
+              position: "absolute",
+              left: "30px",
+              top: "200px",
+              width: "fit-content",
+            }}
+            onClick={() => setShowModal(true)}
+          >
+            E-Class로 내보내기
+          </Button>
+
+          <AppendActivityDialog
+            visible={showModal}
+            onClose={() => setShowModal(false)}
+            onConfirm={() => setShowModal(false)}
+            answer={<CustomChart />}
+          />
         </>
       )}
       {tab === "assignment" && (

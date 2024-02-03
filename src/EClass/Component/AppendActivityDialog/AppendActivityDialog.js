@@ -12,7 +12,7 @@ function AppendActivityDialog({ visible, onClose, onConfirm, answer }) {
 
   const onSubmit = () => {
     onConfirm();
-    appendActivity(selectedActivity, <Table tableData={answer} />);
+    appendActivity(selectedActivity, answer);
   };
   return (
     <Dialog
