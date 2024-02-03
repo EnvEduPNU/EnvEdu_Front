@@ -4,7 +4,7 @@ import * as Styled from "./Styled";
 import { useGraphDataStore } from "../../store/graphStore";
 import GraphSelector from "../GraphSelector/GraphSelector";
 
-function Header() {
+function Header({ isEclassTab = false }) {
   const { title } = useGraphDataStore();
 
   return (
@@ -13,7 +13,7 @@ function Header() {
         <span>{title}</span>
       </Styled.Box>
       <Styled.Middle>
-        <Tab />
+        <Tab isEclassTab={isEclassTab} />
       </Styled.Middle>
       <Styled.LastBox>
         <GraphSelector />

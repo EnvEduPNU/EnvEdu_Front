@@ -4,12 +4,10 @@ import { useGraphDataStore } from "../store/graphStore";
 import * as Styled from "./Styled";
 import CustomTable from "../DrwaGraph/CustomTable/CustomTable";
 import { Button } from "react-bootstrap";
-import ActivityDialog from "../component/ActivityDialog/ActivityDialog";
 import CustomTableHeader from "../DrwaGraph/CustomTable/CustomTableHeader";
 import GraphAndEditor from "../DrwaGraph/GraphAndEditor/GraphAndEditor";
 import EClassPage from "../../EClass/Page/EClassPage/EClassPage";
 import Header from "../DrwaGraph/Header/Header";
-import { useEClassStore } from "../../EClass/store/eClassStore";
 import AppendActivityDialog from "../../EClass/Component/AppendActivityDialog/AppendActivityDialog";
 import CustomChart from "../DrwaGraph/CustomChart/CustomChart";
 import Table from "../../EClass/Component/Table/Table";
@@ -18,10 +16,9 @@ function CreateEClass() {
   const tab = useTabStore(state => state.tab);
   const [showModal, setShowModal] = useState(false);
   const data = useGraphDataStore(state => state.data);
-  const { eClass, appendActivity } = useEClassStore();
   return (
     <Styled.Wrapper>
-      <Header />
+      <Header isEclassTab />
       {tab === "table" && (
         <>
           <CustomTable />
@@ -69,7 +66,7 @@ function CreateEClass() {
           />
         </>
       )}
-      {tab === "assignment" && (
+      {tab === "eclass" && (
         <>
           <EClassPage />
         </>
