@@ -9,11 +9,14 @@ import CustomTableHeader from "../DrwaGraph/CustomTable/CustomTableHeader";
 import GraphAndEditor from "../DrwaGraph/GraphAndEditor/GraphAndEditor";
 import EClassPage from "../../EClass/Page/EClassPage/EClassPage";
 import Header from "../DrwaGraph/Header/Header";
+import { useEClassStore } from "../../EClass/store/eClassStore";
+import AppendActivityDialog from "../../EClass/Component/AppendActivityDialog/AppendActivityDialog";
 
 function CreateEClass() {
   const tab = useTabStore(state => state.tab);
   const [showModal, setShowModal] = useState(false);
   const data = useGraphDataStore(state => state.data);
+  const { eClass, appendActivity } = useEClassStore();
   return (
     <Styled.Wrapper>
       <Header />
@@ -32,7 +35,7 @@ function CreateEClass() {
             E-Class로 내보내기
           </Button>
 
-          <ActivityDialog
+          <AppendActivityDialog
             visible={showModal}
             onClose={() => setShowModal(false)}
             onConfirm={() => setShowModal(false)}

@@ -2,12 +2,18 @@ import { useState } from "react";
 import classNames from "classnames";
 import "./Table.scss";
 
-const Table = ({ row, col }) => {
+const Table = ({ row, col, tableData }) => {
   const [data, setData] = useState(
     Array(row)
       .fill(0)
       .map(_ => Array(col).fill(""))
   );
+
+  useState(() => {
+    if (tableData) {
+      setData(tableData);
+    }
+  }, []);
 
   const handleInputChange = (rowIdx, colIdx, value) => {
     const newData = data.map(v => [...v]);
