@@ -10,10 +10,12 @@ import Question from "../Question/Question";
 import TableTool from "../TableTool/TableTool";
 import GraphTool from "../GraphTool/GraphTool";
 import SubmitButton from "../SubmitButton/SubmitButton";
+import { useEClassStore } from "../../store/eClassStore";
 
-function Toolbar({ setActivity }) {
+function Toolbar({ pageNum }) {
+  const appendActivity = useEClassStore(state => state.appendActivity);
   const onClickBtn = component => {
-    setActivity(state => [...state, component]);
+    appendActivity(pageNum, component);
   };
   return (
     <Styled.Wrapper>
@@ -29,13 +31,13 @@ function Toolbar({ setActivity }) {
       </Styled.ToolGroup>
       <Styled.Bar></Styled.Bar>
       <Styled.ToolGroup>
-        <ImageTool setActivity={setActivity} />
-        <YoutubeTool setActivity={setActivity} />
+        <ImageTool pageNum={pageNum} />
+        <YoutubeTool pageNum={pageNum} />
       </Styled.ToolGroup>
       <Styled.Bar></Styled.Bar>
       <Styled.ToolGroup>
-        <TableTool setActivity={setActivity} />
-        <GraphTool setActivity={setActivity} />
+        <TableTool pageNum={pageNum} />
+        <GraphTool pageNum={pageNum} />
       </Styled.ToolGroup>
       <Styled.Bar></Styled.Bar>
       <Styled.ToolGroup>

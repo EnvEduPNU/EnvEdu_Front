@@ -59,6 +59,7 @@ import SlidePage from "./Study/Page/SlidePage";
 
 import EClassList from "./DataClass";
 import EClassPage from "./EClass/Page/EClassPage/EClassPage";
+import CreateEClassPage from "./Study/Page/CreateEClassPage";
 
 function App() {
   /**
@@ -171,7 +172,7 @@ function App() {
           />
           <Route path="/E-Classes">
             <Route path="" exact={true} element={<EClassList />} />
-            <Route path="new" exact={true} element={<EClassPage />} />
+            <Route path="new" exact={true} element={<CreateEClassPage />} />
           </Route>
 
           <Route path="/measure" exact={true} element={<Measure />} />

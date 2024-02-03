@@ -3,10 +3,12 @@ import * as Styled from "./Styled";
 import PaperWithToolBar from "../../Component/PaperWithToolBar/PaperWithToolBar";
 import Thumbnail from "../../Component/Thumbnail/Thumbnail";
 import { useNavigate } from "react-router-dom";
+import { useEClassStore } from "../../store/eClassStore";
 
 const EClassPage = () => {
   const navigate = useNavigate();
   const [paperCnt, setPaperCnt] = useState(1);
+  const { eClass, appendPage } = useEClassStore();
 
   return (
     <Styled.Wrapper>
@@ -23,13 +25,11 @@ const EClassPage = () => {
               </Styled.InputWrapper>
             </Styled.Block>
             <div>
-              {Array(paperCnt)
-                .fill(1)
-                .map((_, idx) => (
-                  <Styled.PaperWrapper key={idx}>
-                    <PaperWithToolBar />
-                  </Styled.PaperWrapper>
-                ))}
+              {eClass.map((page, idx) => (
+                <Styled.PaperWrapper key={idx}>
+                  <PaperWithToolBar pageNum={idx} activities={page} />
+                </Styled.PaperWrapper>
+              ))}
             </div>
           </section>
           {/* <Styled.MainSectionWrapper> */}
@@ -50,7 +50,7 @@ const EClassPage = () => {
             </Styled.SubSection>
 
             <Styled.SubSection style={{ marginTop: "30px" }}>
-              <Styled.SaveButton onClick={() => setPaperCnt(cnt => cnt + 1)}>
+              <Styled.SaveButton onClick={appendPage}>
                 + 페이지 추가
               </Styled.SaveButton>
             </Styled.SubSection>
