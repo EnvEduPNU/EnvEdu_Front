@@ -67,6 +67,8 @@ export const Th = styled.div`
   justify-content: space-between;
   align-items: center;
   line-height: 2;
+  max-height: 35px;
+  overflow: auto;
   border-bottom: 1px solid rgba(34, 36, 38, 0.15);
 `;
 

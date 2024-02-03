@@ -2,7 +2,7 @@ import { useState } from "react";
 import ActivityDialog from "../../component/ActivityDialog/ActivityDialog";
 import Dialog from "../../component/Dialog/Dialog";
 import Modal from "../../component/Modal/Modal";
-import Sharing from "../../component/Sharing/Sharing"
+import Sharing from "../../component/Sharing/Sharing";
 import { useTabStore } from "../../store/tabStore";
 import CustomTable from "../CustomTable/CustomTable";
 import CustomTableHeader from "../CustomTable/CustomTableHeader";
@@ -50,6 +50,23 @@ function DrawGraph() {
         <>
           <CustomTableHeader />
           <GraphAndEditor />
+          <Button
+            onClick={() => setShowModal(true)}
+            style={{
+              position: "absolute",
+              left: "30px",
+              top: "200px",
+              width: "fit-content",
+            }}
+          >
+            보고서로 내보내기
+          </Button>
+          <ActivityDialog
+            visible={showModal}
+            onClose={() => setShowModal(false)}
+            onConfirm={() => setShowModal(false)}
+            answer={""}
+          />
         </>
       )}
       {tab === "assignment" && (

@@ -20,23 +20,6 @@ function GraphAndEditor() {
 
   return (
     <Styled.Wrapper>
-      <Button
-        onClick={() => setShowModal(true)}
-        style={{
-          position: "absolute",
-          left: "30px",
-          top: "310px",
-          width: "fit-content",
-        }}
-      >
-        보고서로 내보내기
-      </Button>
-      <ActivityDialog
-        visible={showModal}
-        onClose={() => setShowModal(false)}
-        onConfirm={() => setShowModal(false)}
-        answer={""}
-      />
       {graphIdx === 0 && (
         <>
           <CustomBarChart />

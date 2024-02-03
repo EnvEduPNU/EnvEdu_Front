@@ -10,7 +10,6 @@ function Select({ defaultValue, items, onChange }) {
   const { ref, position } = useComponentPosition();
   const onClickArrowIcon = () => {
     setIsShow(state => !state);
-    console.log("??");
   };
 
   const onClickItem = item => {
