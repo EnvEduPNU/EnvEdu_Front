@@ -24,6 +24,7 @@ export const Box = styled.div`
   }
   span {
     margin-left: 9px;
+    white-space: nowrap;
   }
   border-bottom: 6px solid #f0f0f0;
   ${props =>

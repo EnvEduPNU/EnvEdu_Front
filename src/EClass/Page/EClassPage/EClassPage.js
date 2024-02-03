@@ -3,10 +3,13 @@ import * as Styled from "./Styled";
 import PaperWithToolBar from "../../Component/PaperWithToolBar/PaperWithToolBar";
 import Thumbnail from "../../Component/Thumbnail/Thumbnail";
 import { useNavigate } from "react-router-dom";
+import { useEClassStore } from "../../store/eClassStore";
+import Select from "../../../DataLiteracy/common/Select/Select";
 
 const EClassPage = () => {
   const navigate = useNavigate();
   const [paperCnt, setPaperCnt] = useState(1);
+  const { eClass, appendPage } = useEClassStore();
 
   return (
     <Styled.Wrapper>
@@ -23,17 +26,40 @@ const EClassPage = () => {
               </Styled.InputWrapper>
             </Styled.Block>
             <div>
-              {Array(paperCnt)
-                .fill(1)
-                .map((_, idx) => (
-                  <Styled.PaperWrapper key={idx}>
-                    <PaperWithToolBar />
-                  </Styled.PaperWrapper>
-                ))}
+              {eClass.map((page, idx) => (
+                <Styled.PaperWrapper key={idx}>
+                  <PaperWithToolBar pageNum={idx} activities={page} />
+                </Styled.PaperWrapper>
+              ))}
             </div>
           </section>
           {/* <Styled.MainSectionWrapper> */}
           <Styled.MainSection>
+            <Styled.SubSection>
+              <Styled.SelectWrapper>
+                <div>
+                  <Styled.Label>학년</Styled.Label>
+                  <Select
+                    defaultValue={"초등학생"}
+                    items={["초등학생", "중학생", "고등학생"]}
+                  />
+                </div>
+                <div>
+                  <Styled.Label>과목</Styled.Label>
+                  <Select
+                    defaultValue={"기타"}
+                    items={["시회", "수학", "과학", "정보-전산", "기타"]}
+                  />
+                </div>
+                <div>
+                  <Styled.Label>데이터 종류</Styled.Label>
+                  <Select
+                    defaultValue={"기타"}
+                    items={["SEED", "OpenAPI", "교과서", "기타"]}
+                  />
+                </div>
+              </Styled.SelectWrapper>
+            </Styled.SubSection>
             <Styled.SubSection>
               <Styled.Label>설명</Styled.Label>
               <Styled.Textarea />
@@ -50,7 +76,7 @@ const EClassPage = () => {
             </Styled.SubSection>
 
             <Styled.SubSection style={{ marginTop: "30px" }}>
-              <Styled.SaveButton onClick={() => setPaperCnt(cnt => cnt + 1)}>
+              <Styled.SaveButton onClick={appendPage}>
                 + 페이지 추가
               </Styled.SaveButton>
             </Styled.SubSection>

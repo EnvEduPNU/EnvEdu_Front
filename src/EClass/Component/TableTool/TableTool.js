@@ -4,8 +4,10 @@ import useComponentPosition from "../../../DataLiteracy/hooks/useComponentPositi
 import Portal from "../../../Portal";
 import { Button } from "react-bootstrap";
 import Table from "../Table/Table";
+import { useEClassStore } from "../../store/eClassStore";
 
-function TableTool({ setActivity }) {
+function TableTool({ pageNum }) {
+  const appendActivity = useEClassStore(state => state.appendActivity);
   const { ref, position } = useComponentPosition();
   const [cell, setCell] = useState({ row: "", col: "" });
   const [visible, setVisible] = useState(false);
@@ -19,10 +21,7 @@ function TableTool({ setActivity }) {
     setVisible(state => !state);
 
     if (cell.row > 0 && cell.col > 0) {
-      setActivity(state => [
-        ...state,
-        <Table row={+cell.row} col={+cell.col} />,
-      ]);
+      appendActivity(pageNum, <Table row={+cell.row} col={+cell.col} />);
     }
     setCell({ row: "", col: "" });
   };

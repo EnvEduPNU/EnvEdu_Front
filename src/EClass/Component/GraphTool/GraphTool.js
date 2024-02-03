@@ -1,12 +1,11 @@
+import { useEClassStore } from "../../store/eClassStore";
 import SubmitButton from "../SubmitButton/SubmitButton";
 import * as Styld from "./Styled";
 
-function GraphTool({ setActivity }) {
+function GraphTool({ pageNum }) {
+  const appendActivity = useEClassStore(state => state.appendActivity);
   const onClick = () => {
-    setActivity(state => [
-      ...state,
-      <SubmitButton text={"그래프 그리러 가기"} />,
-    ]);
+    appendActivity(pageNum, <SubmitButton text={"그래프 그리러 가기"} />);
   };
   return (
     <Styld.Tool onClick={onClick}>

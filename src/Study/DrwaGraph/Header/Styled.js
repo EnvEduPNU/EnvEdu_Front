@@ -4,6 +4,7 @@ export const Wrapper = styled.div`
   padding: 0;
   width: 100%;
   height: 46px;
+  max-height: 46px;
   line-height: 46px;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
   border-bottom: 1px solid #ccc;

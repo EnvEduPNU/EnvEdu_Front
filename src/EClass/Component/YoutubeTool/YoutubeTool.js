@@ -1,11 +1,12 @@
 import { useState } from "react";
 import * as Styled from "./Styled";
-import { Button } from "../../../DataLiteracy/common/ButtonSelector/Styled";
 import Portal from "../../../Portal";
 import useComponentPosition from "../../../DataLiteracy/hooks/useComponentPosition";
+import { useEClassStore } from "../../store/eClassStore";
 // import { Button } from "react-bootstrap";
 
-const YoutubeTool = ({ setActivity }) => {
+const YoutubeTool = ({ pageNum }) => {
+  const appendActivity = useEClassStore(state => state.appendActivity);
   const { ref, position } = useComponentPosition();
   const [url, setUrl] = useState("");
   const [visible, setVisible] = useState(false);
@@ -21,18 +22,16 @@ const YoutubeTool = ({ setActivity }) => {
       /https:\/\/www.youtube.com\/watch\?v=.{11,}/.test(url)
     ) {
       const src = `https://www.youtube-nocookie.com/embed/${url.slice(-11)}`;
-      setActivity(state => [
-        ...state,
+      appendActivity(
+        pageNum,
         <iframe
           id="ytplayer"
           type="text/html"
           width="600"
           height="305"
           src={src}
-          frameborder="0"
-          allowfullscreen
-        />,
-      ]);
+        />
+      );
       setUrl("");
     }
   };

@@ -1,26 +1,24 @@
 import { useState } from "react";
-import ActivityDialog from "../../component/ActivityDialog/ActivityDialog";
-import Dialog from "../../component/Dialog/Dialog";
-import Modal from "../../component/Modal/Modal";
-import Sharing from "../../component/Sharing/Sharing";
-import { useTabStore } from "../../store/tabStore";
-import CustomTable from "../CustomTable/CustomTable";
-import CustomTableHeader from "../CustomTable/CustomTableHeader";
-import GraphAndEditor from "../GraphAndEditor/GraphAndEditor";
-import Header from "../Header/Header";
-import ResultReport from "../ResultReport/ResultReport";
+import { useTabStore } from "../store/tabStore";
+import { useGraphDataStore } from "../store/graphStore";
 import * as Styled from "./Styled";
+import CustomTable from "../DrwaGraph/CustomTable/CustomTable";
 import { Button } from "react-bootstrap";
-import { useGraphDataStore } from "../../store/graphStore";
+import CustomTableHeader from "../DrwaGraph/CustomTable/CustomTableHeader";
+import GraphAndEditor from "../DrwaGraph/GraphAndEditor/GraphAndEditor";
+import EClassPage from "../../EClass/Page/EClassPage/EClassPage";
+import Header from "../DrwaGraph/Header/Header";
+import AppendActivityDialog from "../../EClass/Component/AppendActivityDialog/AppendActivityDialog";
+import CustomChart from "../DrwaGraph/CustomChart/CustomChart";
+import Table from "../../EClass/Component/Table/Table";
 
-function DrawGraph() {
+function CreateEClass() {
   const tab = useTabStore(state => state.tab);
   const [showModal, setShowModal] = useState(false);
   const data = useGraphDataStore(state => state.data);
-
   return (
     <Styled.Wrapper>
-      <Header />
+      <Header isEclassTab />
       {tab === "table" && (
         <>
           <CustomTable />
@@ -33,16 +31,14 @@ function DrawGraph() {
             }}
             onClick={() => setShowModal(true)}
           >
-            보고서로 내보내기
+            E-Class로 내보내기
           </Button>
 
-          <Sharing />
-
-          <ActivityDialog
+          <AppendActivityDialog
             visible={showModal}
             onClose={() => setShowModal(false)}
             onConfirm={() => setShowModal(false)}
-            answer={data}
+            answer={<Table tableData={data} />}
           />
         </>
       )}
@@ -51,31 +47,32 @@ function DrawGraph() {
           <CustomTableHeader />
           <GraphAndEditor />
           <Button
-            onClick={() => setShowModal(true)}
             style={{
               position: "absolute",
               left: "30px",
               top: "200px",
               width: "fit-content",
             }}
+            onClick={() => setShowModal(true)}
           >
-            보고서로 내보내기
+            E-Class로 내보내기
           </Button>
-          <ActivityDialog
+
+          <AppendActivityDialog
             visible={showModal}
             onClose={() => setShowModal(false)}
             onConfirm={() => setShowModal(false)}
-            answer={""}
+            answer={<CustomChart />}
           />
         </>
       )}
-      {tab === "assignment" && (
+      {tab === "eclass" && (
         <>
-          <ResultReport />
+          <EClassPage />
         </>
       )}
     </Styled.Wrapper>
   );
 }
 
-export default DrawGraph;
+export default CreateEClass;

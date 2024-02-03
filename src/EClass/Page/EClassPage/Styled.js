@@ -1,9 +1,6 @@
 import styled from "styled-components";
 
 export const Wrapper = styled.div`
-  position: absolute;
-  left: 0;
-  top: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -188,4 +185,10 @@ export const CancelButton = styled.div`
 export const MainSectionWrapper = styled.section`
   width: 100%;
   position: relative;
+`;
+
+export const SelectWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  gap: 40px;
 `;

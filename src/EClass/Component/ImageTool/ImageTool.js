@@ -1,21 +1,23 @@
 import { useRef } from "react";
 import * as Styled from "./Styled";
+import { useEClassStore } from "../../store/eClassStore";
 
-const ImageTool = ({ setActivity }) => {
+const ImageTool = ({ pageNum }) => {
+  const appendActivity = useEClassStore(state => state.appendActivity);
   const imgRef = useRef();
   const saveImgFile = () => {
     const file = imgRef.current.files[0];
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onloadend = () => {
-      setActivity(state => [
-        ...state,
+      appendActivity(
+        pageNum,
         <img
           style={{ maxWidth: "500px" }}
           src={reader.result}
           alt="업로드 이미지"
-        />,
-      ]);
+        />
+      );
     };
   };
 

@@ -3,7 +3,7 @@ import { create } from "zustand";
 class Variable {
   constructor(name) {
     this._name = name;
-    this._type = "Categorical";
+    this._type = "Numeric";
     this._isSelected = true;
     this._axis = null;
     this._graph = null;
