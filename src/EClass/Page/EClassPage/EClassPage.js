@@ -4,6 +4,7 @@ import PaperWithToolBar from "../../Component/PaperWithToolBar/PaperWithToolBar"
 import Thumbnail from "../../Component/Thumbnail/Thumbnail";
 import { useNavigate } from "react-router-dom";
 import { useEClassStore } from "../../store/eClassStore";
+import Select from "../../../DataLiteracy/common/Select/Select";
 
 const EClassPage = () => {
   const navigate = useNavigate();
@@ -34,6 +35,31 @@ const EClassPage = () => {
           </section>
           {/* <Styled.MainSectionWrapper> */}
           <Styled.MainSection>
+            <Styled.SubSection>
+              <Styled.SelectWrapper>
+                <div>
+                  <Styled.Label>학년</Styled.Label>
+                  <Select
+                    defaultValue={"초등학생"}
+                    items={["초등학생", "중학생", "고등학생"]}
+                  />
+                </div>
+                <div>
+                  <Styled.Label>과목</Styled.Label>
+                  <Select
+                    defaultValue={"기타"}
+                    items={["시회", "수학", "과학", "정보-전산", "기타"]}
+                  />
+                </div>
+                <div>
+                  <Styled.Label>데이터 종류</Styled.Label>
+                  <Select
+                    defaultValue={"기타"}
+                    items={["SEED", "OpenAPI", "교과서", "기타"]}
+                  />
+                </div>
+              </Styled.SelectWrapper>
+            </Styled.SubSection>
             <Styled.SubSection>
               <Styled.Label>설명</Styled.Label>
               <Styled.Textarea />

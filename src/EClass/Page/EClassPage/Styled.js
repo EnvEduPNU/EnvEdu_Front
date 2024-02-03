@@ -186,3 +186,9 @@ export const MainSectionWrapper = styled.section`
   width: 100%;
   position: relative;
 `;
+
+export const SelectWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  gap: 40px;
+`;
