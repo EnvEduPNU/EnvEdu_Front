@@ -81,7 +81,7 @@ function Header() {
             <Nav>
               <NavLink className="nav-link" to="/" style={{ display: 'flex' }}>
                 <PiPlant size="30" color="#2F5F3A" />
-                <h4 style={{ fontWeight: 'bold', marginLeft: '0.3rem' }}>SEEd</h4>
+                <h4 style={{ color: '#000', fontWeight: 'bold', marginLeft: '0.3rem' }}>SEEd</h4>
               </NavLink>
             </Nav>
             <Nav>
