@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import './Header.css';
+import './Header.scss';
 import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { customAxios } from '../Common/CustomAxios';
+import { PiPlant } from "react-icons/pi";
 
 function Header() {
   /**
@@ -78,33 +79,12 @@ function Header() {
             style={{ height: '5em' }}
           >
             <Nav>
-              <NavLink className="nav-link" to="/" style={{ color: 'black' }}>
-                <h4>SEEd</h4>
+              <NavLink className="nav-link" to="/" style={{ display: 'flex' }}>
+                <PiPlant size="30" color="#2F5F3A" />
+                <h4 style={{ color: '#000', fontWeight: 'bold', marginLeft: '0.3rem' }}>SEEd</h4>
               </NavLink>
             </Nav>
             <Nav>
-              <NavDropdown
-                title="DATA"
-                id="basic-nav-dropdown"
-                className={'mx-2'}
-                style={{ fontSize: '1.2em' }}
-              >
-                <NavLink className={'nav-link'} to="/">
-                  SEEd Device
-                </NavLink>
-                <NavLink className={'nav-link'} to="/">
-                  Data portal
-                </NavLink>
-                <NavLink className={'nav-link'} to="/myData">
-                  My data
-                </NavLink>
-                <NavLink className={'nav-link'} to="/openapi">
-                  Open Api Data
-                </NavLink>
-                <NavLink className={'nav-link'} to="/socket">
-                  SEEd 측정 기기
-                </NavLink>
-              </NavDropdown>
               <NavDropdown
                 title="ABOUT"
                 id="basic-nav-dropdown"
@@ -112,13 +92,10 @@ function Header() {
                 style={{ fontSize: '1.2em' }}
               >
                 <NavLink className={'nav-link'} to="/what">
-                  What we do
+                  What We Do
                 </NavLink>
                 <NavLink className={'nav-link'} to="/team">
-                  TEAM
-                </NavLink>
-                <NavLink className={'nav-link'} to="/">
-                  Community
+                  Team
                 </NavLink>
                 <NavLink className={'nav-link'} to="/">
                   Projects
@@ -131,16 +108,35 @@ function Header() {
                 style={{ fontSize: '1.2em' }}
               >
                 <NavLink className={'nav-link'} to="/">
-                  Using SEEd platform
+                  SEEd Platform
                 </NavLink>
                 <NavLink className={'nav-link'} to="/">
-                  SEEd Device manual
+                  SEEd Device
                 </NavLink>
                 <NavLink className={'nav-link'} to="/">
-                  Data manual
+                  E-class manual
                 </NavLink>
                 <NavLink className={'nav-link'} to="/">
-                  FAQs
+                  Data Literacy
+                </NavLink>
+              </NavDropdown>
+              <NavDropdown
+                title="DATA"
+                id="basic-nav-dropdown"
+                className={'mx-2'}
+                style={{ fontSize: '1.2em' }}
+              >
+                <NavLink className={'nav-link'} to="/socket">
+                  SEEd App
+                </NavLink>
+                <NavLink className={'nav-link'} to="/myData">
+                  My Data
+                </NavLink>
+                <NavLink className={'nav-link'} to="/openapi">
+                  Open API Data
+                </NavLink>
+                <NavLink className={'nav-link'} to="/">
+                  Data In Textbooks
                 </NavLink>
               </NavDropdown>
               <NavDropdown
@@ -149,14 +145,20 @@ function Header() {
                 className={'mx-2'}
                 style={{ fontSize: '1.2em' }}
               >
-                <NavLink className={'nav-link'} to="/">
-                  Start E-Classes
-                </NavLink>
                 <NavLink className={'nav-link'} to="/E-Classes">
-                  E-Classes
+                  E-Class
                 </NavLink>
                 <NavLink className={'nav-link'} to="/">
-                  Project reports
+                  E-Class Library
+                </NavLink>
+                <NavLink className={'nav-link'} to="/dataLiteracy/dataLoad">
+                  Data Literacy
+                </NavLink>
+                <NavLink className={'nav-link'} to="/">
+                  Education Resources
+                </NavLink>
+                <NavLink className={'nav-link'} to="/">
+                  Survey
                 </NavLink>
               </NavDropdown>
               <NavDropdown
@@ -166,14 +168,22 @@ function Header() {
                 className={'mx-2'}
               >
                 <NavLink className={'nav-link'} to="/news_reserch">
-                  News and Research
+                  News
                 </NavLink>
+                <NavLink className={'nav-link'} to="/news_reserch">
+                  Research
+                </NavLink>
+                <NavLink className={'nav-link'} to="/training">
+                  Training
+                </NavLink>
+                <NavLink className={'nav-link'} to="/training">
+                  Implementation
+                </NavLink>
+                {/*
                 <NavLink className={'nav-link'} to="/resourceBoard">
                   Education Resources
                 </NavLink>
-                <NavLink className={'nav-link'} to="/training">
-                  Training and implementation
-                </NavLink>
+                */}
               </NavDropdown>
               <NavDropdown
                 title="CONTACT"
@@ -185,17 +195,16 @@ function Header() {
                   Contact us
                 </NavLink>
                 <NavLink className={'nav-link'} to="/">
-                  SEEd 기기 대여
-                </NavLink>
-                <NavLink className={'nav-link'} to="/">
-                  연수 신청
+                  Announcement
                 </NavLink>
                 <NavLink className={'nav-link'} to="/board">
                   Board
                 </NavLink>
+                {/*
                 <NavLink className={'nav-link'} to="/notice">
                   공지
                 </NavLink>
+                */}
               </NavDropdown>
             </Nav>
           </Container>

@@ -2,7 +2,7 @@ import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import { useEffect } from "react";
 import RegisterForm from "./User/Register/RegisterForm";
-import HomePage from "./HomePage";
+import Home from "./Homepage/Home";
 import AddMACForm from "./Device/Manager/AddMACForm";
 import AddDevice from "./Admin/Device/addDevice";
 import LoginForm from "./User/Login/LoginForm";
@@ -75,7 +75,7 @@ function App() {
       <div className="wrap">
         <Routes>
           {/*home*/}
-          <Route index element={<HomePage />} />
+          <Route index element={<Home />} />
 
           {/*user*/}
           <Route path="/auth" exact={true} element={<EmailAuth />} />
