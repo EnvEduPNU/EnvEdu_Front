@@ -135,10 +135,10 @@ export const Textarea = styled.textarea`
 `;
 
 export const MainSection = styled.section`
-  position: sticky;
-  top: 30px;
+  /* position: sticky; */
+  /* top: 30px; */
   width: 100%;
-  height: 900px;
+  /* height: 900px; */
   display: flex;
   flex-direction: column;
   gap: 20px;
