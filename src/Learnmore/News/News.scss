@@ -1,0 +1,21 @@
+.news {
+    .award-list {
+        display: flex;
+        flex-direction: column;
+        h2 {position: relative; font-size: 33px; color: #000; line-height: 1;}
+        h2:before {
+          content:""; position: absolute;
+          left:-48px; top:50%; transform: translateY(-50%);
+          width: 17px; height: 17px; border-radius: 100%;
+          background:#fff; border: 5px solid #5e2ced;
+          box-sizing: border-box;}
+      
+        div {position: relative; padding: 0 0 0 48px;}
+        div:before { content:""; position:absolute; left:8px; top:0;
+                width: 2px; height:100%; background:#ddd;}
+        div:first-child:before { top:10px; height:calc(100% - 10px);}
+      
+        ul { padding: 20px 0 74px; }
+        li {font-size: 17px; color:#000; line-height: 29px;  }
+    }
+}
