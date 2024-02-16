@@ -18,8 +18,10 @@ import Board from "./Board/Board";
 import Board_content from "./Board/Board_content";
 import Team from "./About/Team/Team";
 import What from "./About/What/What";
-import Training from "./Learnmore/Train/Training";
 import News from "./Learnmore/News/News";
+import Research from "./Learnmore/Research/Research";
+import Training from "./Learnmore/Train/Training";
+import Implementation from "./Learnmore/Implementation/Implementation";
 import EmailAuth from "./User/Register/EmailAuth";
 import AdminLogin from "./Admin/Login/AdminLogin";
 import DeviceList from "./Admin/Device/DeviceList";
@@ -183,8 +185,10 @@ function App() {
           />
 
           {/*Learnmore*/}
+          <Route path="/news" exact={true} element={<News />} />
+          <Route path="/research" exact={true} element={<Research />} />
           <Route path="/training" exact={true} element={<Training />} />
-          <Route path="/news_reserch" exact={true} element={<News />} />
+          <Route path="/implementation" exact={true} element={<Implementation />} />
           <Route path="/resource" exact={true} element={<Resource />} />
           <Route path="/tboard" exact={true} element={<Tboard />} />
 
