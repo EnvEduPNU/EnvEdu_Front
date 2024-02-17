@@ -37,4 +37,24 @@ export const useEClassStore = create((set, get) => ({
         eClassData: newEclassData,
       };
     }),
+
+  changeClassroomData: (pageIndex, dataIndex, field, newData) =>
+    set(state => {
+      const newEclassData = get().eClassData.map(d => [...d]);
+
+      const copyData = {
+        ...newEclassData[pageIndex][dataIndex],
+      };
+      copyData[field] = newData;
+      newEclassData[pageIndex][dataIndex] = copyData;
+
+      return {
+        ...state,
+        eClassData: newEclassData,
+      };
+    }),
+
+  getActiveNextIndex: pageNum => {
+    return get().eClass[pageNum].length;
+  },
 }));

@@ -15,16 +15,37 @@ import ClassroomType from "../../utils/classRoomType";
 
 function Toolbar({ pageNum }) {
   const appendActivity = useEClassStore(state => state.appendActivity);
+  const getActiveNextIndex = useEClassStore(state => state.getActiveNextIndex);
   const onClickBtn = (component, type) => {
     appendActivity(pageNum, component, type);
   };
   return (
     <Styled.Wrapper>
       <Styled.ToolGroup>
-        <Styled.Tool onClick={() => onClickBtn(<H1 />, ClassroomType.H2)}>
+        <Styled.Tool
+          onClick={() =>
+            onClickBtn(
+              <H1
+                pageIndex={pageNum}
+                dataIndex={getActiveNextIndex(pageNum)}
+              />,
+              ClassroomType.H2
+            )
+          }
+        >
           H1
         </Styled.Tool>
-        <Styled.Tool onClick={() => onClickBtn(<H2 />, ClassroomType.H2)}>
+        <Styled.Tool
+          onClick={() =>
+            onClickBtn(
+              <H2
+                pageIndex={pageNum}
+                dataIndex={getActiveNextIndex(pageNum)}
+              />,
+              ClassroomType.H2
+            )
+          }
+        >
           H2
         </Styled.Tool>
       </Styled.ToolGroup>
