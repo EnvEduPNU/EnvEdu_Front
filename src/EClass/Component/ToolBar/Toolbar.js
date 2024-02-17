@@ -28,7 +28,7 @@ function Toolbar({ pageNum }) {
                 pageIndex={pageNum}
                 dataIndex={getActiveNextIndex(pageNum)}
               />,
-              ClassroomType.H2
+              ClassroomType.H1
             )
           }
         >

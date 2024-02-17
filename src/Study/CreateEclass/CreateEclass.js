@@ -11,6 +11,7 @@ import Header from "../DrwaGraph/Header/Header";
 import AppendActivityDialog from "../../EClass/Component/AppendActivityDialog/AppendActivityDialog";
 import CustomChart from "../DrwaGraph/CustomChart/CustomChart";
 import Table from "../../EClass/Component/Table/Table";
+import ClassroomType from "../../EClass/utils/classRoomType";
 
 function CreateEClass() {
   const tab = useTabStore(state => state.tab);
@@ -39,6 +40,8 @@ function CreateEClass() {
             onClose={() => setShowModal(false)}
             onConfirm={() => setShowModal(false)}
             answer={<Table tableData={data} />}
+            classroomType={ClassroomType.MATRIX}
+            data={data}
           />
         </>
       )}
@@ -63,6 +66,7 @@ function CreateEClass() {
             onClose={() => setShowModal(false)}
             onConfirm={() => setShowModal(false)}
             answer={<CustomChart />}
+            classroomType={ClassroomType.CHART}
           />
         </>
       )}

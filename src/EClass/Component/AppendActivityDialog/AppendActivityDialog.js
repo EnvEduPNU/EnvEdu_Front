@@ -4,15 +4,21 @@ import FormCheckLabel from "react-bootstrap/esm/FormCheckLabel";
 import FormCheckInput from "react-bootstrap/esm/FormCheckInput";
 import { useEClassStore } from "../../store/eClassStore";
 import { useState } from "react";
-import Table from "../Table/Table";
 
-function AppendActivityDialog({ visible, onClose, onConfirm, answer }) {
+function AppendActivityDialog({
+  visible,
+  onClose,
+  onConfirm,
+  answer,
+  classroomType,
+  data = null,
+}) {
   const [selectedActivity, setSelectedAcitivity] = useState(-1);
   const { eClass, appendActivity } = useEClassStore();
 
   const onSubmit = () => {
     onConfirm();
-    appendActivity(selectedActivity, answer);
+    appendActivity(selectedActivity, answer, classroomType, data);
   };
   return (
     <Dialog

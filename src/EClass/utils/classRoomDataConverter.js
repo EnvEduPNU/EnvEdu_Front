@@ -31,7 +31,7 @@ export class H2DataConverter extends ClassRoomDataConverter {
 
   convert() {
     return {
-      classroomSequenceType: ClassroomType.H1,
+      classroomSequenceType: ClassroomType.H2,
       studentVisibleStatus: true,
       title: "",
     };
@@ -104,7 +104,7 @@ export class YoutubeUrlDataConverter extends ClassRoomDataConverter {
     return {
       classroomSequenceType: ClassroomType.YOUTUBEURL,
       studentVisibleStatus: true,
-      url: data.url,
+      url: data,
     };
   }
 }
@@ -114,12 +114,11 @@ export class MatrixDataConverter extends ClassRoomDataConverter {
     return type == ClassroomType.MATRIX;
   }
 
-  convert() {
+  convert(data) {
     return {
       classroomSequenceType: ClassroomType.MATRIX,
       studentVisibleStatus: true,
-      properties: [],
-      data: [[]],
+      data,
     };
   }
 }

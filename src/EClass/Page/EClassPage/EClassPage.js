@@ -41,10 +41,14 @@ const dataTypeArr = ["SEED", "OpenAPI", "교과서", "기타"];
 
 const EClassPage = () => {
   const navigate = useNavigate();
-  const { eClass, appendPage } = useEClassStore();
+  const { eClass, appendPage, eClassData } = useEClassStore();
   const [grade, setGrade] = useState("초등학교");
   const [subject, setSubject] = useState("기타");
   const [dataType, setDataType] = useState("기타");
+
+  const onClickSaveBtn = () => {
+    console.log(eClassData);
+  };
 
   return (
     <Styled.Wrapper>
@@ -136,7 +140,9 @@ const EClassPage = () => {
               <Thumbnail />
             </Styled.SubSection>
             <Styled.SubSection>
-              <Styled.SaveButton>저장</Styled.SaveButton>
+              <Styled.SaveButton onClick={onClickSaveBtn}>
+                저장
+              </Styled.SaveButton>
             </Styled.SubSection>
             <Styled.SubSection onClick={() => navigate(-1)}>
               <Styled.CancelButton>취소</Styled.CancelButton>

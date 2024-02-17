@@ -1,12 +1,11 @@
 import { create } from "zustand";
 import { ClassRoomDataConverterAdapter } from "../utils/ClassRoomDataConverterAdapter";
-import ClassroomType from "../utils/classRoomType";
 
 export const useEClassStore = create((set, get) => ({
   eClass: [[]],
   eClassData: [[]],
 
-  appendActivity: (pageNumber, activity, classroomType, data) =>
+  appendActivity: (pageNumber, activity, classroomType, data = null) =>
     set(state => {
       const newEclass = get().eClass.map(page => [...page]);
       newEclass[pageNumber].push(activity);
