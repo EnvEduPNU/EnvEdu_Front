@@ -1,4 +1,3 @@
-import { Button } from "react-bootstrap";
 import * as Styled from "./Styled";
 import H2 from "../H2/H2";
 import H1 from "../H1/H1";
@@ -60,7 +59,15 @@ function Toolbar({ pageNum }) {
           토론
         </Styled.Tool>
         <Styled.Tool
-          onClick={() => onClickBtn(<Question />, ClassroomType.QNA)}
+          onClick={() =>
+            onClickBtn(
+              <Question
+                pageIndex={pageNum}
+                dataIndex={getActiveNextIndex(pageNum)}
+              />,
+              ClassroomType.QNA
+            )
+          }
         >
           질문
         </Styled.Tool>

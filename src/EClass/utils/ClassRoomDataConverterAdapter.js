@@ -23,13 +23,18 @@ export class ClassRoomDataConverterAdapter {
     new ChartDataConverter(),
   ];
 
-  convert(classroomType) {
+  convert(classroomType, data = null) {
     const dataConvert = this.converters.filter(convert =>
       convert.isSupport(classroomType)
     );
     if (dataConvert.length !== 1) {
       throw new Error(`${classroomType} 타입의 컨버터가 없습니다.`);
     }
-    return dataConvert[0].convert();
+
+    if (data == null) {
+      return dataConvert[0].convert();
+    }
+
+    return dataConvert[0].convert(data);
   }
 }

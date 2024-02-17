@@ -100,11 +100,11 @@ export class YoutubeUrlDataConverter extends ClassRoomDataConverter {
     return type == ClassroomType.YOUTUBEURL;
   }
 
-  convert() {
+  convert(data) {
     return {
       classroomSequenceType: ClassroomType.YOUTUBEURL,
       studentVisibleStatus: true,
-      url: "",
+      url: data.url,
     };
   }
 }

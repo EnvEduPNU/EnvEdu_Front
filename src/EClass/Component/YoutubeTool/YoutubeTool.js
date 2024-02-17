@@ -8,6 +8,7 @@ import ClassroomType from "../../utils/classRoomType";
 
 const YoutubeTool = ({ pageNum }) => {
   const appendActivity = useEClassStore(state => state.appendActivity);
+
   const { ref, position } = useComponentPosition();
   const [url, setUrl] = useState("");
   const [visible, setVisible] = useState(false);
@@ -28,12 +29,14 @@ const YoutubeTool = ({ pageNum }) => {
         <iframe
           id="ytplayer"
           type="text/html"
-          width="600"
+          width="100%"
           height="305"
           src={src}
         />,
-        ClassroomType.YOUTUBEURL
+        ClassroomType.YOUTUBEURL,
+        src
       );
+
       setUrl("");
     }
   };
