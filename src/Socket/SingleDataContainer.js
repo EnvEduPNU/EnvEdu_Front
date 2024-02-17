@@ -40,6 +40,10 @@ const labels = ['', '', '', '', '', '', '', '', '', ''];
 
 
 function SingleDataContainer(props) {
+    const handleClick = (type) => {
+        props.toggleSelection(type);
+    };
+
     /**
      * 데이터의 각 종류별로 존재하는 컴포넌트
      */
@@ -190,35 +194,56 @@ function SingleDataContainer(props) {
     /*센서 이름 css */
     const style = {
         display: "inline-block",
-        fontSize: "0.9em",
-        width: "8em",
-        backgroundColor: `${value === -99999 ? "#fff" : "#FAE4FF"}`,
+        fontSize: "0.75em",
+        fontWeight: 'bold',
+        width: "8rem",
+        backgroundColor: value === -99999 ? "#fff" : (props.selectedTypes.includes(props.type) ? '#CBE0FF' : '#FFE2E7'),
         borderRadius: '1.25rem',
         textAlign: 'center'
+    };
+    
+    //console.log(props.selectedTypes.includes(props.type))
+
+    const putUnit = (type) => {
+        const unitMap = {
+            temp: '°C',
+            hum: '%',
+            tur: 'NTU',
+            dust:'㎍/㎥',
+            dox: 'mg/L',
+            co2: 'ppm',
+            lux: 'lx',
+            pre: 'hPa'
+        };
+    
+        return unitMap[type] || null;
+
     }
 
     return (
         <div>
             <div className="d-flex justify-content-between">
                 <div style={{display: 'flex', alignItems: 'center'}}>
-                    
-                    {props.type === 'temp' && <span className="border pe-2 ps-2 mb-2" style={style}>기온</span>}
-                    {props.type === 'pH' && <span className="border pe-2 ps-2 mb-2" style={style}>pH</span>}
-                    {props.type === 'hum' && <span className="border pe-2 ps-2 mb-2" style={style}>습도</span>}
-                    {props.type === 'hum_earth' && <span className="border pe-2 ps-2 mb-2" style={style}>토양 습도</span>}
-                    {props.type === 'tur' && <span className="border pe-2 ps-2 mb-2" style={style}>탁도</span>}
-                    {props.type === 'dust' && <span className="border pe-2 ps-2 mb-2" style={style}>미세먼지</span>}
-                    {props.type === 'dox' && <span className="border pe-2 ps-2 mb-2" style={style}>용존산소량</span>}
-                    {props.type === 'co2' && <span className="border pe-2 ps-2 mb-2" style={style}>이산화탄소</span>}
-                    {props.type === 'lux' && <span className="border pe-2 ps-2 mb-2" style={style}>조도</span>}
-                    {props.type === 'pre' && <span className="border pe-2 ps-2 mb-2" style={style}>기압</span>}
+                    <span className="border pe-2 ps-2 mb-2" onClick={() => handleClick(props.type)} style={style}>
+                        {props.type === 'temp' && "기온"}
+                        {props.type === 'pH' && "pH"}
+                        {props.type === 'hum' && "습도"}
+                        {props.type === 'hum_earth' && "토양 습도"}
+                        {props.type === 'tur' && "탁도"}
+                        {props.type === 'dust' && "미세먼지"}
+                        {props.type === 'dox' && "용존산소량"}
+                        {props.type === 'co2' && "이산화탄소"}
+                        {props.type === 'lux' && "조도"}
+                        {props.type === 'pre' && "기압"}
+                    </span>
+
                     &nbsp;&nbsp;
                     
                     {
                         /**
                          * 유효하지 않은 값의 처리
                          */
-                        <span>{value === -99999 ? "N/A" : value}</span>
+                        <span style={{fontSize: '0.75em'}}>{value === -99999 ? "" : value} {putUnit(props.type)}</span>
                     }
                 </div>
 
