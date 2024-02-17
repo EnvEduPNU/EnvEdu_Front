@@ -9,14 +9,30 @@ import GraphAndEditor from "../DrwaGraph/GraphAndEditor/GraphAndEditor";
 import EClassPage from "../../EClass/Page/EClassPage/EClassPage";
 import Header from "../DrwaGraph/Header/Header";
 import AppendActivityDialog from "../../EClass/Component/AppendActivityDialog/AppendActivityDialog";
-import CustomChart from "../DrwaGraph/CustomChart/CustomChart";
 import Table from "../../EClass/Component/Table/Table";
 import ClassroomType from "../../EClass/utils/classRoomType";
+import Chart from "../../EClass/Component/Chart/Chart";
+import { useBarStore } from "../store/barStore";
+import useChartMetaDataStore from "../store/chartMetaDataStore";
+import { useLineStore } from "../store/lineStore";
+import { useBubbleStore } from "../store/bubbleStore";
+import { useScatterStore } from "../store/scatterStore";
+import { useMixStore } from "../store/mixStore";
 
 function CreateEClass() {
   const tab = useTabStore(state => state.tab);
   const [showModal, setShowModal] = useState(false);
   const data = useGraphDataStore(state => state.data);
+  const graphIdx = useGraphDataStore(state => state.graphIdx);
+
+  const getGraphState = () => {
+    if (graphIdx === 0) return useBarStore.getState();
+    if (graphIdx === 1) return useLineStore.getState();
+    if (graphIdx === 2) return useBubbleStore.getState();
+    if (graphIdx === 4) return useScatterStore.getState();
+    if (graphIdx === 5) return useMixStore.getState();
+  };
+
   return (
     <Styled.Wrapper>
       <Header isEclassTab />
@@ -65,7 +81,14 @@ function CreateEClass() {
             visible={showModal}
             onClose={() => setShowModal(false)}
             onConfirm={() => setShowModal(false)}
-            answer={<CustomChart />}
+            answer={
+              <Chart
+                graphIdx={graphIdx}
+                graphDataState={useGraphDataStore.getState()}
+                graphState={getGraphState()}
+                metaDataState={useChartMetaDataStore.getState()}
+              />
+            }
             classroomType={ClassroomType.CHART}
           />
         </>

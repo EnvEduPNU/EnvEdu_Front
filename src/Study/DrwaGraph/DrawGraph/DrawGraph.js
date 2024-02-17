@@ -21,31 +21,29 @@ function DrawGraph() {
   return (
     <Styled.Wrapper>
       <Header />
-      {tab === "table" && (
-        <>
-          <CustomTable />
-          <Button
-            style={{
-              position: "absolute",
-              right: "30px",
-              bottom: "100px",
-              width: "fit-content",
-            }}
-            onClick={() => setShowModal(true)}
-          >
-            보고서로 내보내기
-          </Button>
+      <>
+        <CustomTable />
+        <Button
+          style={{
+            position: "absolute",
+            right: "30px",
+            bottom: "100px",
+            width: "fit-content",
+          }}
+          onClick={() => setShowModal(true)}
+        >
+          보고서로 내보내기
+        </Button>
 
-          <Sharing />
+        <Sharing />
 
-          <ActivityDialog
-            visible={showModal}
-            onClose={() => setShowModal(false)}
-            onConfirm={() => setShowModal(false)}
-            answer={data}
-          />
-        </>
-      )}
+        <ActivityDialog
+          visible={showModal}
+          onClose={() => setShowModal(false)}
+          onConfirm={() => setShowModal(false)}
+          answer={data}
+        />
+      </>
       {tab === "graph" && (
         <>
           <CustomTableHeader />

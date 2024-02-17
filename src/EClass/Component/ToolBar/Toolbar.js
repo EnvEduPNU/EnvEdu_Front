@@ -18,6 +18,7 @@ function Toolbar({ pageNum }) {
   const onClickBtn = (component, type) => {
     appendActivity(pageNum, component, type);
   };
+
   return (
     <Styled.Wrapper>
       <Styled.ToolGroup>
