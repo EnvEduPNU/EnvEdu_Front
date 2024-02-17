@@ -30,6 +30,7 @@ const CustomCard = styled.div`
     transform: translateY(-20px);
   }
   h4 {
+    margin-top: 1rem;
     font-weight: bold;
   }
   span {

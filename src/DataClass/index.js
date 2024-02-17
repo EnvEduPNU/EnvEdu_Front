@@ -41,7 +41,7 @@ export default function EClassList() {
               <small>[탐구] 센서를 활용하여 교실의 공기질을 측정해보자.</small>
             </Card.Text>
             <a href="/slide" target="_blank">
-              <Button variant="primary">Start</Button>
+              <Button variant="primary" style={{ width: '7rem' }}>Start</Button>
             </a>
           </Card.Body>
         </Card>

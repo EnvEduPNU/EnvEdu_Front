@@ -3,6 +3,7 @@ import * as Styled from "./Styled";
 import Portal from "../../../Portal";
 import useComponentPosition from "../../../DataLiteracy/hooks/useComponentPosition";
 import { useEClassStore } from "../../store/eClassStore";
+import ClassroomType from "../../utils/classRoomType";
 // import { Button } from "react-bootstrap";
 
 const YoutubeTool = ({ pageNum }) => {
@@ -30,7 +31,8 @@ const YoutubeTool = ({ pageNum }) => {
           width="600"
           height="305"
           src={src}
-        />
+        />,
+        ClassroomType.YOUTUBEURL
       );
       setUrl("");
     }
