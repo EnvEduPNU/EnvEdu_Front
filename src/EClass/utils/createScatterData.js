@@ -1,61 +1,46 @@
 import { colorsArray } from "../../DataLiteracy/utils/randomColor";
 
-const createLineData = (graphDataState, lineDataState, metaDataState) => {
+function createScatterData(graphDataState, scatterDataState, metaDataState) {
   const { variables, data } = graphDataState;
-  const { min, max, stepSize } = lineDataState;
+  const { xAxis, yAxis } = scatterDataState;
   const {
     metaData: { legendPostion, datalabelAnchor },
   } = metaDataState;
 
-  const categorycalList = variables.filter(
-    variable =>
-      variable.isSelected &&
-      variable.type === "Categorical" &&
-      variable.axis !== null
-  );
-  const numericList = variables.filter(
-    variable =>
-      variable.isSelected &&
-      variable.type === "Numeric" &&
-      variable.axis !== null
+  const xVariavleList = variables.filter(
+    variable => variable.isSelected && variable.axis === "X"
   );
 
-  const labels = data
-    .slice(1)
-    .map(item => item[data[0].indexOf(categorycalList[0].name)]);
+  const yVariavleList = variables.filter(
+    variable => variable.isSelected && variable.axis === "Y"
+  );
 
   const createDataset = () => {
-    return numericList.map((variable, idx) => ({
-      label: variable.name,
-      data: data.slice(1).map(item => item[data[0].indexOf(variable.name)]),
-      backgroundColor: colorsArray[idx],
-      borderWidth: 1,
-    }));
+    if (xVariavleList.length === 1 && yVariavleList.length === 1) {
+      return [
+        {
+          label: "산점도 그래프",
+          data: data.slice(1).map(item => ({
+            x: item[data[0].indexOf(xVariavleList[0].name)],
+            y: item[data[0].indexOf(yVariavleList[0].name)],
+            // label: item[qualitativeVariableIdx],
+          })),
+          backgroundColor: colorsArray[0],
+          borderWidth: 1,
+        },
+      ];
+    }
   };
 
   const createOptions = () => {
-    if (categorycalList.length === 1 && categorycalList[0].axis === "X") {
+    if (xVariavleList.length === 1 && yVariavleList.length === 1) {
       return {
         scales: {
           x: {
-            title: {
-              // 이 축의 단위 또는 이름도 title 속성을 이용하여 표시할 수 있습니다.
-              display: true,
-              align: "end",
-              color: "#808080",
-              font: {
-                size: 18,
-                family: "'Noto Sans KR', sans-serif",
-                weight: 300,
-              },
-              text: categorycalList[0].name,
-            },
-          },
-          y: {
-            min,
-            max,
+            min: xAxis.min,
+            max: xAxis.max,
             ticks: {
-              stepSize,
+              stepSize: xAxis.stepSize,
               autoSkip: false,
             },
             title: {
@@ -68,7 +53,27 @@ const createLineData = (graphDataState, lineDataState, metaDataState) => {
                 family: "'Noto Sans KR', sans-serif",
                 weight: 300,
               },
-              text: numericList.length > 0 ? numericList[0].name : "",
+              text: xVariavleList[0].name,
+            },
+          },
+          y: {
+            min: yAxis.min,
+            max: yAxis.max,
+            ticks: {
+              stepSize: yAxis.stepSize,
+              autoSkip: false,
+            },
+            title: {
+              // 이 축의 단위 또는 이름도 title 속성을 이용하여 표시할 수 있습니다.
+              display: true,
+              align: "end",
+              color: "#808080",
+              font: {
+                size: 18,
+                family: "'Noto Sans KR', sans-serif",
+                weight: 300,
+              },
+              text: yVariavleList[0].name,
             },
           },
         },
@@ -85,14 +90,10 @@ const createLineData = (graphDataState, lineDataState, metaDataState) => {
       };
     }
   };
-
   return {
-    data: {
-      labels,
-      datasets: createDataset(),
-    },
+    data: { datasets: createDataset() },
     options: createOptions(),
   };
-};
+}
 
-export default createLineData;
+export default createScatterData;
