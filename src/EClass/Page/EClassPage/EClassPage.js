@@ -1,4 +1,3 @@
-import { useState } from "react";
 import * as Styled from "./Styled";
 import PaperWithToolBar from "../../Component/PaperWithToolBar/PaperWithToolBar";
 import Thumbnail from "../../Component/Thumbnail/Thumbnail";
@@ -41,13 +40,29 @@ const dataTypeArr = ["SEED", "OpenAPI", "교과서", "기타"];
 
 const EClassPage = () => {
   const navigate = useNavigate();
-  const { eClass, appendPage, eClassData } = useEClassStore();
-  const [grade, setGrade] = useState("초등학교");
-  const [subject, setSubject] = useState("기타");
-  const [dataType, setDataType] = useState("기타");
+  const {
+    title,
+    description,
+    gradeLabel,
+    subjectLabel,
+    dataTypeLabel,
+    changeFieldValue,
+    eClass,
+    appendPage,
+    eClassData,
+  } = useEClassStore();
 
   const onClickSaveBtn = () => {
-    console.log(eClassData);
+    const saveData = {
+      title,
+      description,
+      gradeLabel,
+      subjectLabel,
+      dataTypeLabel,
+      eClassData,
+    };
+    localStorage.setItem("eclass", JSON.stringify(saveData));
+    alert("저장되었습니다.");
   };
 
   return (
@@ -61,13 +76,20 @@ const EClassPage = () => {
             <Styled.Block>
               <Styled.Label>제목</Styled.Label>
               <Styled.InputWrapper>
-                <Styled.Input />
+                <Styled.Input
+                  value={title}
+                  onChange={e => changeFieldValue("title", e.target.value)}
+                />
               </Styled.InputWrapper>
             </Styled.Block>
             <div>
               {eClass.map((page, idx) => (
                 <Styled.PaperWrapper key={idx}>
-                  <PaperWithToolBar pageNum={idx} activities={page} />
+                  <PaperWithToolBar
+                    pageNum={idx}
+                    activities={page}
+                    eClassData={eClassData[idx]}
+                  />
                 </Styled.PaperWrapper>
               ))}
             </div>
@@ -75,14 +97,19 @@ const EClassPage = () => {
           <Styled.MainSection>
             <Styled.SubSection>
               <Styled.Label>학년</Styled.Label>
-              <Dropdown title={grade}>
+              <Dropdown title={gradeLabel}>
                 {Object.keys(gradeObj).map(item => (
                   <Dropdown.Item key={item}>
                     {item}
                     <Dropdown.Submenu position="right">
                       {gradeObj[item].map(subItem => (
                         <Dropdown.Item
-                          onClick={() => setGrade(`${item} (${subItem})`)}
+                          onClick={() =>
+                            changeFieldValue(
+                              "gradeLabel",
+                              `${item} (${subItem})`
+                            )
+                          }
                           key={subItem}
                         >
                           {subItem}
@@ -95,11 +122,11 @@ const EClassPage = () => {
             </Styled.SubSection>
             <Styled.SubSection>
               <Styled.Label>과목</Styled.Label>
-              <Dropdown title={subject}>
+              <Dropdown title={subjectLabel}>
                 {Object.keys(subjectObj).map(item => (
                   <Dropdown.Item
                     key={item}
-                    onClick={() => setSubject(`${item}`)}
+                    onClick={() => changeFieldValue("subjectLabel", `${item}`)}
                   >
                     {item}
                     {subjectObj[item].length > 0 && (
@@ -108,7 +135,10 @@ const EClassPage = () => {
                           <Dropdown.Item
                             onClick={e => {
                               e.stopPropagation();
-                              setSubject(`${item} (${subItem})`);
+                              changeFieldValue(
+                                "subjectLabel",
+                                `${item} (${subItem})`
+                              );
                             }}
                             key={subItem}
                           >
@@ -123,9 +153,12 @@ const EClassPage = () => {
             </Styled.SubSection>
             <Styled.SubSection>
               <Styled.Label>데이터 종류</Styled.Label>
-              <Dropdown title={dataType}>
+              <Dropdown title={dataTypeLabel}>
                 {dataTypeArr.map(type => (
-                  <Dropdown.Item key={type} onClick={() => setDataType(type)}>
+                  <Dropdown.Item
+                    key={type}
+                    onClick={() => changeFieldValue("dataTypeLabel", type)}
+                  >
                     {type}
                   </Dropdown.Item>
                 ))}
@@ -133,7 +166,10 @@ const EClassPage = () => {
             </Styled.SubSection>
             <Styled.SubSection>
               <Styled.Label>설명</Styled.Label>
-              <Styled.Textarea />
+              <Styled.Textarea
+                value={description}
+                onChange={e => changeFieldValue("description", e.target.value)}
+              />
             </Styled.SubSection>
             <Styled.SubSection>
               <Styled.Label>썸네일</Styled.Label>

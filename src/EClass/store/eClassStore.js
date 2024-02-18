@@ -2,6 +2,11 @@ import { create } from "zustand";
 import { ClassRoomDataConverterAdapter } from "../utils/ClassRoomDataConverterAdapter";
 
 export const useEClassStore = create((set, get) => ({
+  title: "",
+  description: "",
+  gradeLabel: "초등학생",
+  subjectLabel: "기타",
+  dataTypeLabel: "기타",
   eClass: [[]],
   eClassData: [[]],
 
@@ -51,6 +56,33 @@ export const useEClassStore = create((set, get) => ({
       return {
         ...state,
         eClassData: newEclassData,
+      };
+    }),
+
+  toggleSelected: (pageIndex, dataIndex) =>
+    set(state => {
+      const newEclassData = get().eClassData.map(d => [...d]);
+
+      const copyData = {
+        ...newEclassData[pageIndex][dataIndex],
+      };
+
+      if ("studentVisibleStatus" in copyData) {
+        copyData["studentVisibleStatus"] = !copyData["studentVisibleStatus"];
+        newEclassData[pageIndex][dataIndex] = copyData;
+      }
+
+      return {
+        ...state,
+        eClassData: newEclassData,
+      };
+    }),
+
+  changeFieldValue: (key, newValue) =>
+    set(state => {
+      return {
+        ...state,
+        [key]: newValue,
       };
     }),
 
