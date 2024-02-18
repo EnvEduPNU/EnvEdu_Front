@@ -86,6 +86,20 @@ export const useEClassStore = create((set, get) => ({
       };
     }),
 
+  deleteActivity: (pageIndex, activityIndex) =>
+    set(state => {
+      const newEclass = get().eClass.map(page => [...page]);
+      newEclass[pageIndex][activityIndex] = <></>;
+
+      const newEclassData = get().eClassData.map(a => [...a]);
+      newEclassData[pageIndex][activityIndex]["isRemove"] = true;
+      return {
+        ...state,
+        eClass: newEclass,
+        eClassData: newEclassData,
+      };
+    }),
+
   getActiveNextIndex: pageNum => {
     return get().eClass[pageNum].length;
   },

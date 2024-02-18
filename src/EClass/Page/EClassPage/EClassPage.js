@@ -53,13 +53,17 @@ const EClassPage = () => {
   } = useEClassStore();
 
   const onClickSaveBtn = () => {
+    const noRemoveEclassData = eClassData.map(page =>
+      page.filter(data => !data["isRemove"])
+    );
+
     const saveData = {
       title,
       description,
       gradeLabel,
       subjectLabel,
       dataTypeLabel,
-      eClassData,
+      eClassData: noRemoveEclassData,
     };
     localStorage.setItem("eclass", JSON.stringify(saveData));
 
