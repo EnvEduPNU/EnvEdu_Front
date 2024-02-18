@@ -3,8 +3,10 @@ import {useState} from "react";
 import SingleDataContainer from "./SingleDataContainer";
 import {decodeToken} from "react-jwt";
 import {customAxios} from "../Common/CustomAxios";
-
-
+import { BsRecordCircle } from "react-icons/bs";
+import { FaRegStopCircle } from "react-icons/fa";
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
 
 const stomp = require('stompjs');
 /**
@@ -31,6 +33,17 @@ let isFinished = false;
 let lastReceivedDate = null;
 
 function SampleSocket(props) {
+    // 선택된 데이터 타입들을 저장하는 상태
+    const [selectedTypes, setSelectedTypes] = useState([]);
+
+    // 선택된 데이터 타입을 토글하는 함수
+    const toggleSelectedType = (type) => {
+        setSelectedTypes(prev => {
+            // 이미 선택된 타입이면 제거, 아니면 추가
+            return prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type];
+        });
+    };
+    
     /**
      * 센서 기기에서 전송하는 데이터 종류
      */
@@ -109,17 +122,6 @@ function SampleSocket(props) {
     const [location, setLocation] = useState("");
     const [memo, setMemo] = useState("");
 
-    /*checkbox*/
-    const [checkedDataTypes, setCheckedDataTypes] = useState(dataTypes); //제일 처음에 모두 체크된 상태로
-
-    const handleCheckboxChange = (dataType) => {
-        if (checkedDataTypes.includes(dataType)) {
-            setCheckedDataTypes(checkedDataTypes.filter(item => item !== dataType));
-        } else {
-            setCheckedDataTypes([...checkedDataTypes, dataType]);
-        }
-    };
-
     /** 
      * 데이터 수신 시, 실행되는 핸들러
      */
@@ -153,10 +155,9 @@ function SampleSocket(props) {
             console.log(updatedReceiveObject)
 
             //선택하지 않은 센서의 값은 null로 만들기
-            console.log("체크한 것 확인")
-            console.log(checkedDataTypes)
+
             dataTypes.forEach((dataType) => {
-                if (!checkedDataTypes.includes(dataType)) {
+                if (!selectedTypes.includes(dataType)) {
                     if (dataType === 'pH') {
                         updatedReceiveObject['ph'] = null;
                     }
@@ -217,192 +218,206 @@ function SampleSocket(props) {
         setReceivedData([...receivedData]);
     }
 
-    console.log(checkedDataTypes)
+    //modal
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
     console.log(location)
+    console.log(selectedTypes)
     return (
             <div>
-                <div style={{padding: '1rem 2rem'}}>
-                    <span onClick={() => register()} style={{cursor: 'pointer', background: '#FFF', padding: '0.5rem', fontSize: '1.2rem', fontWeight: '600', borderRadius: '0.625rem', marginRight: '0.5rem'}}>
-                            <img src="/assets/img/start.png" style={{marginRight: '0.3rem'}} />
-                            측정 시작
-                    </span>
-                    {connected  && isConnectionDropped && 
-                        <span style={{padding: '0.5rem', fontSize: '1.2rem', fontWeight: '600', borderRadius: '0.625rem'}}>
-                            전송 중단                    
-                        </span>}
+                <div style={{padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between'}}>
+                    <div>
+                        <span onClick={() => register()} style={{cursor: 'pointer', background: '#FFF', padding: '0.5rem', fontSize: '16px', fontWeight: '600', borderRadius: '0.625rem', marginRight: '0.5rem'}}>
+                                <img src="/assets/img/start.png" style={{marginRight: '0.3rem'}} />
+                                측정 시작
+                        </span>
+                        {connected  && isConnectionDropped && 
+                            <span style={{padding: '0.5rem', fontSize: '1.2rem', fontWeight: '600', borderRadius: '0.625rem'}}>
+                                전송 중단                    
+                            </span>
+                        }
+                    </div>
+
+                    {
+                        (!save || (save && selectedTypes.length === 0)) && (
+                            <div style={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                padding: '0 1.5rem',
+                                width: '10rem',
+                                height: '2rem',
+                                borderRadius: '0.625rem',
+                                background: '#666666',
+                                color: '#fff',
+                                fontSize: '16px',
+                                cursor: 'pointer',
+                            }}
+                            onClick={handleShow}
+                            >   
+                                <BsRecordCircle color='red' style={{ marginRight: '0.5rem' }}/>
+                                데이터 기록
+                            </div>
+                        )
+                    }
+
+                    <Modal show={show} onHide={handleClose}>
+                        <Modal.Header closeButton>
+                            <Modal.Title>데이터 기록하기</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            {/*저장 간격*/}
+                            <div style={{display: 'flex'}}>
+                                <div style={{
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        fontSize: '1.25rem',
+                                        width: '11rem',
+                                        height:' 2rem',
+                                        borderRadius: '1.25rem',
+                                        background: '#CBE0FF',
+                                        marginRight: '1.5rem'
+                                    }}>
+                                    시간 간격
+                                </div>
+
+                                <input style={{
+                                    width: '40%',
+                                    height: '2rem',
+                                    borderRadius: '0.625rem',
+                                    background: '#fff',
+                                    border: '1px solid #d2d2d2',
+                                    outline: 'none',
+                                    fontSize: '1.25rem',
+                                    padding: '0 1rem',
+                                    marginRight: '1rem',
+                                }} 
+                                    onChange={(e) => setPeriod(e.target.value)} 
+                                    placeholder='단위는 초' />
+                            </div>
+
+                            {/*측정 위치*/}
+                            <div style={{display: 'flex', marginTop: '1rem'}}>
+                                <div style={{
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        fontSize: '1.25rem',
+                                        width: '11rem',
+                                        height:' 2rem',
+                                        borderRadius: '1.25rem',
+                                        background: '#CBE0FF',
+                                        marginRight: '1.5rem'
+                                    }}>
+                                    측정 위치
+                                </div>
+
+                                <input style={{
+                                    width: '40%',
+                                    height: '2rem',
+                                    borderRadius: '0.625rem',
+                                    background: '#fff',
+                                    border: '1px solid #d2d2d2',
+                                    outline: 'none',
+                                    fontSize: '1.25rem',
+                                    padding: '0 1rem',
+                                    marginRight: '1rem'
+                                }} 
+                                    onChange={(e) => setLocation(e.target.value)} />
+                            </div>
+
+                            {/*메모*/}
+                            <div style={{display: 'flex', marginTop: '1rem'}}>
+                                <div style={{
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        fontSize: '1.25rem',
+                                        width: '11rem',
+                                        height:' 2rem',
+                                        borderRadius: '1.25rem',
+                                        background: '#CBE0FF',
+                                        marginRight: '1.5rem'
+                                    }}>
+                                    메모
+                                </div>
+
+                                <input style={{
+                                    width: '40%',
+                                    height: '2rem',
+                                    borderRadius: '0.625rem',
+                                    background: '#fff',
+                                    border: '1px solid #d2d2d2',
+                                    outline: 'none',
+                                    fontSize: '1.25rem',
+                                    padding: '0 1rem',
+                                    marginRight: '1rem'
+                                }} 
+                                    onChange={(e) => setMemo(e.target.value)} />
+                            </div>
+
+                            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '2rem' }}>
+                                <Button 
+                                    style={{ width: '10rem', borderRadius: '1.25rem', background: '#d9dcff', border: 'none', color: '#000', fontSize: '1.25rem' }}
+                                    onClick={() => { 
+                                        save = true; 
+                                        if (selectedTypes.length === 0) {
+                                            alert("저장할 센서를 한 개 이상 선택해주세요.")
+                                        }
+                                    }}
+                                >
+                                        확인
+                                </Button>
+                            </div>
+                        </Modal.Body>
+                    </Modal>
+
+                    {save && selectedTypes.length !== 0 &&
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            padding: '0 1.5rem',
+                            width: '10rem',
+                            height: '2rem',
+                            borderRadius: '0.625rem',
+                            background: '#666666',
+                            color: '#fff',
+                            fontSize: '16px',
+                            cursor: 'pointer',
+                        }}
+                        onClick={() => {
+                            isFinished = true;
+                        }}>
+                            <FaRegStopCircle style={{ marginRight: '0.5rem' }}/>
+                            기록 중지
+                        </div>
+                    }
                 </div>
 
-                <div style={{ padding: '0 2rem 2rem 2rem' }} >
+                <div style={{ padding: '0 2rem 0.5rem 2rem' }} >
                     {dataTypes.map((elem) => (
                             <div key={elem}>
-                                <input 
-                                    type="checkbox" 
-                                    style={{width: '1rem', height: '1rem', accentColor: '#000'}}
-                                    checked={checkedDataTypes.includes(elem)}
-                                    onChange={() => handleCheckboxChange(elem)}/>
-                                  
-                                <SingleDataContainer type={elem} data={receivedData}
-                                                        current={receivedData[receivedData.length - 1]} stomp={stompClient}
-                                                        sendFunction={sendCalibrationMsg}/>
+                                <SingleDataContainer 
+                                    type={elem} 
+                                    data={receivedData}
+                                    current={receivedData[receivedData.length - 1]} 
+                                    stomp={stompClient}
+                                    sendFunction={sendCalibrationMsg}
+                                    toggleSelection={toggleSelectedType}
+                                    selectedTypes={selectedTypes}
+                                />
                             </div>
                         ))}
                     
                     <div style={{
                         marginTop: '2.5rem',
                     }}>
-                        {/*저장 간격*/}
-                        <div style={{display: 'flex'}}>
-                            <div style={{
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    fontSize: '1.25rem',
-                                    width: '11rem',
-                                    height:' 2rem',
-                                    borderRadius: '1.25rem',
-                                    background: '#CBE0FF',
-                                    marginRight: '1.5rem'
-                                }}>
-                                시간 간격
-                            </div>
-
-                            <input style={{
-                                width: '30%',
-                                height: '2rem',
-                                borderRadius: '0.625rem',
-                                background: '#fff',
-                                border: 'none',
-                                outline: 'none',
-                                fontSize: '1.25rem',
-                                padding: '0 1rem',
-                                marginRight: '1rem',
-                            }} 
-                                onChange={(e) => setPeriod(e.target.value)} 
-                                placeholder='단위는 초' />
-                        </div>
-
-                        {/*측정 위치*/}
-                        <div style={{display: 'flex', marginTop: '1rem'}}>
-                            <div style={{
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    fontSize: '1.25rem',
-                                    width: '11rem',
-                                    height:' 2rem',
-                                    borderRadius: '1.25rem',
-                                    background: '#CBE0FF',
-                                    marginRight: '1.5rem'
-                                }}>
-                                측정 위치
-                            </div>
-
-                            <input style={{
-                                width: '30%',
-                                height: '2rem',
-                                borderRadius: '0.625rem',
-                                background: '#fff',
-                                border: 'none',
-                                outline: 'none',
-                                fontSize: '1.25rem',
-                                padding: '0 1rem',
-                                marginRight: '1rem'
-                            }} 
-                                onChange={(e) => setLocation(e.target.value)} />
-                        </div>
-
-                        {/*메모*/}
-                        <div style={{display: 'flex', marginTop: '1rem'}}>
-                            <div style={{
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    fontSize: '1.25rem',
-                                    width: '11rem',
-                                    height:' 2rem',
-                                    borderRadius: '1.25rem',
-                                    background: '#CBE0FF',
-                                    marginRight: '1.5rem'
-                                }}>
-                                메모
-                            </div>
-
-                            <input style={{
-                                width: '30%',
-                                height: '2rem',
-                                borderRadius: '0.625rem',
-                                background: '#fff',
-                                border: 'none',
-                                outline: 'none',
-                                fontSize: '1.25rem',
-                                padding: '0 1rem',
-                                marginRight: '1rem'
-                            }} 
-                                onChange={(e) => setMemo(e.target.value)} />
-                        </div>
-                        {/*
-                        <div style={{display: 'flex', justifyContent: 'center', marginTop: '1rem'}}>
-                            <div>
-                                {dataTypes_ko.map((dataType) => (
-                                    <label style={{fontSize: '1.2rem', fontWeight: '600'}}>
-                                        <input
-                                            style={{accentColor: '#000'}}
-                                            type="checkbox"
-                                            checked={checkedDataTypes.includes(dataTypes[dataTypes_ko.indexOf(dataType)])}
-                                            onChange={() => handleCheckboxChange(dataTypes[dataTypes_ko.indexOf(dataType)])}
-                                        />
-                                        {dataType}
-                                    </label>
-                                ))}
-                            </div>
-                        </div>
-                        */}
-                        <div style={{display: 'flex', justifyContent: 'center', marginTop: '2rem'}}>
-                            {!save && 
-                                <div style={{
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    padding: '0 1.5rem',
-                                    width: '14rem',
-                                    height: '2rem',
-                                    borderRadius: '1.25rem',
-                                    background: '#666666',
-                                    color: '#fff',
-                                    fontSize: '1.25rem',
-                                    cursor: 'pointer',
-                                }}
-                                onClick={() => { 
-                                    save = true; 
-                                    if (checkedDataTypes.length === 0) {
-                                        alert("저장할 센서를 한 개 이상 선택해주세요.")
-                                    }
-                                }}>
-                                    데이터 기록하기
-                                </div>
-                            }
-
-                            {save && <div style={{
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    padding: '0 1.5rem',
-                                    width: '14rem',
-                                    height: '2rem',
-                                    borderRadius: '1.25rem',
-                                    background: '#666666',
-                                    color: '#fff',
-                                    fontSize: '1.25rem',
-                                    cursor: 'pointer',
-                                }}
-                                onClick={() => {
-                                    isFinished = true;
-                                }}>
-                                    저장 중지하기
-                                </div>
-                            }
-                            
-                        </div>
+                        
                     </div>
                         
                 </div>
