@@ -65,6 +65,7 @@ const EClassPage = () => {
       dataTypeLabel,
       eClassData: noRemoveEclassData,
     };
+    console.log(saveData);
     localStorage.setItem("eclass", JSON.stringify(saveData));
 
     alert("저장되었습니다.");

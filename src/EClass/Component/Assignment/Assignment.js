@@ -81,7 +81,14 @@ const TitlePage = () => {
         <Badge bg="dark">{dataTypeLabel}</Badge>
       </Stack>
       <Styled.Box>
-        <div style={{ marginTop: "1rem" }}>{description}</div>
+        <div style={{ marginTop: "1rem" }}>
+          {description.split("\n").map(line => (
+            <>
+              {line}
+              <br />
+            </>
+          ))}
+        </div>
       </Styled.Box>
     </Styled.Paper>
   );

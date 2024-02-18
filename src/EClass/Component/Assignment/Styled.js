@@ -28,7 +28,7 @@ export const Paper = styled.div`
   margin: 30px;
   background-color: white;
   /* text-align: center; */
-  padding: 10px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -36,7 +36,7 @@ export const Paper = styled.div`
 
 export const ActivityWrapper = styled.div`
   width: 100%;
-  padding: 10px;
+  padding: 5px;
   border: 1px solid #eee;
   display: flex;
   flex-direction: column;
