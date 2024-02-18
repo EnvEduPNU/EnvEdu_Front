@@ -1,3 +1,5 @@
+import H1ForStudent from "../Component/H1/H1ForStudent";
+import H2ForStudent from "../Component/H2/H2ForStudent";
 import ClassroomType from "./classRoomType";
 
 export class ClassRoomDataConverter {
@@ -12,7 +14,7 @@ export class ClassRoomDataConverter {
 
 export class H1DataConverter extends ClassRoomDataConverter {
   isSupport(type) {
-    return type == ClassroomType.H1;
+    return type === ClassroomType.H1;
   }
 
   convert() {
@@ -22,11 +24,15 @@ export class H1DataConverter extends ClassRoomDataConverter {
       title: "",
     };
   }
+
+  convertActivityForAssignment(data) {
+    return <H1ForStudent value={data["title"]} />;
+  }
 }
 
 export class H2DataConverter extends ClassRoomDataConverter {
   isSupport(type) {
-    return type == ClassroomType.H2;
+    return type === ClassroomType.H2;
   }
 
   convert() {
@@ -36,11 +42,15 @@ export class H2DataConverter extends ClassRoomDataConverter {
       title: "",
     };
   }
+
+  convertActivityForAssignment(data) {
+    return <H2ForStudent value={data["title"]} />;
+  }
 }
 
 export class SeedDataConverter extends ClassRoomDataConverter {
   isSupport(type) {
-    return type == ClassroomType.SEED;
+    return type === ClassroomType.SEED;
   }
 
   convert() {
@@ -53,7 +63,7 @@ export class SeedDataConverter extends ClassRoomDataConverter {
 
 export class DiscussDataConverter extends ClassRoomDataConverter {
   isSupport(type) {
-    return type == ClassroomType.DISCUSS;
+    return type === ClassroomType.DISCUSS;
   }
 
   convert() {
@@ -68,7 +78,7 @@ export class DiscussDataConverter extends ClassRoomDataConverter {
 
 export class QnaDataConverter extends ClassRoomDataConverter {
   isSupport(type) {
-    return type == ClassroomType.QNA;
+    return type === ClassroomType.QNA;
   }
 
   convert() {
@@ -83,7 +93,7 @@ export class QnaDataConverter extends ClassRoomDataConverter {
 
 export class PictureDataConverter extends ClassRoomDataConverter {
   isSupport(type) {
-    return type == ClassroomType.PIC;
+    return type === ClassroomType.PIC;
   }
 
   convert() {
@@ -97,7 +107,7 @@ export class PictureDataConverter extends ClassRoomDataConverter {
 
 export class YoutubeUrlDataConverter extends ClassRoomDataConverter {
   isSupport(type) {
-    return type == ClassroomType.YOUTUBEURL;
+    return type === ClassroomType.YOUTUBEURL;
   }
 
   convert(data) {
@@ -111,7 +121,7 @@ export class YoutubeUrlDataConverter extends ClassRoomDataConverter {
 
 export class MatrixDataConverter extends ClassRoomDataConverter {
   isSupport(type) {
-    return type == ClassroomType.MATRIX;
+    return type === ClassroomType.MATRIX;
   }
 
   convert(data) {
@@ -125,7 +135,7 @@ export class MatrixDataConverter extends ClassRoomDataConverter {
 
 export class ChartDataConverter extends ClassRoomDataConverter {
   isSupport(type) {
-    return type == ClassroomType.CHART;
+    return type === ClassroomType.CHART;
   }
 
   convert() {

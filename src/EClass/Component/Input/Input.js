@@ -1,8 +1,13 @@
 import { useCallback, useState } from "react";
 import * as Styled from "./Styled";
 
-const Input = ({ onChange, placeholder }) => {
-  const [value, setValue] = useState("");
+const Input = ({
+  onChange,
+  placeholder,
+  defaultValue = "",
+  disabled = false,
+}) => {
+  const [value, setValue] = useState(defaultValue);
 
   const onChangeInput = useCallback(
     e => {
@@ -17,6 +22,7 @@ const Input = ({ onChange, placeholder }) => {
       placeholder={placeholder}
       value={value}
       onChange={onChangeInput}
+      disabled={disabled}
     />
   );
 };

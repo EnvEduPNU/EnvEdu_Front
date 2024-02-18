@@ -7,13 +7,19 @@ const H1 = ({ pageIndex, dataIndex }) => {
     state => state.changeClassroomData
   );
 
+  const eClassData = useEClassStore(state => state.eClassData);
+
   const onChange = newValue => {
     changeClassroomData(pageIndex, dataIndex, "title", newValue);
   };
 
   return (
     <Styled.Wrapper>
-      <Input placeholder={"제목을 지정해 주세요"} onChange={onChange} />
+      <Input
+        placeholder={"제목을 지정해 주세요"}
+        onChange={onChange}
+        defaultValue={eClassData[pageIndex][dataIndex].title}
+      />
     </Styled.Wrapper>
   );
 };

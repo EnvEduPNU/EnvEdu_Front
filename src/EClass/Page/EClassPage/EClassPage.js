@@ -62,6 +62,7 @@ const EClassPage = () => {
       eClassData,
     };
     localStorage.setItem("eclass", JSON.stringify(saveData));
+
     alert("저장되었습니다.");
   };
 

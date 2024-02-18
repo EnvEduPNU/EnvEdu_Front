@@ -6,6 +6,7 @@ const H2 = ({ placeholder = null, pageIndex, dataIndex }) => {
   const changeClassroomData = useEClassStore(
     state => state.changeClassroomData
   );
+  const eClassData = useEClassStore(state => state.eClassData);
 
   const onChange = newValue => {
     changeClassroomData(pageIndex, dataIndex, "title", newValue);
@@ -15,6 +16,7 @@ const H2 = ({ placeholder = null, pageIndex, dataIndex }) => {
       <Input
         placeholder={placeholder || "글을 작성해 주세요"}
         onChange={onChange}
+        defaultValue={eClassData[pageIndex][dataIndex].title}
       />
     </Styled.Wrapper>
   );
