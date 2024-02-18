@@ -1,4 +1,3 @@
-import { Button } from "react-bootstrap";
 import { useGraphDataStore } from "../../store/graphStore";
 import CustomBarChart from "../CustomChart/CustomBarChart";
 import CustomBubbleChart from "../CustomChart/CustomBubbleChart";
@@ -11,11 +10,8 @@ import LineEditor from "../Editor/LineEditor/LineEditor";
 import MixEditor from "../Editor/MixEditor/MixEditor";
 import ScatterEditor from "../Editor/ScatterEditor/ScatterEditor";
 import * as Styled from "./Styled";
-import ActivityDialog from "../../component/ActivityDialog/ActivityDialog";
-import { useState } from "react";
 
 function GraphAndEditor() {
-  const [showModal, setShowModal] = useState(false);
   const graphIdx = useGraphDataStore(state => state.graphIdx);
 
   return (

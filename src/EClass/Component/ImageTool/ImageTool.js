@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import * as Styled from "./Styled";
 import { useEClassStore } from "../../store/eClassStore";
+import ClassroomType from "../../utils/classRoomType";
 
 const ImageTool = ({ pageNum }) => {
   const appendActivity = useEClassStore(state => state.appendActivity);
@@ -16,7 +17,8 @@ const ImageTool = ({ pageNum }) => {
           style={{ maxWidth: "500px" }}
           src={reader.result}
           alt="업로드 이미지"
-        />
+        />,
+        ClassroomType.PIC
       );
     };
   };

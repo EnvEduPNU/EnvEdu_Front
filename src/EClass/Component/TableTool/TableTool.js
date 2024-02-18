@@ -5,6 +5,7 @@ import Portal from "../../../Portal";
 import { Button } from "react-bootstrap";
 import Table from "../Table/Table";
 import { useEClassStore } from "../../store/eClassStore";
+import ClassroomType from "../../utils/classRoomType";
 
 function TableTool({ pageNum }) {
   const appendActivity = useEClassStore(state => state.appendActivity);
@@ -21,7 +22,11 @@ function TableTool({ pageNum }) {
     setVisible(state => !state);
 
     if (cell.row > 0 && cell.col > 0) {
-      appendActivity(pageNum, <Table row={+cell.row} col={+cell.col} />);
+      appendActivity(
+        pageNum,
+        <Table row={+cell.row} col={+cell.col} />,
+        ClassroomType.MATRIX
+      );
     }
     setCell({ row: "", col: "" });
   };

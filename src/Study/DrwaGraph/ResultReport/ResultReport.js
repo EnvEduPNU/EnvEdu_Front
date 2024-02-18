@@ -1,5 +1,4 @@
 import CustomChart from "../CustomChart/CustomChart";
-import CustomTable from "../CustomTable/CustomTable";
 import * as Styled from "./Styled";
 import makePdf from "../../../DataLiteracy/utils/makePdf";
 import Textarea from "../../../DataLiteracy/common/Textarea/Textarea";
@@ -151,7 +150,7 @@ function ResultReport() {
       .catch(err => console.log(err));
   };
 
-  const submitOpinion = (sequence) => {
+  const submitOpinion = sequence => {
     customAxios
       .post("/dataLiteracy/sequenceData/reply", {
         title: title,
