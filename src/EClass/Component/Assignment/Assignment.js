@@ -1,4 +1,4 @@
-import { Badge, Stack } from "react-bootstrap";
+import { Badge, Button, Stack } from "react-bootstrap";
 import useEClassAssignmentStore from "../../store/eClassAssignmentStore";
 import ActivityMappingHandler from "../../utils/ActivityMappingHandler";
 import * as Styled from "./Styled";
@@ -20,15 +20,39 @@ function Assignment() {
       <TitlePage />
       {eClassDatas.map((page, pageIndex) => (
         <Styled.Paper className="div_paper" key={pageIndex}>
-          {page.map((activityData, activityIndex) => (
-            <div key={activityIndex}>
-              {activityMappingHandler.convertForAssignment(
-                activityData,
-                pageIndex,
-                activityIndex
-              )}
-            </div>
-          ))}
+          {page.map((activityData, activityIndex) =>
+            activityData["canShare"] || activityData["canSubmit"] ? (
+              <Styled.ActivityWrapper key={activityIndex}>
+                <Styled.ActivityHeader>
+                  {activityData["canSubmit"] && (
+                    <Badge style={{ cursor: "pointer" }} bg="success">
+                      제출하기
+                    </Badge>
+                  )}
+                  {activityData["canShare"] && (
+                    <Badge style={{ cursor: "pointer" }} bg="success">
+                      공유하기
+                    </Badge>
+                  )}
+                </Styled.ActivityHeader>
+                <div>
+                  {activityMappingHandler.convertForAssignment(
+                    activityData,
+                    pageIndex,
+                    activityIndex
+                  )}
+                </div>
+              </Styled.ActivityWrapper>
+            ) : (
+              <div key={activityIndex}>
+                {activityMappingHandler.convertForAssignment(
+                  activityData,
+                  pageIndex,
+                  activityIndex
+                )}
+              </div>
+            )
+          )}
         </Styled.Paper>
       ))}
 

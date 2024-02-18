@@ -59,7 +59,7 @@ export const useEClassStore = create((set, get) => ({
       };
     }),
 
-  toggleSelected: (pageIndex, dataIndex) =>
+  toggleSelected: (pageIndex, dataIndex, key) =>
     set(state => {
       const newEclassData = get().eClassData.map(d => [...d]);
 
@@ -67,8 +67,8 @@ export const useEClassStore = create((set, get) => ({
         ...newEclassData[pageIndex][dataIndex],
       };
 
-      if ("studentVisibleStatus" in copyData) {
-        copyData["studentVisibleStatus"] = !copyData["studentVisibleStatus"];
+      if (key in copyData) {
+        copyData[key] = !copyData[key];
         newEclassData[pageIndex][dataIndex] = copyData;
       }
 

@@ -9,8 +9,8 @@ const PaperWithToolBar = ({ pageNum, activities, eClassData }) => {
   const toggleSelected = useEClassStore(state => state.toggleSelected);
   const deleteActivity = useEClassStore(state => state.deleteActivity);
 
-  const onChange = index => {
-    toggleSelected(pageNum, index);
+  const onChange = (index, key) => {
+    toggleSelected(pageNum, index, key);
   };
 
   return (
@@ -27,23 +27,23 @@ const PaperWithToolBar = ({ pageNum, activities, eClassData }) => {
                   <FormLabel style={{ cursor: "pointer", margin: 0 }}>
                     제출
                     <FormCheckInput
-                      onChange={() => onChange(idx)}
-                      defaultChecked={eClassData[idx]["studentVisibleStatus"]}
+                      onChange={() => onChange(idx, "canSubmit")}
+                      defaultChecked={eClassData[idx]["canSubmit"]}
                       style={{ marginLeft: "7px" }}
                     />
                   </FormLabel>
                   <FormLabel style={{ cursor: "pointer", margin: 0 }}>
                     공유
                     <FormCheckInput
-                      onChange={() => onChange(idx)}
-                      defaultChecked={eClassData[idx]["studentVisibleStatus"]}
+                      onChange={() => onChange(idx, "canShare")}
+                      defaultChecked={eClassData[idx]["canShare"]}
                       style={{ marginLeft: "7px" }}
                     />
                   </FormLabel>
                   <FormLabel style={{ cursor: "pointer", margin: 0 }}>
                     보고서
                     <FormCheckInput
-                      onChange={() => onChange(idx)}
+                      onChange={() => onChange(idx, "studentVisibleStatus")}
                       defaultChecked={eClassData[idx]["studentVisibleStatus"]}
                       style={{ marginLeft: "7px" }}
                     />

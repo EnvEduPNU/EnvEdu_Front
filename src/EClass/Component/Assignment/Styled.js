@@ -28,10 +28,28 @@ export const Paper = styled.div`
   margin: 30px;
   background-color: white;
   /* text-align: center; */
-  padding: 20px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+`;
+
+export const ActivityWrapper = styled.div`
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  border-radius: 5px;
+`;
+
+export const ActivityHeader = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
 `;
 
 export const Box = styled.div`

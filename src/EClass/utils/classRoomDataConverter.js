@@ -31,6 +31,8 @@ export class H1DataConverter extends ClassRoomDataConverter {
       classroomSequenceType: ClassroomType.H1,
       studentVisibleStatus: true,
       title: "",
+      canSubmit: false,
+      canShare: false,
     };
   }
 
@@ -49,6 +51,8 @@ export class H2DataConverter extends ClassRoomDataConverter {
       classroomSequenceType: ClassroomType.H2,
       studentVisibleStatus: true,
       title: "",
+      canSubmit: false,
+      canShare: false,
     };
   }
 
@@ -66,6 +70,8 @@ export class SeedDataConverter extends ClassRoomDataConverter {
     return {
       classroomSequenceType: ClassroomType.SEED,
       studentVisibleStatus: true,
+      canSubmit: false,
+      canShare: false,
     };
   }
 
@@ -85,6 +91,8 @@ export class DiscussDataConverter extends ClassRoomDataConverter {
       studentVisibleStatus: true,
       title: "",
       content: "",
+      canSubmit: false,
+      canShare: false,
     };
   }
 
@@ -110,6 +118,8 @@ export class QnaDataConverter extends ClassRoomDataConverter {
       studentVisibleStatus: true,
       title: "",
       content: "",
+      canSubmit: false,
+      canShare: false,
     };
   }
 
@@ -134,6 +144,8 @@ export class PictureDataConverter extends ClassRoomDataConverter {
       classroomSequenceType: ClassroomType.PIC,
       studentVisibleStatus: true,
       url: "",
+      canSubmit: false,
+      canShare: false,
     };
   }
 }
@@ -148,6 +160,8 @@ export class YoutubeUrlDataConverter extends ClassRoomDataConverter {
       classroomSequenceType: ClassroomType.YOUTUBEURL,
       studentVisibleStatus: true,
       url: data,
+      canSubmit: false,
+      canShare: false,
     };
   }
 
@@ -166,6 +180,8 @@ export class MatrixDataConverter extends ClassRoomDataConverter {
       classroomSequenceType: ClassroomType.MATRIX,
       studentVisibleStatus: true,
       data,
+      canSubmit: false,
+      canShare: false,
     };
   }
 
@@ -184,6 +200,8 @@ export class ChartDataConverter extends ClassRoomDataConverter {
       classroomSequenceType: ClassroomType.CHART,
       studentVisibleStatus: true,
       title: "",
+      canSubmit: false,
+      canShare: false,
     };
   }
 }
