@@ -5,7 +5,9 @@ import * as Styled from "./Styled";
 import makePdf from "../../../DataLiteracy/utils/makePdf";
 
 function Assignment() {
-  const eClassDatas = useEClassAssignmentStore(state => state.eClassDatas);
+  const eClassDatas = useEClassAssignmentStore(
+    state => state.eClassDatasForAssignment
+  );
 
   const activityMappingHandler = new ActivityMappingHandler();
 
@@ -20,7 +22,11 @@ function Assignment() {
         <Styled.Paper className="div_paper" key={pageIndex}>
           {page.map((activityData, activityIndex) => (
             <div key={activityIndex}>
-              {activityMappingHandler.convertForAssignment(activityData)}
+              {activityMappingHandler.convertForAssignment(
+                activityData,
+                pageIndex,
+                activityIndex
+              )}
             </div>
           ))}
         </Styled.Paper>

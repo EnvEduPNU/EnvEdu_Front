@@ -1,5 +1,10 @@
+import ArgumentForStudent from "../Component/Argument/ArgumentForStudent";
 import H1ForStudent from "../Component/H1/H1ForStudent";
 import H2ForStudent from "../Component/H2/H2ForStudent";
+import QuestionForAssignment from "../Component/Question/QuestionForAssignment";
+import SeedForStudent from "../Component/Seed/SeedForStudent";
+import TableForAssignment from "../Component/Table/TableForAssignment";
+import YoutubeToolForAssignment from "../Component/YoutubeTool/YoutubeToolForAssignment";
 import ClassroomType from "./classRoomType";
 
 export class ClassRoomDataConverter {
@@ -8,6 +13,10 @@ export class ClassRoomDataConverter {
   }
 
   convert() {
+    throw new Error("추상 메소드는 꼭 오버라이딩 되어야 합니다.");
+  }
+
+  convertActivityForAssignment() {
     throw new Error("추상 메소드는 꼭 오버라이딩 되어야 합니다.");
   }
 }
@@ -25,7 +34,7 @@ export class H1DataConverter extends ClassRoomDataConverter {
     };
   }
 
-  convertActivityForAssignment(data) {
+  convertActivityForAssignment(data, pageIndex, activityIndex) {
     return <H1ForStudent value={data["title"]} />;
   }
 }
@@ -43,7 +52,7 @@ export class H2DataConverter extends ClassRoomDataConverter {
     };
   }
 
-  convertActivityForAssignment(data) {
+  convertActivityForAssignment(data, pageIndex, activityIndex) {
     return <H2ForStudent value={data["title"]} />;
   }
 }
@@ -58,6 +67,10 @@ export class SeedDataConverter extends ClassRoomDataConverter {
       classroomSequenceType: ClassroomType.SEED,
       studentVisibleStatus: true,
     };
+  }
+
+  convertActivityForAssignment(data, pageIndex, activityIndex) {
+    return <SeedForStudent />;
   }
 }
 
@@ -74,6 +87,16 @@ export class DiscussDataConverter extends ClassRoomDataConverter {
       content: "",
     };
   }
+
+  convertActivityForAssignment(data, pageIndex, activityIndex) {
+    return (
+      <ArgumentForStudent
+        data={data}
+        pageIndex={pageIndex}
+        activityIndex={activityIndex}
+      />
+    );
+  }
 }
 
 export class QnaDataConverter extends ClassRoomDataConverter {
@@ -88,6 +111,16 @@ export class QnaDataConverter extends ClassRoomDataConverter {
       title: "",
       content: "",
     };
+  }
+
+  convertActivityForAssignment(data, pageIndex, activityIndex) {
+    return (
+      <QuestionForAssignment
+        data={data}
+        pageIndex={pageIndex}
+        activityIndex={activityIndex}
+      />
+    );
   }
 }
 
@@ -117,6 +150,10 @@ export class YoutubeUrlDataConverter extends ClassRoomDataConverter {
       url: data,
     };
   }
+
+  convertActivityForAssignment(data, pageIndex, activityIndex) {
+    return <YoutubeToolForAssignment data={data} />;
+  }
 }
 
 export class MatrixDataConverter extends ClassRoomDataConverter {
@@ -130,6 +167,10 @@ export class MatrixDataConverter extends ClassRoomDataConverter {
       studentVisibleStatus: true,
       data,
     };
+  }
+
+  convertActivityForAssignment(data, pageIndex, activityIndex) {
+    return <TableForAssignment data={data["data"]} />;
   }
 }
 
