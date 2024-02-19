@@ -34,27 +34,27 @@ function CreateEClass() {
   };
 
   const getAxisData = () => {
-    if (graphIdx == 0) {
+    if (graphIdx === 0) {
       const { min, max, stepSize } = useBarStore.getState();
       return { min, max, stepSize };
     }
 
-    if (graphIdx == 1) {
+    if (graphIdx === 1) {
       const { min, max, stepSize } = useLineStore.getState();
       return { min, max, stepSize };
     }
 
-    if (graphIdx == 2) {
+    if (graphIdx === 2) {
       const { xAxis, yAxis } = useBubbleStore.getState();
       return { xAxis, yAxis };
     }
 
-    if (graphIdx == 4) {
+    if (graphIdx === 4) {
       const { xAxis, yAxis } = useScatterStore.getState();
       return { xAxis, yAxis };
     }
 
-    if (graphIdx == 5) {
+    if (graphIdx === 5) {
       const { y1Axis, y2Axis } = useMixStore.getState();
       return { y1Axis, y2Axis };
     }

@@ -148,6 +148,31 @@ export const useEClassAssignmentStore = create((set, get) => ({
         eClassDatasForAssignment: newEClassDatas,
       };
     }),
+
+  changeChartDataValue: (pageIndex, activityIndex, newValue) =>
+    set(state => {
+      const newEClassDatas = get().eClassDatasForAssignment.map(page => [
+        ...page,
+      ]);
+      const copyData = {
+        ...newEClassDatas[pageIndex][activityIndex],
+      };
+
+      if ("data" in copyData) {
+        copyData["data"] = newValue;
+        newEClassDatas[pageIndex][activityIndex] = copyData;
+      }
+
+      newEClassDatas[pageIndex][activityIndex] = Object.assign(
+        newEClassDatas[pageIndex][activityIndex],
+        { isMine: true }
+      );
+
+      return {
+        ...state,
+        eClassDatasForAssignment: newEClassDatas,
+      };
+    }),
 }));
 
 export default useEClassAssignmentStore;

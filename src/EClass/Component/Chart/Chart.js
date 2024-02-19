@@ -6,10 +6,6 @@ import ScatterChart from "./ScatterChart";
 import * as Styled from "./Styled";
 
 function Chart({ graphIdx, graphDataState, graphState, metaDataState }) {
-  console.log(graphIdx);
-  console.log(graphDataState);
-  console.log(graphState);
-  console.log(metaDataState);
   return (
     <Styled.Wrapper>
       <Styled.Graph>

@@ -1,4 +1,5 @@
 import ArgumentForStudent from "../Component/Argument/ArgumentForStudent";
+import ChartForAssignment from "../Component/Chart/ChartForAssignment";
 import H1ForStudent from "../Component/H1/H1ForStudent";
 import H2ForStudent from "../Component/H2/H2ForStudent";
 import QuestionForAssignment from "../Component/Question/QuestionForAssignment";
@@ -204,5 +205,9 @@ export class ChartDataConverter extends ClassRoomDataConverter {
       canShare: false,
       data,
     };
+  }
+
+  convertActivityForAssignment(data, pageIndex, activityIndex) {
+    return <ChartForAssignment data={data["data"]} />;
   }
 }
