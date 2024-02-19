@@ -193,6 +193,7 @@ function SingleDataContainer(props) {
 
     /*센서 이름 css */
     const style = {
+        cursor: "pointer",
         display: "inline-block",
         fontSize: "0.75em",
         fontWeight: 'bold',
