@@ -16,7 +16,7 @@ export default function Sample() {
             setClickedIndexes([...clickedIndexes, index]);
         }
     };
-
+    
     const [connectableSocket, setConnectableSocket] = useState([]);
 
     useEffect(()=>{
