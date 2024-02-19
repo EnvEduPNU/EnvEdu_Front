@@ -1,5 +1,5 @@
 import SockJS from 'sockjs-client';
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import SingleDataContainer from "./SingleDataContainer";
 import {decodeToken} from "react-jwt";
 import {customAxios} from "../Common/CustomAxios";
@@ -149,13 +149,25 @@ function SampleSocket(props) {
             receivedData.splice(0, 1);
         }
 
-        if (save === true) {
+        setReceivedData([...receivedData]);
+    }
+
+    //modal
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
+
+    const [save, setSave] = useState(false);
+
+    useEffect(() => {
+        if (save) {
+            console.log("save==true 직후", selectedTypes)
             // receiveObject를 복제
             const updatedReceiveObject = { ...receiveObject };
-            console.log(updatedReceiveObject)
 
             //선택하지 않은 센서의 값은 null로 만들기
-
             dataTypes.forEach((dataType) => {
                 if (!selectedTypes.includes(dataType)) {
                     if (dataType === 'pH') {
@@ -169,8 +181,6 @@ function SampleSocket(props) {
                     }
                 }
             });
-            //
-            console.log(updatedReceiveObject)
             
             updatedReceiveObject.username = props.username;
 
@@ -200,32 +210,22 @@ function SampleSocket(props) {
             saveData.push(JSON.stringify(updatedReceiveObject));
             setSaveData([...saveData]);
             if (isFinished) {
-               
-                console.log(saveData);
+                console.log("isFinished 이후", selectedTypes)
                 customAxios.post("/seed/save/continuous", {data: saveData, memo: memo})
                     .then(() => {
                         console.log(saveData) //location, period 확인
                     })
                     .catch((err) => console.log(err))
 
-                save = false; //수정
+                setSave(false);
                 isFinished = false;
 
                 saveData.splice(0, saveData.length);
                 setSaveData([...saveData]);
             }
         }
-        setReceivedData([...receivedData]);
-    }
+    }, [save, selectedTypes, isFinished])
 
-    //modal
-    const [show, setShow] = useState(false);
-
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
-
-    console.log(location)
-    console.log(selectedTypes)
     return (
             <div>
                 <div style={{padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between'}}>
@@ -364,10 +364,13 @@ function SampleSocket(props) {
                                 <Button 
                                     style={{ width: '10rem', borderRadius: '1.25rem', background: '#d9dcff', border: 'none', color: '#000', fontSize: '1.25rem' }}
                                     onClick={() => { 
-                                        save = true; 
                                         if (selectedTypes.length === 0) {
                                             alert("저장할 센서를 한 개 이상 선택해주세요.")
                                         }
+                                        else {
+                                            setSave(true);
+                                        }
+                                        setShow(false);
                                     }}
                                 >
                                         확인
@@ -391,6 +394,7 @@ function SampleSocket(props) {
                             cursor: 'pointer',
                         }}
                         onClick={() => {
+                            console.log(selectedTypes);
                             isFinished = true;
                         }}>
                             <FaRegStopCircle style={{ marginRight: '0.5rem' }}/>
