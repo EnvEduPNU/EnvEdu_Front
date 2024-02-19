@@ -1,4 +1,5 @@
 import {
+  ChartDataConverter,
   DiscussDataConverter,
   H1DataConverter,
   H2DataConverter,
@@ -17,6 +18,7 @@ class ActivityMappingHandler {
     new QnaDataConverter(),
     new YoutubeUrlDataConverter(),
     new MatrixDataConverter(),
+    new ChartDataConverter(),
   ];
 
   // convertForAssignment(data) {

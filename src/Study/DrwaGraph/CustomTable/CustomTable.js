@@ -10,7 +10,7 @@ function CustomTable({ isChangeCategory = true }) {
   const [editableCell, setEditableCell] = useState(null);
 
   const tableNumberData = data.map((d, idx) => {
-    if (idx == 0) return "Rows#";
+    if (idx === 0) return "Rows#";
     return `${idx}`;
   });
 
@@ -56,7 +56,7 @@ function CustomTable({ isChangeCategory = true }) {
         ))}
       </Styled.FirstColumn>
       {headers.map((header, col) => (
-        <Styled.Column key={col} $isNotEnd={col != headers.length - 1}>
+        <Styled.Column key={col} $isNotEnd={col !== headers.length - 1}>
           <Styled.HeaderWrapper>
             <Styled.Header>
               <Styled.Th $isNotEnd>

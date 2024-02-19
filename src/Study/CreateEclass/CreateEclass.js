@@ -33,6 +33,49 @@ function CreateEClass() {
     if (graphIdx === 5) return useMixStore.getState();
   };
 
+  const getAxisData = () => {
+    if (graphIdx === 0) {
+      const { min, max, stepSize } = useBarStore.getState();
+      return { min, max, stepSize };
+    }
+
+    if (graphIdx === 1) {
+      const { min, max, stepSize } = useLineStore.getState();
+      return { min, max, stepSize };
+    }
+
+    if (graphIdx === 2) {
+      const { xAxis, yAxis } = useBubbleStore.getState();
+      return { xAxis, yAxis };
+    }
+
+    if (graphIdx === 4) {
+      const { xAxis, yAxis } = useScatterStore.getState();
+      return { xAxis, yAxis };
+    }
+
+    if (graphIdx === 5) {
+      const { y1Axis, y2Axis } = useMixStore.getState();
+      return { y1Axis, y2Axis };
+    }
+  };
+
+  const getGraphData = () => {
+    const { data, variables } = useGraphDataStore.getState();
+    const {
+      metaData: { legendPostion, datalabelAnchor },
+    } = useChartMetaDataStore.getState();
+    return {
+      graphIdx,
+      data,
+      variables: variables.filter(
+        variable => variable.isSelected && variable.axis !== null
+      ),
+      axisData: getAxisData(),
+      metaData: { legendPostion, datalabelAnchor },
+    };
+  };
+
   return (
     <Styled.Wrapper>
       <Header isEclassTab />
@@ -90,6 +133,7 @@ function CreateEClass() {
               />
             }
             classroomType={ClassroomType.CHART}
+            data={getGraphData()}
           />
         </>
       )}

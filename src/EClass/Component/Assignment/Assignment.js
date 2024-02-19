@@ -1,13 +1,19 @@
-import { Badge, Button, Stack } from "react-bootstrap";
+import { Badge, Stack } from "react-bootstrap";
 import useEClassAssignmentStore from "../../store/eClassAssignmentStore";
 import ActivityMappingHandler from "../../utils/ActivityMappingHandler";
 import * as Styled from "./Styled";
 import makePdf from "../../../DataLiteracy/utils/makePdf";
+import { useGraphDataStore } from "../../../Study/store/graphStore";
+import { useTabStore } from "../../../Study/store/tabStore";
+import React from "react";
 
 function Assignment() {
   const eClassDatas = useEClassAssignmentStore(
     state => state.eClassDatasForAssignment
   );
+  const setData = useGraphDataStore(state => state.setData);
+  const changeActivity = useGraphDataStore(state => state.changeActivity);
+  const changeTab = useTabStore(state => state.changeTab);
 
   const activityMappingHandler = new ActivityMappingHandler();
 
@@ -15,13 +21,23 @@ function Assignment() {
     e.preventDefault();
     await makePdf.viewWithPdf();
   };
+
+  const onClickChartBtn = (data, pageIndex, activityIndex) => {
+    setData(data.data);
+    changeActivity(pageIndex, activityIndex);
+    changeTab("graph");
+    localStorage.setItem("data", JSON.stringify(data.data));
+  };
+
   return (
     <Styled.Wrapper className="div_container">
       <TitlePage />
       {eClassDatas.map((page, pageIndex) => (
         <Styled.Paper className="div_paper" key={pageIndex}>
           {page.map((activityData, activityIndex) =>
-            activityData["canShare"] || activityData["canSubmit"] ? (
+            activityData["canShare"] ||
+            activityData["canSubmit"] ||
+            activityData["classroomSequenceType"] === "CHART" ? (
               <Styled.ActivityWrapper key={activityIndex}>
                 <Styled.ActivityHeader>
                   {activityData["canSubmit"] && (
@@ -32,6 +48,26 @@ function Assignment() {
                   {activityData["canShare"] && (
                     <Badge style={{ cursor: "pointer" }} bg="success">
                       공유하기
+                    </Badge>
+                  )}
+                  {activityData["classroomSequenceType"] === "CHART" && (
+                    <Badge
+                      onClick={() =>
+                        onClickChartBtn(
+                          activityData.data,
+                          pageIndex,
+                          activityIndex
+                        )
+                      }
+                      style={{ cursor: "pointer" }}
+                      bg="success"
+                    >
+                      해당 데이터로 그래프 그리기
+                    </Badge>
+                  )}
+                  {activityData["isMine"] && (
+                    <Badge style={{ cursor: "pointer" }} bg="info">
+                      그래프 그리기 완료
                     </Badge>
                   )}
                 </Styled.ActivityHeader>
@@ -82,11 +118,11 @@ const TitlePage = () => {
       </Stack>
       <Styled.Box>
         <div style={{ marginTop: "1rem" }}>
-          {description.split("\n").map(line => (
-            <>
+          {description.split("\n").map((line, index) => (
+            <React.Fragment key={index}>
               {line}
               <br />
-            </>
+            </React.Fragment>
           ))}
         </div>
       </Styled.Box>

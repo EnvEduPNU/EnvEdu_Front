@@ -8,8 +8,6 @@ function ScatterChart({ graphDataState, scatterDataState, metaDataState }) {
     metaDataState
   );
 
-  console.log(options);
-
   return (
     <Scatter
       style={{ width: "100%", height: "100%" }}

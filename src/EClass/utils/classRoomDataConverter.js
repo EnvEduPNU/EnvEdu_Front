@@ -1,4 +1,5 @@
 import ArgumentForStudent from "../Component/Argument/ArgumentForStudent";
+import ChartForAssignment from "../Component/Chart/ChartForAssignment";
 import H1ForStudent from "../Component/H1/H1ForStudent";
 import H2ForStudent from "../Component/H2/H2ForStudent";
 import QuestionForAssignment from "../Component/Question/QuestionForAssignment";
@@ -195,13 +196,18 @@ export class ChartDataConverter extends ClassRoomDataConverter {
     return type === ClassroomType.CHART;
   }
 
-  convert() {
+  convert(data) {
     return {
       classroomSequenceType: ClassroomType.CHART,
       studentVisibleStatus: true,
       title: "",
       canSubmit: false,
       canShare: false,
+      data,
     };
+  }
+
+  convertActivityForAssignment(data, pageIndex, activityIndex) {
+    return <ChartForAssignment data={data["data"]} />;
   }
 }
