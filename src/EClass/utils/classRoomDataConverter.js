@@ -195,13 +195,14 @@ export class ChartDataConverter extends ClassRoomDataConverter {
     return type === ClassroomType.CHART;
   }
 
-  convert() {
+  convert(data) {
     return {
       classroomSequenceType: ClassroomType.CHART,
       studentVisibleStatus: true,
       title: "",
       canSubmit: false,
       canShare: false,
+      data,
     };
   }
 }
