@@ -62,6 +62,7 @@ import SlidePage from "./Study/Page/SlidePage";
 import EClassList from "./DataClass";
 import EClassPage from "./EClass/Page/EClassPage/EClassPage";
 import CreateEClassPage from "./Study/Page/CreateEClassPage";
+import TextbookPage from "./Textbook/page/TextbookPage";
 
 function App() {
   /**
@@ -188,7 +189,11 @@ function App() {
           <Route path="/news" exact={true} element={<News />} />
           <Route path="/research" exact={true} element={<Research />} />
           <Route path="/training" exact={true} element={<Training />} />
-          <Route path="/implementation" exact={true} element={<Implementation />} />
+          <Route
+            path="/implementation"
+            exact={true}
+            element={<Implementation />}
+          />
           <Route path="/resource" exact={true} element={<Resource />} />
           <Route path="/tboard" exact={true} element={<Tboard />} />
 
@@ -226,6 +231,8 @@ function App() {
             <Route path="dataload" element={<DataLoadPage />} />
             <Route path="ex" element={<DrawGraphV2Page />} />
           </Route>
+
+          <Route path="/textbook" exact={true} element={<TextbookPage />} />
         </Routes>
       </div>
 

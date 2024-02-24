@@ -1,0 +1,147 @@
+import Dropdown from "react-multilevel-dropdown";
+import * as Styled from "./Styled";
+import { useState } from "react";
+import useComponentPosition from "../../../DataLiteracy/hooks/useComponentPosition";
+import Portal from "../../../Portal";
+
+const gradeObj = {
+  초등학생: ["1학년", "2학년", "3학년", "4학년", "5학년", "6학년", "공통"],
+  중학생: ["1학년", "2학년", "3학년", "공통"],
+  고등학생: ["1학년", "2학년", "3학년", "공통"],
+};
+
+const subjectObj = {
+  사회: [],
+  과학: [
+    "통합과학1",
+    "통합과학2",
+    "과학탐구실험1",
+    "과학탐구실험2",
+    "물리학",
+    "화학",
+    "지구과학",
+    "생명과학",
+    "지구시스템과학",
+    "행성우주과학",
+    "기후변화와 환경상태",
+    "융합과학탐구",
+    "역학과 에너지",
+    "물질과 에너지",
+    "화학반응의 세계",
+    "전자기와 양자",
+  ],
+  환경: [],
+  공통: [],
+};
+
+function TagsInput() {
+  const [gradeLabel, setGradeLabel] = useState("초등학교");
+  const [subjectLabel, setSubjectLabel] = useState("과학");
+  const { ref, position } = useComponentPosition();
+  const onClickInput = () => {};
+  return (
+    <Styled.Wrapper ref={ref}>
+      <SearchTag tag={"태그"} />
+      <Styled.InputWrapper onClick={onClickInput}>
+        <Styled.Input type="text" />
+      </Styled.InputWrapper>
+      <Styled.SearchBtn>
+        <svg
+          viewBox="0 0 40 40"
+          focusable="false"
+          role="presentation"
+          // class="withIcon_icon__2nnc8"
+          aria-hidden="true"
+          style={{ width: "24px", height: "24px" }}
+        >
+          <path fill="none" d="M0 0h40v40H0z"></path>
+          <path d="M29.2 27.91a14.38 14.38 0 1 0-1.42 1.4l7.16 7.15.07.08 1.41-1.41zM18.45 6a12.36 12.36 0 0 1 8.35 3.23 12.24 12.24 0 0 1 4 8.59A12.39 12.39 0 1 1 17.88 6z"></path>
+        </svg>
+      </Styled.SearchBtn>
+      <Portal>
+        <Styled.Modal
+          style={{
+            top: position.top + position.height + 10,
+            right: position.right,
+          }}
+        >
+          <Styled.SubSection>
+            <Styled.Label>학년</Styled.Label>
+            <Dropdown title={gradeLabel}>
+              {Object.keys(gradeObj).map(item => (
+                <Dropdown.Item key={item}>
+                  {item}
+                  <Dropdown.Submenu position="right">
+                    {gradeObj[item].map(subItem => (
+                      <Dropdown.Item
+                        // onClick={() =>
+                        //   // changeFieldValue("gradeLabel", `${item} (${subItem})`)
+                        // }
+                        key={subItem}
+                      >
+                        {subItem}
+                      </Dropdown.Item>
+                    ))}
+                  </Dropdown.Submenu>
+                </Dropdown.Item>
+              ))}
+            </Dropdown>
+          </Styled.SubSection>
+          <Styled.SubSection>
+            <Styled.Label>과목</Styled.Label>
+            <Dropdown title={subjectLabel}>
+              {Object.keys(subjectObj).map(item => (
+                <Dropdown.Item
+                  key={item}
+                  // onClick={() => changeFieldValue("subjectLabel", `${item}`)}
+                >
+                  {item}
+                  {subjectObj[item].length > 0 && (
+                    <Dropdown.Submenu position="right">
+                      {subjectObj[item].map(subItem => (
+                        <Dropdown.Item
+                          onClick={e => {
+                            // e.stopPropagation();
+                            // changeFieldValue(
+                            //   "subjectLabel",
+                            //   `${item} (${subItem})`
+                            // );
+                          }}
+                          key={subItem}
+                        >
+                          {subItem}
+                        </Dropdown.Item>
+                      ))}
+                    </Dropdown.Submenu>
+                  )}
+                </Dropdown.Item>
+              ))}
+            </Dropdown>
+          </Styled.SubSection>
+        </Styled.Modal>
+      </Portal>
+    </Styled.Wrapper>
+  );
+}
+
+const SearchTag = ({ tag }) => {
+  return (
+    <Styled.SearchTag>
+      <span>{tag}</span>
+      <Styled.Button>
+        <svg
+          viewBox="0 0 40 40"
+          focusable="false"
+          role="presentation"
+          // class="withIcon_icon__2nnc8"
+          aria-hidden="true"
+          style={{ width: "12px", height: "12px" }}
+        >
+          <path d="M33.4 8L32 6.6l-12 12-12-12L6.6 8l12 12-12 12L8 33.4l12-12 12 12 1.4-1.4-12-12 12-12z"></path>
+        </svg>
+      </Styled.Button>
+    </Styled.SearchTag>
+  );
+};
+
+export default TagsInput;
