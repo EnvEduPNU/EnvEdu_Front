@@ -207,7 +207,7 @@ function App() {
           />*/}
 
           {/*ContactUs*/}
-          <Route path="/contactus" exact={true} element={<ContactUs />} />
+          <Route path="/contact" exact={true} element={<ContactUs />} />
 
           <Route path="/slide" exact={true} element={<SlidePage />} />
 

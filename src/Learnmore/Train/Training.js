@@ -11,11 +11,11 @@ function Training (){
                 <div className='team-circle'>
                     <FaChalkboardTeacher size="45" color="#5e2ced" />
                 </div>
-                <h2 style={{ fontFamily: 'Poppins', fontWeight: 'bold', margin: '1rem 0 5rem 0' }}>Training</h2>
+                <h2 style={{ fontWeight: 'bold', margin: '1rem 0 5rem 0' }}>연수</h2>
             </div>
         <div className="container">
           <div className="student">
-            <h2><b>교사 연수</b></h2>
+            <h4><b>교사 연수</b></h4>
             <hr/>
             <div className="row featurette" style={{ padding: '1.5rem' }}>
               <div className="col-md-7 order-md-2">
@@ -31,7 +31,7 @@ function Training (){
           </div>
 
           <div className="student" style={{ marginTop: '3rem' }}>
-            <h2><b>사회환경지도사 연수</b></h2>
+            <h4><b>사회환경지도사 연수</b></h4>
             <hr/>
             <div className="row featurette" style={{ padding: '1.5rem' }}>
               <div className="col-md-7 order-md-2">
