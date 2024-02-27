@@ -24,7 +24,7 @@ export default function Sample() {
             setClickedIndexes([...clickedIndexes, index]);
         }
     };
-    /*
+
     const [connectableSocket, setConnectableSocket] = useState([]);
 
     useEffect(()=>{
@@ -35,13 +35,14 @@ export default function Sample() {
             })
     },[]);
 
-    */
+    /*
     const [connectableSocket, setConnectableSocket] = useState([
         { username: "user1", elements: [{ deviceName: 'device1', mac: 'AA:BB:CC:DD:EE:FF' }] },
         { username: "user2", elements: [{ deviceName: 'device2', mac: 'AA:BB:CC:DD:EE:FF' }] },
         { username: "user3", elements: [{ deviceName: 'device3', mac: 'AA:BB:CC:DD:EE:FF' }] },
         { username: "user4", elements: [{ deviceName: 'device4', mac: 'AA:BB:CC:DD:EE:FF' }] }
     ]);
+    */
 
     return(
         <div style={{fontSize: "1.5em"}} className="sample">
