@@ -80,7 +80,7 @@ export default function Sample() {
                                                     borderRadius: '1.25rem',
                                                     background: '#D9DCFF'
                                                 }}
-                                                onClick={() => SampleSocket.register()}>
+                                                >
                                                     {element.deviceName}
                                             </div>
                                             
@@ -99,10 +99,14 @@ export default function Sample() {
                                             
                                                 <div className="showBtn" onClick={() => {
                                                     handleShowing(index); 
+
+                                                    //handleRegister();
+                                                    
+                                                    /*
                                                     console.log(clickedIndexes.includes(index))
                                                     if (!clickedIndexes.includes(index)) {
                                                         handleRegister();
-                                                    }
+                                                    }*/
                                                     
                                                 }}>
                                                     {clickedIndexes.includes(index) ? '닫기' : '데이터 보기'}
