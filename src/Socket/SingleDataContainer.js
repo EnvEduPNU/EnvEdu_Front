@@ -12,6 +12,7 @@ import {
     Legend,
 } from 'chart.js';
 import { getDropdownMenuPlacement } from "react-bootstrap/esm/DropdownMenu";
+import { CiFloppyDisk } from "react-icons/ci";
 
 ChartJS.register(
     CategoryScale,
@@ -202,8 +203,6 @@ function SingleDataContainer(props) {
         borderRadius: '1.25rem',
         textAlign: 'center'
     };
-    
-    //console.log(props.selectedTypes.includes(props.type))
 
     const putUnit = (type) => {
         const unitMap = {
@@ -226,6 +225,9 @@ function SingleDataContainer(props) {
             <div className="d-flex justify-content-between">
                 <div style={{display: 'flex', alignItems: 'center'}}>
                     <span className="border pe-2 ps-2 mb-2" onClick={() => handleClick(props.type)} style={style}>
+                        {props.selectedTypes.includes(props.type) && 
+                            <CiFloppyDisk size="20" style={{ marginRight: '0.2rem' }}/>
+                        }
                         {props.type === 'temp' && "기온"}
                         {props.type === 'pH' && "pH"}
                         {props.type === 'hum' && "습도"}
@@ -244,7 +246,7 @@ function SingleDataContainer(props) {
                         /**
                          * 유효하지 않은 값의 처리
                          */
-                        <span style={{fontSize: '0.75em'}}>{value === -99999 ? "" : value} {putUnit(props.type)}</span>
+                        <span style={{fontSize: '0.75em', fontWeight: 'bold'}}>{value === -99999 ? "" : value} {putUnit(props.type)}</span>
                     }
                 </div>
 
