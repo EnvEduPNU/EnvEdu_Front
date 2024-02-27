@@ -172,7 +172,6 @@ const SampleSocket = forwardRef((props, ref) => {
 
     useEffect(() => {
         if (save) {
-            console.log("save==true 직후", selectedTypes)
             // receiveObject를 복제
             const updatedReceiveObject = { ...receiveObject };
 
@@ -219,7 +218,6 @@ const SampleSocket = forwardRef((props, ref) => {
             saveData.push(JSON.stringify(updatedReceiveObject));
             setSaveData([...saveData]);
             if (isFinished) {
-                console.log("isFinished 이후", selectedTypes)
                 customAxios.post("/seed/save/continuous", {data: saveData, memo: memo})
                     .then(() => {
                         console.log(saveData) //location, period 확인
@@ -233,7 +231,12 @@ const SampleSocket = forwardRef((props, ref) => {
                 setSaveData([...saveData]);
             }
         }
-    }, [save, selectedTypes, isFinished])
+    }, [save, selectedTypes, isFinished]);
+
+    useEffect(() => {
+        // 컴포넌트가 마운트될 때 register 함수를 자동으로 호출
+        register();
+    }, []);
 
     return (
             <div>
@@ -411,7 +414,6 @@ const SampleSocket = forwardRef((props, ref) => {
                             cursor: 'pointer',
                         }}
                         onClick={() => {
-                            console.log(selectedTypes);
                             isFinished = true;
                         }}>
                             <FaRegStopCircle style={{ marginRight: '0.5rem' }}/>
