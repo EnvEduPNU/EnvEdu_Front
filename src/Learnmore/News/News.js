@@ -15,10 +15,17 @@ function News() {
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <div className='award-list'>
             <div>
+              <h2>2021</h2>
+              <ul>
+                <li>2021년 한국과학교육학회 하계학술대회 '우수논문상'</li>
+              </ul>
+            </div>
+
+            <div>
               <h2>2020</h2>
               <ul>
                 <li>2020년 제16회 대한민국 환경교육한마당 프로그램경진대회 '환경부 장관상'</li>
-                <li>2020년 환경과학회 정기학술대회 '우수 구두발표상'</li>
+                <li>2020년 한국환경과학회 정기학술대회 '우수 구두발표상'</li>
                 <li>2020년 한국컴퓨터교육학회 하계 학술대회 '우수논문상'</li>
               </ul>
             </div>

@@ -1,0 +1,51 @@
+#con1 {
+    height: 16em;
+    background-color: aliceblue;
+    text-align: center;
+    padding: 5em 0;
+    margin-bottom:3 em;
+}
+
+.lead {
+    line-height:1.3em;
+    margin-top: 0.5rem;
+}
+
+li {
+    font-size: 0.75em;
+    color: black;
+    font-weight: 400;
+}
+
+#te {
+    line-height: 1.8em;;
+}
+
+h5 {
+    color:black;
+}
+
+.training-shortcut-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 80%;
+    img {
+      width: 18rem;
+      height: 11rem;
+    }
+}
+
+.training {
+    padding: 0rem 3rem;
+
+    .training-text {
+        padding-bottom: 2.5rem;
+        line-height: 2em;
+    }
+
+    a {
+        text-decoration: none;
+        color: #484848;
+    }
+}
