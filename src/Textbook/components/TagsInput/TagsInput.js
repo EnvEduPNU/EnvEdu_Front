@@ -3,11 +3,12 @@ import * as Styled from "./Styled";
 import { useState } from "react";
 import useComponentPosition from "../../../DataLiteracy/hooks/useComponentPosition";
 import Portal from "../../../Portal";
+import { Button } from "react-bootstrap";
 
 const gradeObj = {
-  초등학생: ["1학년", "2학년", "3학년", "4학년", "5학년", "6학년", "공통"],
-  중학생: ["1학년", "2학년", "3학년", "공통"],
-  고등학생: ["1학년", "2학년", "3학년", "공통"],
+  초등학교: ["1학년", "2학년", "3학년", "4학년", "5학년", "6학년", "공통"],
+  중학교: ["1학년", "2학년", "3학년", "공통"],
+  고등학교: ["1학년", "2학년", "3학년", "공통"],
 };
 
 const subjectObj = {
@@ -35,13 +36,21 @@ const subjectObj = {
 };
 
 function TagsInput() {
+  const { ref, position } = useComponentPosition();
+  const [visible, setVisible] = useState(false);
   const [gradeLabel, setGradeLabel] = useState("초등학교");
   const [subjectLabel, setSubjectLabel] = useState("과학");
-  const { ref, position } = useComponentPosition();
-  const onClickInput = () => {};
+  const [tags, setTags] = useState([]);
+
+  const onClickInput = () => {
+    setVisible(true);
+  };
+
   return (
     <Styled.Wrapper ref={ref}>
-      <SearchTag tag={"태그"} />
+      {tags.map(tag => (
+        <SearchTag key={tag} tag={tag} setTags={setTags} />
+      ))}
       <Styled.InputWrapper onClick={onClickInput}>
         <Styled.Input type="text" />
       </Styled.InputWrapper>
@@ -50,7 +59,6 @@ function TagsInput() {
           viewBox="0 0 40 40"
           focusable="false"
           role="presentation"
-          // class="withIcon_icon__2nnc8"
           aria-hidden="true"
           style={{ width: "24px", height: "24px" }}
         >
@@ -58,77 +66,92 @@ function TagsInput() {
           <path d="M29.2 27.91a14.38 14.38 0 1 0-1.42 1.4l7.16 7.15.07.08 1.41-1.41zM18.45 6a12.36 12.36 0 0 1 8.35 3.23 12.24 12.24 0 0 1 4 8.59A12.39 12.39 0 1 1 17.88 6z"></path>
         </svg>
       </Styled.SearchBtn>
-      <Portal>
-        <Styled.Modal
-          style={{
-            top: position.top + position.height + 10,
-            right: position.right,
-          }}
-        >
-          <Styled.SubSection>
-            <Styled.Label>학년</Styled.Label>
-            <Dropdown title={gradeLabel}>
-              {Object.keys(gradeObj).map(item => (
-                <Dropdown.Item key={item}>
-                  {item}
-                  <Dropdown.Submenu position="right">
-                    {gradeObj[item].map(subItem => (
-                      <Dropdown.Item
-                        // onClick={() =>
-                        //   // changeFieldValue("gradeLabel", `${item} (${subItem})`)
-                        // }
-                        key={subItem}
-                      >
-                        {subItem}
-                      </Dropdown.Item>
-                    ))}
-                  </Dropdown.Submenu>
-                </Dropdown.Item>
-              ))}
-            </Dropdown>
-          </Styled.SubSection>
-          <Styled.SubSection>
-            <Styled.Label>과목</Styled.Label>
-            <Dropdown title={subjectLabel}>
-              {Object.keys(subjectObj).map(item => (
-                <Dropdown.Item
-                  key={item}
-                  // onClick={() => changeFieldValue("subjectLabel", `${item}`)}
-                >
-                  {item}
-                  {subjectObj[item].length > 0 && (
-                    <Dropdown.Submenu position="right">
-                      {subjectObj[item].map(subItem => (
-                        <Dropdown.Item
-                          onClick={e => {
-                            // e.stopPropagation();
-                            // changeFieldValue(
-                            //   "subjectLabel",
-                            //   `${item} (${subItem})`
-                            // );
-                          }}
-                          key={subItem}
-                        >
-                          {subItem}
-                        </Dropdown.Item>
-                      ))}
-                    </Dropdown.Submenu>
-                  )}
-                </Dropdown.Item>
-              ))}
-            </Dropdown>
-          </Styled.SubSection>
-        </Styled.Modal>
-      </Portal>
+      {visible && (
+        <Portal>
+          <Styled.Modal
+            style={{
+              top: position.top + position.height + 10,
+              right: position.right,
+            }}
+          >
+            <section style={{ display: "flex", gap: 10, flex: 1 }}>
+              <Styled.SubSection>
+                <Styled.Label>학년</Styled.Label>
+                <Dropdown title={gradeLabel}>
+                  {Object.keys(gradeObj).map(item => (
+                    <Dropdown.Item key={item}>
+                      {item}
+                      <Dropdown.Submenu position="right">
+                        {gradeObj[item].map(subItem => (
+                          <Dropdown.Item
+                            onClick={() =>
+                              // changeFieldValue("gradeLabel", `${item} (${subItem})`)
+                              setTags(state => [...state, item, subItem])
+                            }
+                            key={subItem}
+                          >
+                            {subItem}
+                          </Dropdown.Item>
+                        ))}
+                      </Dropdown.Submenu>
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown>
+              </Styled.SubSection>
+              <Styled.SubSection>
+                <Styled.Label>과목</Styled.Label>
+                <Dropdown title={subjectLabel}>
+                  {Object.keys(subjectObj).map(item => (
+                    <Dropdown.Item
+                      key={item}
+                      onClick={() => setTags(state => [...state, item])}
+                    >
+                      {item}
+                      {subjectObj[item].length > 0 && (
+                        <Dropdown.Submenu position="right">
+                          {subjectObj[item].map(subItem => (
+                            <Dropdown.Item
+                              onClick={e => {
+                                e.stopPropagation();
+                                setTags(state => [...state, item, subItem]);
+                              }}
+                              key={subItem}
+                            >
+                              {subItem}
+                            </Dropdown.Item>
+                          ))}
+                        </Dropdown.Submenu>
+                      )}
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown>
+              </Styled.SubSection>
+            </section>
+            <Styled.ButtonWrapper onClick={() => setVisible(false)}>
+              <Button
+                onClick={e => {
+                  e.stopPropagation();
+                  setVisible(false);
+                }}
+              >
+                닫기
+              </Button>
+            </Styled.ButtonWrapper>
+          </Styled.Modal>
+        </Portal>
+      )}
     </Styled.Wrapper>
   );
 }
 
-const SearchTag = ({ tag }) => {
+const SearchTag = ({ tag, setTags }) => {
+  const deleteTag = () => {
+    setTags(tags => tags.filter(t => t !== tag));
+  };
   return (
     <Styled.SearchTag>
       <span>{tag}</span>
-      <Styled.Button>
+      <Styled.Button onClick={deleteTag}>
         <svg
           viewBox="0 0 40 40"
           focusable="false"

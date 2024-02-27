@@ -63,6 +63,7 @@ import EClassList from "./DataClass";
 import EClassPage from "./EClass/Page/EClassPage/EClassPage";
 import CreateEClassPage from "./Study/Page/CreateEClassPage";
 import TextbookPage from "./Textbook/page/TextbookPage";
+import TextbookDetailPage from "./Textbook/page/TextbookDetaliPage/TextbookDetailPage";
 
 function App() {
   /**
@@ -233,6 +234,11 @@ function App() {
           </Route>
 
           <Route path="/textbook" exact={true} element={<TextbookPage />} />
+          <Route
+            path="/textbook/detail"
+            exact={true}
+            element={<TextbookDetailPage />}
+          />
         </Routes>
       </div>
 

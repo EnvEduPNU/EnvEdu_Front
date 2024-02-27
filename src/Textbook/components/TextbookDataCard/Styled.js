@@ -8,11 +8,15 @@ export const Wrapper = styled.div`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   border-radius: 1rem;
   padding: 20px 20px;
+  height: 200px;
+  max-height: 200px;
+  cursor: pointer;
 `;
 
 export const Head = styled.div`
   display: flex;
   flex-direction: column;
+  flex: 1;
   gap: 10px;
 `;
 export const Title = styled.div`

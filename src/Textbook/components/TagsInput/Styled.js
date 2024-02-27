@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const Wrapper = styled.div`
-  width: 100%;
+  width: 500px;
   display: flex;
   border: 1px solid #00c4c4;
   border-radius: 4px;
@@ -103,6 +103,7 @@ export const Modal = styled.div`
   width: 700px;
   padding: 20px;
   display: flex;
+  flex-direction: column;
   gap: 10px;
 `;
 
@@ -118,4 +119,14 @@ export const Label = styled.label`
   display: block;
   margin-bottom: 6px;
   color: #1b1c1d;
+`;
+
+export const ButtonWrapper = styled.div`
+  /* flex: 1; */
+  display: flex;
+  justify-content: flex-end;
+  button {
+    border: none;
+    background-color: #00c4c4;
+  }
 `;

@@ -1,9 +1,15 @@
 import { Badge } from "react-bootstrap";
 import * as Styled from "./Styled";
+import { useNavigate } from "react-router-dom";
 
 function TextbookDataCard({ textbookData }) {
+  const navigate = useNavigate();
+
+  const onClickCard = () => {
+    navigate(`/textbook/detail`, { state: { textbookData } });
+  };
   return (
-    <Styled.Wrapper>
+    <Styled.Wrapper onClick={onClickCard}>
       <Styled.Head>
         <Styled.Title>{textbookData.title}</Styled.Title>
         <Styled.Description>{textbookData.description}</Styled.Description>

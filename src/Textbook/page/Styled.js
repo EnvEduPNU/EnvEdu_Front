@@ -12,10 +12,10 @@ export const SearchWrapper = styled.div`
   width: 100%;
   display: flex;
   justify-content: flex-end;
-  & > * {
-    width: 500px;
-  }
+  text-align: right;
 `;
+
+export const H2 = styled.h2``;
 
 export const DataWrapper = styled.div`
   display: flex;
