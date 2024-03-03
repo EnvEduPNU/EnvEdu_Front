@@ -16,6 +16,7 @@ function Air() {
 
     useEffect(() => {
         customAxios.get('/air-quality?location=부산')
+        //customAxios.get('/air-quality/station?addr=부산')
             .then((jsonData) => {
                 jsonData = jsonData.data;
                 console.log(jsonData)
@@ -23,9 +24,9 @@ function Air() {
                 setFilteredData(jsonData);
 
                 // Set the table headers dynamically
-                const headers = Object.keys(jsonData[0]).filter((key) => key !== 'id' && key != 'dataUUID' && key != 'saveDate' && key !== 'PTNM');
+                const headers = Object.keys(jsonData[0]).filter((key) => key !== 'id' && key != 'dataUUID' && key != 'saveDate' && key !== 'PTNM' && key !== 'memo' && key !== 'dataLabel');
                 setHeaders(headers);
-                const checkedHeaders = Object.keys(jsonData[0]).filter((key) => key !== 'id' && key != 'dataUUID' && key != 'saveDate' && key !== 'PTNM');
+                const checkedHeaders = Object.keys(jsonData[0]).filter((key) => key !== 'id' && key != 'dataUUID' && key != 'saveDate' && key !== 'PTNM' && key !== 'memo' && key !== 'dataLabel');
                 setCheckedHeaders(checkedHeaders);
             });                   
     }, [])
@@ -137,8 +138,8 @@ function Air() {
         return kor[name] || "";
     }
 
-    console.log(checkedHeaders);
-    console.log(headers);
+    //console.log(checkedHeaders);
+    //console.log(headers);
 
     return (
         <div>

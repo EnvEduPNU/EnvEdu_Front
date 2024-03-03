@@ -5,9 +5,29 @@ import { useEffect, useState } from 'react';
 
 export default function OpenApiPast() {
     const location = useLocation();
-    const stationName = location.state ? location.state.stationName : null;
+    const [currentAddr, setCurrentAddr] = useState('');
+
+    const { stationName, addr } = location.state || {};
+
+    useEffect(() => {
+        if (!addr) {
+            customAxios.get(`/air-quality/station?addr=부산&stationName=${stationName}`)
+            .then((res) => {
+                if (res.data[0] && res.data[0].addr) {
+                    setCurrentAddr(res.data[0].addr);
+                }
+            })
+            .catch((err) => console.log(err));
+        } else {
+            setCurrentAddr(addr);
+        }
+    }, [stationName, addr]);
+    //console.log(addr)
+
+    //const addr = useLocation().state ? useLocation.state.addr : null;
+    //const stationName = location.state ? location.state.stationName : null;
     
-    const [stations, setStations] = useState([]);
+    //const [stations, setStations] = useState([]);
     const [pastData, setPastData] = useState([]);
 
     const [headers, setHeaders] = useState([]);
@@ -20,14 +40,17 @@ export default function OpenApiPast() {
 
     useEffect(() => {
         if (location.state) {
-            customAxios.get(`/air-quality/station?addr=${stationName}`)
-            .then((res) => {setStations(res.data); console.log(res.data)})
+            /*
+            customAxios.get(`/air-quality/station?addr=${addr.split(' ')[0]}}&stationName=${stationName}`)
+            .then((res) => {setStations(res.data); console.log(res.data); console.log(stationName)})
             .catch((err) => console.log(err));
+            */
 
-            customAxios.get(`/air-quality?stationName=${stationName}&dataTerm=${dataTerm}`)
+            customAxios.get(`/air-quality?location=${(addr ? addr : currentAddr).split(' ')[0]}&stationName=${stationName}&dataTerm=${dataTerm}`)
             .then((res) => {
                 setPastData(res.data);
-                const headers = Object.keys(res.data[0]).filter((key) => key !== 'id');
+                const headers = Object.keys(res.data[0]).filter(
+                    (key) => key !== 'dataLabel' && key !== 'dataUUID' && key !== 'memo' && key !== 'saveDate');
                 setHeaders(headers);
                 setCheckedHeaders(headers);
             })
@@ -95,18 +118,16 @@ export default function OpenApiPast() {
     return(
         <div className='openApIPast-container'>
             {stationName && <h4 style={{marginBottom: '2rem'}}>
-                <span style={{ color: '#f06313', fontWeight: '600' }}>{stationName}</span> 과거 데이터 조회
+                <span style={{ color: '#f06313', fontWeight: '600' }}>{(addr ? addr : currentAddr).split(' ')[0]} {stationName}</span> 과거 데이터 조회
                 <img src='/assets/img/question.png' style={{marginLeft: '1rem', marginRight: '0.3rem', width : '1rem', height: '1rem'}}/>
                 <span>
                     <Link to={'/search'} style={{color: "#aaa", fontSize: '1rem'}}>다른 지역의 측정소 조회하기</Link>
                 </span>
             </h4>}
             
-            {stations.map((station, index) => (
-                <div key={index}>
-                    <label style={{fontWeight: '600', marginRight: '1rem'}}>측정소 위치</label>{station.addr}
-                </div>
-            ))}
+            <div>
+                <label style={{fontWeight: '600', marginRight: '1rem'}}>측정소 위치</label>{addr || currentAddr}
+            </div>
 
             <div style={{marginTop: '1rem'}}>
                 <label style={{fontWeight: '600', marginRight: '1rem'}}>측정 기간 범위 선택</label>

@@ -22,14 +22,14 @@ function Water() {
             .then((jsonData) => {
                 setSelectedOption(null); //측정 시점 필터링 조건 바뀌면 조사 지점 필터링이 null('전체') 되게
                 jsonData = jsonData.data;
-                console.log(jsonData)
+                //console.log(jsonData)
                 setData(jsonData);
                 setFilteredData(jsonData);
                 
                 // Set the table headers dynamically
-                const headers = Object.keys(jsonData[0]).filter((key) => key !== 'id' && key != 'dataUUID' && key != 'saveDate');
+                const headers = Object.keys(jsonData[0]).filter((key) => key !== 'id' && key != 'dataUUID' && key != 'saveDate' && key !== 'memo' && key !== 'dataLabel');
                 setHeaders(headers);
-                const checkedHeaders = Object.keys(jsonData[0]).filter((key) => key !== 'id' && key != 'dataUUID' && key != 'saveDate');
+                const checkedHeaders = Object.keys(jsonData[0]).filter((key) => key !== 'id' && key != 'dataUUID' && key != 'saveDate' && key !== 'memo' && key !== 'dataLabel');
                 setCheckedHeaders(checkedHeaders);
             })
             .catch((err) => console.log(err));
@@ -165,9 +165,9 @@ function Water() {
         return month;
     });
 
-    console.log(selectedItems); 
-    console.log(checkedHeaders);
-    console.log(headers);
+    //console.log(selectedItems); 
+    //console.log(checkedHeaders);
+    //console.log(headers);
 
     return (
         <div>
