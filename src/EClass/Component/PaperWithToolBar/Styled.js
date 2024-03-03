@@ -21,13 +21,20 @@ export const ActivityWrapper = styled.div`
   border: 1px solid #eee;
   display: flex;
   flex-direction: column;
-  /* gap: 3px; */
+  gap: 3px;
   border-radius: 5px;
 `;
 
 export const ActivityEditHeader = styled.div`
   width: 100%;
   display: flex;
-  justify-content: flex-end;
-  gap: 5px;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  cursor: default;
+`;
+
+export const ActivityCheckBoxWrapper = styled.div`
+  display: flex;
+  gap: 15px;
 `;

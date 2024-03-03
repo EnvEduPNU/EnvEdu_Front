@@ -4,13 +4,14 @@ import useChartMetaDataStore from "../store/chartMetaDataStore";
 import { useGraphDataStore } from "../store/graphStore";
 
 const useBarData = () => {
-  let errorMessage = null;
-  let labels = null;
   const { variables, data } = useGraphDataStore();
   const { min, max, stepSize } = useBarStore();
   const { legendPostion, datalabelAnchor } = useChartMetaDataStore(
     state => state.metaData
   );
+
+  let errorMessage = null;
+  let labels = null;
 
   // x축에 category가 있으면 x축엔 변인이 하나만 와야하고 y축에는 다 number가 되야함
   // y축에 category가 있으면 y축엔 변인이 하나만 와야하고 x축에는 다 number가 되야함

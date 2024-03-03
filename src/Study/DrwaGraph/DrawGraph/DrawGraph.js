@@ -1,22 +1,78 @@
 import { useState } from "react";
 import ActivityDialog from "../../component/ActivityDialog/ActivityDialog";
-import Dialog from "../../component/Dialog/Dialog";
-import Modal from "../../component/Modal/Modal";
 import Sharing from "../../component/Sharing/Sharing";
 import { useTabStore } from "../../store/tabStore";
 import CustomTable from "../CustomTable/CustomTable";
 import CustomTableHeader from "../CustomTable/CustomTableHeader";
 import GraphAndEditor from "../GraphAndEditor/GraphAndEditor";
 import Header from "../Header/Header";
-import ResultReport from "../ResultReport/ResultReport";
 import * as Styled from "./Styled";
 import { Button } from "react-bootstrap";
 import { useGraphDataStore } from "../../store/graphStore";
+import Assignment from "../../../EClass/Component/Assignment/Assignment";
+import useChartMetaDataStore from "../../store/chartMetaDataStore";
+import { useBarStore } from "../../store/barStore";
+import { useLineStore } from "../../store/lineStore";
+import { useBubbleStore } from "../../store/bubbleStore";
+import { useScatterStore } from "../../store/scatterStore";
+import { useMixStore } from "../../store/mixStore";
+import useEClassAssignmentStore from "../../../EClass/store/eClassAssignmentStore";
 
 function DrawGraph() {
-  const tab = useTabStore(state => state.tab);
+  const { tab, changeTab } = useTabStore();
   const [showModal, setShowModal] = useState(false);
-  const data = useGraphDataStore(state => state.data);
+  const { data, graphIdx, pageIndex, activityIndex } = useGraphDataStore();
+  const changeChartDataValue = useEClassAssignmentStore(
+    state => state.changeChartDataValue
+  );
+
+  const getAxisData = () => {
+    if (graphIdx === 0) {
+      const { min, max, stepSize } = useBarStore.getState();
+      return { min, max, stepSize };
+    }
+
+    if (graphIdx === 1) {
+      const { min, max, stepSize } = useLineStore.getState();
+      return { min, max, stepSize };
+    }
+
+    if (graphIdx === 2) {
+      const { xAxis, yAxis } = useBubbleStore.getState();
+      return { xAxis, yAxis };
+    }
+
+    if (graphIdx === 4) {
+      const { xAxis, yAxis } = useScatterStore.getState();
+      return { xAxis, yAxis };
+    }
+
+    if (graphIdx === 5) {
+      const { y1Axis, y2Axis } = useMixStore.getState();
+      return { y1Axis, y2Axis };
+    }
+  };
+
+  const getGraphData = () => {
+    const { data, variables, graphIdx } = useGraphDataStore.getState();
+    const {
+      metaData: { legendPostion, datalabelAnchor },
+    } = useChartMetaDataStore.getState();
+    return {
+      graphIdx,
+      data,
+      variables: variables.filter(
+        variable => variable.isSelected && variable.axis !== null
+      ),
+      axisData: getAxisData(),
+      metaData: { legendPostion, datalabelAnchor },
+    };
+  };
+
+  const onClickGraphToAssignment = () => {
+    changeChartDataValue(pageIndex, activityIndex, getGraphData());
+    changeTab("assignment");
+  };
 
   return (
     <Styled.Wrapper>
@@ -51,7 +107,7 @@ function DrawGraph() {
           <CustomTableHeader />
           <GraphAndEditor />
           <Button
-            onClick={() => setShowModal(true)}
+            onClick={onClickGraphToAssignment}
             style={{
               position: "absolute",
               left: "30px",
@@ -71,7 +127,7 @@ function DrawGraph() {
       )}
       {tab === "assignment" && (
         <>
-          <ResultReport />
+          <Assignment />
         </>
       )}
     </Styled.Wrapper>

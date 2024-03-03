@@ -10,7 +10,7 @@ import TopSlidePage from "./topSlidePage";
 import BottomSlidePage from "./bottomSildePage";
 import LeftSlidePage from "./leftSlidePage";
 import RightSildePage from "./rightSlidePage";
-import Header from '../../Header/Header'
+import Header from "../../Header/Header";
 import { useSlideStore } from "../store/slideStore";
 
 function SlidePage() {
@@ -24,9 +24,9 @@ function SlidePage() {
         </div>
       </LeftSilde>
       <RightSilde>
-        <div style={{ width: "600px" }}>
-          <RightSildePage />
-        </div>
+        {/* <div style={{ width: "600px" }}> */}
+        <RightSildePage />
+        {/* </div> */}
       </RightSilde>
       <BottomSilde>
         <div style={{ height: "300px" }}>

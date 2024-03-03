@@ -44,7 +44,7 @@ export const HeaderWrapper = styled.div`
   padding: 0 10px;
   box-shadow: 0 8px 5px -5px rgba(0, 0, 0, 0.3);
   z-index: 3;
-  height: 100%;
+  /* height: 100%; */
 `;
 
 export const Header = styled.div`
@@ -67,8 +67,10 @@ export const Th = styled.div`
   justify-content: space-between;
   align-items: center;
   line-height: 2;
+  height: 35px;
   max-height: 35px;
   overflow: auto;
+  white-space: nowrap;
   border-bottom: 1px solid rgba(34, 36, 38, 0.15);
 `;
 
@@ -153,6 +155,7 @@ export const InputDiv = styled.div`
   background-color: inherit;
   width: 100%;
   height: 100%;
+  min-height: 28px;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;

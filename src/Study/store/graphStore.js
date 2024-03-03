@@ -106,6 +106,15 @@ export const useGraphDataStore = create((set, get) => ({
     ),
 
   graphIdx: 0,
+  pageIndex: -1,
+  activityIndex: -1,
+
+  changeActivity: (pageIndex, activityIndex) =>
+    set(state => ({
+      ...state,
+      pageIndex,
+      activityIndex,
+    })),
 
   setData: newData =>
     set(state => ({
