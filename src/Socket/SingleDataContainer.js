@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 import {Button, OverlayTrigger, Popover} from "react-bootstrap";
+import { GoGraph } from "react-icons/go";
 import {Bubble, Line} from 'react-chartjs-2';
 import {
     Chart as ChartJS,
@@ -12,7 +13,7 @@ import {
     Legend,
 } from 'chart.js';
 import { getDropdownMenuPlacement } from "react-bootstrap/esm/DropdownMenu";
-import { CiFloppyDisk } from "react-icons/ci";
+import { PiFloppyDiskFill } from "react-icons/pi";
 
 ChartJS.register(
     CategoryScale,
@@ -29,11 +30,7 @@ export const option = {
     plugins: {
         legend: {
             position: 'top',
-        },
-        title: {
-            display: true,
-            text: 'Chart.js Line Chart',
-        },
+        }
     },
 };
 
@@ -195,11 +192,13 @@ function SingleDataContainer(props) {
     /*센서 이름 css */
     const style = {
         cursor: "pointer",
-        display: "inline-block",
+        display: "flex",
+        justifyContent: 'space-between',
+        alignItems: 'center',
         fontSize: "0.75em",
         fontWeight: 'bold',
         width: "8rem",
-        backgroundColor: value === -99999 ? "#fff" : (props.selectedTypes.includes(props.type) ? '#CBE0FF' : '#FFE2E7'),
+        backgroundColor: value === -99999 ? "#fff" : '#FFE2E7',
         borderRadius: '1.25rem',
         textAlign: 'center'
     };
@@ -225,9 +224,6 @@ function SingleDataContainer(props) {
             <div className="d-flex justify-content-between">
                 <div style={{display: 'flex', alignItems: 'center'}}>
                     <span className="border pe-2 ps-2 mb-2" onClick={() => handleClick(props.type)} style={style}>
-                        {props.selectedTypes.includes(props.type) && 
-                            <CiFloppyDisk size="20" style={{ marginRight: '0.2rem' }}/>
-                        }
                         {props.type === 'temp' && "기온"}
                         {props.type === 'pH' && "pH"}
                         {props.type === 'hum' && "습도"}
@@ -238,6 +234,14 @@ function SingleDataContainer(props) {
                         {props.type === 'co2' && "이산화탄소"}
                         {props.type === 'lux' && "조도"}
                         {props.type === 'pre' && "기압"}
+                        {/*
+                        {props.selectedTypes.includes(props.type) && 
+                            <CiFloppyDisk size="20" style={{ marginRight: '0.2rem' }}/>
+                        }
+                        */}
+
+                        <PiFloppyDiskFill size="20" color={props.selectedTypes.includes(props.type) ? "#FF5271" : "#000"} style={{ marginRight: '0.2rem'}}/>
+                        
                     </span>
 
                     &nbsp;&nbsp;
@@ -296,11 +300,13 @@ function SingleDataContainer(props) {
                 </div>
             </div>
 
-            <div style={{display: 'flex', justifyContent: 'center', borderRadius: '1.875rem', background: '#fff', marginBottom: '1rem'}}>
+            <div style={{display: 'flex', justifyContent: 'center', marginBottom: '1rem'}}>
                 {
                     seeGraph === true && props.data.length !== 0 ?
                         (
-                            <Line options={option} data={dataElem} width="700" height="500"/>
+                            <div style={{ borderRadius: '1.875rem', background: '#fff', padding: '1rem' }}>
+                                <Line options={option} data={dataElem} width="500" height="300"/>
+                            </div>
                         )
                         : (<></>)
 

@@ -43,7 +43,6 @@ export default function Sample() {
         { username: "user4", elements: [{ deviceName: 'device4', mac: 'AA:BB:CC:DD:EE:FF' }] }
     ]);
     */
-
     return(
         <div style={{fontSize: "1.5em"}} className="sample">
             <div className="row d-flex justify-content-center">
