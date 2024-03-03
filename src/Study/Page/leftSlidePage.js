@@ -75,67 +75,86 @@ export default function LeftSlidePage() {
     const { setData } = useGraphDataStore();
 
     const getTable = (type, id) => {
-        let path = ''
-        if (type === "수질 데이터") {
-            path = `/ocean-quality/mine/chunk?dataUUID=${id}`;
-        } else if (type === "대기질 데이터") {
-            path = `/air-quality/mine/chunk?dataUUID=${id}`;
-        } else if (type === "SEED") {
-            path = `/seed/mine/chunk?dataUUID=${id}`;
-        }
+        if (type === "CUSTOM") {
+            customAxios.get(`/dataLiteracy/customData/download/${id}`)
+            .then((res) => {
+                //수정 필요
+                let headers = res.data.properties; // ['a','b','c]
 
-        customAxios.get(path)
-        .then((res)=>{
-            let headers = Object.keys(res.data[0]).filter(
-                (key) => key !== "id" && key !== "dataUUID" && key !== "saveDate" && key !== "dateString"
-            );
+                let values = res.data.data; // [[1,2,3], [4,5,6]]
 
-            const attributesToCheck = [
-                "co2",
-                "dox",
-                "dust",
-                "hum",
-                "hum_EARTH",
-                "lux",
-                "ph",
-                "pre",
-                "temp",
-                "tur"  
-            ];
-            
-            for (const attribute of attributesToCheck) {
-                const isAllZero = res.data.every(item => item[attribute] === 0);
-                // 해당 속성이 모두 0일 때, headers에서 제거
-                if (isAllZero) {
-                    headers = headers.filter(
-                        (header) => header !== attribute
-                    );
-                }
+                // 최종 결과 생성 (헤더 + 값)
+                const recombined = [headers, ...values];
+                
+                setData(recombined);
+                localStorage.setItem("data", JSON.stringify(recombined));
+                window.location.reload();
+            })
+            .catch((err) => console.log(err));
+        } 
+        else {
+            let path = ''
+            if (type === "수질 데이터") {
+                path = `/ocean-quality/mine/chunk?dataUUID=${id}`;
+            } else if (type === "대기질 데이터") {
+                path = `/air-quality/mine/chunk?dataUUID=${id}`;
+            } else if (type === "SEED") {
+                path = `/seed/mine/chunk?dataUUID=${id}`;
             }
 
-            headers = headers.map((header) => engToKor(header));
-            
-            // 각각의 딕셔너리에서 값만 추출하여 리스트로 변환
-            const keysToExclude = ["id", "dataUUID", "saveDate", "dateString"];
+            customAxios.get(path)
+            .then((res)=>{
+                let headers = Object.keys(res.data[0]).filter(
+                    (key) => key !== "id" && key !== "dataUUID" && key !== "saveDate" && key !== "dateString"
+                );
 
-            const values = res.data.map(item => {
-                const filteredItem = Object.keys(item)
-                    .filter(key => !keysToExclude.includes(key))
-                    .reduce((obj, key) => {
-                    obj[key] = item[key];
-                    return obj;
-                    }, {});
-                return Object.values(filteredItem);
-            });
+                const attributesToCheck = [
+                    "co2",
+                    "dox",
+                    "dust",
+                    "hum",
+                    "hum_EARTH",
+                    "lux",
+                    "ph",
+                    "pre",
+                    "temp",
+                    "tur"  
+                ];
+                
+                for (const attribute of attributesToCheck) {
+                    const isAllZero = res.data.every(item => item[attribute] === 0);
+                    // 해당 속성이 모두 0일 때, headers에서 제거
+                    if (isAllZero) {
+                        headers = headers.filter(
+                            (header) => header !== attribute
+                        );
+                    }
+                }
 
-            // 최종 결과 생성 (헤더 + 값)
-            const recombined = [headers, ...values];
-            
-            setData(recombined);
-            localStorage.setItem("data", JSON.stringify(recombined));
-            window.location.reload();
-        })
-        .catch((err) => console.log(err));
+                headers = headers.map((header) => engToKor(header));
+                
+                // 각각의 딕셔너리에서 값만 추출하여 리스트로 변환
+                const keysToExclude = ["id", "dataUUID", "saveDate", "dateString"];
+
+                const values = res.data.map(item => {
+                    const filteredItem = Object.keys(item)
+                        .filter(key => !keysToExclude.includes(key))
+                        .reduce((obj, key) => {
+                        obj[key] = item[key];
+                        return obj;
+                        }, {});
+                    return Object.values(filteredItem);
+                });
+
+                // 최종 결과 생성 (헤더 + 값)
+                const recombined = [headers, ...values];
+                
+                setData(recombined);
+                localStorage.setItem("data", JSON.stringify(recombined));
+                window.location.reload();
+            })
+            .catch((err) => console.log(err));
+        }
     };
     
     const [filteredData, setFilteredData] = useState([]);
