@@ -43,7 +43,7 @@ customAxios.interceptors.response.use(
             alert("권한이 없습니다");
         }
         else if(error.response.request.status === RESPONSE_BAD_REQ) {
-            alert(error.response.data);
+            alert("잘못된 요청입니다");
         }
         return Promise.reject(error);
     }

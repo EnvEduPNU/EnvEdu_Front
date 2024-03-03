@@ -112,7 +112,7 @@ const SampleSocket = forwardRef((props, ref) => {
      * 커넥션 생성 성공 시, 센서 기기에서 전송하는 데이터를 받기 위해 MAC 주소를 이용한 경로로 subscribe
      */
     function onConnected() {
-        setConnected(true);
+        //setConnected(true);
         stompClient.subscribe("/topic/user/" + props.mac, onMessageReceived, onError);
     }
 
@@ -141,7 +141,8 @@ const SampleSocket = forwardRef((props, ref) => {
          */
         lastReceivedDate = new Date();
         setIsConnectionDropped(false);
-
+        setConnected(true);
+        
         /**
          * 받은 데이터 파싱 
          */
