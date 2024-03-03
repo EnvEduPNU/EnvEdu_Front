@@ -106,6 +106,7 @@ const MyData = () => {
             customAxios.get(`/dataLiteracy/customData/download/${id}`)
             .then((res) => {
                 //수정 필요
+                console.log(res.data);
                 setIsCustom(true);
                 setDetails(res.data);
 
