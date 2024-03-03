@@ -4,6 +4,12 @@ import Thumbnail from "../../Component/Thumbnail/Thumbnail";
 import { useNavigate } from "react-router-dom";
 import { useEClassStore } from "../../store/eClassStore";
 import Dropdown from "react-multilevel-dropdown";
+import {
+  createEclass,
+  getEclassDetail,
+  getEclassList,
+} from "../../api/eclassApi";
+import { useEffect } from "react";
 
 const gradeObj = {
   초등학생: ["1학년", "2학년", "3학년", "4학년", "5학년", "6학년", "공통"],
@@ -52,6 +58,12 @@ const EClassPage = () => {
     eClassData,
   } = useEClassStore();
 
+  useEffect(() => {
+    getEclassDetail()
+      .then(res => console.log(res.data))
+      .catch(error => console.error(error));
+  }, []);
+
   const onClickSaveBtn = () => {
     const noRemoveEclassData = eClassData.map(page =>
       page.filter(data => !data["isRemove"])
@@ -67,7 +79,9 @@ const EClassPage = () => {
     };
     console.log(saveData);
     localStorage.setItem("eclass", JSON.stringify(saveData));
-
+    createEclass(saveData)
+      .then(res => console.log(res))
+      .catch(error => console.log(error));
     alert("저장되었습니다.");
   };
 
