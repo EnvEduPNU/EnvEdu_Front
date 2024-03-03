@@ -43,19 +43,35 @@ export default function ReadExcel() {
     const handleChangeLabel = (e) => {
         setLabel(e.target.value);
     }
-    
+
     const navigate = useNavigate('');
     const handleSave = () => {
-        customAxios.post('/dataupload', {
-            data: excelData, 
-            label: label,
-            memo: memo
-        })
-            .then(() => {
-                alert("데이터가 저장되었습니다.");
-                navigate('/myData');
+        if (label === 'CUSTOM') {
+            //console.log(excelData.slice(1))
+            customAxios.post('/dataupload', {
+                properties: excelData[0],
+                data: excelData.slice(1), 
+                label: label,
+                memo: memo
             })
-            .catch((err) => console.log(err));
+                .then(() => {
+                    alert("데이터가 저장되었습니다.");
+                    navigate('/myData');
+                })
+                .catch((err) => console.log(err));
+        }
+        else {
+            customAxios.post('/dataupload', {
+                data: excelData, 
+                label: label,
+                memo: memo
+            })
+                .then(() => {
+                    alert("데이터가 저장되었습니다.");
+                    navigate('/myData');
+                })
+                .catch((err) => console.log(err));
+        } 
     }
 
     console.log(excelData);
