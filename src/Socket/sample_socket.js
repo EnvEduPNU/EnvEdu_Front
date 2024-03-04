@@ -3,8 +3,10 @@ import {useEffect, useState} from "react";
 import SingleDataContainer from "./SingleDataContainer";
 import {decodeToken} from "react-jwt";
 import {customAxios} from "../Common/CustomAxios";
-import { BsRecordCircle } from "react-icons/bs";
-import { FaRegStopCircle } from "react-icons/fa";
+
+import { FaPlay } from "react-icons/fa";
+import { FaPause } from "react-icons/fa6";
+
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
@@ -279,7 +281,7 @@ const SampleSocket = forwardRef((props, ref) => {
                             }}
                             onClick={handleShow}
                             >   
-                                <BsRecordCircle color='red' style={{ marginRight: '0.5rem' }}/>
+                                <FaPlay style={{ marginRight: '0.5rem' }}/>
                                 데이터 기록
                             </div>
                         )
@@ -417,7 +419,7 @@ const SampleSocket = forwardRef((props, ref) => {
                         onClick={() => {
                             isFinished = true;
                         }}>
-                            <FaRegStopCircle style={{ marginRight: '0.5rem' }}/>
+                            <FaPause size="20" style={{ marginRight: '0.5rem' }}/>
                             기록 중지
                         </div>
                     }
