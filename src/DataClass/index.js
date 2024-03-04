@@ -6,6 +6,7 @@ import cardImg from "./card.jpg";
 import { getEclassList } from "../EClass/api/eclassApi";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
+import { Badge, Stack } from "react-bootstrap";
 
 export default function EClassList() {
   const naviate = useNavigate();
@@ -21,7 +22,7 @@ export default function EClassList() {
     <Wrapper>
       <h3 style={{ marginBottom: "2rem" }}>E-class 목록</h3>
       <div style={{ display: "flex", gap: "30px", flexWrap: "wrap" }}>
-        <Card style={{ width: "18rem", height: "450px", cursor: "pointer" }}>
+        <Card style={{ width: "18rem", height: "400px", cursor: "pointer" }}>
           <div
             onClick={() => {
               naviate("/E-Classes/new");
@@ -42,9 +43,23 @@ export default function EClassList() {
         {eclasses.map((eclass, idx) => (
           <Card
             key={idx}
-            style={{ width: "18rem", height: "450px", cursor: "pointer" }}
+            style={{ width: "18rem", height: "400px", cursor: "pointer" }}
+            onClick={() => naviate("/slide")}
           >
             <Card.Img variant="top" src={cardImg} />
+            <Stack
+              direction="horizontal"
+              gap={2}
+              style={{
+                justifyContent: "flex-end",
+                padding: "10px 0",
+                paddingRight: "10px",
+              }}
+            >
+              <Badge bg="primary">{eclass?.gradeLabel}</Badge>
+              <Badge bg="info">{eclass?.subjectLabel}</Badge>
+              <Badge bg="dark">{eclass?.dataTypeLabel}</Badge>
+            </Stack>
             <Card.Body>
               <Card.Title style={{ fontWeight: "bold" }}>
                 {eclass.title}
@@ -52,11 +67,11 @@ export default function EClassList() {
               <Card.Text style={{ marginTop: "1rem" }}>
                 {eclass.description}
               </Card.Text>
-              <a href="/slide" target="_blank">
+              {/* <a href="/slide" target="_blank">
                 <Button variant="primary" style={{ width: "7rem" }}>
                   Start
                 </Button>
-              </a>
+              </a> */}
             </Card.Body>
           </Card>
         ))}
