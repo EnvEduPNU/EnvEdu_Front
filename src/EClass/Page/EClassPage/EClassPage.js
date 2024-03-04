@@ -58,11 +58,11 @@ const EClassPage = () => {
     eClassData,
   } = useEClassStore();
 
-  useEffect(() => {
-    getEclassDetail()
-      .then(res => console.log(res.data))
-      .catch(error => console.error(error));
-  }, []);
+  // useEffect(() => {
+  //   getEclassList()
+  //     .then(res => console.log(res.data))
+  //     .catch(error => console.error(error));
+  // }, []);
 
   const onClickSaveBtn = () => {
     const noRemoveEclassData = eClassData.map(page =>
