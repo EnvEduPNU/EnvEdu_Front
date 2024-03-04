@@ -8,6 +8,11 @@ import { FaRegStopCircle } from "react-icons/fa";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
+import React, { forwardRef, useImperativeHandle } from 'react';
+import { MdError } from "react-icons/md";
+import { MdSignalWifiStatusbarConnectedNoInternet } from "react-icons/md";
+import { ImConnection } from "react-icons/im";
+
 const stomp = require('stompjs');
 /**
  * 웹 소켓 연결을 위한 stompClient
@@ -32,7 +37,11 @@ let isFinished = false;
  */
 let lastReceivedDate = null;
 
-function SampleSocket(props) {
+const SampleSocket = forwardRef((props, ref) => {
+    useImperativeHandle(ref, () => ({
+        register,
+    }));
+
     // 선택된 데이터 타입들을 저장하는 상태
     const [selectedTypes, setSelectedTypes] = useState([]);
 
@@ -103,7 +112,7 @@ function SampleSocket(props) {
      * 커넥션 생성 성공 시, 센서 기기에서 전송하는 데이터를 받기 위해 MAC 주소를 이용한 경로로 subscribe
      */
     function onConnected() {
-        setConnected(true);
+        //setConnected(true);
         stompClient.subscribe("/topic/user/" + props.mac, onMessageReceived, onError);
     }
 
@@ -132,7 +141,8 @@ function SampleSocket(props) {
          */
         lastReceivedDate = new Date();
         setIsConnectionDropped(false);
-
+        setConnected(true);
+        
         /**
          * 받은 데이터 파싱 
          */
@@ -163,7 +173,6 @@ function SampleSocket(props) {
 
     useEffect(() => {
         if (save) {
-            console.log("save==true 직후", selectedTypes)
             // receiveObject를 복제
             const updatedReceiveObject = { ...receiveObject };
 
@@ -210,7 +219,6 @@ function SampleSocket(props) {
             saveData.push(JSON.stringify(updatedReceiveObject));
             setSaveData([...saveData]);
             if (isFinished) {
-                console.log("isFinished 이후", selectedTypes)
                 customAxios.post("/seed/save/continuous", {data: saveData, memo: memo})
                     .then(() => {
                         console.log(saveData) //location, period 확인
@@ -224,19 +232,32 @@ function SampleSocket(props) {
                 setSaveData([...saveData]);
             }
         }
-    }, [save, selectedTypes, isFinished])
+    }, [save, selectedTypes, isFinished]);
+
+    useEffect(() => {
+        // 컴포넌트가 마운트될 때 register 함수를 자동으로 호출
+        register();
+    }, []);
 
     return (
             <div>
                 <div style={{padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between'}}>
                     <div>
-                        <span onClick={() => register()} style={{cursor: 'pointer', background: '#FFF', padding: '0.5rem', fontSize: '16px', fontWeight: '600', borderRadius: '0.625rem', marginRight: '0.5rem'}}>
-                                <img src="/assets/img/start.png" style={{marginRight: '0.3rem'}} />
-                                측정 시작
-                        </span>
-                        {connected  && isConnectionDropped && 
-                            <span style={{padding: '0.5rem', fontSize: '1.2rem', fontWeight: '600', borderRadius: '0.625rem'}}>
-                                전송 중단                    
+                        {connected && !isConnectionDropped && 
+                            <span style={{padding: '0.5rem', fontSize: '1rem', fontWeight: '600', borderRadius: '0.625rem', color: 'blue'}}>
+                                <ImConnection size="20"/> 연결됨                 
+                            </span>
+                        }
+
+                        {!connected && 
+                            <span style={{padding: '0.5rem', fontSize: '1rem', fontWeight: '600', borderRadius: '0.625rem', color: 'red'}}>
+                                <MdError size="20"/> 연결 해제                   
+                            </span>
+                        }
+
+                        {connected && isConnectionDropped && 
+                            <span style={{padding: '0.5rem', fontSize: '1rem', fontWeight: '600', borderRadius: '0.625rem', color: 'red'}}>
+                                <MdSignalWifiStatusbarConnectedNoInternet size="20"/> 전송 중단                    
                             </span>
                         }
                     </div>
@@ -394,7 +415,6 @@ function SampleSocket(props) {
                             cursor: 'pointer',
                         }}
                         onClick={() => {
-                            console.log(selectedTypes);
                             isFinished = true;
                         }}>
                             <FaRegStopCircle style={{ marginRight: '0.5rem' }}/>
@@ -427,6 +447,6 @@ function SampleSocket(props) {
                 </div>
             </div>
         );
-}
+})
 
 export default SampleSocket;

@@ -4,7 +4,15 @@ import { customAxios } from "../Common/CustomAxios";
 //import UserMacList from "./UserMacList";
 import SampleSocket from "./sample_socket";
 
+import React, { useRef } from 'react';
+
 export default function Sample() {
+    const sampleSocketRef = useRef();
+
+    const handleRegister = () => {
+        sampleSocketRef.current?.register();
+    };
+
     // click한 div의 index 저장하는 배열
     const [clickedIndexes, setClickedIndexes] = useState([]);
 
@@ -16,7 +24,7 @@ export default function Sample() {
             setClickedIndexes([...clickedIndexes, index]);
         }
     };
-    
+
     const [connectableSocket, setConnectableSocket] = useState([]);
 
     useEffect(()=>{
@@ -35,7 +43,6 @@ export default function Sample() {
         { username: "user4", elements: [{ deviceName: 'device4', mac: 'AA:BB:CC:DD:EE:FF' }] }
     ]);
     */
-
     return(
         <div style={{fontSize: "1.5em"}} className="sample">
             <div className="row d-flex justify-content-center">
@@ -72,7 +79,7 @@ export default function Sample() {
                                                     borderRadius: '1.25rem',
                                                     background: '#D9DCFF'
                                                 }}
-                                                onClick={() => SampleSocket.register()}>
+                                                >
                                                     {element.deviceName}
                                             </div>
                                             
@@ -89,15 +96,26 @@ export default function Sample() {
                                                     {item.username}
                                                 </div>
                                             
-                                                <div className="showBtn" onClick={() => handleShowing(index)}>
-                                                    {clickedIndexes.includes(index) ? '닫기' : '보기'}
+                                                <div className="showBtn" onClick={() => {
+                                                    handleShowing(index); 
+
+                                                    //handleRegister();
+                                                    
+                                                    /*
+                                                    console.log(clickedIndexes.includes(index))
+                                                    if (!clickedIndexes.includes(index)) {
+                                                        handleRegister();
+                                                    }*/
+                                                    
+                                                }}>
+                                                    {clickedIndexes.includes(index) ? '닫기' : '데이터 보기'}
                                                 </div>
                                             </div>
                                         
                                         </div>
                                         
                                     {clickedIndexes.includes(index) &&
-                                        <SampleSocket mac={element.mac} name={element.deviceName} username={item.username} clickedIndexes={clickedIndexes} />
+                                        <SampleSocket ref={sampleSocketRef} mac={element.mac} name={element.deviceName} username={item.username} clickedIndexes={clickedIndexes} />
                                     }   
                                     </div>
                                 ))}

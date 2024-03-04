@@ -21,13 +21,15 @@ import What from "./About/What/What";
 import News from "./Learnmore/News/News";
 import Research from "./Learnmore/Research/Research";
 import Training from "./Learnmore/Train/Training";
+import Training1 from "./Learnmore/Train/Training1";
+import Training2 from "./Learnmore/Train/Training2";
+import Training3 from "./Learnmore/Train/Training3";
 import Implementation from "./Learnmore/Implementation/Implementation";
 import EmailAuth from "./User/Register/EmailAuth";
 import AdminLogin from "./Admin/Login/AdminLogin";
 import DeviceList from "./Admin/Device/DeviceList";
 import ContactUs from "./Contact/ContactUs";
 import Resource from "./Learnmore/Resource/Resource";
-import Tboard from "./Learnmore/Train/Tborad";
 import OpenApi from "./OpenApi/OpenApi";
 import OpenApiPast from "./OpenApi/openAPIPast";
 import Search from "./OpenApi/search";
@@ -190,13 +192,20 @@ function App() {
           <Route path="/news" exact={true} element={<News />} />
           <Route path="/research" exact={true} element={<Research />} />
           <Route path="/training" exact={true} element={<Training />} />
+          <Route path="/training1" exact={true} element={<Training1 />} />
+          <Route path="/training2" exact={true} element={<Training2 />} />
+          <Route path="/training3" exact={true} element={<Training3 />} />
+          <Route
+            path="/implementation"
+            exact={true}
+            element={<Implementation />}
+          />
           <Route
             path="/implementation"
             exact={true}
             element={<Implementation />}
           />
           <Route path="/resource" exact={true} element={<Resource />} />
-          <Route path="/tboard" exact={true} element={<Tboard />} />
 
           {/*Admin*/}
           <Route path="/admin/login" exact={true} element={<AdminLogin />} />
@@ -213,7 +222,7 @@ function App() {
           />*/}
 
           {/*ContactUs*/}
-          <Route path="/contactus" exact={true} element={<ContactUs />} />
+          <Route path="/contact" exact={true} element={<ContactUs />} />
 
           <Route path="/slide" exact={true} element={<SlidePage />} />
 

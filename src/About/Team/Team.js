@@ -5,6 +5,7 @@ import { FaPhoneAlt } from "react-icons/fa";
 import About1 from './Image/About1.png';
 import About2 from './Image/About2.jpg';
 import About3 from './Image/About3.jpg';
+import About4 from './Image/About4.jpeg';
 
 const Card = ({ img, name, position, profile, email, call }) => {
   return (
@@ -99,6 +100,25 @@ export default function Team() {
           }
           email="woonseok.cho@gmail.com"
           call="051)510-1877"
+        />
+
+        <Card 
+          img={About4}
+          name="이동영"
+          position="외부참여 연구원"
+          profile={
+            <>
+            해원초등학교
+            <br />
+            부산교육대학교 강의교수
+            <br />
+            이학박사수료(지구과학), 교육학석사(영재교육)
+            <br />
+            과학교육, 융합교육, STEM, Maker, 공학교육
+            </>
+          }
+          email="shainare00@hanmail.net"
+          call="051)510-1642"
         />
 
       </div>

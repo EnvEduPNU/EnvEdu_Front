@@ -99,49 +99,63 @@ const MyData = () => {
         }
     }, []);
 
+    const [isCustom, setIsCustom] = useState(false);
     const [details, setDetails] = useState([]);
     const getTable = (type, id) => {
-        let path = ''
-        if (type === "수질 데이터") {
-            path = `/ocean-quality/mine/chunk?dataUUID=${id}`;
-        } else if (type === "대기질 데이터") {
-            path = `/air-quality/mine/chunk?dataUUID=${id}`;
-        } else if (type === "SEED") {
-            path = `/seed/mine/chunk?dataUUID=${id}`;
-        }
+        if (type === "CUSTOM") {
+            customAxios.get(`/dataLiteracy/customData/download/${id}`)
+            .then((res) => {
+                //수정 필요
+                console.log(res.data);
+                setIsCustom(true);
+                setDetails(res.data);
 
-        customAxios.get(path)
-        .then((res)=>{
-            setDetails(res.data);
-                let headers = Object.keys(res.data[0]).filter(
-                (key) => key !== "id" && key !== "dataUUID" && key !== "saveDate" && key !== "dateString"
-            );
-
-            const attributesToCheck = [
-                "co2",
-                "dox",
-                "dust",
-                "hum",
-                "hum_EARTH",
-                "lux",
-                "ph",
-                "pre",
-                "temp",
-                "tur"  
-            ];
-            
-            for (const attribute of attributesToCheck) {
-                const isAllZero = res.data.every(item => item[attribute] === 0);
-                // 해당 속성이 모두 0일 때, headers에서 제거
-                if (isAllZero) {
-                    headers = headers.filter(
-                        (header) => header !== attribute
-                    );
-                }
+            })
+            .catch((err) => console.log(err));
+        } 
+        else {
+            let path = ''
+            if (type === "수질 데이터") {
+                path = `/ocean-quality/mine/chunk?dataUUID=${id}`;
+            } else if (type === "대기질 데이터") {
+                path = `/air-quality/mine/chunk?dataUUID=${id}`;
+            } else if (type === "SEED") {
+                path = `/seed/mine/chunk?dataUUID=${id}`;
             }
-            setHeaders(headers);
-        })
-        .catch((err) => console.log(err));
+
+            customAxios.get(path)
+            .then((res)=>{
+                setDetails(res.data);
+                let headers = Object.keys(res.data[0]).filter(
+                    (key) => key !== "id" && key !== "dataUUID" && key !== "saveDate" && key !== "dateString"
+                );
+
+                const attributesToCheck = [
+                    "co2",
+                    "dox",
+                    "dust",
+                    "hum",
+                    "hum_EARTH",
+                    "lux",
+                    "ph",
+                    "pre",
+                    "temp",
+                    "tur"  
+                ];
+                
+                for (const attribute of attributesToCheck) {
+                    const isAllZero = res.data.every(item => item[attribute] === 0);
+                    // 해당 속성이 모두 0일 때, headers에서 제거
+                    if (isAllZero) {
+                        headers = headers.filter(
+                            (header) => header !== attribute
+                        );
+                    }
+                }
+                setHeaders(headers);
+            })
+            .catch((err) => console.log(err));
+        }
     };
 
     const [headers, setHeaders] = useState([]);
@@ -249,9 +263,10 @@ const MyData = () => {
                     </div>
                 </div>
             </div>
-                  
+            
+            {/* 수정 */}
             <div className='myData-right'>
-                {details.length !== 0 && 
+                {details.length !== 0 && !isCustom &&
                     <>
                         <div style={{display: 'flex', justifyContent: 'flex-end'}}>
                             <button 
@@ -293,6 +308,53 @@ const MyData = () => {
                                     </tr>
                                 ))}
                             </tbody>
+                        </table>
+                    </>
+                }
+
+                {details.length !== 0 && isCustom &&
+                    <>
+                        <div style={{display: 'flex', justifyContent: 'flex-end'}}>
+                            <button 
+                                className='excel-download'
+                                onClick={() => handleDownload()}>
+                                엑셀 파일로 저장
+                            </button>
+                        </div>
+                        <table border="1" className='myData-detail'>
+                            <thead>
+                                <tr>
+                                    {details.properties.map((property) => (
+                                        <th key={property}>{property}</th>
+                                    ))}
+                                    <th>
+                                        <input
+                                            type="checkbox"
+                                            onChange={() => handleFullCheck()}
+                                            checked={isFull}
+                                        ></input>
+                                    </th>
+                                </tr>
+                            </thead>
+                            
+                            <tbody>
+                                {details.data.map((row, rowIndex) => (
+                                    <tr key={rowIndex}>
+                                        {row.map((item, itemIndex) => (
+                                            <td key={itemIndex}>{item}</td>
+                                        ))}
+                                        <td>
+                                            <input
+                                                type="checkbox"
+                                                name={row}
+                                                checked={selectedItems.includes(row)}
+                                                onChange={() => handleViewCheckBoxChange(row)}
+                                            ></input>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+
                         </table>
                     </>
                 }

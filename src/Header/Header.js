@@ -154,7 +154,7 @@ function Header() {
                 <NavLink className={'nav-link'} to="/dataLiteracy/dataLoad">
                   Data Literacy
                 </NavLink>
-                <NavLink className={'nav-link'} to="/">
+                <NavLink className={'nav-link'} to="/resource">
                   Education Resources
                 </NavLink>
                 <NavLink className={'nav-link'} to="/">
@@ -179,11 +179,6 @@ function Header() {
                 <NavLink className={'nav-link'} to="/implementation">
                   Implementation
                 </NavLink>
-                {/*
-                <NavLink className={'nav-link'} to="/resourceBoard">
-                  Education Resources
-                </NavLink>
-                */}
               </NavDropdown>
               <NavDropdown
                 title="CONTACT"
@@ -191,20 +186,15 @@ function Header() {
                 style={{ fontSize: '1.2em' }}
                 className={'mx-2'}
               >
-                <NavLink className={'nav-link'} to="/">
+                <NavLink className={'nav-link'} to="/contact">
                   Contact us
                 </NavLink>
-                <NavLink className={'nav-link'} to="/">
+                <NavLink className={'nav-link'} to="/notice">
                   Announcement
                 </NavLink>
                 <NavLink className={'nav-link'} to="/board">
                   Board
                 </NavLink>
-                {/*
-                <NavLink className={'nav-link'} to="/notice">
-                  공지
-                </NavLink>
-                */}
               </NavDropdown>
             </Nav>
           </Container>

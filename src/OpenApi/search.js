@@ -88,7 +88,7 @@ export default function Search() {
                     <div key={index} className="station-container">
                         <div>
                             <span>측정소명</span> 
-                            <Link to={"/openAPI/past"} state={{ stationName: station.stationName }}>{station.stationName}</Link>
+                            <Link to={"/openAPI/past"} state={{ stationName: station.stationName, addr: station.addr }}>{station.stationName}</Link>
                         </div>
                             
                         <div>
