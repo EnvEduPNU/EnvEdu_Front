@@ -20,10 +20,8 @@ class MatrixApiConverter {
   convert(data) {
     return {
       ...data,
-      properties: this.convertArrToApiArr(data.data[0]),
-      data: this.convertArrToApiArr(
-        data.data.slice(1).map(arr => this.convertArrToApiArr(arr))
-      ),
+      properties: JSON.stringify(data.data[0]),
+      data: JSON.stringify(data.data.slice(1)),
     };
   }
 
@@ -44,10 +42,13 @@ class ChartApiConverter {
     canShare,
     data,
   }) {
+    console.log(data);
     const { graphIdx, variables, axisData, metaData } = data;
     return {
       classroomSequenceType,
       studentVisibleStatus,
+      properties: JSON.stringify(data.data.slice(1)),
+      data: JSON.stringify(data.data[0]),
       title,
       canSubmit,
       canShare,

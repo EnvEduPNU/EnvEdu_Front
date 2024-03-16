@@ -3,7 +3,7 @@ import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import { Link, useNavigate } from "react-router-dom";
 import cardImg from "./card.jpg";
-import { getEclassList } from "../EClass/api/eclassApi";
+import { getEclassDetail, getEclassList } from "../EClass/api/eclassApi";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Badge, Stack } from "react-bootstrap";
@@ -16,6 +16,8 @@ export default function EClassList() {
     getEclassList()
       .then(res => setEclasses(res.data))
       .catch(error => console.error(error));
+
+    getEclassDetail().then(res => console.log(res));
   }, []);
 
   return (
