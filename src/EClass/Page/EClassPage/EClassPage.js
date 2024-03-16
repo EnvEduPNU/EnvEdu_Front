@@ -64,12 +64,6 @@ const EClassPage = () => {
     eClassData,
   } = useEClassStore();
 
-  // useEffect(() => {
-  //   getEclassList()
-  //     .then(res => console.log(res.data))
-  //     .catch(error => console.error(error));
-  // }, []);
-
   const onClickSaveBtn = () => {
     const noRemoveEclassData = eClassData.map(page =>
       page.filter(data => !data["isRemove"])
@@ -86,9 +80,14 @@ const EClassPage = () => {
     console.log(saveData);
     localStorage.setItem("eclass", JSON.stringify(saveData));
     createEclass(saveData)
-      .then(res => console.log(res))
-      .catch(error => console.log(error));
-    alert("저장되었습니다.");
+      .then(res => {
+        console.log(res);
+        alert("저장되었습니다.");
+      })
+      .catch(error => {
+        console.log(error);
+        alert("저장하는데 문제가 생겼습니다.");
+      });
   };
 
   return (
