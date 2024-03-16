@@ -51,8 +51,8 @@ export class ChartApiConverter {
     return {
       classroomSequenceType,
       studentVisibleStatus,
-      properties: JSON.stringify(data.data.slice(1)),
-      data: JSON.stringify(data.data[0]),
+      properties: JSON.stringify(data.data[0]),
+      data: JSON.stringify(data.data.slice(1)),
       title,
       canSubmit,
       canShare,

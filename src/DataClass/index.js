@@ -16,8 +16,6 @@ export default function EClassList() {
     getEclassList()
       .then(res => setEclasses(res.data))
       .catch(error => console.error(error));
-
-    getEclassDetail().then(res => console.log(res));
   }, []);
 
   return (
@@ -46,7 +44,7 @@ export default function EClassList() {
           <Card
             key={idx}
             style={{ width: "18rem", height: "400px", cursor: "pointer" }}
-            onClick={() => naviate("/slide")}
+            onClick={() => naviate(`/slide/${eclass.id}`)}
           >
             <Card.Img variant="top" src={cardImg} />
             <Stack

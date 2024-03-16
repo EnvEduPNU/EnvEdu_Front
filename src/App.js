@@ -224,7 +224,7 @@ function App() {
           {/*ContactUs*/}
           <Route path="/contact" exact={true} element={<ContactUs />} />
 
-          <Route path="/slide" exact={true} element={<SlidePage />} />
+          <Route path="/slide/:id" exact={true} element={<SlidePage />} />
 
           {/*DataLiteracy */}
           <Route path="/dataLiteracy">

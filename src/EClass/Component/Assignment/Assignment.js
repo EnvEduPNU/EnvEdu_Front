@@ -5,12 +5,18 @@ import * as Styled from "./Styled";
 import makePdf from "../../../DataLiteracy/utils/makePdf";
 import { useGraphDataStore } from "../../../Study/store/graphStore";
 import { useTabStore } from "../../../Study/store/tabStore";
-import React from "react";
+import React, { useEffect } from "react";
+import { getEclassDetail } from "../../api/eclassApi";
+import { convertApiToEclassData } from "../../utils/converApiToEclassData";
+import { useParams } from "react-router-dom";
 
 function Assignment() {
+  const { id } = useParams();
   const eClassDatas = useEClassAssignmentStore(
     state => state.eClassDatasForAssignment
   );
+  const appendEclass = useEClassAssignmentStore(state => state.appendEclass);
+  const settingEclass = useEClassAssignmentStore(state => state.settingEclass);
   const setData = useGraphDataStore(state => state.setData);
   const changeActivity = useGraphDataStore(state => state.changeActivity);
   const changeTab = useTabStore(state => state.changeTab);
@@ -28,6 +34,28 @@ function Assignment() {
     changeTab("graph");
     localStorage.setItem("data", JSON.stringify(data.data));
   };
+
+  useEffect(() => {
+    const fetchEclassDetail = async () => {
+      // localStorage에서 데이터를 시도
+      const storedData = localStorage.getItem(`eclassDetail-${id}`);
+      if (storedData) {
+        settingEclass(JSON.parse(storedData));
+      } else {
+        // 데이터가 localStorage에 없을 경우 API 호출
+        const res = await getEclassDetail(id);
+        const convertedData = convertApiToEclassData(res.data);
+        appendEclass(convertedData);
+        // 결과를 localStorage에 저장
+        // localStorage.setItem(
+        //   `eclassDetail-${id}`,
+        //   JSON.stringify(convertedData)
+        // );
+      }
+    };
+
+    fetchEclassDetail();
+  }, []);
 
   return (
     <Styled.Wrapper className="div_container">

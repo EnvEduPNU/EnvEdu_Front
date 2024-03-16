@@ -26,8 +26,8 @@ export const createEclass = async ({
   });
 };
 
-export const getEclassDetail = async () => {
-  return customAxios.get("/dataLiteracy/classroom?id=44");
+export const getEclassDetail = async id => {
+  return customAxios.get(`/dataLiteracy/classroom?id=${id}`);
 };
 
 export const getEclassList = async () => {

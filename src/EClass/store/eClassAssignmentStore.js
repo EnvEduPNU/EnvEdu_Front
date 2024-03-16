@@ -373,15 +373,33 @@ let eClassData = JSON.parse(localStorage.getItem("eclass")) || {
 eClassData = convertEclassData(originData);
 
 export const useEClassAssignmentStore = create((set, get) => ({
-  title: eClassData.title,
-  description: eClassData.description,
-  gradeLabel: eClassData.gradeLabel,
-  subjectLabel: eClassData.subjectLabel,
-  dataTypeLabel: eClassData.dataTypeLabel,
-  eClassDatas: eClassData.eClassData,
-  eClassDatasForAssignment: eClassData.eClassData.map(page =>
-    page.filter(data => data["studentVisibleStatus"])
-  ),
+  id: -1,
+  title: "",
+  description: "",
+  gradeLabel: "",
+  subjectLabel: "",
+  dataTypeLabel: "",
+  eClassDatas: [],
+  eClassDatasForAssignment: [],
+
+  settingEclass: eClassData => set(state => ({ ...state, ...eClassData })),
+
+  appendEclass: eClassData =>
+    set(state => {
+      return {
+        ...state,
+        id: eClassData.id,
+        title: eClassData.title,
+        description: eClassData.description,
+        gradeLabel: eClassData.gradeLabel,
+        subjectLabel: eClassData.subjectLabel,
+        dataTypeLabel: eClassData.dataTypeLabel,
+        eClassDatas: eClassData.eClassData,
+        eClassDatasForAssignment: eClassData.eClassData.map(page =>
+          page.filter(data => data["studentVisibleStatus"])
+        ),
+      };
+    }),
 
   changeEclassDataFieldValue: (pageIndex, activityIndex, key, newValue) =>
     set(state => {
@@ -428,5 +446,10 @@ export const useEClassAssignmentStore = create((set, get) => ({
       };
     }),
 }));
+
+useEClassAssignmentStore.subscribe(state => {
+  if (state.id == -1) return;
+  localStorage.setItem(`eclassDetail-${state.id}`, JSON.stringify(state));
+});
 
 export default useEClassAssignmentStore;
