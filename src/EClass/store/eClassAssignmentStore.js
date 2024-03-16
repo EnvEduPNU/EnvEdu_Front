@@ -230,7 +230,6 @@ const convertEclassData = originData => {
     dataTypeLabel,
     classroomChapters,
   } = originData;
-  console.log(classroomChapters[0].classroomSequences);
   return {
     id,
     title,
