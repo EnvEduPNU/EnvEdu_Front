@@ -158,7 +158,7 @@ export default function LeftSlidePage() {
 
           setData(recombined);
           localStorage.setItem("data", JSON.stringify(recombined));
-          window.location.reload();
+          // window.location.reload();
         })
         .catch(err => console.log(err));
     }
