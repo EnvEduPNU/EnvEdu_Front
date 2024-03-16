@@ -13,7 +13,7 @@ export class ApiConverter {
   }
 }
 
-class MatrixApiConverter {
+export class MatrixApiConverter {
   isSupport(type) {
     return type === "MATRIX";
   }
@@ -25,12 +25,17 @@ class MatrixApiConverter {
     };
   }
 
-  convertArrToApiArr(arr) {
-    return "[" + arr.join(",") + "]";
+  convertApiToAssignmentData(chunk) {
+    const data = JSON.parse(chunk.data);
+    data.unshift(JSON.parse(chunk.properties));
+    return {
+      ...chunk,
+      data,
+    };
   }
 }
 
-class ChartApiConverter {
+export class ChartApiConverter {
   isSupport(type) {
     return type === "CHART";
   }
@@ -42,7 +47,6 @@ class ChartApiConverter {
     canShare,
     data,
   }) {
-    console.log(data);
     const { graphIdx, variables, axisData, metaData } = data;
     return {
       classroomSequenceType,
@@ -72,6 +76,13 @@ class ChartApiConverter {
         this.convertAxisPropertieWithBubble(variable, axisData)
       );
     }
+
+    if (graphIdx == 5) {
+      return variables.map(variable =>
+        this.convertAxisPropertieWithMix(variable, axisData)
+      );
+    }
+
     return [];
   }
 
@@ -86,7 +97,7 @@ class ChartApiConverter {
       case 4:
         return "SCATTER";
       case 5:
-        return "MIX";
+        return "BAR_LINE_MIXED";
       default:
         return -1;
     }
@@ -113,5 +124,139 @@ class ChartApiConverter {
       maximumValue: variable.axis === "X" ? xAxis.max : yAxis.max,
       stepSize: variable.axis === "X" ? xAxis.stepSize : yAxis.stepSize,
     };
+  }
+
+  convertAxisPropertieWithMix(variable, axisData) {
+    console.log(axisData);
+    const { y1Axis, y2Axis } = axisData;
+    return {
+      axis: variable.axis,
+      axisName: variable.name,
+      axisType: variable.type.toUpperCase(),
+      minimumValue:
+        variable.axis === "X"
+          ? 0
+          : variable.axis === "Y1"
+          ? y1Axis.min
+          : y2Axis.min,
+      maximumValue:
+        variable.axis === "X"
+          ? 0
+          : variable.axis === "Y1"
+          ? y1Axis.max
+          : y2Axis.max,
+      stepSize:
+        variable.axis === "X"
+          ? 0
+          : variable.axis === "Y1"
+          ? y1Axis.stepSize
+          : y2Axis.stepSize,
+    };
+  }
+
+  convertApiToAssignmentData(chunk) {
+    const data = JSON.parse(chunk.data);
+    data.unshift(JSON.parse(chunk.properties));
+    const metaData = {
+      legendPosition: chunk.legendPosition,
+      datalabelAnchor: chunk.labelPosition,
+    };
+    return {
+      ...chunk,
+      data: {
+        graphIdx: this.convertGraphIndex(chunk.chartType),
+        data: data,
+        variables: this.convertAxisPropertiesTovariables(
+          chunk.axisProperties,
+          chunk.chartType
+        ),
+        axisData: this.convertToAxisData(chunk.axisProperties, chunk.chartType),
+        metaData,
+      },
+    };
+  }
+  convertToAxisData(axisProperties, chartType) {
+    if (chartType === "BAR" || chartType === "LINE") {
+      const xAxis = this.convertToAxis(axisProperties, "X");
+      const yAxis = this.convertToAxis(axisProperties, "Y1");
+      if (xAxis._min == null) {
+        return {
+          min: yAxis._min,
+          max: yAxis._max,
+          stepSize: yAxis._stepSize,
+        };
+      }
+      return {
+        min: xAxis._min,
+        max: xAxis._max,
+        stepSize: xAxis._stepSize,
+      };
+    }
+    if (chartType === "BUBBLE" || chartType === "SCATTER") {
+      const xAxis = this.convertToAxis(axisProperties, "X");
+      const yAxis = this.convertToAxis(axisProperties, "Y1");
+      return {
+        xAxis,
+        yAxis,
+      };
+    }
+
+    if (chartType === "BAR_LINE_MIXED") {
+      const y1Axis = this.convertToAxis(axisProperties, "Y1");
+      const y2Axis = this.convertToAxis(axisProperties, "Y2");
+      return {
+        y1Axis,
+        y2Axis,
+      };
+    }
+    return {};
+  }
+
+  convertToAxis(axisProperties, axis) {
+    const axisData = axisProperties.filter(
+      axisPropertie => axisPropertie.axis === axis
+    );
+
+    return {
+      _min: axisData[0]?.minimumValue,
+      _max: axisData[0]?.maximumValue,
+      _stepSize: axisData[0]?.stepSize,
+    };
+  }
+
+  convertAxisPropertiesTovariables(axisProperties, chartType) {
+    return axisProperties.map(axisPropertie => ({
+      _name: axisPropertie.axisName,
+      _type:
+        axisPropertie.axisType === "CATEGORICAL" ? "Categorical" : "Numeric",
+      _isSelected: true,
+      _axis: this.convertAxis(axisPropertie.axis, chartType),
+      _graph: axisPropertie.graph,
+      _unit: "",
+    }));
+  }
+
+  convertAxis(axis, chartType) {
+    if (chartType === "BAR_LINE_MIXED") return axis;
+    if (axis === "X") return axis;
+    if (axis === "Y1") return "Y";
+    return axis;
+  }
+
+  convertGraphIndex(chartType) {
+    switch (chartType) {
+      case "BAR":
+        return 0;
+      case "LINE":
+        return 1;
+      case "BUBBLE":
+        return 2;
+      case "SCATTER":
+        return 4;
+      case "BAR_LINE_MIXED":
+        return 5;
+      default:
+        return -1;
+    }
   }
 }
