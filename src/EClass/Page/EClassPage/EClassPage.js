@@ -4,11 +4,23 @@ import Thumbnail from "../../Component/Thumbnail/Thumbnail";
 import { useNavigate } from "react-router-dom";
 import { useEClassStore } from "../../store/eClassStore";
 import Dropdown from "react-multilevel-dropdown";
+import {
+  createEclass,
+  getEclassDetail,
+  getEclassList,
+} from "../../api/eclassApi";
+import { useEffect } from "react";
+
+// const gradeObj = {
+//   초등학생: ["1학년", "2학년", "3학년", "4학년", "5학년", "6학년", "공통"],
+//   중학생: ["1학년", "2학년", "3학년", "공통"],
+//   고등학생: ["1학년", "2학년", "3학년", "공통"],
+// };
 
 const gradeObj = {
-  초등학생: ["1학년", "2학년", "3학년", "4학년", "5학년", "6학년", "공통"],
-  중학생: ["1학년", "2학년", "3학년", "공통"],
-  고등학생: ["1학년", "2학년", "3학년", "공통"],
+  초등: ["1", "2", "3", "4", "5", "6", "공통"],
+  중등: ["1", "2", "3", "공통"],
+  고등: ["1", "2", "3", "공통"],
 };
 
 const subjectObj = {
@@ -21,10 +33,10 @@ const subjectObj = {
     "물리학",
     "화학",
     "지구과학",
-    "생명과학",
     "지구시스템과학",
+    "생명과학",
     "행성우주과학",
-    "기후변화와 환경상태",
+    "기후변화와 환경생태",
     "융합과학탐구",
     "역학과 에너지",
     "물질과 에너지",
@@ -36,7 +48,7 @@ const subjectObj = {
   기타: [],
 };
 
-const dataTypeArr = ["SEED", "OpenAPI", "교과서", "기타"];
+const dataTypeArr = ["SEED", "OPEN API", "교과서", "기타"];
 
 const EClassPage = () => {
   const navigate = useNavigate();
@@ -67,8 +79,15 @@ const EClassPage = () => {
     };
     console.log(saveData);
     localStorage.setItem("eclass", JSON.stringify(saveData));
-
-    alert("저장되었습니다.");
+    createEclass(saveData)
+      .then(res => {
+        console.log(res);
+        alert("저장되었습니다.");
+      })
+      .catch(error => {
+        console.log(error);
+        alert("저장하는데 문제가 생겼습니다.");
+      });
   };
 
   return (
@@ -110,12 +129,19 @@ const EClassPage = () => {
                     <Dropdown.Submenu position="right">
                       {gradeObj[item].map(subItem => (
                         <Dropdown.Item
-                          onClick={() =>
-                            changeFieldValue(
-                              "gradeLabel",
-                              `${item} (${subItem})`
-                            )
-                          }
+                          onClick={() => {
+                            if (subItem === "공통") {
+                              changeFieldValue(
+                                "gradeLabel",
+                                `${item} ${subItem}`
+                              );
+                            } else {
+                              changeFieldValue(
+                                "gradeLabel",
+                                `${item}${subItem}`
+                              );
+                            }
+                          }}
                           key={subItem}
                         >
                           {subItem}
@@ -141,10 +167,7 @@ const EClassPage = () => {
                           <Dropdown.Item
                             onClick={e => {
                               e.stopPropagation();
-                              changeFieldValue(
-                                "subjectLabel",
-                                `${item} (${subItem})`
-                              );
+                              changeFieldValue("subjectLabel", `${subItem}`);
                             }}
                             key={subItem}
                           >

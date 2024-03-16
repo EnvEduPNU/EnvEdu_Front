@@ -64,6 +64,8 @@ import SlidePage from "./Study/Page/SlidePage";
 import EClassList from "./DataClass";
 import EClassPage from "./EClass/Page/EClassPage/EClassPage";
 import CreateEClassPage from "./Study/Page/CreateEClassPage";
+import TextbookPage from "./Textbook/page/TextbookPage";
+import TextbookDetailPage from "./Textbook/page/TextbookDetaliPage/TextbookDetailPage";
 
 function App() {
   /**
@@ -193,7 +195,16 @@ function App() {
           <Route path="/training1" exact={true} element={<Training1 />} />
           <Route path="/training2" exact={true} element={<Training2 />} />
           <Route path="/training3" exact={true} element={<Training3 />} />
-          <Route path="/implementation" exact={true} element={<Implementation />} />
+          <Route
+            path="/implementation"
+            exact={true}
+            element={<Implementation />}
+          />
+          <Route
+            path="/implementation"
+            exact={true}
+            element={<Implementation />}
+          />
           <Route path="/resource" exact={true} element={<Resource />} />
 
           {/*Admin*/}
@@ -213,7 +224,7 @@ function App() {
           {/*ContactUs*/}
           <Route path="/contact" exact={true} element={<ContactUs />} />
 
-          <Route path="/slide" exact={true} element={<SlidePage />} />
+          <Route path="/slide/:id" exact={true} element={<SlidePage />} />
 
           {/*DataLiteracy */}
           <Route path="/dataLiteracy">
@@ -230,6 +241,13 @@ function App() {
             <Route path="dataload" element={<DataLoadPage />} />
             <Route path="ex" element={<DrawGraphV2Page />} />
           </Route>
+
+          <Route path="/textbook" exact={true} element={<TextbookPage />} />
+          <Route
+            path="/textbook/detail"
+            exact={true}
+            element={<TextbookDetailPage />}
+          />
         </Routes>
       </div>
 

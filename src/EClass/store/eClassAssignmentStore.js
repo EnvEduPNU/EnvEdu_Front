@@ -1,7 +1,258 @@
 import { create } from "zustand";
+import { ChartApiConverter, MatrixApiConverter } from "../api/apiConverters";
+
+const originData = {
+  id: 44,
+  title: "진짜 마지막 테스트",
+  subtitle: null,
+  description: "테이트 마지막..\n",
+  createTime: "2024-03-16T13:22:56.986859",
+  gradeLabel: "고등 공통",
+  subjectLabel: "통합과학2",
+  dataTypeLabel: "OPEN API",
+  thumbnail: null,
+  classroomChapters: [
+    {
+      id: 44,
+      title: null,
+      subtitle: null,
+      description: null,
+      createTime: "2024-03-16T13:22:56.986834",
+      classroomSequences: [
+        {
+          id: 50,
+          title: null,
+          subtitle: null,
+          description: null,
+          createTime: "2024-03-16T13:22:56.991983",
+          sequenceChunks: [
+            {
+              id: 83,
+              classroomSequenceType: "MATRIX",
+              studentVisibleStatus: true,
+              canSubmit: false,
+              canShare: true,
+              title: null,
+              content: null,
+              url: null,
+              properties: '["test1","test","test2"]',
+              data: '[["1","2","3"],["4","5","6"],["7","8","9"]]',
+              customDataChart: null,
+              legendPosition: null,
+              labelPosition: null,
+              chartType: null,
+              uuid: null,
+              axisProperties: [],
+            },
+            {
+              id: 84,
+              classroomSequenceType: "H1",
+              studentVisibleStatus: true,
+              canSubmit: false,
+              canShare: false,
+              title: "제목입니다. ",
+              content: null,
+              url: null,
+              properties: null,
+              data: null,
+              customDataChart: null,
+              legendPosition: null,
+              labelPosition: null,
+              chartType: null,
+              uuid: null,
+              axisProperties: [],
+            },
+            {
+              id: 85,
+              classroomSequenceType: "H2",
+              studentVisibleStatus: true,
+              canSubmit: false,
+              canShare: false,
+              title: "글입니다. ",
+              content: null,
+              url: null,
+              properties: null,
+              data: null,
+              customDataChart: null,
+              legendPosition: null,
+              labelPosition: null,
+              chartType: null,
+              uuid: null,
+              axisProperties: [],
+            },
+            {
+              id: 86,
+              classroomSequenceType: "DISCUSS",
+              studentVisibleStatus: true,
+              canSubmit: true,
+              canShare: false,
+              title: "",
+              content: "",
+              url: null,
+              properties: null,
+              data: null,
+              customDataChart: null,
+              legendPosition: null,
+              labelPosition: null,
+              chartType: null,
+              uuid: null,
+              axisProperties: [],
+            },
+          ],
+        },
+        {
+          id: 51,
+          title: null,
+          subtitle: null,
+          description: null,
+          createTime: "2024-03-16T13:22:56.992081",
+          sequenceChunks: [
+            {
+              id: 87,
+              classroomSequenceType: "H1",
+              studentVisibleStatus: true,
+              canSubmit: false,
+              canShare: false,
+              title: "2번째 페이지입니다. ",
+              content: null,
+              url: null,
+              properties: null,
+              data: null,
+              customDataChart: null,
+              legendPosition: null,
+              labelPosition: null,
+              chartType: null,
+              uuid: null,
+              axisProperties: [],
+            },
+            {
+              id: 88,
+              classroomSequenceType: "QNA",
+              studentVisibleStatus: true,
+              canSubmit: false,
+              canShare: false,
+              title: "질문입니다. ",
+              content: "",
+              url: null,
+              properties: null,
+              data: null,
+              customDataChart: null,
+              legendPosition: null,
+              labelPosition: null,
+              chartType: null,
+              uuid: null,
+              axisProperties: [],
+            },
+            {
+              id: 89,
+              classroomSequenceType: "CHART",
+              studentVisibleStatus: true,
+              canSubmit: false,
+              canShare: false,
+              title: "",
+              content: null,
+              url: null,
+              data: '[["1","2","3"],["4","5","6"],["7","8","9"]]',
+              properties: '["test1","test","test2"]',
+              customDataChart: null,
+              legendPosition: "NO",
+              labelPosition: "NO",
+              chartType: "BUBBLE",
+              uuid: null,
+              axisProperties: [
+                {
+                  axis: "X",
+                  axisName: "test1",
+                  axisType: "NUMERIC",
+                  minimumValue: 0,
+                  maximumValue: 100,
+                  stepSize: 10,
+                },
+                {
+                  axis: "Y1",
+                  axisName: "test",
+                  axisType: "NUMERIC",
+                  minimumValue: 0,
+                  maximumValue: 100,
+                  stepSize: 10,
+                },
+                {
+                  axis: "Z",
+                  axisName: "test2",
+                  axisType: "NUMERIC",
+                  minimumValue: 0,
+                  maximumValue: 100,
+                  stepSize: 10,
+                },
+              ],
+            },
+          ],
+        },
+        {
+          id: 52,
+          title: null,
+          subtitle: null,
+          description: null,
+          createTime: "2024-03-16T13:22:56.992128",
+          sequenceChunks: [
+            {
+              id: 90,
+              classroomSequenceType: "YOUTUBEURL",
+              studentVisibleStatus: true,
+              canSubmit: false,
+              canShare: false,
+              title: null,
+              content: null,
+              url: "https://www.youtube-nocookie.com/embed/FGNqdazP7Ns",
+              properties: null,
+              data: null,
+              customDataChart: null,
+              legendPosition: null,
+              labelPosition: null,
+              chartType: null,
+              uuid: null,
+              axisProperties: [],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+};
+
+const convertEclassData = originData => {
+  const {
+    id,
+    title,
+    description,
+    gradeLabel,
+    subjectLabel,
+    dataTypeLabel,
+    classroomChapters,
+  } = originData;
+  return {
+    id,
+    title,
+    description,
+    gradeLabel,
+    subjectLabel,
+    dataTypeLabel,
+    eClassData: classroomChapters[0].classroomSequences.map(page =>
+      page.sequenceChunks.map(chunk => {
+        if (chunk.classroomSequenceType === "MATRIX") {
+          return new MatrixApiConverter().convertApiToAssignmentData(chunk);
+        }
+        if (chunk.classroomSequenceType === "CHART") {
+          return new ChartApiConverter().convertApiToAssignmentData(chunk);
+        }
+        return chunk;
+      })
+    ),
+  };
+};
 
 // TODO: 나중에 api로 변경해야함
-const eClassData = JSON.parse(localStorage.getItem("eclass")) || {
+let eClassData = JSON.parse(localStorage.getItem("eclass")) || {
   title: "우리 학교의 공기질 측정하기",
   description:
     "1차시: 교실의 공기질 측정하기\n\n2차시 : 학교의 여러장소 공기질 측정하기\n\n3차시 : 교실과 학교의 장소별 공기질 비교하기",
@@ -55,7 +306,7 @@ const eClassData = JSON.parse(localStorage.getItem("eclass")) || {
       {
         classroomSequenceType: "H2",
         studentVisibleStatus: true,
-        title: "2. 토론해보기 ",
+        title: "2. 토론해보기awdwa ",
         canSubmit: false,
         canShare: false,
       },
@@ -118,16 +369,36 @@ const eClassData = JSON.parse(localStorage.getItem("eclass")) || {
   ],
 };
 
+eClassData = convertEclassData(originData);
+
 export const useEClassAssignmentStore = create((set, get) => ({
-  title: eClassData.title,
-  description: eClassData.description,
-  gradeLabel: eClassData.gradeLabel,
-  subjectLabel: eClassData.subjectLabel,
-  dataTypeLabel: eClassData.dataTypeLabel,
-  eClassDatas: eClassData.eClassData,
-  eClassDatasForAssignment: eClassData.eClassData.map(page =>
-    page.filter(data => data["studentVisibleStatus"])
-  ),
+  id: -1,
+  title: "",
+  description: "",
+  gradeLabel: "",
+  subjectLabel: "",
+  dataTypeLabel: "",
+  eClassDatas: [],
+  eClassDatasForAssignment: [],
+
+  settingEclass: eClassData => set(state => ({ ...state, ...eClassData })),
+
+  appendEclass: eClassData =>
+    set(state => {
+      return {
+        ...state,
+        id: eClassData.id,
+        title: eClassData.title,
+        description: eClassData.description,
+        gradeLabel: eClassData.gradeLabel,
+        subjectLabel: eClassData.subjectLabel,
+        dataTypeLabel: eClassData.dataTypeLabel,
+        eClassDatas: eClassData.eClassData,
+        eClassDatasForAssignment: eClassData.eClassData.map(page =>
+          page.filter(data => data["studentVisibleStatus"])
+        ),
+      };
+    }),
 
   changeEclassDataFieldValue: (pageIndex, activityIndex, key, newValue) =>
     set(state => {
@@ -174,5 +445,10 @@ export const useEClassAssignmentStore = create((set, get) => ({
       };
     }),
 }));
+
+useEClassAssignmentStore.subscribe(state => {
+  if (state.id == -1) return;
+  localStorage.setItem(`eclassDetail-${state.id}`, JSON.stringify(state));
+});
 
 export default useEClassAssignmentStore;
