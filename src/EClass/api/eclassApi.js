@@ -33,3 +33,7 @@ export const getEclassDetail = async id => {
 export const getEclassList = async () => {
   return customAxios.get("/dataLiteracy/classroom/mine");
 };
+
+export const getUUIDData = async uuid => {
+  return customAxios.get(`/dataLiteracy/customData/download/${uuid}`);
+};

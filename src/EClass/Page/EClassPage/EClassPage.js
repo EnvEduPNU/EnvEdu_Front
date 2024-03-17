@@ -77,8 +77,8 @@ const EClassPage = () => {
       dataTypeLabel,
       eClassData: noRemoveEclassData,
     };
-    console.log(saveData);
-    localStorage.setItem("eclass", JSON.stringify(saveData));
+
+    // localStorage.setItem("eclass", JSON.stringify(saveData));
     createEclass(saveData)
       .then(res => {
         console.log(res);

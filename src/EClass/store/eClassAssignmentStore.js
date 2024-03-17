@@ -220,36 +220,36 @@ const originData = {
   ],
 };
 
-const convertEclassData = originData => {
-  const {
-    id,
-    title,
-    description,
-    gradeLabel,
-    subjectLabel,
-    dataTypeLabel,
-    classroomChapters,
-  } = originData;
-  return {
-    id,
-    title,
-    description,
-    gradeLabel,
-    subjectLabel,
-    dataTypeLabel,
-    eClassData: classroomChapters[0].classroomSequences.map(page =>
-      page.sequenceChunks.map(chunk => {
-        if (chunk.classroomSequenceType === "MATRIX") {
-          return new MatrixApiConverter().convertApiToAssignmentData(chunk);
-        }
-        if (chunk.classroomSequenceType === "CHART") {
-          return new ChartApiConverter().convertApiToAssignmentData(chunk);
-        }
-        return chunk;
-      })
-    ),
-  };
-};
+// const convertEclassData = originData => {
+//   const {
+//     id,
+//     title,
+//     description,
+//     gradeLabel,
+//     subjectLabel,
+//     dataTypeLabel,
+//     classroomChapters,
+//   } = originData;
+//   return {
+//     id,
+//     title,
+//     description,
+//     gradeLabel,
+//     subjectLabel,
+//     dataTypeLabel,
+//     eClassData: classroomChapters[0].classroomSequences.map(page =>
+//       page.sequenceChunks.map(chunk => {
+//         if (chunk.classroomSequenceType === "MATRIX") {
+//           return new MatrixApiConverter().convertApiToAssignmentData(chunk);
+//         }
+//         if (chunk.classroomSequenceType === "CHART") {
+//           return new ChartApiConverter().convertApiToAssignmentData(chunk);
+//         }
+//         return chunk;
+//       })
+//     ),
+//   };
+// };
 
 // TODO: 나중에 api로 변경해야함
 let eClassData = JSON.parse(localStorage.getItem("eclass")) || {
@@ -368,8 +368,6 @@ let eClassData = JSON.parse(localStorage.getItem("eclass")) || {
     ],
   ],
 };
-
-eClassData = convertEclassData(originData);
 
 export const useEClassAssignmentStore = create((set, get) => ({
   id: -1,

@@ -44,7 +44,7 @@ function Assignment() {
       } else {
         // 데이터가 localStorage에 없을 경우 API 호출
         const res = await getEclassDetail(id);
-        const convertedData = convertApiToEclassData(res.data);
+        const convertedData = await convertApiToEclassData(res.data);
         appendEclass(convertedData);
         // 결과를 localStorage에 저장
         // localStorage.setItem(

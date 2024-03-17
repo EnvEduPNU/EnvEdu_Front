@@ -1,6 +1,6 @@
 import { ChartApiConverter, MatrixApiConverter } from "../api/apiConverters";
 
-export const convertApiToEclassData = originData => {
+export const convertApiToEclassData = async originData => {
   const {
     id,
     title,
@@ -10,7 +10,7 @@ export const convertApiToEclassData = originData => {
     dataTypeLabel,
     classroomChapters,
   } = originData;
-  console.log(classroomChapters[0].classroomSequences);
+
   return {
     id,
     title,
@@ -18,15 +18,21 @@ export const convertApiToEclassData = originData => {
     gradeLabel,
     subjectLabel,
     dataTypeLabel,
-    eClassData: classroomChapters[0].classroomSequences.map(page =>
-      page.sequenceChunks.map(chunk => {
-        if (chunk.classroomSequenceType === "MATRIX") {
-          return new MatrixApiConverter().convertApiToAssignmentData(chunk);
-        }
-        if (chunk.classroomSequenceType === "CHART") {
-          return new ChartApiConverter().convertApiToAssignmentData(chunk);
-        }
-        return chunk;
+    eClassData: await Promise.all(
+      classroomChapters[0].classroomSequences.map(async page => {
+        return await Promise.all(
+          page.sequenceChunks.map(async chunk => {
+            if (chunk.classroomSequenceType === "MATRIX") {
+              return new MatrixApiConverter().convertApiToAssignmentData(chunk);
+            }
+            if (chunk.classroomSequenceType === "CHART") {
+              return await new ChartApiConverter().convertApiToAssignmentData(
+                chunk
+              );
+            }
+            return chunk;
+          })
+        );
       })
     ),
   };
