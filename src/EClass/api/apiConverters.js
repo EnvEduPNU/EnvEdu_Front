@@ -60,8 +60,14 @@ export class ChartApiConverter {
       canShare,
       chartType: this.convertChartType(graphIdx),
       uuid: null,
-      legendPosition: metaData.legendPostion.toUpperCase(),
-      labelPosition: metaData.datalabelAnchor.toUpperCase(),
+      legendPosition:
+        metaData.legendPostion === "no"
+          ? "NONE"
+          : metaData.legendPostion.toUpperCase(),
+      labelPosition:
+        metaData.datalabelAnchor === "no"
+          ? "NONE"
+          : metaData.datalabelAnchor.toUpperCase(),
       axisProperties: this.convertAxisProperties(graphIdx, variables, axisData),
     };
   }
@@ -190,8 +196,14 @@ export class ChartApiConverter {
           customDataChart?.chartType
         ),
         metaData: {
-          legendPosition: customDataChart?.legendPosition,
-          datalabelAnchor: customDataChart?.labelPosition,
+          legendPosition:
+            customDataChart?.legendPosition === "NONE"
+              ? "no"
+              : customDataChart?.legendPosition,
+          datalabelAnchor:
+            customDataChart?.labelPosition === "NONE"
+              ? "no"
+              : customDataChart?.labelPosition,
         },
       },
     };
