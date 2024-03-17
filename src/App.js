@@ -65,6 +65,10 @@ import EClassList from "./DataClass";
 import EClassPage from "./EClass/Page/EClassPage/EClassPage";
 import CreateEClassPage from "./Study/Page/CreateEClassPage";
 
+import Survey from "./Survey/Survey";
+import CreateSurvey from "./Survey/Admin/CreateSurvey";
+import UploadReward from "./Survey/Admin/UploadReward";
+
 function App() {
   /**
    * 처음에 반드시 .env 파일 생성 후 REACT_APP_API_URL = ${서버 도메인} 작성
@@ -184,6 +188,24 @@ function App() {
             path="/measureContinuous"
             exact={true}
             element={<MeasureContinuous />}
+          />
+
+          <Route
+            path="/survey"
+            exact={true}
+            element={<Survey />}
+          />
+
+          <Route
+            path="/create-survey"
+            exact={true}
+            element={<CreateSurvey />}
+          />
+
+          <Route
+            path="/upload-reward"
+            exact={true}
+            element={<UploadReward />}
           />
 
           {/*Learnmore*/}
