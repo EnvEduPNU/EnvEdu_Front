@@ -1,3 +1,5 @@
+import { getUUIDData } from "./eclassApi";
+
 export class ApiConverter {
   converters = [new MatrixApiConverter(), new ChartApiConverter()];
 
@@ -58,8 +60,14 @@ export class ChartApiConverter {
       canShare,
       chartType: this.convertChartType(graphIdx),
       uuid: null,
-      legendPosition: metaData.legendPostion.toUpperCase(),
-      labelPosition: metaData.datalabelAnchor.toUpperCase(),
+      legendPosition:
+        metaData.legendPostion === "no"
+          ? "NONE"
+          : metaData.legendPostion.toUpperCase(),
+      labelPosition:
+        metaData.datalabelAnchor === "no"
+          ? "NONE"
+          : metaData.datalabelAnchor.toUpperCase(),
       axisProperties: this.convertAxisProperties(graphIdx, variables, axisData),
     };
   }
@@ -127,7 +135,7 @@ export class ChartApiConverter {
   }
 
   convertAxisPropertieWithMix(variable, axisData) {
-    console.log(axisData);
+    console.log(variable);
     const { y1Axis, y2Axis } = axisData;
     return {
       axis: variable.axis,
@@ -151,27 +159,52 @@ export class ChartApiConverter {
           : variable.axis === "Y1"
           ? y1Axis.stepSize
           : y2Axis.stepSize,
+      chartType: variable.axis === "X" ? "BAR" : variable.graph.toUpperCase(),
     };
   }
 
-  convertApiToAssignmentData(chunk) {
-    const data = JSON.parse(chunk.data);
-    data.unshift(JSON.parse(chunk.properties));
-    const metaData = {
-      legendPosition: chunk.legendPosition,
-      datalabelAnchor: chunk.labelPosition,
-    };
+  async convertApiToAssignmentData(chunk) {
+    // const data = JSON.parse(chunk.data);
+    // data.unshift(JSON.parse(chunk.properties));
+    const { customDataChart } = chunk;
+    const res = await getUUIDData(customDataChart.uuid);
+    const graphData = res.data.data.map(row =>
+      row.map(item => {
+        try {
+          // JSON.parse로 문자열에서 숫자로 변환을 시도합니다.
+          const parsedItem = JSON.parse(item);
+          const number = +parsedItem;
+          return isNaN(number) ? parsedItem : number;
+        } catch (error) {
+          // 변환에 실패하면 원래의 문자열을 반환합니다.
+          return item;
+        }
+      })
+    );
+    graphData.unshift(res.data.properties.map(item => JSON.parse(item)));
     return {
       ...chunk,
       data: {
-        graphIdx: this.convertGraphIndex(chunk.chartType),
-        data: data,
+        graphIdx: this.convertGraphIndex(customDataChart?.chartType),
+        data: graphData,
         variables: this.convertAxisPropertiesTovariables(
-          chunk.axisProperties,
-          chunk.chartType
+          customDataChart?.axisProperties,
+          customDataChart?.chartType
         ),
-        axisData: this.convertToAxisData(chunk.axisProperties, chunk.chartType),
-        metaData,
+        axisData: this.convertToAxisData(
+          customDataChart?.axisProperties,
+          customDataChart?.chartType
+        ),
+        metaData: {
+          legendPosition:
+            customDataChart?.legendPosition === "NONE"
+              ? "no"
+              : customDataChart?.legendPosition,
+          datalabelAnchor:
+            customDataChart?.labelPosition === "NONE"
+              ? "no"
+              : customDataChart?.labelPosition,
+        },
       },
     };
   }
@@ -231,7 +264,7 @@ export class ChartApiConverter {
         axisPropertie.axisType === "CATEGORICAL" ? "Categorical" : "Numeric",
       _isSelected: true,
       _axis: this.convertAxis(axisPropertie.axis, chartType),
-      _graph: axisPropertie.graph,
+      _graph: axisPropertie.chartType === "BAR" ? "Bar" : "Line",
       _unit: "",
     }));
   }
