@@ -7,7 +7,10 @@ import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import { useState } from "react";
 import useEClassAssignmentStore from "../../EClass/store/eClassAssignmentStore";
-import { getEclassShareData } from "../../EClass/api/eclassApi";
+import {
+  getEclassShareData,
+  getEclassSubmitData,
+} from "../../EClass/api/eclassApi";
 import ActivityMappingHandler from "../../EClass/utils/ActivityMappingHandler";
 
 // 바 그래프 컴포넌트
@@ -34,14 +37,23 @@ const GraphCard = ({ data }) => {
 const BottomSlidePage = () => {
   const { id, chapterId, eClassSequenceIds } = useEClassAssignmentStore();
   const [data, setData] = useState([]);
-
+  const role = localStorage.getItem("role");
+  console.log(role);
+  //ROLE_STUDENT, ROLE_EDUCATOR
   const getData = sequenceId => {
-    getEclassShareData(id, chapterId, sequenceId)
-      .then(res => {
-        setData(res.data);
-        //window.location.reload();
-      })
-      .catch(err => console.log(err));
+    if (role === "ROLE_EDUCATOR") {
+      getEclassSubmitData(id, chapterId, sequenceId)
+        .then(res => {
+          setData(res.data);
+        })
+        .catch(err => console.log(err));
+    } else if (role === "ROLE_STUDENT") {
+      getEclassShareData(id, chapterId, sequenceId)
+        .then(res => {
+          setData(res.data);
+        })
+        .catch(err => console.log(err));
+    }
   };
 
   const settings = {
@@ -61,7 +73,7 @@ const BottomSlidePage = () => {
           justifyContent: "space-between",
         }}
       >
-        <h4>공유된 데이터</h4>
+        <h4>{role === "ROLE_EDUCATOR" ? "제출" : "공유"}된 데이터</h4>
         <div style={{ display: "flex", gap: "5px" }}>
           {eClassSequenceIds.map((sequenceId, idx) => (
             <Button
