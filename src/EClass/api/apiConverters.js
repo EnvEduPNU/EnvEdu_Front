@@ -27,12 +27,14 @@ export class MatrixApiConverter {
     };
   }
 
-  convertApiToAssignmentData(chunk) {
+  convertApiToAssignmentData(chunk, sequenceId, chapterId) {
     const data = JSON.parse(chunk.data);
     data.unshift(JSON.parse(chunk.properties));
     return {
       ...chunk,
       data,
+      sequenceId,
+      chapterId,
     };
   }
 }
@@ -163,7 +165,7 @@ export class ChartApiConverter {
     };
   }
 
-  async convertApiToAssignmentData(chunk) {
+  async convertApiToAssignmentData(chunk, sequenceId, chapterId) {
     // const data = JSON.parse(chunk.data);
     // data.unshift(JSON.parse(chunk.properties));
     const { customDataChart } = chunk;
@@ -184,6 +186,8 @@ export class ChartApiConverter {
     graphData.unshift(res.data.properties.map(item => JSON.parse(item)));
     return {
       ...chunk,
+      sequenceId,
+      chapterId,
       data: {
         graphIdx: this.convertGraphIndex(customDataChart?.chartType),
         data: graphData,
