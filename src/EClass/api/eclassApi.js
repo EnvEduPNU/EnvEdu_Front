@@ -61,3 +61,15 @@ export const createShare = async (classId, chapterId, sequenceId, data) => {
     answerType: data.classroomSequenceType,
   });
 };
+
+export const getEclassShareData = async (classId, chapterId, sequenceId) => {
+  return customAxios.get(
+    `/dataLiteracy/classroom/answer/share?classId=${classId}&chapterId=${chapterId}&sequenceId=${sequenceId}&answerType=QNA`
+  );
+};
+
+export const getEclassSubmitData = async (classId, chapterId, sequenceId) => {
+  return customAxios.get(
+    `/dataLiteracy/classroom/answer/submit?classId=${classId}&chapterId=${chapterId}&sequenceId=${sequenceId}&answerType=QNA`
+  );
+};

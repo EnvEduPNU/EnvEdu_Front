@@ -49,7 +49,7 @@ function Assignment() {
         // 데이터가 localStorage에 없을 경우 API 호출
         const res = await getEclassDetail(id);
         const convertedData = await convertApiToEclassData(res.data);
-        appendEclass(convertedData);
+        appendEclass(convertedData, res.data);
       }
     };
 
@@ -63,7 +63,7 @@ function Assignment() {
     }
 
     createSubmit(
-      id,
+      +id,
       activityData.chapterId,
       activityData.sequenceId,
       activityData
@@ -79,7 +79,7 @@ function Assignment() {
     }
 
     createShare(
-      id,
+      +id,
       activityData.chapterId,
       activityData.sequenceId,
       activityData
