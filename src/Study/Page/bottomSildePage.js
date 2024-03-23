@@ -8,16 +8,23 @@ import Button from "react-bootstrap/Button";
 import { useState } from "react";
 import useEClassAssignmentStore from "../../EClass/store/eClassAssignmentStore";
 import { getEclassShareData } from "../../EClass/api/eclassApi";
+import ActivityMappingHandler from "../../EClass/utils/ActivityMappingHandler";
 
 // 바 그래프 컴포넌트
-const GraphCard = ({ title, content }) => {
+const GraphCard = ({ data }) => {
+  const activityMappingHandler = new ActivityMappingHandler();
   return (
     <div style={{ width: "450px" }}>
-      <strong>{title}</strong>
-      <Card style={{ width: "18rem", height: "12rem" }}>
-        <Card.Body>
-          <Card.Text>{content}</Card.Text>
-        </Card.Body>
+      <strong>{data.username}</strong>
+      <Card
+        style={{
+          width: "20rem",
+          height: "12rem",
+          overflowY: "auto",
+          padding: "5px",
+        }}
+      >
+        {activityMappingHandler.convertForSubmit(data)}
       </Card>
     </div>
   );
@@ -60,6 +67,7 @@ const BottomSlidePage = () => {
             <Button
               key={sequenceId}
               variant="primary"
+              style={{ width: "100px" }}
               onClick={() => getData(sequenceId)}
             >
               활동{idx + 1}
@@ -68,10 +76,7 @@ const BottomSlidePage = () => {
         </div>
       </div>
       <Slider {...settings}>
-        {data &&
-          data.map(item => (
-            <GraphCard title={item.title} content={item.content} />
-          ))}
+        {data && data.map((item, key) => <GraphCard key={key} data={item} />)}
       </Slider>
     </div>
   );

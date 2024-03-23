@@ -60,6 +60,7 @@ function Assignment() {
     const possibleSubmitTypes = ["DISCUSS", "QNA"];
     if (!possibleSubmitTypes.includes(activityData.classroomSequenceType)) {
       alert("제출을 지원하지 않는 데이터타입입니다.");
+      return;
     }
 
     createSubmit(
@@ -68,7 +69,7 @@ function Assignment() {
       activityData.sequenceId,
       activityData
     )
-      .then(res => console.log(res))
+      .then(res => alert("성공적으로 제출되었습니다."))
       .catch(error => console.log(error));
   };
 
@@ -76,6 +77,7 @@ function Assignment() {
     const possibleSubmitTypes = ["DISCUSS", "QNA"];
     if (!possibleSubmitTypes.includes(activityData.classroomSequenceType)) {
       alert("제출을 지원하지 않는 데이터타입입니다.");
+      return;
     }
 
     createShare(
@@ -84,7 +86,7 @@ function Assignment() {
       activityData.sequenceId,
       activityData
     )
-      .then(res => console.log(res))
+      .then(res => alert("성공적으로 공유되었습니다."))
       .catch(error => console.log(error));
   };
 
