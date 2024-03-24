@@ -24,22 +24,27 @@ const PaperWithToolBar = ({ pageNum, activities, eClassData }) => {
             <Styled.ActivityWrapper key={`${eClassData[idx]} ${idx}`}>
               <Styled.ActivityEditHeader>
                 <Styled.ActivityCheckBoxWrapper>
-                  <FormLabel style={{ cursor: "pointer", margin: 0 }}>
-                    제출
-                    <FormCheckInput
-                      onChange={() => onChange(idx, "canSubmit")}
-                      defaultChecked={eClassData[idx]["canSubmit"]}
-                      style={{ marginLeft: "7px" }}
-                    />
-                  </FormLabel>
-                  <FormLabel style={{ cursor: "pointer", margin: 0 }}>
-                    공유
-                    <FormCheckInput
-                      onChange={() => onChange(idx, "canShare")}
-                      defaultChecked={eClassData[idx]["canShare"]}
-                      style={{ marginLeft: "7px" }}
-                    />
-                  </FormLabel>
+                  {(eClassData[idx].classroomSequenceType === "DISCUSS" ||
+                    eClassData[idx].classroomSequenceType === "QNA") && (
+                    <>
+                      <FormLabel style={{ cursor: "pointer", margin: 0 }}>
+                        제출
+                        <FormCheckInput
+                          onChange={() => onChange(idx, "canSubmit")}
+                          defaultChecked={eClassData[idx]["canSubmit"]}
+                          style={{ marginLeft: "7px" }}
+                        />
+                      </FormLabel>
+                      <FormLabel style={{ cursor: "pointer", margin: 0 }}>
+                        공유
+                        <FormCheckInput
+                          onChange={() => onChange(idx, "canShare")}
+                          defaultChecked={eClassData[idx]["canShare"]}
+                          style={{ marginLeft: "7px" }}
+                        />
+                      </FormLabel>
+                    </>
+                  )}
                   <FormLabel style={{ cursor: "pointer", margin: 0 }}>
                     보고서
                     <FormCheckInput

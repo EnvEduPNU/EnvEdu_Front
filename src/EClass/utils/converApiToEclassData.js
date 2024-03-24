@@ -23,14 +23,24 @@ export const convertApiToEclassData = async originData => {
         return await Promise.all(
           page.sequenceChunks.map(async chunk => {
             if (chunk.classroomSequenceType === "MATRIX") {
-              return new MatrixApiConverter().convertApiToAssignmentData(chunk);
+              return new MatrixApiConverter().convertApiToAssignmentData(
+                chunk,
+                classroomChapters[0].id,
+                page.id
+              );
             }
             if (chunk.classroomSequenceType === "CHART") {
               return await new ChartApiConverter().convertApiToAssignmentData(
-                chunk
+                chunk,
+                classroomChapters[0].id,
+                page.id
               );
             }
-            return chunk;
+            return {
+              ...chunk,
+              sequenceId: page.id,
+              chapterId: classroomChapters[0].id,
+            };
           })
         );
       })

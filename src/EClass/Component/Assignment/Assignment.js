@@ -6,7 +6,11 @@ import makePdf from "../../../DataLiteracy/utils/makePdf";
 import { useGraphDataStore } from "../../../Study/store/graphStore";
 import { useTabStore } from "../../../Study/store/tabStore";
 import React, { useEffect } from "react";
-import { getEclassDetail } from "../../api/eclassApi";
+import {
+  createShare,
+  createSubmit,
+  getEclassDetail,
+} from "../../api/eclassApi";
 import { convertApiToEclassData } from "../../utils/converApiToEclassData";
 import { useParams } from "react-router-dom";
 
@@ -45,17 +49,46 @@ function Assignment() {
         // 데이터가 localStorage에 없을 경우 API 호출
         const res = await getEclassDetail(id);
         const convertedData = await convertApiToEclassData(res.data);
-        appendEclass(convertedData);
-        // 결과를 localStorage에 저장
-        // localStorage.setItem(
-        //   `eclassDetail-${id}`,
-        //   JSON.stringify(convertedData)
-        // );
+        appendEclass(convertedData, res.data);
       }
     };
 
     fetchEclassDetail();
   }, []);
+
+  const onClickSubmitBtn = async activityData => {
+    const possibleSubmitTypes = ["DISCUSS", "QNA"];
+    if (!possibleSubmitTypes.includes(activityData.classroomSequenceType)) {
+      alert("제출을 지원하지 않는 데이터타입입니다.");
+      return;
+    }
+
+    createSubmit(
+      +id,
+      activityData.chapterId,
+      activityData.sequenceId,
+      activityData
+    )
+      .then(res => alert("성공적으로 제출되었습니다."))
+      .catch(error => console.log(error));
+  };
+
+  const onClickShareBtn = async activityData => {
+    const possibleSubmitTypes = ["DISCUSS", "QNA"];
+    if (!possibleSubmitTypes.includes(activityData.classroomSequenceType)) {
+      alert("제출을 지원하지 않는 데이터타입입니다.");
+      return;
+    }
+
+    createShare(
+      +id,
+      activityData.chapterId,
+      activityData.sequenceId,
+      activityData
+    )
+      .then(res => alert("성공적으로 공유되었습니다."))
+      .catch(error => console.log(error));
+  };
 
   return (
     <Styled.Wrapper className="div_container">
@@ -69,12 +102,20 @@ function Assignment() {
               <Styled.ActivityWrapper key={activityIndex}>
                 <Styled.ActivityHeader>
                   {activityData["canSubmit"] && (
-                    <Badge style={{ cursor: "pointer" }} bg="success">
+                    <Badge
+                      onClick={() => onClickSubmitBtn(activityData)}
+                      style={{ cursor: "pointer" }}
+                      bg="success"
+                    >
                       제출하기
                     </Badge>
                   )}
                   {activityData["canShare"] && (
-                    <Badge style={{ cursor: "pointer" }} bg="success">
+                    <Badge
+                      onClick={() => onClickShareBtn(activityData)}
+                      style={{ cursor: "pointer" }}
+                      bg="success"
+                    >
                       공유하기
                     </Badge>
                   )}
@@ -95,7 +136,7 @@ function Assignment() {
                   )}
                   {activityData["isMine"] && (
                     <Badge style={{ cursor: "pointer" }} bg="info">
-                      그래프 그리기 완료
+                      그래프 그리기 완료 ✅
                     </Badge>
                   )}
                 </Styled.ActivityHeader>

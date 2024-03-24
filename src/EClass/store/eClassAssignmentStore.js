@@ -378,10 +378,12 @@ export const useEClassAssignmentStore = create((set, get) => ({
   dataTypeLabel: "",
   eClassDatas: [],
   eClassDatasForAssignment: [],
+  chapterId: -1,
+  eClassSequenceIds: [],
 
   settingEclass: eClassData => set(state => ({ ...state, ...eClassData })),
 
-  appendEclass: eClassData =>
+  appendEclass: (eClassData, data) =>
     set(state => {
       return {
         ...state,
@@ -394,6 +396,10 @@ export const useEClassAssignmentStore = create((set, get) => ({
         eClassDatas: eClassData.eClassData,
         eClassDatasForAssignment: eClassData.eClassData.map(page =>
           page.filter(data => data["studentVisibleStatus"])
+        ),
+        chapterId: data.classroomChapters[0]?.id,
+        eClassSequenceIds: data.classroomChapters[0]?.classroomSequences.map(
+          sequence => sequence.id
         ),
       };
     }),

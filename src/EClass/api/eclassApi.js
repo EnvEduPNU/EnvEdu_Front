@@ -37,3 +37,39 @@ export const getEclassList = async () => {
 export const getUUIDData = async uuid => {
   return customAxios.get(`/dataLiteracy/customData/download/${uuid}`);
 };
+
+export const createSubmit = async (classId, chapterId, sequenceId, data) => {
+  return customAxios.post("/dataLiteracy/classroom/answer", {
+    classId,
+    chapterId,
+    sequenceId,
+    title: data.title,
+    content: data.content,
+    canSubmit: true,
+    answerType: data.classroomSequenceType,
+  });
+};
+
+export const createShare = async (classId, chapterId, sequenceId, data) => {
+  return customAxios.post("/dataLiteracy/classroom/answer", {
+    classId,
+    chapterId,
+    sequenceId,
+    title: data.title,
+    content: data.content,
+    canShare: true,
+    answerType: data.classroomSequenceType,
+  });
+};
+
+export const getEclassShareData = async (classId, chapterId, sequenceId) => {
+  return customAxios.get(
+    `/dataLiteracy/classroom/answer/share?classId=${classId}&chapterId=${chapterId}&sequenceId=${sequenceId}&answerType=QNA`
+  );
+};
+
+export const getEclassSubmitData = async (classId, chapterId, sequenceId) => {
+  return customAxios.get(
+    `/dataLiteracy/classroom/answer/submit?classId=${classId}&chapterId=${chapterId}&sequenceId=${sequenceId}&answerType=QNA`
+  );
+};

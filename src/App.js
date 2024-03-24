@@ -66,6 +66,7 @@ import EClassPage from "./EClass/Page/EClassPage/EClassPage";
 import CreateEClassPage from "./Study/Page/CreateEClassPage";
 import TextbookPage from "./Textbook/page/TextbookPage";
 import TextbookDetailPage from "./Textbook/page/TextbookDetaliPage/TextbookDetailPage";
+import DataInChartPage from "./DataInChart/Page/DataInChartPage";
 
 function App() {
   /**
@@ -247,6 +248,12 @@ function App() {
             path="/textbook/detail"
             exact={true}
             element={<TextbookDetailPage />}
+          />
+
+          <Route
+            path="/data-in-chart"
+            exact={true}
+            element={<DataInChartPage />}
           />
         </Routes>
       </div>
