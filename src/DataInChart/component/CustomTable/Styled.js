@@ -1,5 +1,15 @@
 import styled, { css } from "styled-components";
 
+export const Notice = styled.div`
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  font-size: 16px;
+  font-weight: bold;
+`;
+
 export const TableHeaderWrapper = styled.div`
   position: relative;
   width: 100%;
