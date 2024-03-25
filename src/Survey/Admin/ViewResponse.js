@@ -37,7 +37,7 @@ export default function ViewResponse() {
                 
                 return (
                     <div key={index} className="question-container">
-                        <span>{questionKey}. {questionText}</span>
+                        <span>{index + 1}. {questionText}</span>
 
                         
                         {answerData?.map((answer, idx) => {
