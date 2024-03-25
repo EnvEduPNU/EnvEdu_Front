@@ -33,8 +33,8 @@ export default function CreateSurvey() {
             })
             .then((res) => {
                 alert("등록되었습니다.");
-                console.log(res);
-                // navigate('/upload-reward', { state: { code: 'abc' } }); // 수정 필요
+                console.log(res.data);
+                navigate('/upload-reward', { state: { code: res.data } });
             })
             .catch((err) => console.log(err))
         }

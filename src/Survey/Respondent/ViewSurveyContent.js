@@ -48,9 +48,9 @@ export default function ViewSurveyContent() {
             answer: answers
         })
         .then((res) => {
-            console.log(res);
+            console.log(res.data);
             alert("제출되었습니다.");
-            //navigate('/view-reward', { state: { imgUrl: 'abc' } }); // 수정 필요
+            navigate('/view-reward', { state: { imgUrl: res.data } }); 
         })
         .catch((err) => console.log(err))
     }
