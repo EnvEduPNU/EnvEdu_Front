@@ -212,3 +212,13 @@ export const Button = styled.button`
       background-color: #21ba45;
     `}
 `;
+
+export const Notice = styled.div`
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  font-size: 16px;
+  font-weight: bold;
+`;

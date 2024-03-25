@@ -4,7 +4,7 @@ import { ClassRoomDataConverterAdapter } from "../utils/ClassRoomDataConverterAd
 export const useEClassStore = create((set, get) => ({
   title: "",
   description: "",
-  gradeLabel: "초등학생",
+  gradeLabel: "초등 공통",
   subjectLabel: "기타",
   dataTypeLabel: "기타",
   eClass: [[]],

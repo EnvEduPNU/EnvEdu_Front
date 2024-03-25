@@ -19,7 +19,7 @@ function createMixData(graphDataState, mixDataState, metaDataState) {
       variable.type === "Numeric" &&
       variable.axis !== null
   );
-
+  console.log(categorycalList);
   const labels = data
     .slice(1)
     .map(item => item[data[0].indexOf(categorycalList[0].name)]);

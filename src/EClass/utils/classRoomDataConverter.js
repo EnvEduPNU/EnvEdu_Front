@@ -1,8 +1,10 @@
 import ArgumentForStudent from "../Component/Argument/ArgumentForStudent";
+import ArgumentForSubmit from "../Component/Argument/ArgumentForSubmit";
 import ChartForAssignment from "../Component/Chart/ChartForAssignment";
 import H1ForStudent from "../Component/H1/H1ForStudent";
 import H2ForStudent from "../Component/H2/H2ForStudent";
 import QuestionForAssignment from "../Component/Question/QuestionForAssignment";
+import QuestionForSubmit from "../Component/Question/QuestionForSubmit";
 import SeedForStudent from "../Component/Seed/SeedForStudent";
 import TableForAssignment from "../Component/Table/TableForAssignment";
 import YoutubeToolForAssignment from "../Component/YoutubeTool/YoutubeToolForAssignment";
@@ -106,6 +108,10 @@ export class DiscussDataConverter extends ClassRoomDataConverter {
       />
     );
   }
+
+  convertActivityForSubmit(data) {
+    return <ArgumentForSubmit data={data} />;
+  }
 }
 
 export class QnaDataConverter extends ClassRoomDataConverter {
@@ -132,6 +138,10 @@ export class QnaDataConverter extends ClassRoomDataConverter {
         activityIndex={activityIndex}
       />
     );
+  }
+
+  convertActivityForSubmit(data) {
+    return <QuestionForSubmit data={data} />;
   }
 }
 
