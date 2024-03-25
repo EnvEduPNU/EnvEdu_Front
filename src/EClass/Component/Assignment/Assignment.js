@@ -174,7 +174,9 @@ const TitlePage = () => {
   return (
     <Styled.Paper className="div_paper">
       <Styled.Box>
-        <Styled.Title>#REPORT {title} - 이재훈</Styled.Title>
+        <Styled.Title>
+          #REPORT {title} - {localStorage.getItem("username")}
+        </Styled.Title>
       </Styled.Box>
       <Stack
         direction="horizontal"
