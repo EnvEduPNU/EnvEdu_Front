@@ -1,25 +1,12 @@
 import { useEffect, useState } from "react"
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { customAxios } from '../../Common/CustomAxios';
 import { FiExternalLink } from "react-icons/fi";
 import { FaList } from "react-icons/fa";
 import './ViewSurveyList.scss';
 
 export default function ViewSurveyList() {
-    const [data, setData] = useState([
-        {
-            surveyName: "설문 조사 시작할게요",
-            inviteCode: "55TLZO",
-            createTime: "2023-12-18T03:19:55.332118",
-            attributeName: ['abc']
-        },
-        {
-            surveyName: "설문 조사 시작할게요2",
-            inviteCode: "21TJN5",
-            createTime: "2023-12-18T03:20:45.981928",
-            attributeName: []
-        }
-    ]);
+    const [data, setData] = useState([]);
 
     useEffect(() => {
         customAxios.get('/admin/survey/list')
@@ -32,6 +19,12 @@ export default function ViewSurveyList() {
 
     const formatDate = (date) => {
         return date.split("T")[0] + " " + date.split("T")[1].slice(0, 5);
+    }
+
+    const navigate = useNavigate();
+
+    const goToResponsePage = (inviteCode) => {
+        navigate(`/view-response/${inviteCode}`);
     }
 
     return (
@@ -51,7 +44,12 @@ export default function ViewSurveyList() {
                             <td>{item['surveyName']}</td>
                             <td>{item['inviteCode']}</td>
                             <td>{formatDate(item['createTime'])}</td>
-                            <td><FiExternalLink size="20" /></td>
+                            <td>
+                                <FiExternalLink 
+                                    size="20" 
+                                    onClick={() => goToResponsePage(item['inviteCode'])}
+                                />
+                            </td>
                         </tr>
                     ))}
                 </tbody>

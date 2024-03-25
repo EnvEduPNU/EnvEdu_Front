@@ -68,6 +68,8 @@ import CreateEClassPage from "./Study/Page/CreateEClassPage";
 import Survey from "./Survey/Survey";
 import CreateSurvey from "./Survey/Admin/CreateSurvey";
 import UploadReward from "./Survey/Admin/UploadReward";
+import ViewReward from "./Survey/Respondent/ViewReward";
+import ViewResponse from "./Survey/Admin/ViewResponse";
 
 function App() {
   /**
@@ -203,9 +205,21 @@ function App() {
           />
 
           <Route
+            path="/view-response/:inviteCode"
+            exact={true}
+            element={<ViewResponse />}
+          />
+
+          <Route
             path="/upload-reward"
             exact={true}
             element={<UploadReward />}
+          />
+
+          <Route
+            path="/view-reward"
+            exact={true}
+            element={<ViewReward />}
           />
 
           {/*Learnmore*/}

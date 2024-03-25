@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { PiGift } from "react-icons/pi";
 import { AiOutlineExclamationCircle } from "react-icons/ai";
 import { HiMiniXMark } from "react-icons/hi2";
@@ -7,6 +8,11 @@ import './UploadReward.scss';
 import { customAxios } from "../../Common/CustomAxios";
 
 export default function UploadReward() {
+    const location = useLocation();
+    const state = location.state || {};
+
+    console.log(state.code);
+
     const [showImages, setShowImages] = useState([]);
 
     const handleAddImages = (event) => {
@@ -34,19 +40,23 @@ export default function UploadReward() {
         setShowImages(showImages.filter((_, index) => index !== id));
     };
 
+    const navigate = useNavigate();
+
     const uploadReward = () => {
         const formData = new FormData();
         showImages.forEach((image) => {
             formData.append("files", image.file);
         });
 
-        {/*초대 코드 수정 필요*/}
-        customAxios.post('/survey/reward/upload/987OZN', formData, {
+        customAxios.post(`/survey/reward/upload/${state.code}`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data', 
             }
         })
-        .then(() => alert("등록되었습니다."))
+        .then(() => {
+            alert("등록되었습니다.");
+            navigate('/survey');
+        })
         .catch((err) => console.log(err));
     }
 

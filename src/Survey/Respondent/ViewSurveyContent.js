@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../Admin/CreateSurvey.scss';
 import './ViewSurveyContent.scss';
 import { customAxios } from '../../Common/CustomAxios';
@@ -13,7 +14,10 @@ export default function ViewSurveyContent() {
     const enterCode = () => {
         customAxios.get(`/survey/answer/${inviteCode}`)
         .then((res) => setData(res.data))
-        .catch((err) => console.log(err))
+        .catch((err) => {
+            console.log(err);
+            alert("유효하지 않은 코드입니다.");
+        })
     }
 
     const [answers, setAnswers] = useState([]);
@@ -36,13 +40,17 @@ export default function ViewSurveyContent() {
         setAnswers(newAnswers);
     };
 
+    const navigate = useNavigate();
+
     const submitSurvey = () => {
         customAxios.post(`/survey/answer/${inviteCode}`, {
             sender: sender,
             answer: answers
         })
-        .then(() => {
+        .then((res) => {
+            console.log(res);
             alert("제출되었습니다.");
+            //navigate('/view-reward', { state: { imgUrl: 'abc' } }); // 수정 필요
         })
         .catch((err) => console.log(err))
     }
@@ -71,14 +79,16 @@ export default function ViewSurveyContent() {
 
             <hr />
 
-            <div className='question-container'>
-                <span>이름</span>
-                <input
-                    type="text"
-                    onChange={(e) => setSender(e.target.value)}
-                    placeholder="이름을 입력해주세요."
-                />
-            </div>
+            {Object.keys(data).length > 0 &&
+                <div className='question-container'>
+                    <span>이름</span>
+                    <input
+                        type="text"
+                        onChange={(e) => setSender(e.target.value)}
+                        placeholder="이름을 입력해주세요."
+                    />
+                </div>
+            }
 
             {Object.keys(data).length > 0 && data.attributeName.map((question, index) => (
                 <div key={index} className='question-container'>
@@ -93,11 +103,13 @@ export default function ViewSurveyContent() {
                 </div>
             ))}
 
-            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem' }}>
-                <button className="upload-btn" onClick={submitSurvey}>
-                    Submit
-                </button>
-            </div>
+            {Object.keys(data).length > 0 &&
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem' }}>
+                    <button className="upload-btn" onClick={submitSurvey}>
+                        Submit
+                    </button>
+                </div>
+            }
         </div>
     )
 }

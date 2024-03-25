@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './CreateSurvey.scss';
 import { FaPencil } from "react-icons/fa6";
 import { customAxios } from '../../Common/CustomAxios';
@@ -18,9 +18,11 @@ export default function CreateSurvey() {
         );
     };
 
+    const navigate = useNavigate();
+
     const createSurvey = () => {
         if (!surveyName) {
-            alert("설문지 제목을 작성해주세요.")
+            alert("설문지 제목을 작성해주세요.");
         }
         else {
             const attribute = questions.map((q) => q.text);
@@ -32,7 +34,7 @@ export default function CreateSurvey() {
             .then((res) => {
                 alert("등록되었습니다.");
                 console.log(res);
-                //Navigate('/upload-reward') //state 전달
+                // navigate('/upload-reward', { state: { code: 'abc' } }); // 수정 필요
             })
             .catch((err) => console.log(err))
         }
