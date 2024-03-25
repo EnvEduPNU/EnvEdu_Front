@@ -2,11 +2,17 @@ import * as Styled from "./Styled";
 import { ReactComponent as GraphIcon } from "../../image/GraphIcon.svg";
 import { ReactComponent as TableIcon } from "../../image/TableIcon.svg";
 import { useTabStore } from "../../store/tabStore";
+import { useGraphDataStore } from "../../store/graphStore";
 
 function Tab({ isEclassTab = false }) {
+  const { data } = useGraphDataStore();
   const { tab, changeTab } = useTabStore();
 
   const onClickTab = newTab => {
+    if (newTab === "graph" && data.length <= 0) {
+      alert("데이터를 선택후 graph 탭을 이용해주세요.");
+      return;
+    }
     changeTab(newTab);
   };
 

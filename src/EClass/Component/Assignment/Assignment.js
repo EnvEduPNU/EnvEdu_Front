@@ -5,12 +5,22 @@ import * as Styled from "./Styled";
 import makePdf from "../../../DataLiteracy/utils/makePdf";
 import { useGraphDataStore } from "../../../Study/store/graphStore";
 import { useTabStore } from "../../../Study/store/tabStore";
-import React from "react";
+import React, { useEffect } from "react";
+import {
+  createShare,
+  createSubmit,
+  getEclassDetail,
+} from "../../api/eclassApi";
+import { convertApiToEclassData } from "../../utils/converApiToEclassData";
+import { useParams } from "react-router-dom";
 
 function Assignment() {
+  const { id } = useParams();
   const eClassDatas = useEClassAssignmentStore(
     state => state.eClassDatasForAssignment
   );
+  const appendEclass = useEClassAssignmentStore(state => state.appendEclass);
+  const settingEclass = useEClassAssignmentStore(state => state.settingEclass);
   const setData = useGraphDataStore(state => state.setData);
   const changeActivity = useGraphDataStore(state => state.changeActivity);
   const changeTab = useTabStore(state => state.changeTab);
@@ -29,6 +39,57 @@ function Assignment() {
     localStorage.setItem("data", JSON.stringify(data.data));
   };
 
+  useEffect(() => {
+    const fetchEclassDetail = async () => {
+      // localStorage에서 데이터를 시도
+      const storedData = localStorage.getItem(`eclassDetail-${id}`);
+      if (storedData) {
+        settingEclass(JSON.parse(storedData));
+      } else {
+        // 데이터가 localStorage에 없을 경우 API 호출
+        const res = await getEclassDetail(id);
+        const convertedData = await convertApiToEclassData(res.data);
+        appendEclass(convertedData, res.data);
+      }
+    };
+
+    fetchEclassDetail();
+  }, []);
+
+  const onClickSubmitBtn = async activityData => {
+    const possibleSubmitTypes = ["DISCUSS", "QNA"];
+    if (!possibleSubmitTypes.includes(activityData.classroomSequenceType)) {
+      alert("제출을 지원하지 않는 데이터타입입니다.");
+      return;
+    }
+
+    createSubmit(
+      +id,
+      activityData.chapterId,
+      activityData.sequenceId,
+      activityData
+    )
+      .then(res => alert("성공적으로 제출되었습니다."))
+      .catch(error => console.log(error));
+  };
+
+  const onClickShareBtn = async activityData => {
+    const possibleSubmitTypes = ["DISCUSS", "QNA"];
+    if (!possibleSubmitTypes.includes(activityData.classroomSequenceType)) {
+      alert("제출을 지원하지 않는 데이터타입입니다.");
+      return;
+    }
+
+    createShare(
+      +id,
+      activityData.chapterId,
+      activityData.sequenceId,
+      activityData
+    )
+      .then(res => alert("성공적으로 공유되었습니다."))
+      .catch(error => console.log(error));
+  };
+
   return (
     <Styled.Wrapper className="div_container">
       <TitlePage />
@@ -41,12 +102,20 @@ function Assignment() {
               <Styled.ActivityWrapper key={activityIndex}>
                 <Styled.ActivityHeader>
                   {activityData["canSubmit"] && (
-                    <Badge style={{ cursor: "pointer" }} bg="success">
+                    <Badge
+                      onClick={() => onClickSubmitBtn(activityData)}
+                      style={{ cursor: "pointer" }}
+                      bg="success"
+                    >
                       제출하기
                     </Badge>
                   )}
                   {activityData["canShare"] && (
-                    <Badge style={{ cursor: "pointer" }} bg="success">
+                    <Badge
+                      onClick={() => onClickShareBtn(activityData)}
+                      style={{ cursor: "pointer" }}
+                      bg="success"
+                    >
                       공유하기
                     </Badge>
                   )}
@@ -67,7 +136,7 @@ function Assignment() {
                   )}
                   {activityData["isMine"] && (
                     <Badge style={{ cursor: "pointer" }} bg="info">
-                      그래프 그리기 완료
+                      그래프 그리기 완료 ✅
                     </Badge>
                   )}
                 </Styled.ActivityHeader>
@@ -105,7 +174,9 @@ const TitlePage = () => {
   return (
     <Styled.Paper className="div_paper">
       <Styled.Box>
-        <Styled.Title>#REPORT {title} - 이재훈</Styled.Title>
+        <Styled.Title>
+          #REPORT {title} - {localStorage.getItem("username")}
+        </Styled.Title>
       </Styled.Box>
       <Stack
         direction="horizontal"
