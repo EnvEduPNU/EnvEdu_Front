@@ -8,11 +8,17 @@ import { useTabStore } from "../../../Study/store/tabStore";
 import React, { useEffect } from "react";
 import {
   createShare,
+  createShareChart,
   createSubmit,
+  createSubmitChart,
   getEclassDetail,
 } from "../../api/eclassApi";
 import { convertApiToEclassData } from "../../utils/converApiToEclassData";
 import { useParams } from "react-router-dom";
+import { ChartApiConverter } from "../../api/apiConverters";
+
+const possibleSubmitTypes = ["DISCUSS", "QNA", "CHART", "MATRIX"];
+const activityMappingHandler = new ActivityMappingHandler();
 
 function Assignment() {
   const { id } = useParams();
@@ -24,8 +30,6 @@ function Assignment() {
   const setData = useGraphDataStore(state => state.setData);
   const changeActivity = useGraphDataStore(state => state.changeActivity);
   const changeTab = useTabStore(state => state.changeTab);
-
-  const activityMappingHandler = new ActivityMappingHandler();
 
   const onClick = async e => {
     e.preventDefault();
@@ -57,9 +61,15 @@ function Assignment() {
   }, []);
 
   const onClickSubmitBtn = async activityData => {
-    const possibleSubmitTypes = ["DISCUSS", "QNA"];
     if (!possibleSubmitTypes.includes(activityData.classroomSequenceType)) {
       alert("제출을 지원하지 않는 데이터타입입니다.");
+      return;
+    }
+
+    if (activityData.classroomSequenceType === "CHART") {
+      createSubmitChart(activityData, +id)
+        .then(res => alert("성공적으로 제출되었습니다."))
+        .catch(error => console.log(error));
       return;
     }
 
@@ -74,9 +84,15 @@ function Assignment() {
   };
 
   const onClickShareBtn = async activityData => {
-    const possibleSubmitTypes = ["DISCUSS", "QNA"];
     if (!possibleSubmitTypes.includes(activityData.classroomSequenceType)) {
       alert("제출을 지원하지 않는 데이터타입입니다.");
+      return;
+    }
+
+    if (activityData.classroomSequenceType === "CHART") {
+      createSubmitChart(activityData, +id)
+        .then(res => alert("성공적으로 제출되었습니다."))
+        .catch(error => console.log(error));
       return;
     }
 

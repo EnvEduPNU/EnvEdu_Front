@@ -74,6 +74,39 @@ export class ChartApiConverter {
     };
   }
 
+  convertSubmit({
+    title,
+    canSubmit,
+    canShare,
+    data,
+    classId,
+    chapterId,
+    sequenceId,
+  }) {
+    const { graphIdx, variables, axisData, metaData } = data;
+    return {
+      classId,
+      chapterId,
+      sequenceId,
+      title,
+      chartType: this.convertChartType(graphIdx),
+      properties: JSON.stringify(data.data[0]),
+      data: JSON.stringify(data.data.slice(1)),
+      // uuid: null,
+      legendPosition:
+        metaData.legendPostion === "no"
+          ? "NONE"
+          : metaData.legendPostion.toUpperCase(),
+      labelPosition:
+        metaData.datalabelAnchor === "no"
+          ? "NONE"
+          : metaData.datalabelAnchor.toUpperCase(),
+      canSubmit,
+      canShare,
+      axisProperties: this.convertAxisProperties(graphIdx, variables, axisData),
+    };
+  }
+
   convertAxisProperties(graphIdx, variables, axisData) {
     if (graphIdx == 0 || graphIdx == 1) {
       return variables.map(variable =>
