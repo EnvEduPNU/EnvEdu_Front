@@ -73,6 +73,32 @@ export const createShareChart = async (activityData, classId) => {
   return customAxios.post("/dataLiteracy/chart/properties", data);
 };
 
+export const createShareMatrix = async (activityData, classId) => {
+  return customAxios.post("/dataLiteracy/customData/upload", {
+    properties: activityData.data[0],
+    data: activityData.data.slice(1),
+    memo: "",
+    classId,
+    chapterId: activityData.chapterId,
+    sequenceId: activityData.sequenceId,
+    canSubmit: false,
+    canShared: true,
+  });
+};
+
+export const createSubmitMatrix = async (activityData, classId) => {
+  return customAxios.post("/dataLiteracy/customData/upload", {
+    properties: activityData.data[0],
+    data: activityData.data.slice(1),
+    memo: "",
+    classId,
+    chapterId: activityData.chapterId,
+    sequenceId: activityData.sequenceId,
+    canSubmit: true,
+    canShared: false,
+  });
+};
+
 export const createSubmitChart = async (activityData, classId) => {
   const converter = new ChartApiConverter();
   const data = converter.convertSubmit({
@@ -113,5 +139,17 @@ export const getEclassSubmitChartData = async (
 ) => {
   return customAxios.get(
     `/dataLiteracy/chart/students/properties/submit?classId=${classId}&chapterId=${chapterId}&sequenceId=${sequenceId}`
+  );
+};
+
+export const getEclassSubmitMatiex = async (classId, chapterId, sequenceId) => {
+  return customAxios.get(
+    `/dataLiteracy/customData/list/submit?classId=${classId}&chapterId=${chapterId}&sequenceId=${sequenceId}`
+  );
+};
+
+export const getEclassShareMatiex = async (classId, chapterId, sequenceId) => {
+  return customAxios.get(
+    `/dataLiteracy/customData/list/shared?classId=${classId}&chapterId=${chapterId}&sequenceId=${sequenceId}`
   );
 };

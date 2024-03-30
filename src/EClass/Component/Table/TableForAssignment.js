@@ -23,7 +23,7 @@ function TableForAssignment({ data, pageIndex, activityIndex }) {
     const newData = tableData.map(v => [...v]);
     newData[rowIdx][colIdx] = value;
     setTableData(newData);
-    changeEclassDataFieldValue(pageIndex, activityIndex, "data", tableData);
+    changeEclassDataFieldValue(pageIndex, activityIndex, "data", newData);
   };
 
   return (
