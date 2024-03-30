@@ -117,7 +117,7 @@ const CardWrapper = styled.div`
   margin-top: 5px;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 20px;
 `;
 
 export default BottomSlidePage;

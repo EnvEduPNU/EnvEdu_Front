@@ -197,7 +197,13 @@ export class MatrixDataConverter extends ClassRoomDataConverter {
   }
 
   convertActivityForAssignment(data, pageIndex, activityIndex) {
-    return <TableForAssignment data={data["data"]} />;
+    return (
+      <TableForAssignment
+        data={data["data"]}
+        pageIndex={pageIndex}
+        activityIndex={activityIndex}
+      />
+    );
   }
 }
 

@@ -1,6 +1,3 @@
-import { useState } from "react";
-import ActivityDialog from "../../component/ActivityDialog/ActivityDialog";
-import Sharing from "../../component/Sharing/Sharing";
 import { useTabStore } from "../../store/tabStore";
 import CustomTable from "../CustomTable/CustomTable";
 import CustomTableHeader from "../CustomTable/CustomTableHeader";
@@ -20,8 +17,7 @@ import useEClassAssignmentStore from "../../../EClass/store/eClassAssignmentStor
 
 function DrawGraph() {
   const { tab, changeTab } = useTabStore();
-  const [showModal, setShowModal] = useState(false);
-  const { data, graphIdx, pageIndex, activityIndex } = useGraphDataStore();
+  const { graphIdx, pageIndex, activityIndex } = useGraphDataStore();
   const changeChartDataValue = useEClassAssignmentStore(
     state => state.changeChartDataValue
   );
@@ -80,26 +76,6 @@ function DrawGraph() {
       {tab === "table" && (
         <>
           <CustomTable />
-          <Button
-            style={{
-              position: "absolute",
-              right: "30px",
-              bottom: "100px",
-              width: "fit-content",
-            }}
-            onClick={() => setShowModal(true)}
-          >
-            보고서로 내보내기
-          </Button>
-
-          <Sharing />
-
-          <ActivityDialog
-            visible={showModal}
-            onClose={() => setShowModal(false)}
-            onConfirm={() => setShowModal(false)}
-            answer={data}
-          />
         </>
       )}
       {tab === "graph" && (
@@ -117,12 +93,6 @@ function DrawGraph() {
           >
             보고서로 내보내기
           </Button>
-          <ActivityDialog
-            visible={showModal}
-            onClose={() => setShowModal(false)}
-            onConfirm={() => setShowModal(false)}
-            answer={""}
-          />
         </>
       )}
       {tab === "assignment" && (
