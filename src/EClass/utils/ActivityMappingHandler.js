@@ -25,6 +25,7 @@ class ActivityMappingHandler {
     new DiscussDataConverter(),
     new QnaDataConverter(),
     new ChartDataConverter(),
+    new MatrixDataConverter(),
   ];
 
   convertForAssignment(data, pageIndex, activityIndex) {

@@ -7,6 +7,7 @@ import QuestionForAssignment from "../Component/Question/QuestionForAssignment";
 import QuestionForSubmit from "../Component/Question/QuestionForSubmit";
 import SeedForStudent from "../Component/Seed/SeedForStudent";
 import TableForAssignment from "../Component/Table/TableForAssignment";
+import TableForSubmitAndShare from "../Component/Table/TableForSubmitAndShare";
 import YoutubeToolForAssignment from "../Component/YoutubeTool/YoutubeToolForAssignment";
 import ClassroomType from "./classRoomType";
 
@@ -204,6 +205,11 @@ export class MatrixDataConverter extends ClassRoomDataConverter {
         activityIndex={activityIndex}
       />
     );
+  }
+  convertActivityForSubmit({ data }) {
+    const newData = data.data.map(d => [...d]);
+    newData.unshift(data.properties);
+    return <TableForSubmitAndShare data={newData} />;
   }
 }
 

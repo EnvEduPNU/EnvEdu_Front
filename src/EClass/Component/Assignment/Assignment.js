@@ -9,8 +9,10 @@ import React, { useEffect } from "react";
 import {
   createShare,
   createShareChart,
+  createShareMatrix,
   createSubmit,
   createSubmitChart,
+  createSubmitMatrix,
   getEclassDetail,
 } from "../../api/eclassApi";
 import { convertApiToEclassData } from "../../utils/converApiToEclassData";
@@ -72,6 +74,13 @@ function Assignment() {
       return;
     }
 
+    if (activityData.classroomSequenceType === "MATRIX") {
+      createSubmitMatrix(activityData, +id)
+        .then(res => alert("성공적으로 제출되었습니다."))
+        .catch(error => console.log(error));
+      return;
+    }
+
     createSubmit(
       +id,
       activityData.chapterId,
@@ -90,6 +99,13 @@ function Assignment() {
 
     if (activityData.classroomSequenceType === "CHART") {
       createShareChart(activityData, +id)
+        .then(res => alert("성공적으로 공유되었습니다."))
+        .catch(error => console.log(error));
+      return;
+    }
+
+    if (activityData.classroomSequenceType === "MATRIX") {
+      createShareMatrix(activityData, +id)
         .then(res => alert("성공적으로 공유되었습니다."))
         .catch(error => console.log(error));
       return;
