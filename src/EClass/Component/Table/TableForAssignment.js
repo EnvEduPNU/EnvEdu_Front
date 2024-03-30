@@ -3,23 +3,36 @@ import "./Table.scss";
 import classNames from "classnames";
 import { useGraphDataStore } from "../../../Study/store/graphStore";
 import { useTabStore } from "../../../Study/store/tabStore";
+import { useEffect, useState } from "react";
+import useEClassAssignmentStore from "../../store/eClassAssignmentStore";
 
-function TableForAssignment({ data }) {
+function TableForAssignment({ data, pageIndex, activityIndex }) {
+  const [tableData, setTableData] = useState(data);
   const changeTab = useTabStore(state => state.changeTab);
   const setData = useGraphDataStore(state => state.setData);
+  const changeEclassDataFieldValue = useEClassAssignmentStore(
+    state => state.changeEclassDataFieldValue
+  );
 
   const onClickBtn = () => {
-    setData(data);
+    setData(tableData);
     changeTab("table");
+  };
+
+  const handleInputChange = (rowIdx, colIdx, value) => {
+    const newData = tableData.map(v => [...v]);
+    newData[rowIdx][colIdx] = value;
+    setTableData(newData);
+    changeEclassDataFieldValue(pageIndex, activityIndex, "data", tableData);
   };
 
   return (
     <div style={{ textAlign: "center" }}>
       <div
         className="newDataInput-table"
-        style={{ gridTemplateColumns: `repeat(${data[0].length}, 1fr)` }}
+        style={{ gridTemplateColumns: `repeat(${tableData[0].length}, 1fr)` }}
       >
-        {data.map((tr, row) =>
+        {tableData.map((tr, row) =>
           tr.map((key, col) => (
             <div
               className={classNames(
@@ -32,7 +45,11 @@ function TableForAssignment({ data }) {
               )}
               key={`${row} ${col}`}
             >
-              <input type="text" value={data[row][col]} disabled />
+              <input
+                type="text"
+                value={tableData[row][col]}
+                onChange={e => handleInputChange(row, col, e.target.value)}
+              />
             </div>
           ))
         )}

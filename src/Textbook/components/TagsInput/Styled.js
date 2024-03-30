@@ -97,7 +97,7 @@ export const Modal = styled.div`
   box-shadow: 0 0 5px rgba(10, 22, 70, 0.06),
     0 16px 16px -1px rgba(10, 22, 70, 0.1);
   background-color: #fff;
-  height: 500px;
+  height: 900px;
   max-height: 90vh;
   overflow: hidden;
   width: 700px;

@@ -29,7 +29,7 @@ function SlidePage() {
         {/* </div> */}
       </RightSilde>
       <BottomSilde>
-        <div style={{ height: "300px" }}>
+        <div style={{ height: "300px", overflowY: "auto" }}>
           <BottomSlidePage />
         </div>
       </BottomSilde>

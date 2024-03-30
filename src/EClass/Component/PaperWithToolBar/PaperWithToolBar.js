@@ -5,6 +5,8 @@ import { FormLabel } from "react-bootstrap";
 import { useEClassStore } from "../../store/eClassStore";
 import TrashSvg from "../../svg/TrashSvg";
 
+const avalibleshareAndSubmits = ["QNA", "DISCUSS", "CHART", "MATRIX"];
+
 const PaperWithToolBar = ({ pageNum, activities, eClassData }) => {
   const toggleSelected = useEClassStore(state => state.toggleSelected);
   const deleteActivity = useEClassStore(state => state.deleteActivity);
@@ -24,8 +26,9 @@ const PaperWithToolBar = ({ pageNum, activities, eClassData }) => {
             <Styled.ActivityWrapper key={`${eClassData[idx]} ${idx}`}>
               <Styled.ActivityEditHeader>
                 <Styled.ActivityCheckBoxWrapper>
-                  {(eClassData[idx].classroomSequenceType === "DISCUSS" ||
-                    eClassData[idx].classroomSequenceType === "QNA") && (
+                  {avalibleshareAndSubmits.includes(
+                    eClassData[idx].classroomSequenceType
+                  ) && (
                     <>
                       <FormLabel style={{ cursor: "pointer", margin: 0 }}>
                         제출
