@@ -15,7 +15,6 @@ import {
 } from "../../api/eclassApi";
 import { convertApiToEclassData } from "../../utils/converApiToEclassData";
 import { useParams } from "react-router-dom";
-import { ChartApiConverter } from "../../api/apiConverters";
 
 const possibleSubmitTypes = ["DISCUSS", "QNA", "CHART", "MATRIX"];
 const activityMappingHandler = new ActivityMappingHandler();
@@ -90,8 +89,8 @@ function Assignment() {
     }
 
     if (activityData.classroomSequenceType === "CHART") {
-      createSubmitChart(activityData, +id)
-        .then(res => alert("성공적으로 제출되었습니다."))
+      createShareChart(activityData, +id)
+        .then(res => alert("성공적으로 공유되었습니다."))
         .catch(error => console.log(error));
       return;
     }

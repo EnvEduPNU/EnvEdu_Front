@@ -95,3 +95,23 @@ export const getEclassSubmitData = async (classId, chapterId, sequenceId) => {
     `/dataLiteracy/classroom/answer/submit?classId=${classId}&chapterId=${chapterId}&sequenceId=${sequenceId}`
   );
 };
+
+export const getEclassShareChartData = async (
+  classId,
+  chapterId,
+  sequenceId
+) => {
+  return customAxios.get(
+    `/dataLiteracy/chart/students/properties?classId=${classId}&chapterId=${chapterId}&sequenceId=${sequenceId}`
+  );
+};
+
+export const getEclassSubmitChartData = async (
+  classId,
+  chapterId,
+  sequenceId
+) => {
+  return customAxios.get(
+    `/dataLiteracy/chart/students/properties/submit?classId=${classId}&chapterId=${chapterId}&sequenceId=${sequenceId}`
+  );
+};

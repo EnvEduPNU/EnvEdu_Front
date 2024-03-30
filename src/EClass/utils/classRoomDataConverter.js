@@ -220,4 +220,8 @@ export class ChartDataConverter extends ClassRoomDataConverter {
   convertActivityForAssignment(data, pageIndex, activityIndex) {
     return <ChartForAssignment data={data["data"]} />;
   }
+
+  convertActivityForSubmit(data) {
+    return <ChartForAssignment data={data} />;
+  }
 }

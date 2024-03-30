@@ -92,7 +92,6 @@ export class ChartApiConverter {
       chartType: this.convertChartType(graphIdx),
       properties: JSON.stringify(data.data[0]),
       data: JSON.stringify(data.data.slice(1)),
-      // uuid: null,
       legendPosition:
         metaData.legendPostion === "no"
           ? "NONE"
@@ -170,7 +169,6 @@ export class ChartApiConverter {
   }
 
   convertAxisPropertieWithMix(variable, axisData) {
-    console.log(variable);
     const { y1Axis, y2Axis } = axisData;
     return {
       axis: variable.axis,
@@ -198,9 +196,42 @@ export class ChartApiConverter {
     };
   }
 
+  async convertApiToSubmitAndShareData(data) {
+    const res = await getUUIDData(data.uuid);
+    const graphData = res.data.data.map(row =>
+      row.map(item => {
+        try {
+          // JSON.parse로 문자열에서 숫자로 변환을 시도합니다.
+          const parsedItem = JSON.parse(item);
+          const number = +parsedItem;
+          return isNaN(number) ? parsedItem : number;
+        } catch (error) {
+          // 변환에 실패하면 원래의 문자열을 반환합니다.
+          return item;
+        }
+      })
+    );
+    graphData.unshift(res.data.properties.map(item => JSON.parse(item)));
+    return {
+      username: data.username,
+      answerType: "CHART",
+      graphIdx: this.convertGraphIndex(data.chartType),
+      data: graphData,
+      variables: this.convertAxisPropertiesTovariables(
+        data.axisProperties,
+        data.chartType
+      ),
+      axisData: this.convertToAxisData(data.axisProperties, data.chartType),
+      metaData: {
+        legendPosition:
+          data.legendPosition === "NONE" ? "no" : data.legendPosition,
+        datalabelAnchor:
+          data.labelPosition === "NONE" ? "no" : data.labelPosition,
+      },
+    };
+  }
+
   async convertApiToAssignmentData(chunk, sequenceId, chapterId) {
-    // const data = JSON.parse(chunk.data);
-    // data.unshift(JSON.parse(chunk.properties));
     const { customDataChart } = chunk;
     const res = await getUUIDData(customDataChart.uuid);
     const graphData = res.data.data.map(row =>
