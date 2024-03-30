@@ -19,15 +19,11 @@ function TableForAssignment({ data, pageIndex, activityIndex }) {
     changeTab("table");
   };
 
-  useEffect(() => {
-    return () =>
-      changeEclassDataFieldValue(pageIndex, activityIndex, "data", tableData);
-  }, [tableData]);
-
   const handleInputChange = (rowIdx, colIdx, value) => {
     const newData = tableData.map(v => [...v]);
     newData[rowIdx][colIdx] = value;
     setTableData(newData);
+    changeEclassDataFieldValue(pageIndex, activityIndex, "data", tableData);
   };
 
   return (

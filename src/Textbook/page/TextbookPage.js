@@ -1,20 +1,15 @@
 import * as Styled from "./Styled";
-import result from "../utils/data.json";
+import result from "../utils/data2.json";
 import TextbookDataCard from "../components/TextbookDataCard/TextbookDataCard";
 import TagsInput from "../components/TagsInput/TagsInput";
 
 function TextbookPage() {
-  const elementaryData = result.data.filter(
-    data => data.tag["gradeLabel"] === "초등학교"
+  const elementaryData = result.filter(data =>
+    data.gradeLabel.startsWith("초등")
   );
-  const middleData = result.data.filter(
-    data => data.tag["gradeLabel"] === "중학교"
-  );
-  const highData = result.data.filter(
-    data => data.tag["gradeLabel"] === "고등학교"
-  );
+  const middleData = result.filter(data => data.gradeLabel.startsWith("중등"));
+  const highData = result.filter(data => data.gradeLabel.startsWith("고등"));
 
-  console.log(middleData[0].tableData[0]);
   return (
     <Styled.Wrapper>
       <Styled.SearchWrapper>
