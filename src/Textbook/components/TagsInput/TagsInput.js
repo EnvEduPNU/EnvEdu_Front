@@ -4,15 +4,15 @@ import { useState } from "react";
 import useComponentPosition from "../../../DataLiteracy/hooks/useComponentPosition";
 import Portal from "../../../Portal";
 import { Button } from "react-bootstrap";
+import { useTextbookStore } from "../../store/textbookStore";
 
 const gradeObj = {
-  초등학교: ["1학년", "2학년", "3학년", "4학년", "5학년", "6학년", "공통"],
-  중학교: ["1학년", "2학년", "3학년", "공통"],
-  고등학교: ["1학년", "2학년", "3학년", "공통"],
+  초등: ["1", "2", "3", "4", "5", "6", "공통"],
+  중등: ["1", "2", "3", "공통"],
+  고등: ["1", "2", "3", "공통"],
 };
 
 const subjectObj = {
-  사회: [],
   과학: [
     "통합과학1",
     "통합과학2",
@@ -21,29 +21,35 @@ const subjectObj = {
     "물리학",
     "화학",
     "지구과학",
-    "생명과학",
     "지구시스템과학",
+    "생명과학",
     "행성우주과학",
-    "기후변화와 환경상태",
+    "기후변화와 환경생태",
     "융합과학탐구",
     "역학과 에너지",
     "물질과 에너지",
     "화학반응의 세계",
     "전자기와 양자",
   ],
+  사회: [],
   환경: [],
   공통: [],
+  기타: [],
 };
 
 function TagsInput() {
+  const { setSearchData } = useTextbookStore();
   const { ref, position } = useComponentPosition();
   const [visible, setVisible] = useState(false);
-  const [gradeLabel, setGradeLabel] = useState("초등학교");
-  const [subjectLabel, setSubjectLabel] = useState("과학");
   const [tags, setTags] = useState([]);
 
   const onClickInput = () => {
     setVisible(true);
+  };
+
+  const onClickSearchBtn = () => {
+    setSearchData(tags);
+    setVisible(false);
   };
 
   return (
@@ -54,7 +60,7 @@ function TagsInput() {
       <Styled.InputWrapper onClick={onClickInput}>
         <Styled.Input type="text" />
       </Styled.InputWrapper>
-      <Styled.SearchBtn>
+      <Styled.SearchBtn onClick={onClickSearchBtn}>
         <svg
           viewBox="0 0 40 40"
           focusable="false"
@@ -77,17 +83,32 @@ function TagsInput() {
             <section style={{ display: "flex", gap: 10, flex: 1 }}>
               <Styled.SubSection>
                 <Styled.Label>학년</Styled.Label>
-                <Dropdown title={gradeLabel}>
+                <Dropdown title={"고등1"}>
                   {Object.keys(gradeObj).map(item => (
                     <Dropdown.Item key={item}>
                       {item}
                       <Dropdown.Submenu position="right">
                         {gradeObj[item].map(subItem => (
                           <Dropdown.Item
-                            onClick={() =>
-                              // changeFieldValue("gradeLabel", `${item} (${subItem})`)
-                              setTags(state => [...state, item, subItem])
-                            }
+                            onClick={() => {
+                              if (subItem === "공통") {
+                                setTags(state => [
+                                  ...state,
+                                  {
+                                    value: `${item} ${subItem}`,
+                                    type: "gradeLabel",
+                                  },
+                                ]);
+                              } else {
+                                setTags(state => [
+                                  ...state,
+                                  {
+                                    value: `${item}${subItem}`,
+                                    type: "gradeLabel",
+                                  },
+                                ]);
+                              }
+                            }}
                             key={subItem}
                           >
                             {subItem}
@@ -100,11 +121,16 @@ function TagsInput() {
               </Styled.SubSection>
               <Styled.SubSection>
                 <Styled.Label>과목</Styled.Label>
-                <Dropdown title={subjectLabel}>
+                <Dropdown title={"과학"}>
                   {Object.keys(subjectObj).map(item => (
                     <Dropdown.Item
                       key={item}
-                      onClick={() => setTags(state => [...state, item])}
+                      onClick={() =>
+                        setTags(state => [
+                          ...state,
+                          { value: item, type: "subjectLabel" },
+                        ])
+                      }
                     >
                       {item}
                       {subjectObj[item].length > 0 && (
@@ -113,7 +139,10 @@ function TagsInput() {
                             <Dropdown.Item
                               onClick={e => {
                                 e.stopPropagation();
-                                setTags(state => [...state, item, subItem]);
+                                setTags(state => [
+                                  ...state,
+                                  { value: subItem, type: "subjectLabel" },
+                                ]);
                               }}
                               key={subItem}
                             >
@@ -150,7 +179,7 @@ const SearchTag = ({ tag, setTags }) => {
   };
   return (
     <Styled.SearchTag>
-      <span>{tag}</span>
+      <span>{tag.value}</span>
       <Styled.Button onClick={deleteTag}>
         <svg
           viewBox="0 0 40 40"
