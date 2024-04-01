@@ -74,6 +74,8 @@ import UploadReward from "./Survey/Admin/UploadReward";
 import ViewReward from "./Survey/Respondent/ViewReward";
 import ViewResponse from "./Survey/Admin/ViewResponse";
 
+import Invite from "./Invite/Invite";
+
 function App() {
   /**
    * 처음에 반드시 .env 파일 생성 후 REACT_APP_API_URL = ${서버 도메인} 작성
@@ -193,6 +195,12 @@ function App() {
             path="/measureContinuous"
             exact={true}
             element={<MeasureContinuous />}
+          />
+
+          <Route
+            path="/invite"
+            exact={true}
+            element={<Invite />}
           />
 
           <Route
