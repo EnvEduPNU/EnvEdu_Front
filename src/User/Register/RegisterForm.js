@@ -42,6 +42,7 @@ function RegisterForm() {
             <div className="formBody">
                 <h1>회원가입</h1>
                 <div className="input-box">
+                    <label style={{ display: 'block' }}>아이디</label>
                     <input
                         className="registerInput"
                         placeholder="아이디: 5~20자"
@@ -56,6 +57,7 @@ function RegisterForm() {
                     )}
                 </div>
                 <div className="input-box">
+                    <label style={{ display: 'block' }}>비밀번호</label>
                     <input
                         className="registerInput"
                         placeholder="비밀번호: 8~20자"
@@ -71,6 +73,7 @@ function RegisterForm() {
                     )}
                 </div>
                 <div className="input-box">
+                    <label style={{ display: 'block' }}>비밀번호 확인</label>
                     <input
                         className="registerInput"
                         placeholder="비밀번호 확인"
@@ -81,6 +84,7 @@ function RegisterForm() {
                     />
                 </div>
                 <div className="input-box">
+                    <label style={{ display: 'block' }}>이메일 (read only)</label>
                     <input
                         className="registerInput"
                         placeholder="이메일"
@@ -94,6 +98,7 @@ function RegisterForm() {
                     {/**
                      * yyyy-mm-dd 형식 준수
                      */}
+                    <label style={{ display: 'block' }}>생년월일</label>
                     <input
                         className="registerInput"
                         placeholder="생년월일"
@@ -109,6 +114,7 @@ function RegisterForm() {
                     )}
                 </div>
                 <div className="input-box">
+                    <label style={{ display: 'block' }}>닉네임</label>
                     <input
                         className="registerInput"
                         placeholder="닉네임: 0~20자"
