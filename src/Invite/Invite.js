@@ -38,8 +38,8 @@ export default function Invite() {
     const generateCode = () => {
         customAxios.get('/educator/inviteCode/generate')
         .then((res) => {
-            console.log(res.data);
-            setCode(res.data);
+            console.log(res.data.code);
+            setCode(res.data.code);
         })
         .catch((err) => console.log(err));
     }
