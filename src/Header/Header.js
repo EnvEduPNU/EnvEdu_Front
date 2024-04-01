@@ -143,6 +143,9 @@ function Header() {
                 <NavLink className={"nav-link"} to="/myData">
                   My Data
                 </NavLink>
+                <NavLink className={"nav-link"} to="/data-in-chart">
+                  Data & Chart
+                </NavLink>
                 <NavLink className={"nav-link"} to="/openapi">
                   Open API Data
                 </NavLink>
