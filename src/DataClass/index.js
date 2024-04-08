@@ -11,16 +11,25 @@ import { Badge, Stack } from "react-bootstrap";
 export default function EClassList() {
   const naviate = useNavigate();
   const [eclasses, setEclasses] = useState([]);
+  const [isShow, setShow] = useState(false);
 
   useEffect(() => {
     getEclassList()
       .then(res => setEclasses(res.data))
       .catch(error => console.error(error));
+
+      if (localStorage.getItem('role') === 'ROLE_STUDENT') {
+        setShow(true);
+      }
   }, []);
 
   return (
     <Wrapper>
-      <h3 style={{ marginBottom: "2rem" }}>E-class 목록</h3>
+      {isShow && <a href="/invite" target="_blank" style={{ textDecoration: 'none' }}>
+        <Button variant="success">초대 코드 입력</Button>
+      </a>}
+
+      <h3 style={{ margin: "2rem 0" }}>E-class 목록</h3>
       <div style={{ display: "flex", gap: "30px", flexWrap: "wrap" }}>
         <Card style={{ width: "18rem", height: "400px", cursor: "pointer" }}>
           <div
