@@ -217,6 +217,12 @@ const EClassPage = () => {
               <Styled.SaveButton onClick={appendPage}>
                 + 페이지 추가
               </Styled.SaveButton>
+              
+              <a href="/invite" target="_blank" style={{ textDecoration: 'none' }}>
+                <Styled.SaveButton style={{ marginTop: '20px' }}>
+                  초대 코드 생성
+                </Styled.SaveButton>
+              </a>
             </Styled.SubSection>
           </Styled.MainSection>
         </div>

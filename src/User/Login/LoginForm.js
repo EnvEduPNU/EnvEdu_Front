@@ -36,7 +36,7 @@ function LoginForm() {
                     <button type="submit" className="btn login-btn">로그인</button>
                     <div className="find">
                         <span>Don't have an account?</span>
-                        <a href="/Register" style={{ fontWeight: 'bold', marginLeft: '0.3rem' }}>Sign in</a>
+                        <a href="/auth" style={{ fontWeight: 'bold', marginLeft: '0.3rem' }}>Sign in</a>
                         <br />
                         <span>Forgot your ID or PW?</span>
                         <a href="/Find" style={{ fontWeight: 'bold', marginLeft: '0.3rem' }}>아이디 / 비밀번호 찾기</a>
