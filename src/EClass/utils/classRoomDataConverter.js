@@ -7,6 +7,7 @@ import QuestionForAssignment from "../Component/Question/QuestionForAssignment";
 import QuestionForSubmit from "../Component/Question/QuestionForSubmit";
 import SeedForStudent from "../Component/Seed/SeedForStudent";
 import TableForAssignment from "../Component/Table/TableForAssignment";
+import TableForSubmitAndShare from "../Component/Table/TableForSubmitAndShare";
 import YoutubeToolForAssignment from "../Component/YoutubeTool/YoutubeToolForAssignment";
 import ClassroomType from "./classRoomType";
 
@@ -197,7 +198,18 @@ export class MatrixDataConverter extends ClassRoomDataConverter {
   }
 
   convertActivityForAssignment(data, pageIndex, activityIndex) {
-    return <TableForAssignment data={data["data"]} />;
+    return (
+      <TableForAssignment
+        data={data["data"]}
+        pageIndex={pageIndex}
+        activityIndex={activityIndex}
+      />
+    );
+  }
+  convertActivityForSubmit({ data }) {
+    const newData = data.data.map(d => [...d]);
+    newData.unshift(data.properties);
+    return <TableForSubmitAndShare data={newData} />;
   }
 }
 
@@ -219,5 +231,9 @@ export class ChartDataConverter extends ClassRoomDataConverter {
 
   convertActivityForAssignment(data, pageIndex, activityIndex) {
     return <ChartForAssignment data={data["data"]} />;
+  }
+
+  convertActivityForSubmit(data) {
+    return <ChartForAssignment data={data} />;
   }
 }

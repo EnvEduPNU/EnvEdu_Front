@@ -25,21 +25,21 @@ export const convertApiToEclassData = async originData => {
             if (chunk.classroomSequenceType === "MATRIX") {
               return new MatrixApiConverter().convertApiToAssignmentData(
                 chunk,
-                classroomChapters[0].id,
-                page.id
+                page.id,
+                classroomChapters[0].id
               );
             }
             if (chunk.classroomSequenceType === "CHART") {
               return await new ChartApiConverter().convertApiToAssignmentData(
                 chunk,
-                classroomChapters[0].id,
-                page.id
+                page.id,
+                classroomChapters[0].id
               );
             }
             return {
               ...chunk,
-              sequenceId: page.id,
               chapterId: classroomChapters[0].id,
+              sequenceId: page.id,
             };
           })
         );

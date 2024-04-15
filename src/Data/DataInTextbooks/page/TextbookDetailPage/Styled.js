@@ -6,3 +6,8 @@ export const Wrapper = styled.div`
   flex-direction: column;
   gap: 20px;
 `;
+
+export const Top = styled.div`
+  display: flex;
+  gap: 10px;
+`;
