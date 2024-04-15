@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { customAxios } from "../../Common/CustomAxios";
+import { customAxios } from '../../../Common/CustomAxios';
 import "./leftSlidePage.scss";
 import { useGraphDataStore } from "../store/graphStore";
-import FolderList from "../../Data/MyData/folderList";
+import FolderList from "../../MyData/folderList";
 
 //항목 이름 (한국어 -> 영어)
 const engToKor = name => {
