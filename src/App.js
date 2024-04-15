@@ -3,44 +3,35 @@ import { Routes, Route } from "react-router-dom";
 import { useEffect } from "react";
 import RegisterForm from "./User/Register/RegisterForm";
 import Home from "./Homepage/Home";
-import AddMACForm from "./Device/Manager/AddMACForm";
+import AddMACForm from "./Admin/Device/AddMACForm";
 import AddDevice from "./Admin/Device/addDevice";
 import LoginForm from "./User/Login/LoginForm";
-import ConnectPage from "./Socket/ConnectPage";
 import Header from "./Header/Header";
-import TestSocket from "./Test/SocketTest";
-import TestFetch from "./Test/TestFetch";
 import RegisterStudents from "./User/Educator/RegisterStudents";
 import Footer from "./Footer/Footer";
 import Find from "./User/Find/Find";
-import Notice from "./Board/Notice/Notice";
-import Board from "./Board/Board";
-import Board_content from "./Board/Board_content";
+import Notice from "./Contact/Announcement/Notice";
+import Board from "./Contact/Board/Board";
 import Team from "./About/Team/Team";
 import What from "./About/What/What";
 import News from "./Learnmore/News/News";
 import Research from "./Learnmore/Research/Research";
-import Training from "./Learnmore/Train/Training";
-import Training1 from "./Learnmore/Train/Training1";
-import Training2 from "./Learnmore/Train/Training2";
-import Training3 from "./Learnmore/Train/Training3";
+import Training from "./Learnmore/Training/Training";
+import Training1 from "./Learnmore/Training/Training1";
+import Training2 from "./Learnmore/Training/Training2";
+import Training3 from "./Learnmore/Training/Training3";
 import Implementation from "./Learnmore/Implementation/Implementation";
 import EmailAuth from "./User/Register/EmailAuth";
 import AdminLogin from "./Admin/Login/AdminLogin";
 import DeviceList from "./Admin/Device/DeviceList";
-import ContactUs from "./Contact/ContactUs";
-import Resource from "./Learnmore/Resource/Resource";
-import OpenApi from "./OpenApi/OpenApi";
-import OpenApiPast from "./OpenApi/openAPIPast";
-import Search from "./OpenApi/search";
-import MyData from "./myData/myData";
-import ReadExcel from "./myData/readExcel";
-
-import Measure from "./Education/Measure/measure";
-import Sample from "./Socket/sample";
-
-import MeasureContinuous from "./Education/Measure/measure_continuous";
-
+import ContactUs from "./Contact/ContactUs/ContactUs";
+import EducationResources from "./Education/EducationResources/Resource"
+import OpenApi from "./Data/OpenAPIData/OpenApi";
+import OpenApiPast from "./Data/OpenAPIData/openAPIPast";
+import Search from "./Data/OpenAPIData/search";
+import MyData from "./Data/MyData/myData";
+import ReadExcel from "./Data/MyData/readExcel";
+import Index from "./Data/SEEdApp/Index";
 import DataPretreatmentPage from "./DataLiteracy/DataPretreatment/DataPretreatmentPage";
 import DataInputPage from "./DataLiteracy/DataInput/DataInputPage";
 import NewDataInput from "./DataLiteracy/DataInput/NewDataInput";
@@ -48,11 +39,6 @@ import DrawGraphV2Page from "./DataLiteracy/DrawGraph/page/DrawGraphV2Page";
 import DataLoadPage from "./DataLiteracy/DataLoad/page/DataLoadPage";
 import GraphEvalutionRusult from "./DataLiteracy/DrawGraph/GraphEvalutionRusult/GraphEvalutionRusult";
 import ResultReport from "./DataLiteracy/DrawGraph/ResultReport/ResultReport";
-
-import InterAction from "./Education/interaction/interaction";
-import InterAction2 from "./Education/interaction/interaction2";
-import Combine from "./Education/interaction/combine";
-import Combine2 from "./Education/combin2";
 
 import DataClass from "./DataClass/DataClass";
 import CheckReadData from "./DataClass/ReadData/CheckData";
@@ -64,17 +50,17 @@ import SlidePage from "./Study/Page/SlidePage";
 import EClassList from "./DataClass";
 import EClassPage from "./EClass/Page/EClassPage/EClassPage";
 import CreateEClassPage from "./Study/Page/CreateEClassPage";
-import TextbookPage from "./Textbook/page/TextbookPage";
-import TextbookDetailPage from "./Textbook/page/TextbookDetaliPage/TextbookDetailPage";
-import DataInChartPage from "./DataInChart/Page/DataInChartPage";
+import TextbookPage from "./Data/DataInTextbooks/page/TextbookPage";
+import TextbookDetailPage from "./Data/DataInTextbooks/page/TextbookDetailPage/TextbookDetailPage";
+import DataInChartPage from "./Data/DataInChart/Page/DataInChartPage";
 
-import Survey from "./Survey/Survey";
-import CreateSurvey from "./Survey/Admin/CreateSurvey";
-import UploadReward from "./Survey/Admin/UploadReward";
-import ViewReward from "./Survey/Respondent/ViewReward";
-import ViewResponse from "./Survey/Admin/ViewResponse";
+import Survey from "./Education/Survey/Survey";
+import CreateSurvey from "./Education/Survey/Admin/CreateSurvey";
+import UploadReward from "./Education/Survey/Admin/UploadReward";
+import ViewReward from "./Education/Survey/Respondent/ViewReward";
+import ViewResponse from "./Education/Survey/Admin/ViewResponse";
 
-import Invite from "./Invite/Invite";
+import Invite from "./Education/Invite";
 
 function App() {
   /**
@@ -113,12 +99,7 @@ function App() {
           <Route path="/login" exact={true} element={<LoginForm />} />
 
           {/*socket*/}
-          <Route path="/socket" exact={true} element={<Sample />} />
-          {/*<Route path="/sample" exact={true} element={<Sample />} />*}
-
-          {/*test*/}
-          <Route path="/test/socket" exact={true} element={<TestSocket />} />
-          <Route path="/test/fetch" exact={true} element={<TestFetch />} />
+          <Route path="/socket" exact={true} element={<Index />} />
 
           {/*id_password_find*/}
           <Route path="/find" exact={true} element={<Find />} />
@@ -126,22 +107,12 @@ function App() {
           {/*board*/}
           <Route path="/board" exact={true} element={<Board />} />
           <Route path="/notice" exact={true} element={<Notice />} />
-          <Route
-            path="/boardcontent"
-            exact={true}
-            element={<Board_content />}
-          />
 
           {/*About*/}
           <Route path="/team" exact={true} element={<Team />} />
           <Route path="/what" exact={true} element={<What />} />
 
           {/*Education */}
-          <Route path="/interaction" exact={true} element={<InterAction />} />
-          <Route path="/interaction2" exact={true} element={<InterAction2 />} />
-          <Route path="/combine" exact={true} element={<Combine />} />
-          <Route path="/combine2" exact={true} element={<Combine2 />} />
-
           <Route path="/dataclass" exact={true} element={<DataClass />} />
           <Route
             path="/checkReadData"
@@ -189,13 +160,6 @@ function App() {
             <Route path="" exact={true} element={<EClassList />} />
             <Route path="new" exact={true} element={<CreateEClassPage />} />
           </Route>
-
-          <Route path="/measure" exact={true} element={<Measure />} />
-          <Route
-            path="/measureContinuous"
-            exact={true}
-            element={<MeasureContinuous />}
-          />
 
           <Route
             path="/invite"
@@ -250,7 +214,7 @@ function App() {
             exact={true}
             element={<Implementation />}
           />
-          <Route path="/resource" exact={true} element={<Resource />} />
+          <Route path="/resource" exact={true} element={<EducationResources />} />
 
           {/*Admin*/}
           <Route path="/admin/login" exact={true} element={<AdminLogin />} />
@@ -260,11 +224,11 @@ function App() {
             exact={true}
             element={<AddDevice />}
           />
-          {/*<Route
+          <Route
             path="/admin/add/device"
             exact={true}
             element={<AddMACForm />}
-          />*/}
+          />
 
           {/*ContactUs*/}
           <Route path="/contact" exact={true} element={<ContactUs />} />
