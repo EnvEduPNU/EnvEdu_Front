@@ -13,11 +13,16 @@ function LoginForm() {
   const navigate = useNavigate();
 
   function onSubmit(data) {
-    const response = customAxios.post("/login", { ...data }).then(() => {
-      console.log("로그인 성공" + response.data);
-      navigate("/");
-      window.location.reload();
-    });
+    customAxios
+      .post("/login", { ...data })
+      .then((response) => {
+        console.log("로그인 성공", response.data);
+        navigate("/");
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.log("로그인 실패", error);
+      });
   }
 
   return (
