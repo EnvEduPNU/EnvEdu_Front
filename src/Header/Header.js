@@ -108,9 +108,6 @@ function Header() {
                 <NavLink className={"nav-link"} to="/team">
                   Team
                 </NavLink>
-                <NavLink className={"nav-link"} to="/">
-                  Projects
-                </NavLink>
               </NavDropdown>
               <NavDropdown
                 title="GET STARTED"
@@ -170,8 +167,8 @@ function Header() {
                 </NavLink>
                 <NavLink className={"nav-link"} to="/resource">
                   Education Resources
-                </NavLink> 
-                <NavLink className={'nav-link'} to="/survey">
+                </NavLink>
+                <NavLink className={"nav-link"} to="/survey">
                   Survey
                 </NavLink>
               </NavDropdown>

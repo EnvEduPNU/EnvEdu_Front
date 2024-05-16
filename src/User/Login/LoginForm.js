@@ -80,13 +80,13 @@ function LoginForm() {
             로그인
           </button>
           <div className="find">
-            <span>Don't have an account?</span>
+            {/* <span>Don't have an account?</span>
             <a
               href="/auth"
               style={{ fontWeight: "bold", marginLeft: "0.3rem" }}
             >
               Sign in
-            </a>
+            </a> */}
             <br />
             <span>Forgot your ID or PW?</span>
             <a
