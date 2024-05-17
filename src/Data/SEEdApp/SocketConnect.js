@@ -99,30 +99,67 @@ const SocketConnect = forwardRef((props, ref) => {
    * 5초 주기로 현재 Date와 마지막으로 데이터를 전송받은 시점의 Date를 비교
    * 6초 이상인 경우, 연결이 끊긴 것으로 간주
    */
-  setInterval(() => {
-    if (lastReceivedDate !== "") {
-      const currentDate = new Date();
-      const lastReceivedDateInMillis = Date.parse(lastReceivedDate);
-      if (
-        lastReceivedDate === null ||
-        Date.parse(currentDate.toUTCString()) - lastReceivedDateInMillis >= 6000
-      ) {
-        setIsConnectionDropped(true);
-      }
-    }
-  }, 5000);
+  // setInterval(() => {
+  //   if (lastReceivedDate !== "") {
+  //     const currentDate = new Date();
+  //     const lastReceivedDateInMillis = Date.parse(lastReceivedDate);
+  //     if (
+  //       lastReceivedDate === null ||
+  //       Date.parse(currentDate.toUTCString()) - lastReceivedDateInMillis >= 6000
+  //     ) {
+  //       console.log(
+  //         "연결시간 체크 : 현재시간=" +
+  //           currentDate +
+  //           "기기를 연결한 시간 : " +
+  //           lastReceivedDateInMillis
+  //       );
+  //       setIsConnectionDropped(true);
+  //     }
+  //   }
+  // }, 5000);
+
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  }
 
   /**
    * 서버에 웹 소켓 커넥션 생성
    */
+  // function register() {
+  //   const sock = new SockJS(`${process.env.REACT_APP_API_URL}/client/socket`);
+
+  //   stompClient = stomp.over(sock);
+
+  //   const refreshToken = getCookie("refresh_token");
+
+  //   stompClient.connect({ authorization: refreshToken }, onConnected, onError);
+  // }
+
   function register() {
     const sock = new SockJS(`${process.env.REACT_APP_API_URL}/client/socket`);
     stompClient = stomp.over(sock);
-    stompClient.connect(
-      { authorization: localStorage.getItem("access_token") },
-      onConnected,
-      onError
-    );
+
+    // const headers = {
+    //   "Content-Type": "application/json; charset=utf-8",
+    //   Authorization: localStorage.getItem("jwt"),
+    // };
+
+    // stompClient.connect(headers, onConnected, onError);
+    // stompClient.connect( onConnected, onError);
+
+    const headers = {
+      "Content-Type": "application/json; charset=utf-8",
+      // Authorization: localStorage.getItem("jwt"),
+    };
+
+    if (stompClient && !stompClient.connected) {
+      // 헤더와 콜백을 함께 제공하여 connect를 호출해야 합니다.
+      stompClient.connect(headers, onConnected, onError);
+    } else {
+      console.log("Already connected or not initialized");
+    }
   }
 
   function disconnect() {
@@ -130,16 +167,24 @@ const SocketConnect = forwardRef((props, ref) => {
     setConnected(false);
   }
 
+  // 첫 메시지를 전달하지 않으면 소켓 구독이 안되어서 이용불가함 무조건 1회 이상 보내야함
+  function sendMessage() {
+    const message = {
+      mac: props.mac,
+    };
+    console.log("Sending message to /app/device:", message);
+    stompClient.send("/app/device", {}, JSON.stringify(message));
+  }
+
   /**
    * 커넥션 생성 성공 시, 센서 기기에서 전송하는 데이터를 받기 위해 MAC 주소를 이용한 경로로 subscribe
    */
   function onConnected() {
-    //setConnected(true);
-    stompClient.subscribe(
-      "/topic/user/" + props.mac,
-      onMessageReceived,
-      onError
-    );
+    const topic = "/topic/user/" + props.mac;
+    console.log("백서버에 Connection은 생성");
+    console.log("기기 mac 주소 : " + topic);
+    stompClient.subscribe(topic, onMessageReceived, onError);
+    sendMessage();
   }
 
   function onError() {
@@ -165,6 +210,10 @@ const SocketConnect = forwardRef((props, ref) => {
      * 가장 최근 데이터가 수신된 시점 갱신
      * 데이터를 받았으므로 연결 끊김 여부를 false로 설정
      */
+    console.log("구독 완료");
+
+    console.log("기기 정보 : " + JSON.parse(payload.body));
+
     lastReceivedDate = new Date();
     setIsConnectionDropped(false);
     setConnected(true);
@@ -174,7 +223,7 @@ const SocketConnect = forwardRef((props, ref) => {
      */
     receiveObject = JSON.parse(payload.body);
 
-    //lastReceivedDate = receiveObject.dateString;
+    lastReceivedDate = receiveObject.dateString;
 
     /**
      * 받은 데이터를 receivedData에 추가

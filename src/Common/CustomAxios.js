@@ -17,6 +17,7 @@ export const customAxios = axios.create({
 
 customAxios.interceptors.request.use(function (config) {
   config.headers.ContentType = "application/json; charset=utf-8";
+  console.log("jwt가 뭐여 : " + localStorage.getItem("jwt"));
   config.headers.authorization = localStorage.getItem("jwt");
   return config;
 });
@@ -24,6 +25,8 @@ customAxios.interceptors.request.use(function (config) {
 customAxios.interceptors.response.use(
   function (response) {
     if (response.headers["authorization"] !== undefined) {
+      console.log("response는 성공");
+
       let accessToken = response.headers["authorization"];
       localStorage.setItem("access_token", accessToken);
 
