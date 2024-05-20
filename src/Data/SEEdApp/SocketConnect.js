@@ -141,54 +141,69 @@ const SocketConnect = forwardRef((props, ref) => {
     const sock = new SockJS(`${process.env.REACT_APP_API_URL}/client/socket`);
     stompClient = stomp.over(sock);
 
-    // const headers = {
-    //   "Content-Type": "application/json; charset=utf-8",
-    //   Authorization: localStorage.getItem("jwt"),
-    // };
-
-    // stompClient.connect(headers, onConnected, onError);
-    // stompClient.connect( onConnected, onError);
-
     const headers = {
       "Content-Type": "application/json; charset=utf-8",
-      // Authorization: localStorage.getItem("jwt"),
+      Authorization: localStorage.getItem("jwt"),
     };
 
     if (stompClient && !stompClient.connected) {
-      // 헤더와 콜백을 함께 제공하여 connect를 호출해야 합니다.
       stompClient.connect(headers, onConnected, onError);
+      console.log("백서버에 Connection은 생성");
     } else {
       console.log("Already connected or not initialized");
     }
   }
 
-  function disconnect() {
-    stompClient.disconnect();
-    setConnected(false);
+  function onConnected() {
+    const subscribePath = "/topic/user/" + props.mac;
+
+    console.log("구독 주소 : " + subscribePath);
+
+    setTimeout(() => {
+      stompClient.subscribe(subscribePath, function (message) {
+        const messageData = JSON.parse(message.body);
+
+        console.log("MAC 주소:", messageData.mac);
+        console.log("습도:", messageData.hum);
+        console.log("온도:", messageData.temp);
+
+        onMessageReceived(messageData);
+      });
+      sendMessage(); // 연결 후에 메시지를 전송
+    }, 1000);
+
+    // // 소켓 연결 후 1초 후에 구독과 메시지 전송 시도
+    // setTimeout(() => {
+    //   stompClient.subscribe(subscribePath, function (message) {
+    //     console.log("받은 메시지 파싱 데이터 : " + message);
+
+    //     // 받은 데이터를 onMessageReceived 함수로 전달
+    //     onMessageReceived(messageBody);
+    //   });
+    //   sendMessage(); // 연결 후에 메시지를 전송
+    // }, 1000);
   }
 
-  // 첫 메시지를 전달하지 않으면 소켓 구독이 안되어서 이용불가함 무조건 1회 이상 보내야함
   function sendMessage() {
     const message = {
       mac: props.mac,
     };
-    console.log("Sending message to /app/device:", message);
+    console.log("Sending message to /app/user:", message);
     stompClient.send("/app/device", {}, JSON.stringify(message));
   }
 
-  /**
-   * 커넥션 생성 성공 시, 센서 기기에서 전송하는 데이터를 받기 위해 MAC 주소를 이용한 경로로 subscribe
-   */
-  function onConnected() {
-    const topic = "/topic/user/" + props.mac;
-    console.log("백서버에 Connection은 생성");
-    console.log("기기 mac 주소 : " + topic);
-    stompClient.subscribe(topic, onMessageReceived, onError);
-    sendMessage();
+  function onMessageReceived(payload) {
+    console.log("Received message:", payload);
+    // 메시지를 처리하는 로직을 여기에 추가하세요.
   }
 
   function onError() {
     alert("연결 실패");
+  }
+
+  function disconnect() {
+    stompClient.disconnect();
+    setConnected(false);
   }
 
   /**
@@ -212,7 +227,7 @@ const SocketConnect = forwardRef((props, ref) => {
      */
     console.log("구독 완료");
 
-    console.log("기기 정보 : " + JSON.parse(payload.body));
+    console.log("기기 정보 : " + payload.dataUUID);
 
     lastReceivedDate = new Date();
     setIsConnectionDropped(false);
@@ -221,7 +236,7 @@ const SocketConnect = forwardRef((props, ref) => {
     /**
      * 받은 데이터 파싱
      */
-    receiveObject = JSON.parse(payload.body);
+    receiveObject = payload;
 
     lastReceivedDate = receiveObject.dateString;
 
@@ -260,6 +275,8 @@ const SocketConnect = forwardRef((props, ref) => {
           } else {
             updatedReceiveObject[dataType] = null;
           }
+        } else {
+          console.log("receivedObject가 없음");
         }
       });
 
@@ -310,6 +327,7 @@ const SocketConnect = forwardRef((props, ref) => {
   useEffect(() => {
     // 컴포넌트가 마운트될 때 register 함수를 자동으로 호출
     register();
+    onConnected();
   }, []);
 
   return (
