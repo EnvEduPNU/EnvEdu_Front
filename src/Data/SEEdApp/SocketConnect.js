@@ -265,20 +265,24 @@ const SocketConnect = forwardRef((props, ref) => {
       // receiveObject를 복제
       const updatedReceiveObject = { ...receiveObject };
 
-      //선택하지 않은 센서의 값은 null로 만들기
-      dataTypes.forEach((dataType) => {
-        if (!selectedTypes.includes(dataType)) {
-          if (dataType === "pH") {
-            updatedReceiveObject["ph"] = null;
-          } else if (dataType === "hum_earth") {
-            updatedReceiveObject["hum_EARTH"] = null;
-          } else {
-            updatedReceiveObject[dataType] = null;
-          }
-        } else {
-          console.log("receivedObject가 없음");
-        }
-      });
+      console.log("저장 ? :");
+      console.log("dataType ? :" + dataTypes);
+      console.log("selectedTypes ? :" + selectedTypes);
+
+      // //선택하지 않은 센서의 값은 null로 만들기
+      // dataTypes.forEach((dataType) => {
+      //   if (!selectedTypes.includes(dataType)) {
+      //     if (dataType === "pH") {
+      //       updatedReceiveObject["ph"] = null;
+      //     } else if (dataType === "hum_earth") {
+      //       updatedReceiveObject["hum_EARTH"] = null;
+      //     } else {
+      //       updatedReceiveObject[dataType] = null;
+      //     }
+      //   } else {
+      //     console.log("receivedObject가 없음");
+      //   }
+      // });
 
       updatedReceiveObject.username = props.username;
 
@@ -305,6 +309,8 @@ const SocketConnect = forwardRef((props, ref) => {
        * 받은 데이터를 saveData에 추가
        * 5개가 쌓이면 한 번에 서버로 전송해 저장
        */
+
+      console.log("저장할 객체 : " + JSON.stringify(updatedReceiveObject));
       saveData.push(JSON.stringify(updatedReceiveObject));
       setSaveData([...saveData]);
       if (isFinished) {

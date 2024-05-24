@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { customAxios } from '../../../Common/CustomAxios';
+import { customAxios } from "../../../Common/CustomAxios";
 import "./leftSlidePage.scss";
 import { useGraphDataStore } from "../store/graphStore";
 import FolderList from "../../MyData/folderList";
 
 //항목 이름 (한국어 -> 영어)
-const engToKor = name => {
+const engToKor = (name) => {
   const kor = {
     //수질 데이터
     PTNM: "조사지점명",
@@ -60,8 +60,8 @@ export default function LeftSlidePage() {
   useEffect(() => {
     customAxios
       .get("/mydata/list")
-      .then(res => {
-        const formattedData = res.data.map(data => ({
+      .then((res) => {
+        const formattedData = res.data.map((data) => ({
           ...data,
           saveDate: data.saveDate.split("T")[0],
           dataLabel:
@@ -73,7 +73,7 @@ export default function LeftSlidePage() {
         }));
         setSummary(formattedData);
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   }, []);
 
   const { setData } = useGraphDataStore();
@@ -82,7 +82,7 @@ export default function LeftSlidePage() {
     if (type === "CUSTOM") {
       customAxios
         .get(`/dataLiteracy/customData/download/${id}`)
-        .then(res => {
+        .then((res) => {
           //수정 필요
           let headers = res.data.properties; // ['a','b','c]
 
@@ -95,7 +95,7 @@ export default function LeftSlidePage() {
           localStorage.setItem("data", JSON.stringify(recombined));
           // window.location.reload();
         })
-        .catch(err => console.log(err));
+        .catch((err) => console.log(err));
     } else {
       let path = "";
       if (type === "수질 데이터") {
@@ -108,9 +108,9 @@ export default function LeftSlidePage() {
 
       customAxios
         .get(path)
-        .then(res => {
+        .then((res) => {
           let headers = Object.keys(res.data[0]).filter(
-            key =>
+            (key) =>
               key !== "id" &&
               key !== "dataUUID" &&
               key !== "saveDate" &&
@@ -130,26 +130,36 @@ export default function LeftSlidePage() {
             "tur",
           ];
 
+          const keysToExclude = ["id", "dataUUID", "saveDate", "dateString"];
+
           for (const attribute of attributesToCheck) {
-            const isAllZero = res.data.every(item => item[attribute] === 0);
-            // 해당 속성이 모두 0일 때, headers에서 제거
-            if (isAllZero) {
-              headers = headers.filter(header => header !== attribute);
+            const isAllNone = res.data.every(
+              (item) => item[attribute] === -99999.0
+            );
+            if (isAllNone) {
+              // 해당 속성이 모두 -99999.0일 때, keysToExclude에 추가
+              if (!keysToExclude.includes(attribute)) {
+                keysToExclude.push(attribute);
+              }
+              // // 해당 속성이 모두 -99999.0일 때, headers에서 제거
+              headers = headers.filter((header) => header !== attribute);
             }
           }
 
-          headers = headers.map(header => engToKor(header));
+          headers = headers.map((header) => engToKor(header));
 
-          // 각각의 딕셔너리에서 값만 추출하여 리스트로 변환
-          const keysToExclude = ["id", "dataUUID", "saveDate", "dateString"];
-
-          const values = res.data.map(item => {
+          // 중요한 데이터들은 들어온 데이터 리스트에서 제거
+          const values = res.data.map((item) => {
             const filteredItem = Object.keys(item)
-              .filter(key => !keysToExclude.includes(key))
+              .filter((key) => !keysToExclude.includes(key))
               .reduce((obj, key) => {
                 obj[key] = item[key];
                 return obj;
               }, {});
+
+            console.log(
+              "값들이 어떻게 필터 되나 : " + Object.values(filteredItem)
+            );
             return Object.values(filteredItem);
           });
 
@@ -160,29 +170,29 @@ export default function LeftSlidePage() {
           localStorage.setItem("data", JSON.stringify(recombined));
           // window.location.reload();
         })
-        .catch(err => console.log(err));
+        .catch((err) => console.log(err));
     }
   };
 
   const [filteredData, setFilteredData] = useState([]);
-  const selectFolder = type => {
+  const selectFolder = (type) => {
     let filtered;
     if (type === "전체") {
       filtered = summary;
     } else if (type == "대기질") {
-      filtered = summary.filter(data => data.dataLabel === "대기질 데이터");
+      filtered = summary.filter((data) => data.dataLabel === "대기질 데이터");
     } else if (type == "수질") {
-      filtered = summary.filter(data => data.dataLabel === "수질 데이터");
+      filtered = summary.filter((data) => data.dataLabel === "수질 데이터");
     } else if (type == "SEED") {
-      filtered = summary.filter(data => data.dataLabel === "SEED");
+      filtered = summary.filter((data) => data.dataLabel === "SEED");
     } else if (type == "CUSTOM") {
-      filtered = summary.filter(data => data.dataLabel === "CUSTOM");
+      filtered = summary.filter((data) => data.dataLabel === "CUSTOM");
     }
     setFilteredData(filtered);
   };
 
   const [selectedFolderId, setSelectedFolderId] = useState(null);
-  const handleFolderSelect = folderId => {
+  const handleFolderSelect = (folderId) => {
     setSelectedFolderId(folderId);
   };
 
@@ -275,7 +285,9 @@ export default function LeftSlidePage() {
               </div>
             </div>
 
-            <div style={{ padding: "1rem", overflowY: "scroll" }}>
+            <div
+              style={{ padding: "1rem", height: "700px", overflowY: "scroll" }}
+            >
               {filteredData.length > 0 && (
                 <table className="summary-table">
                   <thead>

@@ -1,7 +1,12 @@
 import styled from "styled-components";
 
 export const Wrapper = styled.div`
-  width: 100%;
+  display: flex;
+  flex-direction: column;
   height: 100%;
-  /* overflow: auto; */
+`;
+
+export const CustomTableWrapper = styled.div`
+  flex: 1;
+  overflow-y: auto;
 `;

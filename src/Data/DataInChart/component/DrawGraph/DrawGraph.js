@@ -12,9 +12,9 @@ function DrawGraph() {
     <Styled.Wrapper>
       <Header />
       {tab === "table" && (
-        <>
+        <Styled.CustomTableWrapper>
           <CustomTable />
-        </>
+        </Styled.CustomTableWrapper>
       )}
       {tab === "graph" && (
         <>

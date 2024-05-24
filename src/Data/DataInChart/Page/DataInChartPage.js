@@ -19,9 +19,7 @@ function DataInChartPage() {
       </LeftSilde>
 
       <TopSlide>
-        <div style={{ height: "100px" }}>
-          {isShowTop && <Header />}
-        </div>
+        <div style={{ height: "100px" }}>{isShowTop && <Header />}</div>
       </TopSlide>
 
       <Blackboard>

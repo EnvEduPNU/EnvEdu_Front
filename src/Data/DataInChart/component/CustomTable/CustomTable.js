@@ -4,6 +4,7 @@ import { ReactComponent as PencilIcon } from "../../../../Study/image/Pencil.svg
 import * as Styled from "./Styled";
 import Select from "../../../../DataLiteracy/common/Select/Select";
 
+// data-in-chart 페이지 테이블이 나오는 컴포넌트
 function CustomTable({ isChangeCategory = true }) {
   const { data, variables, changeValue, changeVariableType } =
     useGraphDataStore();
@@ -11,6 +12,7 @@ function CustomTable({ isChangeCategory = true }) {
 
   const tableNumberData = data.map((d, idx) => {
     if (idx === 0) return "Rows#";
+    console.log("어떻게 데이터가 들어오나 : " + d);
     return `${idx}`;
   });
 
@@ -51,6 +53,7 @@ function CustomTable({ isChangeCategory = true }) {
         </Styled.Notice>
       ) : (
         <>
+          {/* 첫 컬럼 #Rows 번호 */}
           <Styled.FirstColumn key={"starter"} $isNotEnd>
             <Styled.HeaderWrapper>
               <Styled.HeaderStartar>{tableNumberData[0]}</Styled.HeaderStartar>
@@ -61,11 +64,13 @@ function CustomTable({ isChangeCategory = true }) {
               </Styled.RowNumber>
             ))}
           </Styled.FirstColumn>
+          {/* 컬럼과 튜플들 */}
           {headers.map((header, col) => (
             <Styled.Column key={col} $isNotEnd={col !== headers.length - 1}>
               <Styled.HeaderWrapper>
                 <Styled.Header>
                   <Styled.Th $isNotEnd>
+                    {/* 컬럼 이름 */}
                     <span>{header}</span>
                     <Styled.Circle onClick={onClickPencil}>
                       <PencilIcon width={"15px"} height={"15px"} />
@@ -76,7 +81,7 @@ function CustomTable({ isChangeCategory = true }) {
                       <Select
                         defaultValue={variables[col].type}
                         items={["Categorical", "Numeric"]}
-                        onChange={type => onChangeType(col, type)}
+                        onChange={(type) => onChangeType(col, type)}
                       />
                     ) : (
                       variables[col].type
@@ -99,11 +104,12 @@ function CustomTable({ isChangeCategory = true }) {
                     <Styled.Input
                       value={d[col]}
                       spellCheck={false}
-                      onChange={e => handleInputChange(e, row + 1, col)}
+                      onChange={(e) => handleInputChange(e, row + 1, col)}
                       onBlur={() => setEditableCell(null)}
-                      onKeyDown={e => onClickEnter(e)}
+                      onKeyDown={(e) => onClickEnter(e)}
                     />
                   ) : (
+                    // 튜플 이름
                     <Styled.InputDiv
                       onDoubleClick={() => onDoubleClickData(row + 1, col)}
                     >
