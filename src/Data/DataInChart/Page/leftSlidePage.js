@@ -137,11 +137,11 @@ export default function LeftSlidePage() {
               (item) => item[attribute] === -99999.0
             );
             if (isAllNone) {
-              // 해당 속성이 모두 -99999.0일 때, keysToExclude에 추가
+              // 해당 속성이 모두 -99999.0일 때, keysToExclude에 추가(헤더에 따른 values도 제거해줘야함)
               if (!keysToExclude.includes(attribute)) {
                 keysToExclude.push(attribute);
               }
-              // // 해당 속성이 모두 -99999.0일 때, headers에서 제거
+              // 해당 속성이 모두 -99999.0일 때, headers에서 제거
               headers = headers.filter((header) => header !== attribute);
             }
           }

@@ -1,7 +1,6 @@
 import SockJS from "sockjs-client";
 import { useEffect, useState } from "react";
 import SingleDataContainer from "./SingleDataContainer";
-import { decodeToken } from "react-jwt";
 import { customAxios } from "../../Common/CustomAxios";
 
 import { FaPlay } from "react-icons/fa";
@@ -15,52 +14,34 @@ import { MdError } from "react-icons/md";
 import { MdSignalWifiStatusbarConnectedNoInternet } from "react-icons/md";
 import { ImConnection } from "react-icons/im";
 
-const stomp = require("stompjs");
 /**
- * 웹 소켓 연결을 위한 stompClient
+ * 전역 변수 관리
+ * 작성자: 김선규
  */
+let saveTest = false;
+let periodTest = "";
+let memoTest = "";
+let CountTest = 0;
+const stomp = require("stompjs"); //웹 소켓 연결을 위한 stompClient
 let stompClient = null;
+let receiveObject = null; //받은 데이터를 객체로 관리하기 위한 용도
+let isFinished = false; //데이터 저장 중지 여부
+let lastReceivedDate = null; //마지막으로 데이터를 받은 날짜
 
 /**
- * 받은 데이터를 객체로 관리하기 위한 용도
+ * 본 컴포넌트
+ * 작성자: 김선규
  */
-let receiveObject = null;
-
-/**
- * 받은 데이터를 저장할지에 대한 여부
- */
-let save = false;
-
-/*데이터 저장 중지 여부*/
-let isFinished = false;
-
-/**
- * 마지막으로 데이터를 받은 날짜
- */
-let lastReceivedDate = null;
-
-const SocketConnect = forwardRef((props, ref) => {
-  useImperativeHandle(ref, () => ({
-    register,
-  }));
-
-  // 선택된 데이터 타입들을 저장하는 상태
-  const [selectedTypes, setSelectedTypes] = useState([]);
-
-  // 선택된 데이터 타입을 토글하는 함수
-  const toggleSelectedType = (type) => {
-    setSelectedTypes((prev) => {
-      // 이미 선택된 타입이면 제거, 아니면 추가
-      return prev.includes(type)
-        ? prev.filter((t) => t !== type)
-        : [...prev, type];
-    });
-  };
-
+export default function SocketConnect(props) {
   /**
-   * 센서 기기에서 전송하는 데이터 종류
+   * 상태 관리
    */
+  const [selectedTypes, setSelectedTypes] = useState([]); // 선택된 데이터 타입들을 저장하는 상태
+  const [period, setPeriod] = useState("");
+  const [location, setLocation] = useState("");
+  const [memo, setMemo] = useState("");
   const dataTypes = [
+    //센서 기기에서 전송하는 데이터 종류
     "temp",
     "pH",
     "hum",
@@ -72,71 +53,29 @@ const SocketConnect = forwardRef((props, ref) => {
     "lux",
     "pre",
   ];
-  //const dataTypes_ko = ["기온", "pH", "습도", "토양 습도", "탁도", "미세먼지", "용존산소량", "이산화탄소", "조도", "기압"];
+  const [connected, setConnected] = useState(false); //현재 웹 소켓 연결 여부
+  const [receivedData, setReceivedData] = useState([]); //전송받은 데이터
+  const [receivedDataView, setReceivedDataView] = useState([]);
+  const [saveData, setSaveData] = useState([]); //저장할 데이터
+  const [isConnectionDropped, setIsConnectionDropped] = useState(false); //연결 끊김 여부
 
   /**
-   * 현재 웹 소켓 연결 여부
+   * [Method] 선택된 데이터 타입을 토글하는 메서드
+   * 작성자: 김선규
    */
-  const [connected, setConnected] = useState(false);
+  const toggleSelectedType = (type) => {
+    setSelectedTypes((prev) => {
+      // 이미 선택된 타입이면 제거, 아니면 추가
+      return prev.includes(type)
+        ? prev.filter((t) => t !== type)
+        : [...prev, type];
+    });
+  };
 
   /**
-   * 전송받은 데이터
+   * [Method] 소켓을 등록하는 메서드
+   * 작성자: 김선규
    */
-  const [receivedData, setReceivedData] = useState([]);
-
-  /**
-   * 저장할 데이터
-   */
-  const [saveData, setSaveData] = useState([]);
-
-  /**
-   * 연결 끊김 여부
-   */
-  const [isConnectionDropped, setIsConnectionDropped] = useState(false);
-
-  /**
-   * 연결 끊김 체크
-   * 5초 주기로 현재 Date와 마지막으로 데이터를 전송받은 시점의 Date를 비교
-   * 6초 이상인 경우, 연결이 끊긴 것으로 간주
-   */
-  // setInterval(() => {
-  //   if (lastReceivedDate !== "") {
-  //     const currentDate = new Date();
-  //     const lastReceivedDateInMillis = Date.parse(lastReceivedDate);
-  //     if (
-  //       lastReceivedDate === null ||
-  //       Date.parse(currentDate.toUTCString()) - lastReceivedDateInMillis >= 6000
-  //     ) {
-  //       console.log(
-  //         "연결시간 체크 : 현재시간=" +
-  //           currentDate +
-  //           "기기를 연결한 시간 : " +
-  //           lastReceivedDateInMillis
-  //       );
-  //       setIsConnectionDropped(true);
-  //     }
-  //   }
-  // }, 5000);
-
-  function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift();
-  }
-
-  /**
-   * 서버에 웹 소켓 커넥션 생성
-   */
-  // function register() {
-  //   const sock = new SockJS(`${process.env.REACT_APP_API_URL}/client/socket`);
-
-  //   stompClient = stomp.over(sock);
-
-  //   const refreshToken = getCookie("refresh_token");
-
-  //   stompClient.connect({ authorization: refreshToken }, onConnected, onError);
-  // }
-
   function register() {
     const sock = new SockJS(`${process.env.REACT_APP_API_URL}/client/socket`);
     stompClient = stomp.over(sock);
@@ -154,11 +93,16 @@ const SocketConnect = forwardRef((props, ref) => {
     }
   }
 
-  function onConnected() {
+  /**
+   * [Method] 소켓에 연결하여 구독메시지를 주기적으로 받는 메서드
+   * 작성자: 김선규
+   */
+  const onConnected = () => {
     const subscribePath = "/topic/user/" + props.mac;
 
     console.log("구독 주소 : " + subscribePath);
 
+    // setTimeout을 안해주면 동작하지 않는다. 조금더 알아볼것
     setTimeout(() => {
       stompClient.subscribe(subscribePath, function (message) {
         const messageData = JSON.parse(message.body);
@@ -167,35 +111,26 @@ const SocketConnect = forwardRef((props, ref) => {
         console.log("습도:", messageData.hum);
         console.log("온도:", messageData.temp);
 
+        // const now = new Date(2024, 5, 1, 15, 45, 30);
+        // console.log("Set specific date and time: " + now);
+
         onMessageReceived(messageData);
       });
       sendMessage(); // 연결 후에 메시지를 전송
-    }, 1000);
+    }, 1);
+  };
 
-    // // 소켓 연결 후 1초 후에 구독과 메시지 전송 시도
-    // setTimeout(() => {
-    //   stompClient.subscribe(subscribePath, function (message) {
-    //     console.log("받은 메시지 파싱 데이터 : " + message);
-
-    //     // 받은 데이터를 onMessageReceived 함수로 전달
-    //     onMessageReceived(messageBody);
-    //   });
-    //   sendMessage(); // 연결 후에 메시지를 전송
-    // }, 1000);
-  }
-
-  function sendMessage() {
+  /**
+   * [Method] 소켓 연결후 메시지를 전송하여 구독을 연결하는 메서드
+   * 작성자: 김선규
+   */
+  const sendMessage = () => {
     const message = {
       mac: props.mac,
     };
     console.log("Sending message to /app/user:", message);
     stompClient.send("/app/device", {}, JSON.stringify(message));
-  }
-
-  function onMessageReceived(payload) {
-    console.log("Received message:", payload);
-    // 메시지를 처리하는 로직을 여기에 추가하세요.
-  }
+  };
 
   function onError() {
     alert("연결 실패");
@@ -213,43 +148,125 @@ const SocketConnect = forwardRef((props, ref) => {
     stompClient.send("/topic/" + props.mac, {}, message);
   }
 
-  const [period, setPeriod] = useState("");
-  const [location, setLocation] = useState("");
-  const [memo, setMemo] = useState("");
-
   /**
-   * 데이터 수신 시, 실행되는 핸들러
+   * [Method] OnConnected메서드 안의 메시지 받아 처리하는 메서드
+   * 작성자: 김선규
    */
   function onMessageReceived(payload) {
     /**
      * 가장 최근 데이터가 수신된 시점 갱신
      * 데이터를 받았으므로 연결 끊김 여부를 false로 설정
      */
-    console.log("구독 완료");
 
-    console.log("기기 정보 : " + payload.dataUUID);
-
-    lastReceivedDate = new Date();
-    setIsConnectionDropped(false);
     setConnected(true);
+
+    console.log("커넥션 상태 : " + connected);
+
+    console.log("기기 정보 : " + props.name);
+
+    // lastReceivedDate = new Date();
+    // setIsConnectionDropped(false);
 
     /**
      * 받은 데이터 파싱
      */
     receiveObject = payload;
 
-    lastReceivedDate = receiveObject.dateString;
+    // lastReceivedDate = receiveObject.dateString;
 
     /**
-     * 받은 데이터를 receivedData에 추가
-     * 최대 10개
+     * 저장 버튼 누르고 시작하면 데이터 저장
+     * saveTest<boolean> : 저장버튼 true/false
      */
-    receivedData.push(receiveObject);
-    if (receivedData.length > 10) {
-      receivedData.splice(0, 1);
-    }
+    if (saveTest) {
+      console.log("저장 시작후 데이터 넣음 ");
 
-    setReceivedData([...receivedData]);
+      // receiveObject를 복제
+      const updatedReceiveObject = { ...receiveObject };
+
+      console.log("저장 ? :");
+      console.log("dataType ? :" + dataTypes);
+      console.log("selectedTypes ? :" + selectedTypes);
+
+      updatedReceiveObject.username = props.username;
+
+      if (periodTest !== "") {
+        updatedReceiveObject.period = periodTest;
+      }
+      if (location !== "") {
+        updatedReceiveObject.location = location;
+      }
+
+      const now = new Date();
+      // const year = now.getFullYear().toString().padStart(4, "0");
+      // const month = (now.getMonth() + 1).toString().padStart(2, "0"); // 월은 0부터 시작하므로 1을 더해줍니다.
+      // const day = now.getDate().toString().padStart(2, "0");
+      // const hours = now.getHours().toString().padStart(2, "0");
+      // const minutes = now.getMinutes().toString().padStart(2, "0");
+      // const seconds = now.getSeconds().toString().padStart(2, "0");
+
+      // const formattedDateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+      const formattedDateTime = now.toISOString;
+
+      // console.log("똑바로된 date 인가 : " + formattedDateTime); // 생성된 날짜 문자열 로그 출력
+
+      // updatedReceiveObject.dateString = formattedDateTime;
+
+      // const lastSavedDate =
+      //   saveData.length > 0
+      //     ? new Date(JSON.parse(saveData[saveData.length - 1]))
+      //     : (() => {
+      //         const date = new Date();
+      //         date.setTime(date.getTime() - 5000); // 5000밀리초 (5초)를 정확하게 빼줍니다.
+      //         return date;
+      //       })();
+
+      // const currentObjectDate = new Date();
+
+      // console.log("lastSavedDate : " + lastSavedDate);
+      // console.log("currentObjectDate : " + formattedDateTime);
+
+      // 두 날짜의 차이 계산 (밀리초 단위)
+      // const timeDifference = currentObjectDate - lastSavedDate;
+
+      // 5초(5000 밀리초) 차이 확인
+      // if (timeDifference >= 5000) {
+      //   console.log("5초 넘어가는 것! : " + timeDifference);
+
+      // saveData.push(JSON.stringify(updatedReceiveObject));
+      // setSaveData([...saveData]);
+      // }
+
+      // saveData.push(JSON.stringify(updatedReceiveObject));
+      // setSaveData([...saveData]);
+
+      console.log("저장버튼 누르고 저장한 것들 : " + saveData);
+
+      // 기록 중지 버튼 누르면 지금까지 저장한 데이터들 저장 요청
+      if (isFinished) {
+        console.log("저장할 객체 : " + JSON.stringify(updatedReceiveObject));
+        customAxios
+          .post("/seed/save/continuous", { data: saveData, memo: memo })
+          .then(() => {
+            console.log(saveData); //location, period 확인
+          })
+          .catch((err) => console.log(err));
+
+        // setSave(false);
+        saveTest = false;
+        isFinished = false;
+
+        saveData.splice(0, saveData.length);
+        setSaveData([...saveData]);
+      }
+    } else {
+      console.log("저장 시작전 데이터 넣음");
+      receivedDataView.push(receiveObject);
+      // if (receivedDataView.length > 10) {
+      //   receivedDataView.splice(0, 1);
+      // }
+      setReceivedDataView([...receivedDataView]);
+    }
   }
 
   //modal
@@ -260,78 +277,9 @@ const SocketConnect = forwardRef((props, ref) => {
 
   const [save, setSave] = useState(false);
 
-  useEffect(() => {
-    if (save) {
-      // receiveObject를 복제
-      const updatedReceiveObject = { ...receiveObject };
-
-      console.log("저장 ? :");
-      console.log("dataType ? :" + dataTypes);
-      console.log("selectedTypes ? :" + selectedTypes);
-
-      // //선택하지 않은 센서의 값은 null로 만들기
-      // dataTypes.forEach((dataType) => {
-      //   if (!selectedTypes.includes(dataType)) {
-      //     if (dataType === "pH") {
-      //       updatedReceiveObject["ph"] = null;
-      //     } else if (dataType === "hum_earth") {
-      //       updatedReceiveObject["hum_EARTH"] = null;
-      //     } else {
-      //       updatedReceiveObject[dataType] = null;
-      //     }
-      //   } else {
-      //     console.log("receivedObject가 없음");
-      //   }
-      // });
-
-      updatedReceiveObject.username = props.username;
-
-      const now = new Date();
-      const year = now.getFullYear().toString().padStart(4, "0");
-      const month = (now.getMonth() + 1).toString().padStart(2, "0"); // 월은 0부터 시작하므로 1을 더해줍니다.
-      const day = now.getDate().toString().padStart(2, "0");
-      const hours = now.getHours().toString().padStart(2, "0");
-      const minutes = now.getMinutes().toString().padStart(2, "0");
-      const seconds = now.getSeconds().toString().padStart(2, "0");
-
-      const formattedDateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
-      updatedReceiveObject.dateString = formattedDateTime;
-
-      if (period !== "") {
-        updatedReceiveObject.period = period;
-      }
-      if (location !== "") {
-        updatedReceiveObject.location = location;
-      }
-
-      /**
-       * 저장이 활성화된 경우
-       * 받은 데이터를 saveData에 추가
-       * 5개가 쌓이면 한 번에 서버로 전송해 저장
-       */
-
-      console.log("저장할 객체 : " + JSON.stringify(updatedReceiveObject));
-      saveData.push(JSON.stringify(updatedReceiveObject));
-      setSaveData([...saveData]);
-      if (isFinished) {
-        customAxios
-          .post("/seed/save/continuous", { data: saveData, memo: memo })
-          .then(() => {
-            console.log(saveData); //location, period 확인
-          })
-          .catch((err) => console.log(err));
-
-        setSave(false);
-        isFinished = false;
-
-        saveData.splice(0, saveData.length);
-        setSaveData([...saveData]);
-      }
-    }
-  }, [save, selectedTypes, isFinished]);
+  useEffect(() => {}, [saveTest, selectedTypes, isFinished]);
 
   useEffect(() => {
-    // 컴포넌트가 마운트될 때 register 함수를 자동으로 호출
     register();
     onConnected();
   }, []);
@@ -389,7 +337,7 @@ const SocketConnect = forwardRef((props, ref) => {
           )}
         </div>
 
-        {(!save || (save && selectedTypes.length === 0)) && (
+        {(!saveTest || (saveTest && selectedTypes.length === 0)) && (
           <div
             style={{
               display: "flex",
@@ -446,7 +394,7 @@ const SocketConnect = forwardRef((props, ref) => {
                   padding: "0 1rem",
                   marginRight: "1rem",
                 }}
-                onChange={(e) => setPeriod(e.target.value)}
+                onChange={(e) => (periodTest = e.target.value)}
                 placeholder="단위는 초"
               />
             </div>
@@ -499,6 +447,7 @@ const SocketConnect = forwardRef((props, ref) => {
                   background: "#CBE0FF",
                   marginRight: "1.5rem",
                 }}
+                onChange={(e) => setMemo(e.target.value)}
               >
                 메모
               </div>
@@ -515,7 +464,7 @@ const SocketConnect = forwardRef((props, ref) => {
                   padding: "0 1rem",
                   marginRight: "1rem",
                 }}
-                onChange={(e) => setMemo(e.target.value)}
+                onChange={(e) => (memoTest = e.target.value)}
               />
             </div>
 
@@ -539,7 +488,8 @@ const SocketConnect = forwardRef((props, ref) => {
                   if (selectedTypes.length === 0) {
                     alert("저장할 센서를 한 개 이상 선택해주세요.");
                   } else {
-                    setSave(true);
+                    // setSave(true);
+                    saveTest = true;
                   }
                   setShow(false);
                 }}
@@ -550,7 +500,7 @@ const SocketConnect = forwardRef((props, ref) => {
           </Modal.Body>
         </Modal>
 
-        {save && selectedTypes.length !== 0 && (
+        {saveTest && selectedTypes.length !== 0 && (
           <div
             style={{
               display: "flex",
@@ -580,8 +530,8 @@ const SocketConnect = forwardRef((props, ref) => {
           <div key={elem}>
             <SingleDataContainer
               type={elem}
-              data={receivedData}
-              current={receivedData[receivedData.length - 1]}
+              data={receivedDataView}
+              current={receivedDataView[receivedDataView.length - 1]}
               stomp={stompClient}
               sendFunction={sendCalibrationMsg}
               toggleSelection={toggleSelectedType}
@@ -598,6 +548,4 @@ const SocketConnect = forwardRef((props, ref) => {
       </div>
     </div>
   );
-});
-
-export default SocketConnect;
+}

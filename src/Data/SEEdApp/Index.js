@@ -6,21 +6,17 @@ import SocketConnect from "./SocketConnect";
 
 import React, { useRef } from "react";
 
-export default function Sample() {
-  const sampleSocketRef = useRef();
-
-  const handleRegister = () => {
-    sampleSocketRef.current?.register();
-  };
-
-  // click한 div의 index 저장하는 배열
+export default function Index() {
   const [clickedIndexes, setClickedIndexes] = useState([]);
 
   const handleShowing = (index) => {
     if (clickedIndexes.includes(index)) {
       setClickedIndexes(clickedIndexes.filter((i) => i !== index));
-      //SampleSocket.disconnect();
+      console.log(
+        "닫기 버튼 누름 : " + clickedIndexes.filter((i) => i !== index)
+      );
     } else {
+      console.log("데이터보기 누름");
       setClickedIndexes([...clickedIndexes, index]);
     }
   };
@@ -28,45 +24,37 @@ export default function Sample() {
   const [connectableSocket, setConnectableSocket] = useState([]);
 
   // 서버쪽 device폴더->컨트롤러 -> UserDeviceController
+  // 관련 디바이스 리스트를 가져온다.
   useEffect(() => {
     customAxios.get(`/seed/device`).then((response) => {
       setConnectableSocket(response.data.relatedUserDeviceList);
       console.log(
-        "index.js /seed/device 쪽 :" +
+        "소켓 디바이스 내역 :" +
           JSON.stringify(response.data.relatedUserDeviceList)
       );
     });
   }, []);
 
-  /*
-    const [connectableSocket, setConnectableSocket] = useState([
-        { username: "user1", elements: [{ deviceName: 'device1', mac: 'AA:BB:CC:DD:EE:FF' }] },
-        { username: "user2", elements: [{ deviceName: 'device2', mac: 'AA:BB:CC:DD:EE:FF' }] },
-        { username: "user3", elements: [{ deviceName: 'device3', mac: 'AA:BB:CC:DD:EE:FF' }] },
-        { username: "user4", elements: [{ deviceName: 'device4', mac: 'AA:BB:CC:DD:EE:FF' }] }
-    ]);
-    */
   return (
     <div style={{ fontSize: "1.5em" }} className="sample">
       <div className="row d-flex justify-content-center">연결된 기기 목록</div>
 
-      {/*수정 필요*/}
       <div
         style={{ display: "flex", justifyContent: "center", marginTop: "2rem" }}
       >
         <div className="notification_container">
           {connectableSocket.map((item, index) => (
-            <div style={{}}>
+            <div key={index}>
               <div style={{ width: "100%", height: "100%" }}>
                 {item.elements.map((element, elementIndex) => (
                   <div
-                    key={index}
+                    key={elementIndex}
                     className={`notification_list ${
-                      clickedIndexes.includes(index) ? "opened" : ""
+                      clickedIndexes.includes(elementIndex) ? "opened" : ""
                     }`}
                   >
                     <div
-                      key={elementIndex}
+                      // key={elementIndex}
                       className="notification_element"
                       style={{
                         display: "flex",
@@ -126,7 +114,7 @@ export default function Sample() {
                           className="showBtn"
                           onClick={() => {
                             handleShowing(index);
-
+                            console.log("버튼 인덱스 : " + clickedIndexes);
                             //handleRegister();
 
                             /*
@@ -143,9 +131,10 @@ export default function Sample() {
                       </div>
                     </div>
 
+                    {/* 소켓 연결하고 메시지 받는 곳으로 넘김 */}
                     {clickedIndexes.includes(index) && (
                       <SocketConnect
-                        ref={sampleSocketRef}
+                        // ref={sampleSocketRef}
                         mac={element.mac}
                         name={element.deviceName}
                         username={item.username}
