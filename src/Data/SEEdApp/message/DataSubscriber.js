@@ -40,14 +40,14 @@ function DataSubscriber(props) {
     props.setSaveTest(false);
     saveData = [];
 
-    if (props.connection === true) {
+    if (props.connection === true && !stompClient) {
       console.log("스톰프 세팅");
       setStompClient(props.stompClient);
     }
   }, []);
 
   useEffect(() => {
-    if (props.connection === true) {
+    if (props.connection === true && stompClient) {
       console.log("커넥션 실행");
       onConnected();
     }
