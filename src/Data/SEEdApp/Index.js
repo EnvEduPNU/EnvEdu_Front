@@ -1,30 +1,21 @@
 import { useState, useEffect } from "react";
 import "./Socket.scss";
 import { customAxios } from "../../Common/CustomAxios";
-//import UserMacList from "./UserMacList";
 import SocketConnect from "./SocketConnect";
+import React from "react";
 
-import React, { useRef } from "react";
-
+const disConnectFlag = 99999;
+/**
+ * 연결된 기기 목록을 관리하는 컴포넌트입니다.
+ * @author 김선규
+ */
 export default function Index() {
-  const [clickedIndexes, setClickedIndexes] = useState([]);
-
-  const handleShowing = (index) => {
-    if (clickedIndexes.includes(index)) {
-      setClickedIndexes(clickedIndexes.filter((i) => i !== index));
-      console.log(
-        "닫기 버튼 누름 : " + clickedIndexes.filter((i) => i !== index)
-      );
-    } else {
-      console.log("데이터보기 누름");
-      setClickedIndexes([...clickedIndexes, index]);
-    }
-  };
-
+  const [clickedIndex, setClickedIndex] = useState();
   const [connectableSocket, setConnectableSocket] = useState([]);
 
   // 서버쪽 device폴더->컨트롤러 -> UserDeviceController
   // 관련 디바이스 리스트를 가져온다.
+  // 들어와서 한번만 실행돼야 한다
   useEffect(() => {
     customAxios.get(`/seed/device`).then((response) => {
       setConnectableSocket(response.data.relatedUserDeviceList);
@@ -34,6 +25,20 @@ export default function Index() {
       );
     });
   }, []);
+
+  /**
+   * 데이터 보기의 열고 닫는 버튼을 처리하는 메서드
+   * @author 김선규
+   */
+  const handleShowing = (index) => {
+    if (clickedIndex == index) {
+      setClickedIndex(disConnectFlag);
+      console.log("닫는 디바이스 인덱스 : " + clickedIndex);
+    } else {
+      console.log("데이터보기 누름 : " + clickedIndex);
+      setClickedIndex(index);
+    }
+  };
 
   return (
     <div style={{ fontSize: "1.5em" }} className="sample">
@@ -50,34 +55,19 @@ export default function Index() {
                   <div
                     key={elementIndex}
                     className={`notification_list ${
-                      clickedIndexes.includes(elementIndex) ? "opened" : ""
+                      clickedIndex == index ? "opened" : ""
                     }`}
                   >
                     <div
-                      // key={elementIndex}
                       className="notification_element"
                       style={{
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "space-between",
-                        borderTopRightRadius:
-                          clickedIndexes.includes(index - 1) || index == 0
-                            ? "1.875rem"
-                            : 0,
-                        borderTopLeftRadius:
-                          clickedIndexes.includes(index - 1) || index == 0
-                            ? "1.875rem"
-                            : 0,
-                        borderBottomRightRadius:
-                          connectableSocket.length - 1 == index ||
-                          clickedIndexes.includes(index)
-                            ? "1.875rem"
-                            : 0,
-                        borderBottomLeftRadius:
-                          connectableSocket.length - 1 == index ||
-                          clickedIndexes.includes(index)
-                            ? "1.875rem"
-                            : 0,
+                        borderTopRightRadius: "1.875rem",
+                        borderTopLeftRadius: "1.875rem",
+                        borderBottomRightRadius: "1.875rem",
+                        borderBottomLeftRadius: "1.875rem",
                       }}
                     >
                       <div
@@ -113,32 +103,34 @@ export default function Index() {
                         <div
                           className="showBtn"
                           onClick={() => {
-                            handleShowing(index);
-                            console.log("버튼 인덱스 : " + clickedIndexes);
-                            //handleRegister();
-
-                            /*
-                                                    console.log(clickedIndexes.includes(index))
-                                                    if (!clickedIndexes.includes(index)) {
-                                                        handleRegister();
-                                                    }*/
+                            handleShowing(index + elementIndex);
                           }}
                         >
-                          {clickedIndexes.includes(index)
+                          {clickedIndex === index + elementIndex
                             ? "닫기"
                             : "데이터 보기"}
                         </div>
                       </div>
                     </div>
 
+                    {console.log("유저의 인덱스 : " + (index + elementIndex))}
+
                     {/* 소켓 연결하고 메시지 받는 곳으로 넘김 */}
-                    {clickedIndexes.includes(index) && (
+                    {clickedIndex === index + elementIndex && (
                       <SocketConnect
-                        // ref={sampleSocketRef}
                         mac={element.mac}
                         name={element.deviceName}
                         username={item.username}
-                        clickedIndexes={clickedIndexes}
+                        clickedIndex={clickedIndex}
+                      />
+                    )}
+
+                    {clickedIndex === disConnectFlag && (
+                      <SocketConnect
+                        mac={null}
+                        name={null}
+                        username={null}
+                        clickedIndex={clickedIndex}
                       />
                     )}
                   </div>

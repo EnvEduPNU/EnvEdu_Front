@@ -36,36 +36,25 @@ export const option = {
 
 const labels = ["1", "2", "3", "4", "5", "6", "7", "8", "", ""];
 
-function SingleDataContainer(props) {
+/**
+ * 디바이스에서 메시지가 올때마다 일어난다.
+ *
+ */
+export default function SingleDataContainer(props) {
+  console.log("들어올때마다 확인 ");
   const handleClick = (type) => {
     props.toggleSelection(type);
   };
 
-  /**
-   * 데이터의 각 종류별로 존재하는 컴포넌트
-   */
+  const [value, setValue] = useState(-99999); //만약 값이 -99999인 경우, 유효하지 않은 값으로 판단해 처리하지 않음
+  const [graphData] = useState([]); //그래프를 렌더링하기 위한 데이터
+  const [seeGraph, setSeeGraph] = useState(false); //그래프 생성 여부
 
   /**
-   * 제일 마지막으로 받은 데이터의 값
-   * 만약 값이 -99999인 경우, 유효하지 않은 값으로 판단해 처리하지 않음
+   * 유효하지 않은 데이터를 제외한 값을 이용해 그래프 생성
+   * 컴포넌트가 처음 생성될 때 받았던 데이터 중 유효한 값을 graphData에 추가
    */
-  const [value, setValue] = useState(-99999);
-
-  /**
-   * 그래프를 렌더링하기 위한 데이터
-   */
-  const [graphData] = useState([]);
-
-  /**
-   * 그래프 생성 여부
-   */
-  const [seeGraph, setSeeGraph] = useState(false);
-
   useEffect(() => {
-    /**
-     * 유효하지 않은 데이터를 제외한 값을 이용해 그래프 생성
-     * 컴포넌트가 처음 생성될 때 받았던 데이터 중 유효한 값을 graphData에 추가
-     */
     if (props.type === "temp") {
       props.data.forEach((elem) => {
         if (elem.temp !== -99999) graphData.push(elem.temp);
@@ -109,11 +98,11 @@ function SingleDataContainer(props) {
     }
   }, []);
 
+  /**
+   * 데이터를 받았을 때, 유효한 값이면 마지막으로 받은 값 갱신
+   * graphData에도 추가
+   */
   useEffect(() => {
-    /**
-     * 데이터를 받았을 때, 유효한 값이면 마지막으로 받은 값 갱신
-     * graphData에도 추가
-     */
     if (props.current !== null && props.current !== undefined) {
       if (props.type === "temp") {
         setValue(props.data[props.data.length - 1].temp);
@@ -387,5 +376,3 @@ function SingleDataContainer(props) {
     </div>
   );
 }
-
-export default SingleDataContainer;
