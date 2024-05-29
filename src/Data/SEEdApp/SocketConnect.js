@@ -43,7 +43,6 @@ export default function SocketConnect(props) {
       setIsConnectionDropped(true);
       return disconnect();
     } else {
-      console.log("초반 커넥션 테스트 : " + connectTest);
       register();
     }
   }, []);
@@ -63,7 +62,7 @@ export default function SocketConnect(props) {
 
     const headers = {
       "Content-Type": "application/json; charset=utf-8",
-      Authorization: localStorage.getItem("jwt"),
+      // Authorization: localStorage.getItem("jwt"),
     };
 
     if (stompClient && !stompClient.connected) {
@@ -76,7 +75,7 @@ export default function SocketConnect(props) {
       );
       console.log("커넥션 생성 디바이스 이름: " + props.name);
     } else {
-      console.log("Already connected or not initialized");
+      console.log("커넥션이 이미 있습니다.");
     }
   }
 

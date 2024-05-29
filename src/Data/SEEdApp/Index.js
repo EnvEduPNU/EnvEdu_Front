@@ -31,7 +31,7 @@ export default function Index() {
    * @author 김선규
    */
   const handleShowing = (index) => {
-    if (clickedIndex == index) {
+    if (clickedIndex === index) {
       setClickedIndex(disConnectFlag);
       console.log("닫는 디바이스 인덱스 : " + clickedIndex);
     } else {
@@ -55,7 +55,7 @@ export default function Index() {
                   <div
                     key={elementIndex}
                     className={`notification_list ${
-                      clickedIndex == index ? "opened" : ""
+                      clickedIndex === index ? "opened" : ""
                     }`}
                   >
                     <div
@@ -113,7 +113,7 @@ export default function Index() {
                       </div>
                     </div>
 
-                    {console.log("유저의 인덱스 : " + (index + elementIndex))}
+                    {/* {console.log("유저의 인덱스 : " + (index + elementIndex))} */}
 
                     {/* 소켓 연결하고 메시지 받는 곳으로 넘김 */}
                     {clickedIndex === index + elementIndex && (

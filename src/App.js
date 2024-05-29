@@ -1,3 +1,5 @@
+import React, { useEffect } from "react";
+
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import RegisterForm from "./User/Register/RegisterForm";
@@ -24,7 +26,7 @@ import EmailAuth from "./User/Register/EmailAuth";
 import AdminLogin from "./Admin/Login/AdminLogin";
 import DeviceList from "./Admin/Device/DeviceList";
 import ContactUs from "./Contact/ContactUs/ContactUs";
-import EducationResources from "./Education/EducationResources/Resource"
+import EducationResources from "./Education/EducationResources/Resource";
 import OpenApi from "./Data/OpenAPIData/OpenApi";
 import OpenApiPast from "./Data/OpenAPIData/openAPIPast";
 import Search from "./Data/OpenAPIData/search";
@@ -59,7 +61,35 @@ import UploadReward from "./Education/Survey/Admin/UploadReward";
 import ViewReward from "./Education/Survey/Respondent/ViewReward";
 import ViewResponse from "./Education/Survey/Admin/ViewResponse";
 
+import { useNavigate } from "react-router-dom";
+
 function App() {
+  const navigate = useNavigate();
+
+  // 로그인 한지 1일이 넘어가면 localStorage에 있는 내용들을 지워줘서 로그아웃으로 만들어줌
+  // 인증 토큰인 쿠키는 httpOnly라서 js 상에서 가져오거나 조작할 수 없음
+  // 따라서 쿠키를 지우거나 조작할수 없지만 1일의 유효기간이 지났기 때문에 어차피 유효기간 만료로 사용 불가
+  useEffect(() => {
+    const expiredAt = localStorage.getItem("expiredAt");
+
+    if (expiredAt) {
+      const currentTime = new Date().getTime();
+      const refreshExpirationTime = new Date(
+        new Date(expiredAt).getTime() + 24 * 60 * 60 * 1000
+      ).getTime();
+
+      // 1일이 더 지났다면 다시 로그인 해야 됨
+      console.log("유효시간 : " + new Date(expiredAt));
+      if (refreshExpirationTime < currentTime) {
+        localStorage.clear();
+        navigate("/");
+        window.location.reload();
+      }
+    } else {
+      console.log("유효기간 지남");
+      navigate("/");
+    }
+  }, []);
   return (
     <>
       <Header />
@@ -68,14 +98,16 @@ function App() {
         <Routes>
           {/*home*/}
           <Route index element={<Home />} />
-
           {/*user*/}
           <Route path="/login" exact={true} element={<LoginForm />} />
           <Route path="/auth" exact={true} element={<EmailAuth />} />
           <Route path="/register" exact={true} element={<RegisterForm />} />
-          <Route path="/educator/student/add" exact={true} element={<RegisterStudents />} />
+          <Route
+            path="/educator/student/add"
+            exact={true}
+            element={<RegisterStudents />}
+          />
           <Route path="/find" exact={true} element={<Find />} />
-
           {/*Admin*/}
           <Route path="/admin/login" exact={true} element={<AdminLogin />} />
           <Route path="/admin/devices" exact={true} element={<DeviceList />} />
@@ -89,57 +121,40 @@ function App() {
             exact={true}
             element={<AddMACForm />}
           />
-
           {/*ABOUT*/}
-          <Route path="/what" exact={true} element={<What />} /> {/*What We Do*/}
+          <Route path="/what" exact={true} element={<What />} />{" "}
+          {/*What We Do*/}
           <Route path="/team" exact={true} element={<Team />} /> {/*Team*/}
-          
           {/*GET STARTED*/}
-
           {/*DATA*/}
-          <Route path="/socket" exact={true} element={<Index />} /> {/*SEEd App*/}
-          <Route path="/myData" exact={true} element={<MyData />} /> {/*My Data*/}
+          <Route path="/socket" exact={true} element={<Index />} />{" "}
+          {/*SEEd App*/}
+          <Route path="/myData" exact={true} element={<MyData />} />{" "}
+          {/*My Data*/}
           <Route path="/readExcel" exact={true} element={<ReadExcel />} />
           <Route path="/search" exact={true} element={<Search />} />
-          <Route path="/data-in-chart" exact={true} element={<DataInChartPage />} /> {/*Data & Chart*/}
-          <Route path="/openAPI" exact={true} element={<OpenApi />} /> {/*OPEN API*/}
+          <Route
+            path="/data-in-chart"
+            exact={true}
+            element={<DataInChartPage />}
+          />{" "}
+          {/*Data & Chart*/}
+          <Route path="/openAPI" exact={true} element={<OpenApi />} />{" "}
+          {/*OPEN API*/}
           <Route path="/openAPI/past" exact={true} element={<OpenApiPast />} />
-          <Route path="/textbook" exact={true} element={<TextbookPage />} /> {/*Data In Textbooks*/}
+          <Route
+            path="/textbook"
+            exact={true}
+            element={<TextbookPage />}
+          />{" "}
+          {/*Data In Textbooks*/}
           <Route
             path="/textbook/detail"
             exact={true}
             element={<TextbookDetailPage />}
           />
-
           {/*EDUCATION*/}
-          <Route
-            path="/invite"
-            exact={true}
-            element={<Invite />}
-          />
-
-          <Route path="/dataclass" exact={true} element={<DataClass />} /> 
-          <Route
-            path="/checkReadData"
-            exact={true}
-            element={<CheckReadData />}
-          />
-          <Route
-            path="/checkManipulateData"
-            exact={true}
-            element={<CheckManipulateData />}
-          />
-          <Route
-            path="/checkAnalyzeData"
-            exact={true}
-            element={<CheckAnalyzeData />}
-          />
-          <Route
-            path="/checkCompareData"
-            exact={true}
-            element={<CheckCompareData />}
-          />
-
+          <Route path="/invite" exact={true} element={<Invite />} />
           <Route path="/dataclass" exact={true} element={<DataClass />} />
           <Route
             path="/checkReadData"
@@ -161,60 +176,72 @@ function App() {
             exact={true}
             element={<CheckCompareData />}
           />
-
-          <Route path="/E-Classes"> {/*E-Class*/}
+          <Route path="/dataclass" exact={true} element={<DataClass />} />
+          <Route
+            path="/checkReadData"
+            exact={true}
+            element={<CheckReadData />}
+          />
+          <Route
+            path="/checkManipulateData"
+            exact={true}
+            element={<CheckManipulateData />}
+          />
+          <Route
+            path="/checkAnalyzeData"
+            exact={true}
+            element={<CheckAnalyzeData />}
+          />
+          <Route
+            path="/checkCompareData"
+            exact={true}
+            element={<CheckCompareData />}
+          />
+          <Route path="/E-Classes">
+            {" "}
+            {/*E-Class*/}
             <Route path="" exact={true} element={<EClassList />} />
             <Route path="new" exact={true} element={<CreateEClassPage />} />
           </Route>
           <Route path="/slide/:id" exact={true} element={<SlidePage />} />
-
-          <Route path="/dataLiteracy"> {/*DataLiteracy */}
+          <Route path="/dataLiteracy">
+            {" "}
+            {/*DataLiteracy */}
             <Route path="drawGraph" element={<DrawGraphV2Page />} />
             <Route path="graphInterpreter" element={<GraphEvalutionRusult />} />
             <Route path="result" element={<ResultReport />} />
             <Route path="pretreatment" element={<DataPretreatmentPage />} />
-
             <Route path="dataInput">
               <Route path="" element={<DataInputPage />} />
               <Route path="new" element={<NewDataInput />} />
             </Route>
-
             <Route path="dataload" element={<DataLoadPage />} />
             <Route path="ex" element={<DrawGraphV2Page />} />
           </Route>
-
-          <Route path="/resource" exact={true} element={<EducationResources />} /> {/*Education Resources*/}
-
           <Route
-            path="/survey"
+            path="/resource"
             exact={true}
-            element={<Survey />}
-          /> {/*Survey*/}
-
+            element={<EducationResources />}
+          />{" "}
+          {/*Education Resources*/}
+          <Route path="/survey" exact={true} element={<Survey />} />{" "}
+          {/*Survey*/}
           <Route
             path="/create-survey"
             exact={true}
             element={<CreateSurvey />}
           />
-
           <Route
             path="/view-response/:inviteCode"
             exact={true}
             element={<ViewResponse />}
           />
-
           <Route
             path="/upload-reward"
             exact={true}
             element={<UploadReward />}
           />
-
-          <Route
-            path="/view-reward"
-            exact={true}
-            element={<ViewReward />}
-          />
-
+          <Route path="/view-reward" exact={true} element={<ViewReward />} />
           {/*LEARN MORE*/}
           <Route path="/news" exact={true} element={<News />} />
           <Route path="/research" exact={true} element={<Research />} />
@@ -222,11 +249,16 @@ function App() {
           <Route path="/training1" exact={true} element={<Training1 />} />
           <Route path="/training2" exact={true} element={<Training2 />} />
           <Route path="/training3" exact={true} element={<Training3 />} />
-          <Route path="/implementation" exact={true} element={<Implementation />} />
-
+          <Route
+            path="/implementation"
+            exact={true}
+            element={<Implementation />}
+          />
           {/*CONTACT*/}
-          <Route path="/contact" exact={true} element={<ContactUs />} /> {/*Contact us*/}
-          <Route path="/notice" exact={true} element={<Notice />} /> {/*Announcement*/}
+          <Route path="/contact" exact={true} element={<ContactUs />} />{" "}
+          {/*Contact us*/}
+          <Route path="/notice" exact={true} element={<Notice />} />{" "}
+          {/*Announcement*/}
           <Route path="/board" exact={true} element={<Board />} /> {/*Board*/}
         </Routes>
       </div>

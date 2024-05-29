@@ -16,7 +16,6 @@ let firstTimeFlag = true;
 
 function DataSubscriber(props) {
   const [stompClient, setStompClient] = useState(null);
-  //   const [saveData, setSaveData] = useState([]);
 
   const dataTypes = [
     //센서 기기에서 전송하는 데이터 종류
@@ -116,7 +115,7 @@ function DataSubscriber(props) {
       const lastSavedDate =
         saveData.length > 0 ? saveData[saveData.length - 1] : (() => {})();
 
-      if (saveData.length == 0) {
+      if (saveData.length === 0) {
         console.log("맨처음 시간 저장");
         updatedReceiveObject.dateString = currentTime.format(
           "YYYY-MM-DDTHH:mm:ss"

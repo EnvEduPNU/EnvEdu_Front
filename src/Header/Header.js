@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Header.scss";
 import { Navbar, Nav, Container, NavDropdown } from "react-bootstrap";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -6,10 +6,11 @@ import { customAxios } from "../Common/CustomAxios";
 import { PiPlant } from "react-icons/pi";
 
 function Header() {
-  /**
-   * 로그인 성공 시, UI에 변화룰 주기 위한 state
-   */
-  const [username] = useState(localStorage.getItem("username"));
+  const [username, SetUsername] = useState();
+
+  useEffect(() => {
+    SetUsername(localStorage.getItem("username"));
+  }, []);
 
   /**
    * 로그아웃 성공 시, 단순히 한 번 새로고침해 UI에 변경 반영
