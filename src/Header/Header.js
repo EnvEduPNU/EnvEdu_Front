@@ -111,35 +111,23 @@ function Header() {
                 </NavLink>
               </NavDropdown>
               <NavDropdown
-                title="GET STARTED"
-                id="basic-nav-dropdown"
-                className={"mx-2"}
-                style={{ fontSize: "1.2em" }}
-              >
-                <NavLink className={"nav-link"} to="/">
-                  SEEd Platform
-                </NavLink>
-                <NavLink className={"nav-link"} to="/">
-                  SEEd Device
-                </NavLink>
-                <NavLink className={"nav-link"} to="/">
-                  E-class manual
-                </NavLink>
-                <NavLink className={"nav-link"} to="/">
-                  Data Literacy
-                </NavLink>
-              </NavDropdown>
-              <NavDropdown
-                title="DATA"
+                title="SEEd App"
                 id="basic-nav-dropdown"
                 className={"mx-2"}
                 style={{ fontSize: "1.2em" }}
               >
                 <NavLink className={"nav-link"} to="/socket">
-                  SEEd App
+                  측정하기
                 </NavLink>
-                <NavLink className={"nav-link"} to="/myData">
-                  My Data
+              </NavDropdown>
+              <NavDropdown
+                title="Data&Chart"
+                id="basic-nav-dropdown"
+                className={"mx-2"}
+                style={{ fontSize: "1.2em" }}
+              >
+                <NavLink className={"nav-link"} to="/dataLiteracy/dataLoad">
+                  Tutorial
                 </NavLink>
                 <NavLink className={"nav-link"} to="/data-in-chart">
                   Data & Chart
@@ -147,12 +135,9 @@ function Header() {
                 <NavLink className={"nav-link"} to="/openapi">
                   Open API Data
                 </NavLink>
-                <NavLink className={"nav-link"} to="/textbook">
-                  Data In Textbooks
-                </NavLink>
               </NavDropdown>
               <NavDropdown
-                title="EDUCATION"
+                title="E-Class"
                 id="basic-nav-dropdown"
                 className={"mx-2"}
                 style={{ fontSize: "1.2em" }}
@@ -160,18 +145,18 @@ function Header() {
                 <NavLink className={"nav-link"} to="/E-Classes">
                   E-Class
                 </NavLink>
-                <NavLink className={"nav-link"} to="/">
-                  E-Class Library
+                <NavLink className={"nav-link"} to="/myData">
+                  My Data
                 </NavLink>
-                <NavLink className={"nav-link"} to="/dataLiteracy/dataLoad">
-                  Data Literacy
+                <NavLink className={"nav-link"} to="/textbook">
+                  Data In Textbooks
                 </NavLink>
                 <NavLink className={"nav-link"} to="/resource">
                   Education Resources
                 </NavLink>
-                <NavLink className={"nav-link"} to="/survey">
+                {/* <NavLink className={"nav-link"} to="/survey">
                   Survey
-                </NavLink>
+                </NavLink> */}
               </NavDropdown>
               <NavDropdown
                 title="LEARN MORE"

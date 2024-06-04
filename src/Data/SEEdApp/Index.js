@@ -174,7 +174,6 @@ export default function Index() {
                             ) {
                               console.log("여기들어옴?");
                               handleShowing(clickCheck);
-                              globalClickCheck = null;
                             }
 
                             // 맨처음 누르는 것이면 현재 버튼을 연결해야함
@@ -214,6 +213,7 @@ export default function Index() {
                       />
                     )}
 
+                    {/*  */}
                     {clickedIndex === disConnectFlag && (
                       <SocketConnect
                         mac={null}

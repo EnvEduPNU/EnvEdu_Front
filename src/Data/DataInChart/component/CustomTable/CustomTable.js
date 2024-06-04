@@ -3,6 +3,7 @@ import { useGraphDataStore } from "../../store/graphStore";
 import { ReactComponent as PencilIcon } from "../../../../Study/image/Pencil.svg";
 import * as Styled from "./Styled";
 import Select from "../../../../DataLiteracy/common/Select/Select";
+import TutorialButton from "./TutorialButton";
 
 // data-in-chart 페이지 테이블이 나오는 컴포넌트
 function CustomTable({ isChangeCategory = true }) {
@@ -46,7 +47,8 @@ function CustomTable({ isChangeCategory = true }) {
     <Styled.Wrapper>
       {data?.length <= 0 ? (
         <Styled.Notice>
-          왼쪽 슬라이드를 열어 그래프 작성에 필요한 데이터를 선택해 주세요.
+          <TutorialButton buttonName={"Tutorial 하러가기"} />
+          왼쪽 폴더에서 그래프 작성에 필요한 데이터를 선택해 주세요.
         </Styled.Notice>
       ) : (
         <>

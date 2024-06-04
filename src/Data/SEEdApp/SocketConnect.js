@@ -44,18 +44,20 @@ export default function SocketConnect(props) {
   const [stompClientItem, setStompClientItem] = useState();
 
   useEffect(() => {
+    console.log("SocketConnection 랜더링 : " + props.clickedIndex);
     if (props.clickedIndex == disConnectFlag) {
       console.log("커넥션 닫기 됨");
       setIsConnectionDropped(true);
       return disconnect();
     }
+
     if (
       props.clickedIndex != disConnectFlag &&
       props.clickedIndex != noDeviceConnectFlag
     ) {
       register();
     }
-  }, []);
+  }, [props]);
 
   useEffect(() => {
     console.log("재랜더링 커넥션 테스트 : " + connectTest);

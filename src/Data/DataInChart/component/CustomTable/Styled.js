@@ -3,6 +3,7 @@ import styled, { css } from "styled-components";
 export const Notice = styled.div`
   height: 65vh;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 155vh;
