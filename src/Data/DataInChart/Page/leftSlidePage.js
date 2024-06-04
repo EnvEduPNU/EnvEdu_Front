@@ -1,61 +1,14 @@
 import { useState, useEffect } from "react";
 import { customAxios } from "../../../Common/CustomAxios";
 import "./leftSlidePage.scss";
-import { useGraphDataStore } from "../store/graphStore";
 import FolderList from "../../MyData/folderList";
-
-//항목 이름 (한국어 -> 영어)
-const engToKor = (name) => {
-  const kor = {
-    //수질 데이터
-    PTNM: "조사지점명",
-    WMYR: "측정연도",
-    WMOD: "측정월",
-    ITEMTEMP: "수온(°C)",
-    ITEMPH: "pH",
-    ITEMDOC: "DO(㎎/L)",
-    ITEMBOD: "BOD(㎎/L)",
-    ITEMCOD: "COD(㎎/L)",
-    ITEMTN: "총질소(㎎/L)",
-    ITEMTP: "총인(㎎/L)",
-    ITEMTRANS: "투명도(㎎/L)",
-    ITEMCLOA: "클로로필-a(㎎/L)",
-    ITEMEC: "전기전도도(µS/㎝)",
-    ITEMTOC: "TOC(㎎/L)",
-
-    //대기질 데이터
-    stationName: "조사지점명",
-    dataTime: "측정일",
-    so2Value: "아황산가스 농도(ppm)",
-    coValue: "일산화탄소 농도(ppm)",
-    o3Value: "오존 농도(ppm)",
-    no2Value: "이산화질소 농도(ppm)",
-    pm10Value: "미세먼지(PM10) 농도(㎍/㎥)",
-    pm25Value: "미세먼지(PM2.5)  농도(㎍/㎥)",
-
-    //SEED 데이터
-    measuredDate: "측정 시간",
-    location: "측정 장소",
-    unit: "소속",
-    period: "저장 주기",
-    username: "사용자명",
-    hum: "습도",
-    temp: "기온",
-    tur: "탁도",
-    ph: "pH",
-    dust: "미세먼지",
-    dox: "용존산소량",
-    co2: "이산화탄소",
-    lux: "조도",
-    hum_EARTH: "토양 습도",
-    pre: "기압",
-  };
-  return kor[name] || name;
-};
+import ForderListModal from "../modal/ForderListModal";
+import Header from "../component/Header/Header";
 
 export default function LeftSlidePage() {
   /*데이터 요약 정보*/
   const [summary, setSummary] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     customAxios
@@ -76,109 +29,13 @@ export default function LeftSlidePage() {
       .catch((err) => console.log(err));
   }, []);
 
-  const { setData } = useGraphDataStore();
-
-  const getTable = (type, id) => {
-    if (type === "CUSTOM") {
-      customAxios
-        .get(`/dataLiteracy/customData/download/${id}`)
-        .then((res) => {
-          //수정 필요
-          let headers = res.data.properties; // ['a','b','c]
-
-          let values = res.data.data; // [[1,2,3], [4,5,6]]
-
-          // 최종 결과 생성 (헤더 + 값)
-          const recombined = [headers, ...values];
-
-          setData(recombined);
-          localStorage.setItem("data", JSON.stringify(recombined));
-          // window.location.reload();
-        })
-        .catch((err) => console.log(err));
-    } else {
-      let path = "";
-      if (type === "수질 데이터") {
-        path = `/ocean-quality/mine/chunk?dataUUID=${id}`;
-      } else if (type === "대기질 데이터") {
-        path = `/air-quality/mine/chunk?dataUUID=${id}`;
-      } else if (type === "SEED") {
-        path = `/seed/mine/chunk?dataUUID=${id}`;
-      }
-
-      customAxios
-        .get(path)
-        .then((res) => {
-          let headers = Object.keys(res.data[0]).filter(
-            (key) =>
-              key !== "id" &&
-              key !== "dataUUID" &&
-              key !== "saveDate" &&
-              key !== "dateString"
-          );
-
-          const attributesToCheck = [
-            "co2",
-            "dox",
-            "dust",
-            "hum",
-            "hum_EARTH",
-            "lux",
-            "ph",
-            "pre",
-            "temp",
-            "tur",
-          ];
-
-          const keysToExclude = ["id", "dataUUID", "saveDate", "dateString"];
-
-          for (const attribute of attributesToCheck) {
-            const isAllNone = res.data.every(
-              (item) => item[attribute] === -99999.0
-            );
-            if (isAllNone) {
-              // 해당 속성이 모두 -99999.0일 때, keysToExclude에 추가(헤더에 따른 values도 제거해줘야함)
-              if (!keysToExclude.includes(attribute)) {
-                keysToExclude.push(attribute);
-              }
-              // 해당 속성이 모두 -99999.0일 때, headers에서 제거
-              headers = headers.filter((header) => header !== attribute);
-            }
-          }
-
-          headers = headers.map((header) => engToKor(header));
-
-          // 중요한 데이터들은 들어온 데이터 리스트에서 제거
-          const values = res.data.map((item) => {
-            const filteredItem = Object.keys(item)
-              .filter((key) => !keysToExclude.includes(key))
-              .reduce((obj, key) => {
-                obj[key] = item[key];
-                return obj;
-              }, {});
-
-            console.log(
-              "값들이 어떻게 필터 되나 : " + Object.values(filteredItem)
-            );
-            return Object.values(filteredItem);
-          });
-
-          // 최종 결과 생성 (헤더 + 값)
-          const recombined = [headers, ...values];
-
-          setData(recombined);
-          localStorage.setItem("data", JSON.stringify(recombined));
-          // window.location.reload();
-        })
-        .catch((err) => console.log(err));
-    }
-  };
-
+  // 전체 데이터 리스트 가져온 것중에서 데이터 라벨에 따라 필터링해서 뽑아서 보내준다.
   const [filteredData, setFilteredData] = useState([]);
   const selectFolder = (type) => {
-    let filtered;
+    let filtered = [];
     if (type === "전체") {
       filtered = summary;
+      summary.unshift({ total: "전체" });
     } else if (type == "대기질") {
       filtered = summary.filter((data) => data.dataLabel === "대기질 데이터");
     } else if (type == "수질") {
@@ -188,25 +45,37 @@ export default function LeftSlidePage() {
     } else if (type == "CUSTOM") {
       filtered = summary.filter((data) => data.dataLabel === "CUSTOM");
     }
-    setFilteredData(filtered);
+    console.log("필터에 뭐가 있나 : " + filtered);
+
+    if (filtered == "") {
+      filtered.unshift({ none: type });
+      setFilteredData(filtered);
+      setModalOpen(true);
+      console.log("데이터 없음");
+    } else {
+      setFilteredData(filtered);
+      setModalOpen(true);
+    }
   };
 
   const [selectedFolderId, setSelectedFolderId] = useState(null);
+
   const handleFolderSelect = (folderId) => {
+    console.log("뭐가 어떻게 되는거야 이건 : " + folderId);
     setSelectedFolderId(folderId);
   };
 
   return (
     <div className="e-class-mydata">
+      <Header />
+
       {/*folder + 데이터 요약 정보*/}
       <div className="myData-left">
         {/*데이터 요약 정보*/}
         <div className="myData-summary">
           <h4>My Data</h4>
           <div style={{ display: "flex" }}>
-            <div
-              style={{ height: "85vh", overflowY: "scroll", width: "30rem" }}
-            >
+            <div style={{ height: "50vh", width: "20vh" }}>
               <div style={{ marginTop: "1rem" }}>
                 <img
                   src="/assets/img/folder-icon.png"
@@ -214,7 +83,7 @@ export default function LeftSlidePage() {
                 />
                 <label
                   onClick={() => selectFolder("전체")}
-                  style={{ textDecoration: "underline" }}
+                  style={{ textDecoration: "underline", cursor: "pointer" }}
                 >
                   전체
                 </label>
@@ -227,7 +96,7 @@ export default function LeftSlidePage() {
                 />
                 <label
                   onClick={() => selectFolder("대기질")}
-                  style={{ textDecoration: "underline" }}
+                  style={{ textDecoration: "underline", cursor: "pointer" }}
                 >
                   대기질
                 </label>
@@ -236,11 +105,15 @@ export default function LeftSlidePage() {
               <div style={{ marginTop: "0.5rem" }}>
                 <img
                   src="/assets/img/folder-icon.png"
-                  style={{ width: "1.5rem", margin: "0 0.5rem" }}
+                  style={{
+                    width: "1.5rem",
+                    margin: "0 0.5rem",
+                    cursor: "pointer",
+                  }}
                 />
                 <label
                   onClick={() => selectFolder("수질")}
-                  style={{ textDecoration: "underline" }}
+                  style={{ textDecoration: "underline", cursor: "pointer" }}
                 >
                   수질
                 </label>
@@ -253,7 +126,7 @@ export default function LeftSlidePage() {
                 />
                 <label
                   onClick={() => selectFolder("SEED")}
-                  style={{ textDecoration: "underline" }}
+                  style={{ textDecoration: "underline", cursor: "pointer" }}
                 >
                   SEED
                 </label>
@@ -262,22 +135,21 @@ export default function LeftSlidePage() {
               <div style={{ marginTop: "0.5rem" }}>
                 <img
                   src="/assets/img/folder-icon.png"
-                  style={{ width: "1.5rem", margin: "0 0.5rem" }}
+                  style={{
+                    width: "1.5rem",
+                    margin: "0 0.5rem",
+                    cursor: "pointer",
+                  }}
                 />
                 <label
                   onClick={() => selectFolder("CUSTOM")}
-                  style={{ textDecoration: "underline" }}
+                  style={{ textDecoration: "underline", cursor: "pointer" }}
                 >
                   CUSTOM
                 </label>
               </div>
 
               <div className="myData-folder">
-                {/*
-                                <AddFolderModal />
-                                <MoveFolderModal />
-                                <RemoveFolderModal />
-                                */}
                 <FolderList
                   onSelectFolder={handleFolderSelect}
                   onClicked={selectedFolderId}
@@ -285,33 +157,12 @@ export default function LeftSlidePage() {
               </div>
             </div>
 
-            <div
-              style={{ padding: "1rem", height: "700px", overflowY: "scroll" }}
-            >
-              {filteredData.length > 0 && (
-                <table className="summary-table">
-                  <thead>
-                    <tr>
-                      <th key="saveDate">저장 일시</th>
-                      <th key="dataLabel">데이터 종류</th>
-                      <th key="memo">메모</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredData.map((item, index) => (
-                      <tr
-                        key={index}
-                        onClick={() => getTable(item.dataLabel, item.dataUUID)}
-                      >
-                        <td>{item.saveDate}</td>
-                        <td>{item.dataLabel}</td>
-                        <td>{item.memo}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
-            </div>
+            {filteredData.length > 0 && (
+              <ForderListModal
+                filteredData={filteredData}
+                modalOpen={modalOpen}
+              />
+            )}
           </div>
         </div>
       </div>

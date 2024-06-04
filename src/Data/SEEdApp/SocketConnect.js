@@ -287,7 +287,7 @@ export default function SocketConnect(props) {
         <DataSubscriber
           connection={connectTest}
           setConnected={setConnected}
-          location={props.location}
+          location={location}
           memo={memo}
           mac={props.mac}
           deviceName={props.name}

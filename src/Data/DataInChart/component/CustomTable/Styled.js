@@ -1,11 +1,11 @@
 import styled, { css } from "styled-components";
 
 export const Notice = styled.div`
-  height: 300px;
+  height: 65vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
+  width: 155vh;
   font-size: 16px;
   font-weight: bold;
 `;
@@ -38,7 +38,7 @@ export const Column = styled.div`
   font-size: 16px;
   font-weight: 700;
 
-  ${props =>
+  ${(props) =>
     props.$isNotEnd &&
     css`
       border-right: 1px solid rgba(34, 36, 38, 0.15);
@@ -102,7 +102,7 @@ export const Box = styled.div`
   display: flex;
   align-items: center;
   line-height: 2;
-  ${props =>
+  ${(props) =>
     props.$isNotEnd &&
     css`
       border-bottom: 1px solid rgba(34, 36, 38, 0.15);
@@ -126,7 +126,7 @@ export const Data = styled.div`
   font-weight: 500;
   border-bottom: 1px solid rgba(34, 36, 38, 0.15);
 
-  ${props =>
+  ${(props) =>
     props.$isEditCell &&
     css`
       /* padding: 0px; */
@@ -215,7 +215,7 @@ export const Button = styled.button`
   padding: 3px 5px;
   border-radius: 5px;
   margin: 5px 0;
-  ${props =>
+  ${(props) =>
     props.$isSelected &&
     css`
       color: #fff;

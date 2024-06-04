@@ -44,12 +44,12 @@ export default function Index() {
   const [connectableSocket, setConnectableSocket] = useState([]);
 
   useBlocker((tx) => {
-    console.log("뒤로가기 감지 및 소켓 커넥션 종료");
-    setClickedIndex(disConnectFlag);
-
-    if (clickedIndex === disConnectFlag) {
-      tx.retry();
+    if (globalClickCheck) {
+      console.log("뒤로가기 감지 및 소켓 커넥션 종료");
+      setClickedIndex(disConnectFlag);
     }
+
+    tx.retry();
   });
 
   // 서버쪽 device폴더->컨트롤러 -> UserDeviceController

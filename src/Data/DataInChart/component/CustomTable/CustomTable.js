@@ -11,14 +11,11 @@ function CustomTable({ isChangeCategory = true }) {
   const [editableCell, setEditableCell] = useState(null);
 
   const tableNumberData = data.map((d, idx) => {
-    if (idx === 0) return "Rows#";
-    console.log("어떻게 데이터가 들어오나 : " + d);
+    if (idx === 0) return "순서";
     return `${idx}`;
   });
 
   const headers = data[0];
-
-  const onClickPencil = () => {};
 
   const onChangeType = (index, type) => {
     changeVariableType(index, type);
@@ -72,9 +69,9 @@ function CustomTable({ isChangeCategory = true }) {
                   <Styled.Th $isNotEnd>
                     {/* 컬럼 이름 */}
                     <span>{header}</span>
-                    <Styled.Circle onClick={onClickPencil}>
+                    {/* <Styled.Circle onClick={onClickPencil}>
                       <PencilIcon width={"15px"} height={"15px"} />
-                    </Styled.Circle>
+                    </Styled.Circle> */}
                   </Styled.Th>
                   <Styled.Box>
                     {isChangeCategory ? (
@@ -109,7 +106,7 @@ function CustomTable({ isChangeCategory = true }) {
                       onKeyDown={(e) => onClickEnter(e)}
                     />
                   ) : (
-                    // 튜플 이름
+                    // 측정시간, 측정장소, 저장주기
                     <Styled.InputDiv
                       onDoubleClick={() => onDoubleClickData(row + 1, col)}
                     >

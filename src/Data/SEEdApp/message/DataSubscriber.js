@@ -103,13 +103,14 @@ function DataSubscriber(props) {
       const updatedReceiveObject = { ...receiveObject };
 
       updatedReceiveObject.username = saveProps.username;
+      console.log("이름은 ? : " + saveProps.username);
 
-      if (periodTest !== "") {
-        updatedReceiveObject.period = periodTest;
-      }
-      if (props.location !== "") {
+      if (saveProps.location !== "") {
+        console.log("장소는 ? : " + saveProps.location);
         updatedReceiveObject.location = saveProps.location;
       }
+
+      updatedReceiveObject.period = saveProps.period;
 
       const currentTime = moment().tz("Asia/Seoul");
 
@@ -144,6 +145,7 @@ function DataSubscriber(props) {
           updatedReceiveObject.dateString = currentTime.format(
             "YYYY-MM-DDTHH:mm:ss"
           );
+
           saveData.push(JSON.stringify(updatedReceiveObject));
         } else {
           console.log("차이 안나 저장 안함");

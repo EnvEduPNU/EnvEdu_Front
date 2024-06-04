@@ -79,16 +79,16 @@ class Variable {
   }
 }
 
-const data = JSON.parse(localStorage.getItem("data")) || [];
-const title = JSON.parse(localStorage.getItem("title"));
+const data = [];
+const title = "";
 export const useGraphDataStore = create((set, get) => ({
   title: title || "",
-  data: data,
+  data: data || [],
 
   variables:
-    (data && data[0]?.map(name => new Variable(name))) ||
+    (data && data[0]?.map((name) => new Variable(name))) ||
     ["농업지대", "평균기온", "강수량", "일조시간"].map(
-      name => new Variable(name)
+      (name) => new Variable(name)
     ),
 
   graphIdx: 0,
@@ -96,32 +96,32 @@ export const useGraphDataStore = create((set, get) => ({
   activityIndex: -1,
 
   changeActivity: (pageIndex, activityIndex) =>
-    set(state => ({
+    set((state) => ({
       ...state,
       pageIndex,
       activityIndex,
     })),
 
-  setData: newData =>
-    set(state => ({
+  setData: (newData) =>
+    set((state) => ({
       ...state,
       data: newData,
-      variables: newData[0].map(name => new Variable(name)),
+      variables: newData[0].map((name) => new Variable(name)),
     })),
 
-  setTitle: title =>
-    set(state => ({
+  setTitle: (title) =>
+    set((state) => ({
       ...state,
       title,
     })),
 
-  changeGraphIndex: index =>
-    set(state => {
+  changeGraphIndex: (index) =>
+    set((state) => {
       if (index === get().graphIdx) {
         return { ...state };
       }
 
-      const newVariable = get().data[0].map(name => new Variable(name));
+      const newVariable = get().data[0].map((name) => new Variable(name));
       newVariable.forEach((variable, idx) => {
         variable.setIsSelected(get().variables[idx].isSelected);
         variable.setType(get().variables[idx].type);
@@ -135,8 +135,8 @@ export const useGraphDataStore = create((set, get) => ({
     }),
 
   changeValue: (row, col, newValue) =>
-    set(state => {
-      const newData = state.data.map(d => [...d]);
+    set((state) => {
+      const newData = state.data.map((d) => [...d]);
       newData[row][col] = newValue;
       return {
         ...state,
@@ -144,9 +144,9 @@ export const useGraphDataStore = create((set, get) => ({
       };
     }),
 
-  changeSelectedVariable: variableIdx =>
-    set(state => {
-      const newVariables = state.variables.map(variable => variable.copy());
+  changeSelectedVariable: (variableIdx) =>
+    set((state) => {
+      const newVariables = state.variables.map((variable) => variable.copy());
       newVariables[variableIdx].toggleSelected();
       return {
         ...state,
@@ -155,8 +155,8 @@ export const useGraphDataStore = create((set, get) => ({
     }),
 
   changeVariableType: (variableIdx, type) =>
-    set(state => {
-      const newVariables = state.variables.map(variable => variable.copy());
+    set((state) => {
+      const newVariables = state.variables.map((variable) => variable.copy());
       newVariables[variableIdx].setType(type);
 
       return {
@@ -166,8 +166,8 @@ export const useGraphDataStore = create((set, get) => ({
     }),
 
   changeAxis: (variableIdx, axis) =>
-    set(state => {
-      const newVariables = state.variables.map(variable => variable.copy());
+    set((state) => {
+      const newVariables = state.variables.map((variable) => variable.copy());
       newVariables[variableIdx].setAxis(axis);
       return {
         ...state,
@@ -176,8 +176,8 @@ export const useGraphDataStore = create((set, get) => ({
     }),
 
   changeGraph: (variableIdx, graph) =>
-    set(state => {
-      const newVariables = state.variables.map(variable => variable.copy());
+    set((state) => {
+      const newVariables = state.variables.map((variable) => variable.copy());
       newVariables[variableIdx].setGraph(graph);
 
       return {

@@ -21,12 +21,12 @@ function GraphSelectionModal({
   ];
   const onClickCreateGraphBtn = () => {
     setSelectedGraph(graphIdx);
-    setIsVisibleModal(state => !state);
+    setIsVisibleModal((state) => !state);
     changeTab("graph");
   };
 
   const onClickOverlay = () => {
-    setIsVisibleModal(state => !state);
+    setIsVisibleModal((state) => !state);
   };
   return (
     <>
@@ -52,7 +52,6 @@ function GraphSelectionModal({
           <Button onClick={onClickCreateGraphBtn}>그래프 선택</Button>
         </div>
       </div>
-      ;
     </>
   );
 }
