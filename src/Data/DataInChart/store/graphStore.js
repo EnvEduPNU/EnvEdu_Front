@@ -3,7 +3,7 @@ import { create } from "zustand";
 class Variable {
   constructor(name) {
     this._name = name;
-    this._type = "Numeric";
+    this._type = "";
     this._isSelected = true;
     this._axis = null;
     this._graph = null;
@@ -90,7 +90,6 @@ export const useGraphDataStore = create((set, get) => ({
     ["농업지대", "평균기온", "강수량", "일조시간"].map(
       (name) => new Variable(name)
     ),
-
   graphIdx: 0,
   pageIndex: -1,
   activityIndex: -1,
@@ -157,6 +156,9 @@ export const useGraphDataStore = create((set, get) => ({
   changeVariableType: (variableIdx, type) =>
     set((state) => {
       const newVariables = state.variables.map((variable) => variable.copy());
+
+      console.log(newVariables);
+
       newVariables[variableIdx].setType(type);
 
       return {
