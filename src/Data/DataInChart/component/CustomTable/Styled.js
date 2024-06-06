@@ -103,6 +103,7 @@ export const Box = styled.div`
   display: flex;
   align-items: center;
   line-height: 2;
+  padding: 4px 0px;
   ${(props) =>
     props.$isNotEnd &&
     css`
@@ -222,4 +223,10 @@ export const Button = styled.button`
       color: #fff;
       background-color: #21ba45;
     `}
+`;
+
+export const ButtonSelectorWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 `;

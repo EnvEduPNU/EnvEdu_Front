@@ -21,7 +21,7 @@ export const Box = styled.div`
   align-items: center;
   font-size: 14px;
   font-weight: 600;
-  padding: 10px;
+  padding: 0 10px;
   svg {
     cursor: pointer;
     width: 40px;

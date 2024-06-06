@@ -5,6 +5,7 @@ export const Wrapper = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  height: 100%;
   span {
     font-size: 14px;
     color: rgba(0, 0, 0, 0.87);
@@ -48,7 +49,7 @@ export const Button = styled.button`
   background: #e0e1e2 none;
   cursor: pointer;
 
-  ${props =>
+  ${(props) =>
     props.$isSelected &&
     css`
       color: #fff;

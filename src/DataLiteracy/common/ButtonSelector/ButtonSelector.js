@@ -4,7 +4,7 @@ import * as Styled from "./Styled";
 function ButtonSelector({ value, selectList, onChange, defaultValue = null }) {
   const [selected, setSelected] = useState(defaultValue);
 
-  const onClickButton = v => {
+  const onClickButton = (v) => {
     onChange(v);
 
     if (selected === v) {
@@ -15,9 +15,9 @@ function ButtonSelector({ value, selectList, onChange, defaultValue = null }) {
   };
   return (
     <Styled.Wrapper>
-      <span>{value}</span>
+      {/* <span>{value}</span> */}
       <Styled.ButtonWrapper>
-        {selectList.map(v => (
+        {selectList.map((v) => (
           <Styled.Button
             key={v}
             onClick={() => onClickButton(v)}

@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 // Button 컴포넌트 정의
-function Button({ buttonName }) {
+function PublicDataButton({ buttonName }) {
   const navigator = useNavigate();
 
   return (
@@ -30,4 +30,4 @@ function Button({ buttonName }) {
   );
 }
 
-export default Button;
+export default PublicDataButton;

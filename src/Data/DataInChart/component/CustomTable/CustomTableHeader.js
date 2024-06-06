@@ -3,6 +3,7 @@ import { useGraphDataStore } from "../../store/graphStore";
 import Select from "../../../../DataLiteracy/common/Select/Select";
 import { ReactComponent as PencilIcon } from "../../../../Study/image/Pencil.svg";
 import GraphSelector from "../GraphSelector/GraphSelector";
+import ButtonSelector from "../../../../DataLiteracy/common/ButtonSelector/ButtonSelector";
 
 // Data&Chart 메뉴 Graph 탭의 테이블의 헤더 컴포넌트
 function CustomTableHeader() {
@@ -18,6 +19,32 @@ function CustomTableHeader() {
   const onClickShwoBotton = (variableIdx) => {
     changeSelectedVariable(variableIdx);
   };
+
+  const AxisSelector = (props) => {
+    const { variables, changeAxis } = useGraphDataStore();
+
+    return (
+      <Styled.Box>
+        {/* <Styled.Title>축 선택</Styled.Title> */}
+        <Styled.ButtonSelectorWrapper>
+          {variables.map((variable, index) => {
+            if (!variable.isSelected) return;
+            if (index == props.col) {
+              return (
+                <ButtonSelector
+                  key={index}
+                  value={variable.name}
+                  defaultValue={variable.axis}
+                  selectList={["X", "Y"]}
+                  onChange={(axis) => changeAxis(index, axis)}
+                />
+              );
+            }
+          })}
+        </Styled.ButtonSelectorWrapper>
+      </Styled.Box>
+    );
+  };
   return (
     <div>
       <GraphSelector />
@@ -28,24 +55,10 @@ function CustomTableHeader() {
               <Styled.TableHeader>
                 <Styled.Th>
                   <span>{header}</span>
-                  <Styled.Circle onClick={onClickPencil}>
-                    <PencilIcon width={"15px"} height={"15px"} />
-                  </Styled.Circle>
                 </Styled.Th>
-                <Styled.Box $isNotEnd>
-                  <Select
-                    defaultValue={variables[col].type}
-                    items={["Categorical", "Numeric"]}
-                    onChange={(type) => onChangeType(col, type)}
-                  />
-                </Styled.Box>
+
                 <Styled.Box>
-                  <Styled.Button
-                    onClick={() => onClickShwoBotton(col)}
-                    $isSelected={variables[col].isSelected}
-                  >
-                    선택
-                  </Styled.Button>
+                  <AxisSelector col={col} />
                 </Styled.Box>
               </Styled.TableHeader>
             </Styled.HeaderWrapper>

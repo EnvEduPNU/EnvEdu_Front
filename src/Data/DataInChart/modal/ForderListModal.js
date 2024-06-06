@@ -5,7 +5,7 @@ import { customAxios } from "../../../Common/CustomAxios";
 import { useGraphDataStore } from "../store/graphStore";
 import { useState, useEffect } from "react";
 import { Typography } from "@mui/material";
-import Button from "../component/DrawGraph/Button";
+import Button from "../component/DrawGraph/PublicDataButton";
 import ButtonClose from "../component/DrawGraph/ButtonClose";
 
 const style = {
@@ -108,7 +108,9 @@ export default function ForderListModal(props) {
   const [forderType, setforderType] = useState();
 
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const { setData } = useGraphDataStore();
 
@@ -116,7 +118,6 @@ export default function ForderListModal(props) {
     const ModalOpen = props.modalOpen;
     if (ModalOpen) {
       handleOpen();
-      console.log("모달 오픈 : " + ModalOpen);
     }
     const allCheck = props.filteredData[0].total;
     const noneCheck = props.filteredData[0].none;
@@ -147,7 +148,7 @@ export default function ForderListModal(props) {
           const recombined = [headers, ...values];
 
           setData(recombined);
-          localStorage.setItem("data", JSON.stringify(recombined));
+          // localStorage.setItem("data", JSON.stringify(recombined));
           // window.location.reload();
         })
         .catch((err) => console.log(err));
@@ -234,7 +235,7 @@ export default function ForderListModal(props) {
           const recombined = [headers, ...values];
 
           setData(recombined);
-          localStorage.setItem("data", JSON.stringify(recombined));
+          // localStorage.setItem("data", JSON.stringify(recombined));
           // window.location.reload();
         })
         .catch((err) => console.log(err));

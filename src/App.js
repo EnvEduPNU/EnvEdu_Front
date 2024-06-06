@@ -32,7 +32,7 @@ import OpenApiPast from "./Data/OpenAPIData/openAPIPast";
 import Search from "./Data/OpenAPIData/search";
 import MyData from "./Data/MyData/myData";
 import ReadExcel from "./Data/MyData/readExcel";
-import Index from "./Data/SEEdApp/Index";
+import SEEdAppMain from "./Data/SEEdApp/SEEdAppMain";
 import DataPretreatmentPage from "./DataLiteracy/DataPretreatment/DataPretreatmentPage";
 import DataInputPage from "./DataLiteracy/DataInput/DataInputPage";
 import NewDataInput from "./DataLiteracy/DataInput/NewDataInput";
@@ -127,7 +127,7 @@ function App() {
           <Route path="/team" exact={true} element={<Team />} /> {/*Team*/}
           {/*GET STARTED*/}
           {/*DATA*/}
-          <Route path="/socket" exact={true} element={<Index />} />{" "}
+          <Route path="/socket" exact={true} element={<SEEdAppMain />} />{" "}
           {/*SEEd App*/}
           <Route path="/myData" exact={true} element={<MyData />} />{" "}
           {/*My Data*/}

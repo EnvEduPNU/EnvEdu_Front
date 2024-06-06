@@ -43,5 +43,4 @@ export const ErrorMessage = styled.div`
 
 export const Graph = styled.div`
   width: 100%;
-  /* height: 100%; */
 `;

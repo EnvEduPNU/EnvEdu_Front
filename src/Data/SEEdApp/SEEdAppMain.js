@@ -7,6 +7,7 @@ import "./Socket.scss";
 import { customAxios } from "../../Common/CustomAxios";
 import SocketConnect from "./SocketConnect";
 import React from "react";
+import BackwardButton from "./button/BackwardButton";
 
 const disConnectFlag = 99999;
 const noDeviceConnectFlag = 88888;
@@ -101,7 +102,6 @@ export default function Index() {
   return (
     <div style={{ fontSize: "1.5em" }} className="sample">
       <div className="row d-flex justify-content-center">연결된 기기 목록</div>
-
       <div
         style={{ display: "flex", justifyContent: "center", marginTop: "2rem" }}
       >
@@ -227,6 +227,7 @@ export default function Index() {
               </div>
             </div>
           ))}
+          <BackwardButton buttonName={"뒤로가기"} />
         </div>
       </div>
     </div>

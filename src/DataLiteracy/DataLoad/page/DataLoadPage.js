@@ -1,12 +1,21 @@
+import LeftSlidePage from "../../../Data/DataInChart/Page/leftSlidePage";
+import TableOrGraph from "../../../Data/DataInChart/component/DrawGraph/TableOrGraph";
 import SampleData from "../../DataInput/SampleData";
 import Dataset from "../Dataset/Dataset";
-import * as Styled from "./Styled";
+import styled from "@emotion/styled";
+
+const StyledDiv = styled.div`
+  display: flex;
+  padding: 0;
+`;
 
 function DataLoadPage() {
   return (
-    <Styled.Wrapper>
-      <Dataset />
-    </Styled.Wrapper>
+    <StyledDiv>
+      <LeftSlidePage />
+
+      <TableOrGraph />
+    </StyledDiv>
   );
 }
 
