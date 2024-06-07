@@ -18,9 +18,14 @@ export default function LeftSlidePage(props) {
       <Header />
       <div className="myData-left">
         <div className="myData-summary">
-          <MyDataButton buttonName={"Data"} setButtonCheck={setButtonCheck} />
+          <MyDataButton
+            buttonName={"Data"}
+            buttonCheck={buttonCheck}
+            setButtonCheck={setButtonCheck}
+          />
           <ExpertDataButton
             buttonName={"ExpertData"}
+            buttonCheck={buttonCheck}
             setButtonCheck={setButtonCheck}
           />
           <MyDataButton buttonName={"Assignmnet"} />

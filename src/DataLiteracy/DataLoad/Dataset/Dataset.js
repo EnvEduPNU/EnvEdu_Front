@@ -2,10 +2,20 @@ import { useNavigate } from "react-router-dom";
 import { sampleDatas } from "../../sampleData/sampleData";
 import { useGraphDataStore } from "../../store/graphStore";
 import * as Styled from "./Styled";
-import { useState } from "react";
+import { useTabStore } from "../../../Data/DataInChart/store/tabStore";
+import { useEffect, useState } from "react";
 
 function Dataset(props) {
   const { setData, setTitle } = useGraphDataStore();
+  const [isFinished, setIsFinished] = useState(false);
+  const { tab, changeTab } = useTabStore();
+
+  useEffect(() => {
+    // 만약 그래프탭에서 바로 데이터를 바꾸면 테이블 탭으로 돌아가게 한다.
+    if (tab === "graph" && isFinished) {
+      changeTab("table");
+    }
+  }, [props, isFinished]);
 
   const onClickBtn = (key) => {
     setData(sampleDatas[key]);
@@ -14,6 +24,7 @@ function Dataset(props) {
     localStorage.setItem("title", JSON.stringify(key));
     console.log("ExpertDataSet localStorage에 저장 완료!");
     props.setIsFinished(true);
+    setIsFinished(true);
   };
 
   return (

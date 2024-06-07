@@ -12,21 +12,30 @@ export default function ExpertDataButton(props) {
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     console.log("열림");
+    props.setButtonCheck("ExpertData");
     setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    console.log("닫힘");
+    setAnchorEl(null);
   };
 
   useEffect(() => {
     if (isFinished) {
       console.log("ExpertData 불러오기 성공");
       props.setButtonCheck("ExpertData");
-      setAnchorEl(null);
       setIsFinished(false);
     }
-  }, [anchorEl, isFinished]);
+
+    if (props.buttonCheck !== "ExpertData") {
+      handleClose();
+    }
+  }, [anchorEl, isFinished, props]);
 
   return (
     <div>
-      <Button id="fade-button" onClick={handleClick}>
+      <Button id="fade-button" onClick={open ? handleClose : handleClick}>
         <Typography
           sx={{
             fontSize: "3vh",

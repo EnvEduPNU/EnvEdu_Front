@@ -8,6 +8,8 @@ import { Typography } from "@mui/material";
 import Button from "../component/DrawGraph/PublicDataButton";
 import ButtonClose from "../component/DrawGraph/ButtonClose";
 
+import { useTabStore } from "../store/tabStore";
+
 const style = {
   position: "absolute",
   top: "50%",
@@ -106,6 +108,8 @@ const engToKor = (name) => {
 export default function ForderListModal(props) {
   const [open, setOpen] = useState(false);
   const [forderType, setforderType] = useState();
+
+  const { tab, changeTab } = useTabStore();
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
@@ -237,6 +241,11 @@ export default function ForderListModal(props) {
           setData(recombined);
           // localStorage.setItem("data", JSON.stringify(recombined));
           // window.location.reload();
+
+          // 만약 그래프탭에서 바로 데이터를 바꾸면 테이블 탭으로 돌아가게 한다.
+          if (tab === "graph") {
+            changeTab("table");
+          }
         })
         .catch((err) => console.log(err));
     }

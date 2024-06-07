@@ -11,15 +11,25 @@ import SEEdAppButton from "./SEEdAppButton";
 import * as Styled from "./Styled";
 import { useEffect, useState } from "react";
 
+import GraphSelector from "../GraphSelector/GraphSelector";
+
 // 테이블 아니면 그래프 선택하는 탭 컴포넌트
 function TableOrGraph(props) {
   const { tab } = useTabStore();
   const [dataName, setDataName] = useState();
+  const [changeTab, SetChangeTab] = useState(tab);
 
   useEffect(() => {
     console.log("TableOrGraph 데이터 이름 : " + dataName);
-    setDataName(props.button);
-  }, [props]);
+    console.log("Tab : " + tab);
+
+    if (changeTab !== tab) {
+      console.log("Tab 변경 : " + tab);
+      SetChangeTab(tab);
+    } else {
+      setDataName(props.button);
+    }
+  }, [props, tab]);
 
   return (
     <Styled.Wrapper>
@@ -43,6 +53,7 @@ function TableOrGraph(props) {
             <>
               <CustomTableHeader />
               <GraphAndEditor />
+              <GraphSelector />
             </>
           )}
 

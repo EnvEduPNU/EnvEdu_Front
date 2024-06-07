@@ -3,7 +3,6 @@ import { customAxios } from "../../../Common/CustomAxios";
 import "./leftSlidePage.scss";
 import FolderList from "../../MyData/folderList";
 import ForderListModal from "../modal/ForderListModal";
-import Header from "../component/Header/Header";
 
 export default function MyDataList(props) {
   /*데이터 요약 정보*/

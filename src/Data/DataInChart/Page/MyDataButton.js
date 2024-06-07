@@ -18,7 +18,11 @@ export default function MyDataButton(props) {
     setAnchorEl(null);
   };
 
-  useEffect(() => {}, [anchorEl]);
+  useEffect(() => {
+    if (props.buttonCheck !== "MyData") {
+      handleClose();
+    }
+  }, [anchorEl, props]);
 
   return (
     <div>
