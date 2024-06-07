@@ -1,6 +1,6 @@
 import CustomChart from "../../common/CustomChart/CustomChart";
 import ResearcherChart from "../../common/CustomChart/ResearcherChart/ResearcherChart";
-import CustomTable from "../../common/CustomTable/CustomTable";
+import ExpertCustomTable from "../../common/CustomTable/ExpertCustomTable";
 import Textarea from "../../common/Textarea/Textarea";
 import { useGraphInterpreterStore } from "../../store/graphInterpreterStore";
 import { useGraphDataStore } from "../../store/graphStore";
@@ -9,10 +9,10 @@ import * as Styled from "./Styled";
 
 function ResultReport() {
   const { purpose, infomation } = useGraphInterpreterStore(
-    state => state.userData
+    (state) => state.userData
   );
-  const tableTitle = useGraphDataStore(state => state.title);
-  const onClick = async e => {
+  const tableTitle = useGraphDataStore((state) => state.title);
+  const onClick = async (e) => {
     e.preventDefault();
     await makePdf.viewWithPdf();
   };
@@ -29,7 +29,7 @@ function ResultReport() {
         </Styled.Box>
         <Styled.TableWrapper>
           <Styled.SutTitle>제목: {tableTitle}</Styled.SutTitle>
-          <CustomTable />
+          <ExpertCustomTable />
         </Styled.TableWrapper>
       </Styled.Paper>
       <Styled.Paper className="div_paper">

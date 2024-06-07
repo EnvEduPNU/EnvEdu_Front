@@ -10,7 +10,7 @@ import TutorialDescription from "../TutorialDescription/TutorialDescription";
 import { ustTabStore } from "../../store/tabStore";
 import Overlay from "../Overlay/Overlay";
 
-function CustomTable() {
+function ExpertCustomTable() {
   const { data, variables, changeValue, changeVariableType } =
     useGraphDataStore();
   const [editableCell, setEditableCell] = useState(null);
@@ -112,7 +112,7 @@ function CustomTable() {
                 <Select
                   defaultValue={variables[col].getType}
                   items={["Categorical", "Numeric"]}
-                  onChange={type => onChangeType(col, type)}
+                  onChange={(type) => onChangeType(col, type)}
                 />
               </Styled.Box>
             </Styled.Header>
@@ -132,9 +132,9 @@ function CustomTable() {
                 <Styled.Input
                   value={d[col]}
                   spellCheck={false}
-                  onChange={e => handleInputChange(e, row + 1, col)}
+                  onChange={(e) => handleInputChange(e, row + 1, col)}
                   onBlur={() => setEditableCell(null)}
-                  onKeyDown={e => onClickEnter(e)}
+                  onKeyDown={(e) => onClickEnter(e)}
                 />
               ) : (
                 <Styled.InputDiv
@@ -151,4 +151,4 @@ function CustomTable() {
   );
 }
 
-export default CustomTable;
+export default ExpertCustomTable;

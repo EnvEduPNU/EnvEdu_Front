@@ -1,27 +1,32 @@
 import * as React from "react";
+import { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import MyDataList from "./MyDataList";
 import { Typography } from "@mui/material";
 import ExpertDataList from "./ExpertDataList";
 
 export default function ExpertDataButton(props) {
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [isFinished, setIsFinished] = useState(false);
+
+  const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     console.log("열림");
     setAnchorEl(event.currentTarget);
   };
-  const handleClose = () => {
-    console.log("닫힘");
 
-    setAnchorEl(null);
-  };
-
-  React.useEffect(() => {}, [anchorEl]);
+  useEffect(() => {
+    if (isFinished) {
+      console.log("ExpertData 불러오기 성공");
+      props.setButtonCheck("ExpertData");
+      setAnchorEl(null);
+      setIsFinished(false);
+    }
+  }, [anchorEl, isFinished]);
 
   return (
     <div>
-      <Button id="fade-button" onClick={open ? handleClose : handleClick}>
+      <Button id="fade-button" onClick={handleClick}>
         <Typography
           sx={{
             fontSize: "3vh",
@@ -32,7 +37,7 @@ export default function ExpertDataButton(props) {
         </Typography>
       </Button>
 
-      {open && <ExpertDataList />}
+      {open && <ExpertDataList open={open} setIsFinished={setIsFinished} />}
     </div>
   );
 }

@@ -1,17 +1,20 @@
 import { useState, useEffect } from "react";
-import { customAxios } from "../../../Common/CustomAxios";
 import "./leftSlidePage.scss";
-import FolderList from "../../MyData/folderList";
-import ForderListModal from "../modal/ForderListModal";
-import Header from "../component/Header/Header";
 import Dataset from "../../../DataLiteracy/DataLoad/Dataset/Dataset";
+import ExpertDataModal from "../modal/ExpertDataModal";
 
 export default function ExpertDataList(props) {
   /*데이터 요약 정보*/
-  const [summary, setSummary] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
+  const [isFinished, setIsFinished] = useState(false);
+  useEffect(() => {
+    console.log("Expert Data List 모달 상태 : " + modalOpen);
 
-  useEffect(() => {}, []);
+    if (isFinished) {
+      props.setIsFinished(isFinished);
+      console.log("데이터 저장하고 올라오는 상태 : " + isFinished);
+    }
+  }, [modalOpen, isFinished]);
 
   const selectFolder = () => {
     setModalOpen(!modalOpen);
@@ -31,7 +34,15 @@ export default function ExpertDataList(props) {
           >
             전문가 데이터
           </label>
-          {modalOpen ? <Dataset /> : ""}
+          {modalOpen ? (
+            <ExpertDataModal
+              modalOpen={modalOpen}
+              setModalOpen={setModalOpen}
+              setIsFinished={setIsFinished}
+            />
+          ) : (
+            ""
+          )}
         </div>
       </div>
     </div>

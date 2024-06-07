@@ -11,8 +11,8 @@ import MixEditor from "../Editor/MixEditor/MixEditor";
 import ScatterEditor from "../Editor/ScatterEditor/ScatterEditor";
 import * as Styled from "./Styled";
 
-function GraphAndEditor() {
-  const graphIdx = useGraphDataStore(state => state.graphIdx);
+function ExpertGraphAndEditor() {
+  const graphIdx = useGraphDataStore((state) => state.graphIdx);
   return (
     <Styled.Wrapper>
       {graphIdx === 0 && (
@@ -50,4 +50,4 @@ function GraphAndEditor() {
   );
 }
 
-export default GraphAndEditor;
+export default ExpertGraphAndEditor;

@@ -1,26 +1,26 @@
 import * as Styled from "./Styled";
-import CustomTable from "../../common/CustomTable/CustomTable";
-import { ustTabStore } from "../../store/tabStore";
+import ExpertCustomTable from "../../common/CustomTable/ExpertCustomTable";
+import { useTabStore } from "../../../Data/DataInChart/store/tabStore";
 import Header from "../../common/Header/Header";
-import CustomTableHeader from "../../common/CustomTable/CustomTableHeader";
+import ExpertCustomTableHeader from "../../common/CustomTable/ExpertCustomTableHeader";
 import Description from "../../common/Description/Description";
-import GraphAndEditor from "../GraphAndEditor/GraphAndEditor";
+import ExpertGraphAndEditor from "../GraphAndEditor/ExpertGraphAndEditor";
 
 function DrawGraphV2Page() {
-  const tab = ustTabStore(state => state.tab);
+  const { tab } = useTabStore();
   return (
     <Styled.Wrapper>
       <Header />
       {tab === "table" && (
         <Styled.TableTabWrapper>
           <Description />
-          <CustomTable />
+          <ExpertCustomTable />
         </Styled.TableTabWrapper>
       )}
       {tab === "graph" && (
         <Styled.GraphTapWrapper>
-          <CustomTableHeader />
-          <GraphAndEditor />
+          <ExpertCustomTableHeader />
+          <ExpertGraphAndEditor />
         </Styled.GraphTapWrapper>
       )}
     </Styled.Wrapper>

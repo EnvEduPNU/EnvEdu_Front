@@ -10,7 +10,7 @@ import Portal from "../../../Portal";
 import useComponentPosition from "../../hooks/useComponentPosition";
 import Overlay from "../Overlay/Overlay";
 
-function CustomTableHeader() {
+function ExpertCustomTableHeader() {
   const { changeTab } = ustTabStore();
   const { ref, position } = useComponentPosition();
   const { isTutorial, step } = usetutorialStroe();
@@ -23,7 +23,7 @@ function CustomTableHeader() {
   const onChangeType = (index, type) => {
     changeVariableType(index, type);
   };
-  const onClickShwoBotton = variableIdx => {
+  const onClickShwoBotton = (variableIdx) => {
     changeSelectedVariable(variableIdx);
   };
   return (
@@ -42,7 +42,7 @@ function CustomTableHeader() {
                 <Select
                   defaultValue={variables[col].getType}
                   items={["Categorical", "Numeric"]}
-                  onChange={type => onChangeType(col, type)}
+                  onChange={(type) => onChangeType(col, type)}
                 />
               </Styled.Box>
               <Styled.Box>
@@ -73,4 +73,4 @@ function CustomTableHeader() {
   );
 }
 
-export default CustomTableHeader;
+export default ExpertCustomTableHeader;
