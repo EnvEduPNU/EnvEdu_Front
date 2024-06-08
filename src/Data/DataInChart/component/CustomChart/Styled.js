@@ -2,8 +2,6 @@ import styled from "styled-components";
 
 export const Wrapper = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
   width: 160vh;
   height: 60vh;
   border-radius: 5px;
@@ -12,11 +10,7 @@ export const Wrapper = styled.div`
   padding: 14px;
 `;
 
-export const Graph = styled.div`
-  width: 80%;
-  height: 20%;
-`;
-
+export const Graph = styled.div``;
 export const AcitwGraphWrapper = styled.div`
   position: "absolute";
   background-color: rgb(255, 255, 255);

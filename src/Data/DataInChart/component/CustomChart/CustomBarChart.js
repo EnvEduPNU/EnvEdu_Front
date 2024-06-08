@@ -4,11 +4,12 @@ import useBarData from "../../hooks/useBarData";
 import VerticalSlider from "../CustomTable/VerticalSlider";
 import DiscreteSliderLabel from "../CustomTable/DiscreteSliderLabel";
 import makePdf from "../../../../DataLiteracy/utils/makePdf";
-import PdfButton from "../DrawGraph/PdfButton";
+import GraphOpinionText from "../DrawGraph/GraphOpinionText";
 
 import html2canvas from "html2canvas";
 
-import { useRef, useEffect } from "react"; // useRef 훅 추가
+import { useRef, useEffect } from "react";
+import GraphOpinionTempate from "../DrawGraph/GraphOpinionTemplate";
 
 function CustomBarChart(props) {
   const { labels, createDataset, createOptions, errorMessage, isError } =
@@ -48,25 +49,35 @@ function CustomBarChart(props) {
         <div
           style={{
             display: "flex",
-            flexDirection: "column",
-            marginTop: "5vh",
-            marginBottom: "5vh",
+            width: "100%",
+            flexDirection: "row",
+            justifyContent: "space-between",
           }}
         >
-          <div ref={chartRef} style={{ paddingLeft: "4vh" }}>
-            <div style={{ display: "flex", margin: "10px" }}>
-              <VerticalSlider />
-              <Bar
-                style={{ width: "100%", height: "100%" }}
-                data={{
-                  labels,
-                  datasets: createDataset(),
-                }}
-                options={createOptions()}
-              />
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              marginTop: "5vh",
+              marginBottom: "5vh",
+            }}
+          >
+            <div ref={chartRef} style={{ paddingLeft: "4vh" }}>
+              <div style={{ display: "flex" }}>
+                <VerticalSlider />
+                <Bar
+                  style={{ width: "80vh", height: "80vh" }}
+                  data={{
+                    labels,
+                    datasets: createDataset(),
+                  }}
+                  options={createOptions()}
+                />
+              </div>
+              <DiscreteSliderLabel />
             </div>
-            <DiscreteSliderLabel />
           </div>
+          <GraphOpinionTempate />
         </div>
       )}
     </Styled.Wrapper>
