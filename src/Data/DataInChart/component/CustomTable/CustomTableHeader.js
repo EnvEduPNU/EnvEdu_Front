@@ -1,19 +1,24 @@
 import * as Styled from "./Styled";
 import { useGraphDataStore } from "../../store/graphStore";
+import { categoricalStore } from "../../store/categoricalStore";
 import ButtonSelector from "../../../../DataLiteracy/common/ButtonSelector/ButtonSelector";
+import { useEffect } from "react";
 
 // Data&Chart 메뉴 Graph 탭의 테이블의 헤더 컴포넌트
 function CustomTableHeader() {
-  const { data, variables, changeSelectedVariable, changeVariableType } =
-    useGraphDataStore();
+  const { data, variables, changeAxis, changeGraph } = useGraphDataStore();
+
+  const { changeCategory } = categoricalStore();
+
   const headers = data[0];
 
-  const AxisSelector = (props) => {
-    const { variables, changeAxis } = useGraphDataStore();
+  useEffect(() => {
+    console.log("랜더링 체크 로그 : " + data ? data : "");
+  }, [data]);
 
+  const AxisSelector = (props) => {
     return (
       <Styled.Box>
-        {/* <Styled.Title>축 선택</Styled.Title> */}
         <Styled.ButtonSelectorWrapper>
           {variables.map((variable, index) => {
             if (!variable.isSelected) return;
@@ -24,7 +29,15 @@ function CustomTableHeader() {
                   value={variable.name}
                   defaultValue={variable.axis}
                   selectList={["X", "Y"]}
-                  onChange={(axis) => changeAxis(index, axis)}
+                  onChange={(axis) => {
+                    changeAxis(index, axis);
+                    const columnIndex = headers.indexOf(variable.name);
+                    const secondValues = data
+                      .slice(1)
+                      .map((row) => row[columnIndex]);
+                    changeCategory(secondValues);
+                    console.log("바뀐 변인 이름 : " + secondValues);
+                  }}
                 />
               );
             }

@@ -12,14 +12,14 @@ import ScatterEditor from "../Editor/ScatterEditor/ScatterEditor";
 import * as Styled from "./Styled";
 
 function GraphAndEditor() {
-  const graphIdx = useGraphDataStore(state => state.graphIdx);
+  const graphIdx = useGraphDataStore((state) => state.graphIdx);
 
   return (
     <Styled.Wrapper>
       {graphIdx === 0 && (
         <>
           <CustomBarChart />
-          <BarEditor />
+          {/* <BarEditor /> */}
         </>
       )}
       {graphIdx === 1 && (

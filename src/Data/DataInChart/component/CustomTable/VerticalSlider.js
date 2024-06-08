@@ -27,44 +27,45 @@ const marks = [
     value: 0,
     label: "0",
   },
-  {
-    value: 20,
-    label: "20",
-  },
-  {
-    value: 50,
-    label: "50",
-  },
+  // {
+  //   value: 20,
+  //   label: "20",
+  // },
+  // {
+  //   value: 50,
+  //   label: "50",
+  // },
+  // {
+  //   value: 100,
+  //   label: "100",
+  // },
   {
     value: 100,
     label: "100",
-  },
-  {
-    value: 120,
-    label: "120",
   },
 ];
 
 export default function VerticalSlider() {
   const { min, max, changeMinValue, changeMaxValue } = useBarStore();
+  const useBarStoreCheck = useBarStore();
   const [value, setValue] = useState([min, max]);
-  const [sliderMax, setSliderMax] = useState(120); // 최대값을 상태로 관리
+  const [sliderMax, setSliderMax] = useState(0); // 최대값을 상태로 관리
 
   useEffect(() => {
     setValue([min, max]); // 스토어의 초기값으로 상태를 업데이트합니다.
 
-    console.log("최고값 : " + max);
+    console.log("최고값 : " + useBarStoreCheck.getMax());
     console.log("최저값 : " + min);
-  }, [min, max]);
+  }, [min, max, useBarStoreCheck]);
 
   useEffect(() => {
     // value[1]이 100보다 큰 경우, sliderMax를 value[1]로 설정
-    if (value[1] > 100) {
-      setSliderMax(value[1]);
+    if (max > 100) {
+      setSliderMax(value[1] + max);
     } else {
-      setSliderMax(120); // 기본 최대값은 120
+      setSliderMax(100);
     }
-  }, [value]);
+  }, [value, max]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);

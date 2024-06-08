@@ -44,15 +44,18 @@ const useBarData = () => {
       const valuesForNumeric = data.slice(1).map((row) => row[numericIndex]);
       const initialMaxNumber = Math.max(...valuesForNumeric);
       setMaxNumber(initialMaxNumber * 2);
+      console.log("vertical data 변경 감지 : " + initialMaxNumber);
+    } else {
+      setMaxNumber(0);
+      console.log("vertical data 변경 : 리스트 없음 ");
     }
   }, [data, numericList]); // 데이터가 변경될 때만 실행
 
-  // 종속성 배열에서 maxNumber 제거
   useEffect(() => {
     console.log("큰수 리랜더링 : " + maxNumber);
     changeCategory(categoricalData);
     changeMaxValue(maxNumber);
-  }, [maxNumber]); // maxNumber를 종속성 배열에서 제거
+  }, [maxNumber]);
 
   // 문자열 형 변인이 선택 되었을때
   // 첫 번째 행(제목 행)을 제외하고 각 행의 첫 번째 요소만 추출

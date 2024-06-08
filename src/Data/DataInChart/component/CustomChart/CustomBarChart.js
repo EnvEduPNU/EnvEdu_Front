@@ -13,7 +13,14 @@ function CustomBarChart() {
       {isError ? (
         <Styled.ErrorMessage>{errorMessage}</Styled.ErrorMessage>
       ) : (
-        <Styled.Graph>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            marginTop: "5vh",
+            marginBottom: "5vh",
+          }}
+        >
           <div style={{ display: "flex", margin: "10px" }}>
             <VerticalSlider />
             <Bar
@@ -26,7 +33,7 @@ function CustomBarChart() {
             />
           </div>
           <DiscreteSliderLabel />
-        </Styled.Graph>
+        </div>
       )}
     </Styled.Wrapper>
   );

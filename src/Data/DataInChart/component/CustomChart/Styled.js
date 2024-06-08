@@ -4,11 +4,17 @@ export const Wrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
+  width: 160vh;
+  height: 60vh;
   border-radius: 5px;
   border: 1px solid rgba(34, 36, 38, 0.15);
   box-shadow: 0 1px 2px 0 rgba(34, 36, 38, 0.15);
   padding: 14px;
+`;
+
+export const Graph = styled.div`
+  width: 80%;
+  height: 20%;
 `;
 
 export const AcitwGraphWrapper = styled.div`
@@ -39,8 +45,4 @@ export const ErrorMessage = styled.div`
   font-size: 15px;
   font-weight: 600;
   padding: 14px 21px;
-`;
-
-export const Graph = styled.div`
-  width: 100%;
 `;
