@@ -12,12 +12,15 @@ import * as Styled from "./Styled";
 import { useEffect, useState } from "react";
 
 import GraphSelector from "../GraphSelector/GraphSelector";
+import PdfButton from "./PdfButton";
 
 // 테이블 아니면 그래프 선택하는 탭 컴포넌트
 function TableOrGraph(props) {
   const { tab } = useTabStore();
   const [dataName, setDataName] = useState();
   const [changeTab, SetChangeTab] = useState(tab);
+
+  const [pdfClick, setPdfClick] = useState(false);
 
   useEffect(() => {
     console.log("TableOrGraph 데이터 이름 : " + dataName);
@@ -30,6 +33,10 @@ function TableOrGraph(props) {
       setDataName(props.button);
     }
   }, [props, tab]);
+
+  useEffect(() => {
+    console.log("TableOrGraph pdf 클릭");
+  }, [pdfClick]);
 
   return (
     <Styled.Wrapper>
@@ -52,8 +59,11 @@ function TableOrGraph(props) {
           {dataName === "MyData" && (
             <>
               <CustomTableHeader />
-              <GraphAndEditor />
-              <GraphSelector />
+              <GraphAndEditor pdfClick={pdfClick} />
+              <div style={{ display: "flex", flexDirection: "row" }}>
+                <GraphSelector />
+                <PdfButton buttonName={"PDF 보기"} setPdfClick={setPdfClick} />
+              </div>
             </>
           )}
 
