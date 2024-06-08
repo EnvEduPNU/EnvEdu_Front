@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 
 import GraphSelector from "../GraphSelector/GraphSelector";
 import PdfButton from "./PdfButton";
+import GraphSaveButton from "./GraphSaveButton";
 
 // 테이블 아니면 그래프 선택하는 탭 컴포넌트
 function TableOrGraph(props) {
@@ -63,6 +64,7 @@ function TableOrGraph(props) {
               <CustomTableHeader />
               <GraphAndEditor pdfClick={pdfClick} />
               <div style={{ display: "flex", flexDirection: "row" }}>
+                <GraphSaveButton buttonName={"그래프 저장"} />
                 <GraphSelector />
                 <PdfButton buttonName={"PDF 보기"} setPdfClick={setPdfClick} />
               </div>

@@ -12,7 +12,7 @@ export default function GraphOpinionTempate() {
       sx={{
         border: "0px dashed grey",
         padding: "5px",
-        width: "30%",
+        width: "25%",
       }}
     >
       <Typography
@@ -24,7 +24,7 @@ export default function GraphOpinionTempate() {
           border: "0px dashed grey",
           padding: "5px",
           margin: "3vh 0 3vh 0",
-          width: "100%",
+          width: "80%",
         }}
       >
         1. 그래프를 만들면서 깨닫게 된 점.

@@ -17,7 +17,7 @@ export default function GraphOpinionText() {
           multiline
           rows={4}
           defaultValue="Default Value"
-          sx={{ width: "45vh" }}
+          sx={{ width: "110%" }}
         />
       </div>
     </Box>

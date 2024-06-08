@@ -28,8 +28,10 @@ function CustomBarChart(props) {
     try {
       // 차트 요소를 이미지로 변환
       const canvas = await html2canvas(chartRef.current, {
-        width: 1000,
-        height: 900,
+        width: 1300,
+        height: 1400,
+        x: -130,
+        y: -50,
       });
       const imageFile = canvas.toDataURL("image/png", 1.0);
 
