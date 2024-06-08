@@ -4,6 +4,8 @@ export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 `;
 
 export const Label = styled.span`

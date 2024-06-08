@@ -9,37 +9,12 @@ import * as Styled from "./Styled";
 function BarEditor() {
   return (
     <EditorWrapper>
-      {/* <AxisSelector /> */}
       <SacleSelector />
       <StepSizeSelector />
       <MetadataEditor />
     </EditorWrapper>
   );
 }
-
-// const AxisSelector = () => {
-//   const { variables, changeAxis } = useGraphDataStore();
-
-//   return (
-//     <Styled.Box>
-//       {/* <Styled.Title>축 선택</Styled.Title> */}
-//       <Styled.ButtonSelectorWrapper>
-//         {variables.map((variable, index) => {
-//           if (!variable.isSelected) return;
-//           return (
-//             <ButtonSelector
-//               key={index}
-//               value={variable.name}
-//               defaultValue={variable.axis}
-//               selectList={["X", "Y"]}
-//               onChange={(axis) => changeAxis(index, axis)}
-//             />
-//           );
-//         })}
-//       </Styled.ButtonSelectorWrapper>
-//     </Styled.Box>
-//   );
-// };
 
 const SacleSelector = () => {
   const { min, max, changeMinValue, changeMaxValue } = useBarStore();

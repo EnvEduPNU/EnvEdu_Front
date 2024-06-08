@@ -7,15 +7,20 @@ export const useBarStore = create((set, get) => ({
   max: 0,
   stepSize: 0,
   errorMessage: null,
-  getXIndex: variable => {
+
+  getMax: () => {
+    return get().max;
+  },
+
+  getXIndex: (variable) => {
     return get().x.indexOf(variable);
   },
-  getYIndex: variable => {
+  getYIndex: (variable) => {
     return get().y.indexOf(variable);
   },
 
-  changeXAxis: variable =>
-    set(state => {
+  changeXAxis: (variable) =>
+    set((state) => {
       const xIndex = get().getXIndex(variable);
       const yIndex = get().getYIndex(variable);
 
@@ -40,8 +45,8 @@ export const useBarStore = create((set, get) => ({
       };
     }),
 
-  changeYAxis: variable =>
-    set(state => {
+  changeYAxis: (variable) =>
+    set((state) => {
       const xIndex = get().getXIndex(variable);
       const yIndex = get().getYIndex(variable);
 
@@ -67,20 +72,20 @@ export const useBarStore = create((set, get) => ({
       };
     }),
 
-  changeMinValue: min =>
-    set(state => ({
+  changeMinValue: (min) =>
+    set((state) => ({
       ...state,
       min: Math.round(min * 10) / 10,
     })),
 
-  changeMaxValue: max =>
-    set(state => ({
+  changeMaxValue: (max) =>
+    set((state) => ({
       ...state,
       max: Math.round(max * 10) / 10,
     })),
 
-  changeStepSize: stepSize =>
-    set(state => ({
+  changeStepSize: (stepSize) =>
+    set((state) => ({
       ...state,
       stepSize: Math.round(stepSize * 10) / 10,
     })),

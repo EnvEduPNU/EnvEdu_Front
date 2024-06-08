@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { useGraphDataStore } from "../../store/graphStore";
-import { ReactComponent as PencilIcon } from "../../../../Study/image/Pencil.svg";
 import * as Styled from "./Styled";
-import Select from "../../../../DataLiteracy/common/Select/Select";
 import TutorialButton from "./TutorialButton";
 
 // data-in-chart 페이지 테이블이 나오는 컴포넌트
