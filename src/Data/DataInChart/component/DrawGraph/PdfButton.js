@@ -7,19 +7,19 @@ function PdfButton(props) {
       className="showBtn"
       onClick={() => props.setPdfClick(true)}
       style={{
+        position: "relative",
         cursor: "pointer",
-        display: "flex",
         justifyContent: "center",
-        alignItems: "center",
-        fontSize: "0.9rem",
-        fontWeight: "600",
-        width: "7rem",
-        height: "1.75rem",
-        margin: "1rem 0rem",
-        background: "#feecfe",
-        borderRadius: "1rem",
-        border: "none",
-        marginRight: "0.75rem",
+        textAlign: "center",
+        fontWeight: 600,
+        fontSize: "18px",
+        width: "160px",
+        height: "5vh",
+        margin: "2vh 0 2vh 2vh",
+        paddingTop: "5px",
+        color: "#000",
+        border: "1px solid rgba(34, 36, 38, 0.15)",
+        borderBottom: "6px solid #7f3f99",
       }}
     >
       {props.buttonName}
