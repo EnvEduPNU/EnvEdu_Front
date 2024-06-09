@@ -8,7 +8,7 @@ function LiveTeacherPage() {
   useEffect(() => {
     // SockJS 연결 설정
     // let sock = new SockJS("http://localhost:8080/ws");
-    const sock = new SockJS(`${process.env.REACT_APP_API_URL}/ws`);
+    let sock = new SockJS(`${process.env.REACT_APP_API_URL}/ws`);
 
     const stompClient = Stomp.over(sock);
 
