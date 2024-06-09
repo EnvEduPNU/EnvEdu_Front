@@ -7,7 +7,9 @@ function LiveStudentPage() {
   const [page, setPage] = useState("defaultPage");
 
   useEffect(() => {
+    // const sock = new SockJS("http://localhost:8080/ws");
     const sock = new SockJS(`${process.env.REACT_APP_API_URL}/ws`);
+
     const stompClient = Stomp.over(sock);
 
     stompClient.connect({}, function (frame) {
