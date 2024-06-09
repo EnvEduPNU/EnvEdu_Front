@@ -4,7 +4,7 @@ import Stomp from "stompjs";
 
 function LiveTeacherPage() {
   const sendMessage = () => {
-    const sock = new SockJS("http://localhost:8080/ws");
+    const sock = new SockJS(`${process.env.REACT_APP_API_URL}/ws`);
     const stompClient = Stomp.over(sock);
 
     stompClient.connect({}, function (frame) {
