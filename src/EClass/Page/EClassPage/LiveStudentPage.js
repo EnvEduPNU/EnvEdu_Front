@@ -24,7 +24,7 @@ function LiveStudentPage() {
   }, []);
 
   return (
-    <div>{page === "newPage" ? <CustomTable /> : "전환 이전의 페이지"}</div>
+    <div>{page === "newPage" ? <CustomTable /> : <DefaultPageComponent />}</div>
   );
 }
 
