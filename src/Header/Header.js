@@ -155,10 +155,7 @@ function Header() {
                     case "dataChart":
                       return (
                         <>
-                          <NavLink
-                            className={"nav-link"}
-                            to="/dataLiteracy/dataLoad"
-                          >
+                          <NavLink className={"nav-link"} to="/data-in-chart">
                             Tutorial
                           </NavLink>
                           <NavLink className={"nav-link"} to="/data-in-chart">
@@ -167,22 +164,11 @@ function Header() {
                           <NavLink className={"nav-link"} to="/openapi">
                             Open API Data
                           </NavLink>
-                        </>
-                      );
-                    case "dataChart":
-                      return (
-                        <>
-                          <NavLink
-                            className={"nav-link"}
-                            to="/dataLiteracy/dataLoad"
-                          >
-                            Tutorial
+                          <NavLink className={"nav-link"} to="/textbook">
+                            Data In Textbooks
                           </NavLink>
-                          <NavLink className={"nav-link"} to="/data-in-chart">
-                            Data & Chart
-                          </NavLink>
-                          <NavLink className={"nav-link"} to="/openapi">
-                            Open API Data
+                          <NavLink className={"nav-link"} to="/resource">
+                            Education Resources
                           </NavLink>
                         </>
                       );
@@ -194,12 +180,6 @@ function Header() {
                           </NavLink>
                           <NavLink className={"nav-link"} to="/myData">
                             My Data
-                          </NavLink>
-                          <NavLink className={"nav-link"} to="/textbook">
-                            Data In Textbooks
-                          </NavLink>
-                          <NavLink className={"nav-link"} to="/resource">
-                            Education Resources
                           </NavLink>
                         </>
                       );

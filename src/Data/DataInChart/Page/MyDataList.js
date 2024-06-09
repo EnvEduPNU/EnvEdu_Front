@@ -152,7 +152,11 @@ export default function MyDataList(props) {
       </div>
 
       {filteredData.length > 0 && (
-        <ForderListModal filteredData={filteredData} modalOpen={modalOpen} />
+        <ForderListModal
+          filteredData={filteredData}
+          modalOpen={modalOpen}
+          setModalOpen={setModalOpen}
+        />
       )}
     </div>
   );

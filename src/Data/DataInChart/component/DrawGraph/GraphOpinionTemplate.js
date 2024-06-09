@@ -12,6 +12,7 @@ export default function GraphOpinionTempate() {
       sx={{
         border: "0px dashed grey",
         padding: "5px",
+        marginTop: "2vh",
         width: "25%",
       }}
     >

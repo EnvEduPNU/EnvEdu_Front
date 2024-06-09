@@ -62,6 +62,7 @@ import ViewReward from "./Education/Survey/Respondent/ViewReward";
 import ViewResponse from "./Education/Survey/Admin/ViewResponse";
 
 import { useNavigate } from "react-router-dom";
+import EClassLivePage from "./EClass/Page/EClassPage/EClassLivePage";
 
 function App() {
   const navigate = useNavigate();
@@ -197,11 +198,15 @@ function App() {
             exact={true}
             element={<CheckCompareData />}
           />
+          {/* <Route path="/E-Classes">
+
+            <Route path="" exact={true} element={<EClassList />} />
+            <Route path="new" exact={true} element={<CreateEClassPage />} />
+          </Route> */}
           <Route path="/E-Classes">
             {" "}
             {/*E-Class*/}
-            <Route path="" exact={true} element={<EClassList />} />
-            <Route path="new" exact={true} element={<CreateEClassPage />} />
+            <Route path="" exact={true} element={<EClassLivePage />} />
           </Route>
           <Route path="/slide/:id" exact={true} element={<SlidePage />} />
           <Route path="/dataLiteracy">

@@ -31,7 +31,11 @@ export const AcitwGraphWrapper = styled.div`
 `;
 
 export const ErrorMessage = styled.div`
-  width: fit-content;
+  width: 18%;
+  height: 8%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border-radius: 5px;
   background-color: #fff6f6;
   color: #9f3a38;

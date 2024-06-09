@@ -3,6 +3,8 @@ import TableOrGraph from "../component/DrawGraph/TableOrGraph";
 import LeftSlidePage from "./leftSlidePage";
 import styled from "@emotion/styled";
 
+import { useGraphDataStore } from "../store/graphStore";
+
 const StyledDiv = styled.div`
   display: flex;
   padding: 0;
@@ -11,10 +13,13 @@ const StyledDiv = styled.div`
 // Data & Chart 메인 페이지
 function DataInChartPage() {
   const [button, setButton] = useState("MyData");
+  const graphStore = useGraphDataStore();
 
   useEffect(() => {
-    console.log("Data&Chart 버튼체크 : " + button);
-  }, [button]);
+    return () => {
+      graphStore.setDataInit(); // 상태 초기화 함수 호출
+    };
+  }, []);
 
   return (
     <StyledDiv>

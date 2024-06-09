@@ -36,8 +36,6 @@ function TableOrGraph(props) {
   }, [props, tab]);
 
   useEffect(() => {
-    console.log("TableOrGraph pdf 클릭");
-
     return setPdfClick(false);
   }, [pdfClick]);
 

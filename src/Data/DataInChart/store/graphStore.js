@@ -108,6 +108,13 @@ export const useGraphDataStore = create((set, get) => ({
       variables: newData[0].map((name) => new Variable(name)),
     })),
 
+  setDataInit: () =>
+    set((state) => ({
+      ...state,
+      data: [],
+      variables: new Variable(),
+    })),
+
   setTitle: (title) =>
     set((state) => ({
       ...state,

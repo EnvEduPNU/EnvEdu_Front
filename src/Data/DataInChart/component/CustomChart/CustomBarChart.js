@@ -46,7 +46,17 @@ function CustomBarChart(props) {
   return (
     <Styled.Wrapper>
       {isError ? (
-        <Styled.ErrorMessage>{errorMessage}</Styled.ErrorMessage>
+        <div
+          style={{
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Styled.ErrorMessage>{errorMessage}</Styled.ErrorMessage>
+        </div>
       ) : (
         <div
           style={{

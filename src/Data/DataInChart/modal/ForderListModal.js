@@ -136,6 +136,10 @@ export default function ForderListModal(props) {
       setforderType(props.filteredData[0].dataLabel);
       console.log("확인해보자" + JSON.stringify(props.filteredData));
     }
+
+    return () => {
+      props.setModalOpen(false);
+    };
   }, [props]);
 
   const getTable = (type, id) => {
@@ -257,7 +261,7 @@ export default function ForderListModal(props) {
     <div>
       <Modal
         open={open}
-        onClose={handleClose}
+        onClick={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
