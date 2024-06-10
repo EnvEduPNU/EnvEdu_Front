@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 import CustomTable from "../../../Study/DrwaGraph/CustomTable/CustomTable";
+import DataInChartPage from "../../../Data/DataInChart/Page/DataInChartPage";
 
 function LiveStudentPage() {
   const [page, setPage] = useState("defaultPage");
@@ -26,7 +27,9 @@ function LiveStudentPage() {
   }, []);
 
   return (
-    <div>{page === "newPage" ? <CustomTable /> : <DefaultPageComponent />}</div>
+    <div>
+      {page === "newPage" ? <DataInChartPage /> : <DefaultPageComponent />}
+    </div>
   );
 }
 
