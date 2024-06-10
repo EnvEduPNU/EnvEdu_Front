@@ -51,7 +51,10 @@ function LiveTeacherPage() {
 
   const sendMessage = () => {
     if (globalStompClient) {
-      globalStompClient.send("/app/switch", {}, "newPage");
+      const message = {
+        page: "newPage", // JSON 객체에서 "newPage"를 값으로 하는 'page' 키 생성
+      };
+      globalStompClient.send("/app/switch", {}, JSON.stringify(message));
     }
   };
 
