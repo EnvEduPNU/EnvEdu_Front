@@ -50,7 +50,7 @@ function CustomTableHeader() {
     <div>
       {/*그래프 */}
       <Styled.TableHeaderWrapper>
-        {headers.map((header, col) => (
+        {headers?.map((header, col) => (
           <Styled.Column key={col} $isNotEnd={col != headers.length - 1}>
             <Styled.HeaderWrapper>
               <Styled.TableHeader>
