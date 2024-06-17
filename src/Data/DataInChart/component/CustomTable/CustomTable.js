@@ -4,14 +4,19 @@ import * as Styled from "./Styled";
 import TutorialButton from "./TutorialButton";
 
 // data-in-chart 페이지 테이블이 나오는 컴포넌트
-function CustomTable() {
+function CustomTable(props) {
   const { data, variables, changeValue, changeVariableType } =
     useGraphDataStore();
   const [editableCell, setEditableCell] = useState(null);
 
   useEffect(() => {
     regexCategory(variables, data);
+    console.log("랜더링된 데이터 : " + JSON.stringify(data, null, 2));
   }, [data]);
+
+  useEffect(() => {
+    console.log("테이블 저장 버튼 : " + props.tableSaveClick);
+  }, [props]);
 
   const tableNumberData = data.map((d, idx) => {
     if (idx === 0) return "순서";
@@ -31,6 +36,10 @@ function CustomTable() {
   const handleInputChange = (e, row, col) => {
     const newValue = e.target.value;
     changeValue(row, col, newValue);
+  };
+
+  const inputChangeCheck = (e, row, col) => {
+    handleInputChange(e, row, col);
   };
 
   const onClickEnter = ({ key, isComposing }) => {
@@ -93,7 +102,6 @@ function CustomTable() {
         </Styled.Notice>
       ) : (
         <>
-          {console.log(data[0])}
           {/* 첫 컬럼 #Rows 번호 */}
           <Styled.FirstColumn key={"starter"} $isNotEnd>
             <Styled.HeaderWrapper>
@@ -133,7 +141,7 @@ function CustomTable() {
                     <Styled.Input
                       value={d[col]}
                       spellCheck={false}
-                      onChange={(e) => handleInputChange(e, row + 1, col)}
+                      onChange={(e) => inputChangeCheck(e, row + 1, col)}
                       onBlur={() => setEditableCell(null)}
                       onKeyDown={(e) => onClickEnter(e)}
                     />

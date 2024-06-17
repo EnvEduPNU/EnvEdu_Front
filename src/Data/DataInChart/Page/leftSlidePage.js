@@ -24,12 +24,12 @@ export default function LeftSlidePage(props) {
             setButtonCheck={setButtonCheck}
           />
           <ExpertDataButton
-            buttonName={"ExpertData"}
+            buttonName={"Example"}
             buttonCheck={buttonCheck}
             setButtonCheck={setButtonCheck}
           />
-          <MyDataButton buttonName={"Assignmnet"} />
-          <MyDataButton buttonName={"Submitted"} />
+          {/* <MyDataButton buttonName={"Assignmnet"} />
+          <MyDataButton buttonName={"Submitted"} /> */}
         </div>
       </div>
     </div>

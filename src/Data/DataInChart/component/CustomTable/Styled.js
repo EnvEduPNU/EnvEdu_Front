@@ -60,7 +60,7 @@ export const HeaderWrapper = styled.div`
 
 export const Header = styled.div`
   border-bottom: 1px solid rgba(34, 36, 38, 0.15);
-  height: 80px;
+  height: 50px;
 `;
 
 export const TableHeader = styled.div`
@@ -82,7 +82,7 @@ export const Th = styled.div`
   max-height: 35px;
   overflow: auto;
   white-space: nowrap;
-  border-bottom: 1px solid rgba(34, 36, 38, 0.15);
+  border-bottom: 0px solid rgba(34, 36, 38, 0.15);
 `;
 
 export const Circle = styled.div`

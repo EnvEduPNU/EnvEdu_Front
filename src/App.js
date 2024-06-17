@@ -67,30 +67,27 @@ import EClassLivePage from "./EClass/Page/EClassPage/EClassLivePage";
 function App() {
   const navigate = useNavigate();
 
-  // 로그인 한지 1일이 넘어가면 localStorage에 있는 내용들을 지워줘서 로그아웃으로 만들어줌
-  // 인증 토큰인 쿠키는 httpOnly라서 js 상에서 가져오거나 조작할 수 없음
-  // 따라서 쿠키를 지우거나 조작할수 없지만 1일의 유효기간이 지났기 때문에 어차피 유효기간 만료로 사용 불가
   useEffect(() => {
     const expiredAt = localStorage.getItem("expiredAt");
 
     if (expiredAt) {
-      const currentTime = new Date().getTime();
-      const refreshExpirationTime = new Date(
-        new Date(expiredAt).getTime() + 24 * 60 * 60 * 1000
-      ).getTime();
+      const currentTime = new Date();
+      const expiredAtTime = new Date(expiredAt);
 
       // 1일이 더 지났다면 다시 로그인 해야 됨
-      console.log("유효시간 : " + new Date(expiredAt));
-      if (refreshExpirationTime < currentTime) {
+      if (expiredAtTime < currentTime) {
+        console.log("유효기간 만료 : ", expiredAtTime);
         localStorage.clear();
         navigate("/");
         window.location.reload();
+      } else {
+        console.log("유효기간 : " + expiredAtTime);
       }
     } else {
-      console.log("유효기간 지남");
-      navigate("/");
+      alert("로그인이 필요합니다.");
     }
   }, []);
+
   return (
     <>
       <Header />

@@ -51,11 +51,9 @@ function Header() {
 
   const navigate = useNavigate();
   function logout() {
-    customAxios.post("/logout").then(() => {
-      localStorage.clear();
-      navigate("/");
-      window.location.reload();
-    });
+    localStorage.clear();
+    navigate("/");
+    window.location.reload();
   }
 
   return (

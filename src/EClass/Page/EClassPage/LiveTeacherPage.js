@@ -1,20 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
+import LiveTeacherComponent from "../../liveClass/compnent/LiveTeacherComponent";
 
 let globalStompClient;
 
 function LiveTeacherPage() {
   useEffect(() => {
     // SockJS 연결 설정
-    // let sock = new SockJS("http://localhost:8080/ws");
-    let sock = new SockJS(`${process.env.REACT_APP_API_URL}/ws`);
+
+    const token = localStorage.getItem("access_token").replace("Bearer ", "");
+
+    const sock = new SockJS(
+      `${process.env.REACT_APP_API_URL}/ws?token=${token}`
+    );
 
     const stompClient = Stomp.over(sock);
-
-    const headers = {
-      "Connection-Path": "/ws", // 이 위치에 필요한 헤더를 추가
-    };
 
     if (stompClient && !stompClient.connected) {
       console.log(
@@ -22,7 +23,7 @@ function LiveTeacherPage() {
       );
 
       stompClient.connect(
-        headers,
+        {},
         () => {
           globalStompClient = stompClient;
         },
@@ -58,7 +59,12 @@ function LiveTeacherPage() {
     }
   };
 
-  return <button onClick={sendMessage}>Switch Student Page</button>;
+  return (
+    <>
+      <button onClick={sendMessage}>Switch Student Page</button>
+      <LiveTeacherComponent />
+    </>
+  );
 }
 
 export default LiveTeacherPage;

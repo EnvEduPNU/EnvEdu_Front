@@ -114,11 +114,13 @@ export default function ForderListModal(props) {
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
+    props.setModalOpen(false);
   };
 
   const { setData } = useGraphDataStore();
 
   useEffect(() => {
+    console.log("모달모달 들어오나");
     const ModalOpen = props.modalOpen;
     if (ModalOpen) {
       handleOpen();
@@ -136,10 +138,6 @@ export default function ForderListModal(props) {
       setforderType(props.filteredData[0].dataLabel);
       console.log("확인해보자" + JSON.stringify(props.filteredData));
     }
-
-    return () => {
-      props.setModalOpen(false);
-    };
   }, [props]);
 
   const getTable = (type, id) => {

@@ -57,6 +57,7 @@ export default function MyDataList(props) {
     } else {
       setFilteredData(filtered);
       setModalOpen(true);
+      console.log("데이터리스트에서 모달 true");
     }
   };
 
