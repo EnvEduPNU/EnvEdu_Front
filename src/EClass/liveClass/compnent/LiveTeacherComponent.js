@@ -7,7 +7,7 @@ const LiveTeacherComponent = () => {
   const stompClient = useRef(null);
 
   useEffect(() => {
-    const socket = new SockJS("/ws");
+    const socket = new SockJS("/screen-share");
     stompClient.current = Stomp.over(socket);
 
     stompClient.current.connect({}, () => {
