@@ -17,7 +17,7 @@ export const customAxios = axios.create({
 
 customAxios.interceptors.request.use(function (config) {
   const Authorization = localStorage.getItem("access_token");
-  config.headers["Content-Type"] = "application/json; charset=utf-8";
+  config.headers["Content-Type"] = "application/json";
   config.headers["Authorization"] = Authorization;
 
   return config;
