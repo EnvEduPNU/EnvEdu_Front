@@ -10,7 +10,11 @@ function LiveStudentPage() {
 
   useEffect(() => {
     // const sock = new SockJS("http://localhost:8080/ws");
-    let sock = new SockJS(`${process.env.REACT_APP_API_URL}/ws`);
+    const token = localStorage.getItem("access_token").replace("Bearer ", "");
+
+    const sock = new SockJS(
+      `${process.env.REACT_APP_API_URL}/ws?token=${token}`
+    );
 
     const stompClient = Stomp.over(sock);
 
