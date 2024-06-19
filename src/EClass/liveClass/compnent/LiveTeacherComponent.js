@@ -7,7 +7,7 @@ const LiveTeacherComponent = (props) => {
   const [stompClient, setStompClient] = useState(null);
   const [peerConnections, setPeerConnections] = useState({});
   const localStream = useRef(null);
-  const [sessionId] = useState(props.newSessionId);
+  const sessionId = props.newSessionId;
   const [flag, setFlag] = useState(false);
 
   useEffect(() => {
@@ -27,7 +27,7 @@ const LiveTeacherComponent = (props) => {
         });
       }
     };
-  }, []);
+  }, [sessionId]);
 
   useEffect(() => {
     if (stompClient && flag) {
@@ -35,6 +35,12 @@ const LiveTeacherComponent = (props) => {
 
       stompClient.connect({}, () => {
         console.log("STOMP 클라이언트 연결됨");
+
+        // 화면 공유 시작
+        // startScreenShare();
+
+        // 신호를 보내고 구독을 설정합니다.
+        sendInitialSignal();
 
         stompClient.subscribe(`/topic/${sessionId}`, (message) => {
           const signal = JSON.parse(message.body);
@@ -47,6 +53,17 @@ const LiveTeacherComponent = (props) => {
       });
     }
   }, [stompClient, flag]);
+
+  const sendInitialSignal = () => {
+    // 초기 신호를 보냅니다.
+    sendSignal({
+      type: "initial",
+      from: sessionId,
+      to: sessionId,
+      sdp: null,
+      candidate: null,
+    });
+  };
 
   const startScreenShare = () => {
     console.log("스크린 쉐어 시작");
