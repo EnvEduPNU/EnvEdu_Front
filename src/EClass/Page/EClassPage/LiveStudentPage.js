@@ -35,7 +35,7 @@ function LiveStudentPage() {
     <div>
       {page === "newPage" ? <DataInChartPage /> : <DefaultPageComponent />}
 
-      {/* <LiveShareComponent /> */}
+      <LiveShareComponent />
     </div>
   );
 }

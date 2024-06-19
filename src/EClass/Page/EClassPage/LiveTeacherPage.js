@@ -62,7 +62,7 @@ function LiveTeacherPage() {
   return (
     <>
       <button onClick={sendMessage}>Switch Student Page</button>
-      {/* <LiveTeacherComponent /> */}
+      <LiveTeacherComponent />
     </>
   );
 }
