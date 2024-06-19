@@ -109,7 +109,12 @@ const LiveStudentComponent = () => {
     <div>
       <div>
         <h3>Remote Stream (Shared screen)</h3>
-        <video ref={remoteVideoRef} autoPlay playsInline></video>
+        <video
+          ref={remoteVideoRef}
+          autoPlay
+          playsInline
+          style={{ width: "100%", height: "auto" }} // 크기를 명시적으로 설정
+        ></video>
       </div>
     </div>
   );
