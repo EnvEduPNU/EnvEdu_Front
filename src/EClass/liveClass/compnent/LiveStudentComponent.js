@@ -65,6 +65,8 @@ const LiveStudentComponent = () => {
     const pc = new RTCPeerConnection();
     setPeerConnection(pc);
 
+    console.log("handleoffer에 들어왔는지");
+
     pc.onicecandidate = (event) => {
       if (event.candidate) {
         console.log("Sending candidate:", event.candidate);
