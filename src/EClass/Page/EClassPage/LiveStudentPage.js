@@ -3,7 +3,7 @@ import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 import CustomTable from "../../../Study/DrwaGraph/CustomTable/CustomTable";
 import DataInChartPage from "../../../Data/DataInChart/Page/DataInChartPage";
-import LiveShareComponent from "../../liveClass/compnent/LiveTeacherComponent";
+import LiveStudentComponent from "../../liveClass/compnent/LiveStudentComponent";
 
 function LiveStudentPage() {
   const [page, setPage] = useState("defaultPage");
@@ -34,7 +34,7 @@ function LiveStudentPage() {
     <div>
       {page === "newPage" ? <DataInChartPage /> : <DefaultPageComponent />}
 
-      <LiveShareComponent />
+      <LiveStudentComponent />
     </div>
   );
 }
