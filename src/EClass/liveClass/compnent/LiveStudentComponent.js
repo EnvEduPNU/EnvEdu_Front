@@ -28,9 +28,7 @@ const LiveStudentComponent = (props) => {
     if (stompClient && flag) {
       setFlag(false);
 
-      if (!peerConnection) {
-        createPeerConnection(sessionId);
-      }
+      createPeerConnection(sessionId);
 
       stompClient.connect({}, () => {
         stompClient.subscribe(`/topic/${sessionId}`, (message) => {

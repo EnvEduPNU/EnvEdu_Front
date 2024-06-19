@@ -33,11 +33,9 @@ const LiveTeacherComponent = (props) => {
 
       console.log("커넥션 연결 들어오긴 했나");
 
-      if (!peerConnections[sessionId]) {
-        console.log("커넥션 생성");
+      console.log("커넥션 생성");
 
-        createPeerConnection(sessionId);
-      }
+      createPeerConnection(sessionId);
 
       stompClient.connect({}, () => {
         stompClient.subscribe(`/topic/${sessionId}`, (message) => {
