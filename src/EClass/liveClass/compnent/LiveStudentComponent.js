@@ -30,11 +30,14 @@ const LiveStudentComponent = () => {
 
   useEffect(() => {
     if (stompClient && flag) {
-      console.log("버퍼대신");
       setFlag(false);
       const pc = new RTCPeerConnection();
       setPeerConnection(pc);
+    }
+  }, [flag]);
 
+  useEffect(() => {
+    if (peerConnection) {
       stompClient.connect({}, () => {
         stompClient.subscribe("/topic/offer", (message) => {
           console.log("handleOffer에 들어갈 message:", message.body);
@@ -46,7 +49,7 @@ const LiveStudentComponent = () => {
         });
       });
     }
-  }, [flag]);
+  }, [peerConnection]);
 
   const sendSignal = (destination, message) => {
     console.log("샌드시그널");
