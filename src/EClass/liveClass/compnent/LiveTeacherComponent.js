@@ -3,8 +3,9 @@ import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 
 const LiveTeacherComponent = () => {
-  const [connected, setConnected] = useState(false);
-  const stompClient = useRef(null);
+  const localVideoRef = useRef(null);
+  const [stompClient, setStompClient] = useState(null);
+  const [peerConnection, setPeerConnection] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem("access_token").replace("Bearer ", "");
@@ -12,52 +13,64 @@ const LiveTeacherComponent = () => {
     const socket = new SockJS(
       `${process.env.REACT_APP_API_URL}/screen-share?token=${token}`
     );
-
-    stompClient.current = Stomp.over(socket);
-
-    stompClient.current.connect({}, () => {
-      setConnected(true);
+    const client = Stomp.over(socket);
+    client.connect({}, () => {
+      client.subscribe("/topic/answer", (message) =>
+        handleAnswer(JSON.parse(message.body))
+      );
+      client.subscribe("/topic/candidate", (message) =>
+        handleCandidate(JSON.parse(message.body))
+      );
     });
-
-    return () => {
-      if (stompClient.current) {
-        stompClient.current.disconnect();
-      }
-    };
+    setStompClient(client);
   }, []);
 
-  const shareScreen = (data) => {
-    if (connected) {
-      stompClient.current.send("/app/share", {}, data);
-    }
+  const startScreenShare = async () => {
+    const stream = await navigator.mediaDevices.getDisplayMedia({
+      video: { width: 1280, height: 720, frameRate: 15 },
+    });
+    localVideoRef.current.srcObject = stream;
+
+    const pc = new RTCPeerConnection();
+    setPeerConnection(pc);
+
+    stream.getTracks().forEach((track) => pc.addTrack(track, stream));
+
+    pc.onicecandidate = (event) => {
+      if (event.candidate) {
+        sendSignal("/app/sendCandidate", { candidate: event.candidate });
+      }
+    };
+
+    const offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
+
+    sendSignal("/app/sendOffer", { offer });
   };
 
-  const startScreenShare = () => {
-    navigator.mediaDevices.getDisplayMedia({ video: true }).then((stream) => {
-      const video = document.createElement("video");
-      video.srcObject = stream;
-      video.play();
+  const sendSignal = (destination, message) => {
+    stompClient.send(destination, {}, JSON.stringify(message));
+  };
 
-      video.addEventListener("play", () => {
-        const canvas = document.createElement("canvas");
-        const context = canvas.getContext("2d");
+  const handleAnswer = async (message) => {
+    await peerConnection.setRemoteDescription(
+      new RTCSessionDescription(message.answer)
+    );
+  };
 
-        const captureFrame = () => {
-          context.drawImage(video, 0, 0, canvas.width, canvas.height);
-          const dataUrl = canvas.toDataURL("image/png");
-          shareScreen(dataUrl);
-
-          requestAnimationFrame(captureFrame);
-        };
-
-        captureFrame();
-      });
-    });
+  const handleCandidate = async (message) => {
+    await peerConnection.addIceCandidate(
+      new RTCIceCandidate(message.candidate)
+    );
   };
 
   return (
     <div>
       <button onClick={startScreenShare}>Start Screen Share</button>
+      <div>
+        <h3>Local Stream (Your screen)</h3>
+        <video ref={localVideoRef} autoPlay playsInline></video>
+      </div>
     </div>
   );
 };
