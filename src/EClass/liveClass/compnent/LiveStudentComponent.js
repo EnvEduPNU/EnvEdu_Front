@@ -1,16 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
+import { useParams } from "react-router-dom";
 
 const LiveStudentComponent = () => {
   const remoteVideoRef = useRef(null);
   const [stompClient, setStompClient] = useState(null);
   const [peerConnection, setPeerConnection] = useState(null);
-  const sessionId = useRef(null);
+  const { sessionId } = useParams();
 
   useEffect(() => {
     const token = localStorage.getItem("access_token").replace("Bearer ", "");
-
     const socket = new SockJS(
       `${process.env.REACT_APP_API_URL}/screen-share?token=${token}`
     );
@@ -18,8 +18,7 @@ const LiveStudentComponent = () => {
 
     client.connect({}, () => {
       setStompClient(client);
-      sessionId.current = client.ws._transport.url.split("/").slice(-1)[0];
-      client.subscribe(`/topic/${sessionId.current}`, (message) => {
+      client.subscribe(`/topic/${sessionId}`, (message) => {
         const signal = JSON.parse(message.body);
         handleSignal(signal);
       });
@@ -28,12 +27,12 @@ const LiveStudentComponent = () => {
     return () => {
       if (client) client.disconnect();
     };
-  }, []);
+  }, [sessionId]);
 
   const handleSignal = (signal) => {
     const { from, sdp, candidate } = signal;
 
-    if (from === sessionId.current) return;
+    if (from === sessionId) return;
 
     if (!peerConnection) {
       createPeerConnection(from);
@@ -49,7 +48,7 @@ const LiveStudentComponent = () => {
             sendSignal({
               type: "answer",
               sdp: answer,
-              from: sessionId.current,
+              from: sessionId,
               to: from,
             });
           });
@@ -70,7 +69,7 @@ const LiveStudentComponent = () => {
         sendSignal({
           type: "candidate",
           candidate: event.candidate,
-          from: sessionId.current,
+          from: sessionId,
           to: peerId,
         });
       }
@@ -86,7 +85,7 @@ const LiveStudentComponent = () => {
   const sendSignal = (signal) => {
     if (stompClient) {
       stompClient.send(
-        `/app/screen-share/${sessionId.current}`,
+        `/app/screen-share/${sessionId}`,
         {},
         JSON.stringify(signal)
       );

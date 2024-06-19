@@ -64,6 +64,10 @@ import ViewResponse from "./Education/Survey/Admin/ViewResponse";
 import { useNavigate } from "react-router-dom";
 import EClassLivePage from "./EClass/Page/EClassPage/EClassLivePage";
 
+import LiveTeacherComponent from "./EClass/liveClass/compnent/LiveTeacherComponent";
+import LiveStudentComponent from "./EClass/liveClass/compnent/LiveStudentComponent";
+import SessionCreatePage from "./EClass/Page/EClassPage/SessionCreatePage";
+
 function App() {
   const navigate = useNavigate();
 
@@ -200,6 +204,18 @@ function App() {
             <Route path="" exact={true} element={<EClassList />} />
             <Route path="new" exact={true} element={<CreateEClassPage />} />
           </Route> */}
+          {/* E-Class 화면 공유 */}
+          <Switch>
+            <Route
+              path="/teacher/:sessionId"
+              component={LiveTeacherComponent}
+            />
+            <Route
+              path="/student/:sessionId"
+              component={LiveStudentComponent}
+            />
+            <Route path="/" component={SessionCreatePage} />
+          </Switch>
           <Route path="/E-Classes">
             {" "}
             {/*E-Class*/}

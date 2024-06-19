@@ -1,49 +1,56 @@
 import React, { useEffect, useRef, useState } from "react";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
+import { useParams } from "react-router-dom";
 
 const LiveTeacherComponent = () => {
   const localVideoRef = useRef(null);
   const [stompClient, setStompClient] = useState(null);
   const [peerConnections, setPeerConnections] = useState({});
-
   const localStream = useRef(null);
-  const sessionId = useRef(null);
+  const { sessionId } = useParams();
 
   useEffect(() => {
     const token = localStorage.getItem("access_token").replace("Bearer ", "");
-
     const socket = new SockJS(
       `${process.env.REACT_APP_API_URL}/screen-share?token=${token}`
     );
     const client = Stomp.over(socket);
+
     client.connect({}, () => {
       setStompClient(client);
-      sessionId.current = client.ws._transport.url.split("/").slice(-1)[0];
-      client.subscribe(`/topic/${sessionId.current}`, (message) => {
+      client.subscribe(`/topic/${sessionId}`, (message) => {
         const signal = JSON.parse(message.body);
         handleSignal(signal);
       });
     });
-
-    navigator.mediaDevices
-      .getDisplayMedia({ video: true, audio: true })
-      .then((stream) => {
-        localStream.current = stream;
-        localVideoRef.current.srcObject = stream;
-      });
 
     return () => {
       if (client) {
         client.disconnect();
       }
     };
-  }, []);
+  }, [sessionId]);
+
+  const startScreenShare = () => {
+    navigator.mediaDevices
+      .getDisplayMedia({ video: true, audio: true })
+      .then((stream) => {
+        localStream.current = stream;
+        localVideoRef.current.srcObject = stream;
+
+        stream.getTracks().forEach((track) => {
+          for (const peerId in peerConnections) {
+            peerConnections[peerId].addTrack(track, localStream.current);
+          }
+        });
+      });
+  };
 
   const handleSignal = (signal) => {
     const { from, sdp, candidate } = signal;
 
-    if (from === sessionId.current) return;
+    if (from === sessionId) return;
 
     if (!peerConnections[from]) {
       createPeerConnection(from);
@@ -59,7 +66,7 @@ const LiveTeacherComponent = () => {
             sendSignal({
               type: "answer",
               sdp: answer,
-              from: sessionId.current,
+              from: sessionId,
               to: from,
             });
           });
@@ -80,15 +87,17 @@ const LiveTeacherComponent = () => {
         sendSignal({
           type: "candidate",
           candidate: event.candidate,
-          from: sessionId.current,
+          from: sessionId,
           to: peerId,
         });
       }
     };
 
-    localStream.current.getTracks().forEach((track) => {
-      pc.addTrack(track, localStream.current);
-    });
+    if (localStream.current) {
+      localStream.current.getTracks().forEach((track) => {
+        pc.addTrack(track, localStream.current);
+      });
+    }
 
     setPeerConnections((prev) => ({ ...prev, [peerId]: pc }));
   };
@@ -96,7 +105,7 @@ const LiveTeacherComponent = () => {
   const sendSignal = (signal) => {
     if (stompClient) {
       stompClient.send(
-        `/app/screen-share/${sessionId.current}`,
+        `/app/screen-share/${sessionId}`,
         {},
         JSON.stringify(signal)
       );
@@ -105,6 +114,7 @@ const LiveTeacherComponent = () => {
 
   return (
     <div>
+      <button onClick={startScreenShare}>Start Screen Share</button>
       <h3>Local Stream (Your screen)</h3>
       <video
         ref={localVideoRef}

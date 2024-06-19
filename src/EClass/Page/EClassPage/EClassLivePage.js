@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from "react";
-import LiveStudentPage from "./LiveStudentPage";
-import LiveTeacherPage from "./LiveTeacherPage";
+import { useNavigate } from "react-router-dom";
 
 function EClassLivePage() {
   const role = localStorage.getItem("role");
+  const newSessionId = 1234567890;
+
+  const navigator = useNavigate();
 
   console.log(" 권한 : " + role);
+  console.log(" 세션아이디 : " + newSessionId);
 
   return (
     <>
-      {role === "ROLE_EDUCATOR" && <LiveTeacherPage />}
-      {role === "ROLE_STUDENT" && <LiveStudentPage />}
+      {role === "ROLE_EDUCATOR" && navigator(`/teacher/${newSessionId}`)}
+      {role === "ROLE_STUDENT" && navigator(`/student/${newSessionId}`)}
     </>
   );
 }
