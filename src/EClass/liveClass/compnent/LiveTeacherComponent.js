@@ -64,7 +64,7 @@ const LiveTeacherComponent = (props) => {
     console.log("from : " + from);
     console.log("session id : " + sessionId);
 
-    if (from === sessionId) return;
+    // if (from === sessionId) return;
     console.log("from 이 어디야 : {}", from);
 
     if (!peerConnections[from]) {

@@ -45,7 +45,7 @@ const LiveStudentComponent = (props) => {
 
     console.log("from 이 어디야 : {}", from);
 
-    if (from === sessionId) return;
+    // if (from === sessionId) return;
 
     if (!peerConnection) {
       createPeerConnection(from);
