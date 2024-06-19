@@ -35,28 +35,33 @@ const LiveTeacherComponent = () => {
   }, []);
 
   const startScreenShare = async () => {
-    const stream = await navigator.mediaDevices.getDisplayMedia({
-      video: { width: 1280, height: 720, frameRate: 15 },
-    });
-    localVideoRef.current.srcObject = stream;
+    try {
+      const stream = await navigator.mediaDevices.getDisplayMedia({
+        video: { width: 1280, height: 720, frameRate: 15 },
+      });
+      localVideoRef.current.srcObject = stream;
 
-    const pc = new RTCPeerConnection();
-    setPeerConnection(pc);
+      const pc = new RTCPeerConnection();
+      setPeerConnection(pc);
 
-    stream.getTracks().forEach((track) => pc.addTrack(track, stream));
+      stream.getTracks().forEach((track) => pc.addTrack(track, stream));
 
-    pc.onicecandidate = (event) => {
-      if (event.candidate) {
-        console.log("Sending candidate:", event.candidate);
-        sendSignal("/app/sendCandidate", { candidate: event.candidate });
-      }
-    };
+      pc.onicecandidate = (event) => {
+        if (event.candidate) {
+          console.log("Sending candidate:", event.candidate);
+          sendSignal("/app/sendCandidate", { candidate: event.candidate });
+        }
+      };
 
-    const offer = await pc.createOffer();
-    await pc.setLocalDescription(offer);
+      const offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
 
-    console.log("Sending offer:", offer);
-    sendSignal("/app/sendOffer", { offer });
+      console.log("Sending offer:", offer);
+      sendSignal("/app/sendOffer", { offer });
+    } catch (error) {
+      console.error("Error sharing screen:", error);
+      alert("Screen sharing is not supported on this device.");
+    }
   };
 
   const sendSignal = (destination, message) => {
