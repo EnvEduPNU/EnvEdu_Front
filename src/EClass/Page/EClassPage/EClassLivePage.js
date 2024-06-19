@@ -8,7 +8,6 @@ function EClassLivePage() {
   const [studentSessionId] = useState(987654321);
 
   console.log(" 권한 : " + role);
-  console.log(" 세션아이디 : " + newSessionId);
 
   return (
     <>
