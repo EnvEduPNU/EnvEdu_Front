@@ -57,7 +57,7 @@ const LiveStudentComponent = () => {
     setPeerConnection(pc);
 
     pc.onicecandidate = (event) => {
-      console.log("온 아이스 candidate");
+      console.log("온 아이스 candidate : {}", event.candidate);
       if (event.candidate) {
         sendSignal("/app/sendCandidate", { candidate: event.candidate });
       }

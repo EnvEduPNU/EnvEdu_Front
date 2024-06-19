@@ -71,6 +71,7 @@ const LiveTeacherComponent = () => {
 
   const handleAnswer = async (message) => {
     if (peerConnection) {
+      console.log("똑바로 보내고 있나");
       await peerConnection.setRemoteDescription(
         new RTCSessionDescription(message.answer)
       );
@@ -79,6 +80,7 @@ const LiveTeacherComponent = () => {
 
   const handleCandidate = async (message) => {
     if (peerConnection) {
+      console.log("핸들 캔디데이트 : {}", message.candidate);
       await peerConnection.addIceCandidate(
         new RTCIceCandidate(message.candidate)
       );
