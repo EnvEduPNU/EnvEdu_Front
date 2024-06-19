@@ -36,13 +36,13 @@ const LiveTeacherComponent = () => {
 
   useEffect(() => {
     if (peerConnection) {
-      client.connect({}, () => {
+      stompClient.connect({}, () => {
         console.log("Connected to STOMP");
-        client.subscribe("/topic/answer", (message) => {
+        stompClient.subscribe("/topic/answer", (message) => {
           console.log("Received answer:", message.body);
           handleAnswer(JSON.parse(message.body));
         });
-        client.subscribe("/topic/candidate", (message) => {
+        stompClient.subscribe("/topic/candidate", (message) => {
           console.log("Received candidate:", message.body);
           handleCandidate(JSON.parse(message.body));
         });
