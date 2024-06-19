@@ -36,8 +36,8 @@ const LiveStudentComponent = () => {
     }
 
     return () => {
-      if (client) {
-        client.disconnect();
+      if (stompClient) {
+        stompClient.disconnect();
       }
     };
   }, [flag]);
