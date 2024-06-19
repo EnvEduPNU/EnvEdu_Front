@@ -4,7 +4,8 @@ import LiveStudentComponent from "../../liveClass/compnent/LiveStudentComponent"
 
 function EClassLivePage() {
   const role = localStorage.getItem("role");
-  const [newSessionId] = useState(1234567890);
+  const [teacherSessionId] = useState(1234567890);
+  const [studentSessionId] = useState(987654321);
 
   console.log(" 권한 : " + role);
   console.log(" 세션아이디 : " + newSessionId);
@@ -12,10 +13,16 @@ function EClassLivePage() {
   return (
     <>
       {role === "ROLE_EDUCATOR" && (
-        <LiveTeacherComponent newSessionId={newSessionId} />
+        <LiveTeacherComponent
+          teacherSessionId={teacherSessionId}
+          studentSessionId={studentSessionId}
+        />
       )}
       {role === "ROLE_STUDENT" && (
-        <LiveStudentComponent newSessionId={newSessionId} />
+        <LiveStudentComponent
+          teacherSessionId={teacherSessionId}
+          studentSessionId={studentSessionId}
+        />
       )}
     </>
   );

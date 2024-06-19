@@ -7,7 +7,9 @@ const LiveTeacherComponent = (props) => {
   const [stompClient, setStompClient] = useState(null);
   const [peerConnections, setPeerConnections] = useState({});
   const localStream = useRef(null);
-  const sessionId = props.newSessionId;
+  const teacherSessionId = props.teacherSessionId;
+  const studentSessionId = props.studentSessionId;
+
   const [flag, setFlag] = useState(false);
 
   useEffect(() => {
@@ -27,7 +29,7 @@ const LiveTeacherComponent = (props) => {
         });
       }
     };
-  }, [sessionId]);
+  }, [props]);
 
   useEffect(() => {
     if (stompClient && flag) {
@@ -36,20 +38,17 @@ const LiveTeacherComponent = (props) => {
       stompClient.connect({}, () => {
         console.log("STOMP 클라이언트 연결됨");
 
-        // 화면 공유 시작
-        // startScreenShare();
-
         // 신호를 보내고 구독을 설정합니다.
         sendInitialSignal();
 
-        stompClient.subscribe(`/topic/${sessionId}`, (message) => {
+        stompClient.subscribe(`/topic/${teacherSessionId}`, (message) => {
           const signal = JSON.parse(message.body);
           console.log("받은 시그널: ", signal);
 
           handleSignal(signal);
         });
 
-        console.log("구독 시작: /topic/" + sessionId);
+        console.log("구독 시작: /topic/" + teacherSessionId);
       });
     }
   }, [stompClient, flag]);
@@ -58,8 +57,8 @@ const LiveTeacherComponent = (props) => {
     // 초기 신호를 보냅니다.
     sendSignal({
       type: "initial",
-      from: sessionId,
-      to: sessionId,
+      from: teacherSessionId,
+      to: studentSessionId,
       sdp: null,
       candidate: null,
     });
@@ -84,7 +83,7 @@ const LiveTeacherComponent = (props) => {
   const handleSignal = (signal) => {
     const { from, sdp, candidate } = signal;
 
-    if (from === sessionId) return; // 자기 자신이 보낸 시그널 무시
+    if (from === teacherSessionId) return; // 자기 자신이 보낸 시그널 무시
 
     if (!peerConnections[from]) {
       createPeerConnection(from);
@@ -100,7 +99,7 @@ const LiveTeacherComponent = (props) => {
             sendSignal({
               type: "answer",
               sdp: answer,
-              from: sessionId,
+              from: teacherSessionId,
               to: from,
             });
           });
@@ -122,7 +121,7 @@ const LiveTeacherComponent = (props) => {
         sendSignal({
           type: "candidate",
           candidate: event.candidate,
-          from: sessionId,
+          from: teacherSessionId,
           to: peerId,
         });
       }
@@ -145,7 +144,7 @@ const LiveTeacherComponent = (props) => {
     if (stompClient) {
       console.log("시그널 보내기: ", signal);
       stompClient.send(
-        `/app/screen-share/${sessionId}`,
+        `/app/screen-share/${teacherSessionId}`,
         {},
         JSON.stringify(signal)
       );
