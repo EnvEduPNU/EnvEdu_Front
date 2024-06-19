@@ -5,8 +5,10 @@ import Stomp from "stompjs";
 const LiveTeacherComponent = () => {
   const localVideoRef = useRef(null);
   const [stompClient, setStompClient] = useState(null);
-  const [peerConnection, setPeerConnection] = useState(null);
-  const [flag, setFlag] = useState(false);
+  const [peerConnections, setPeerConnections] = useState({});
+
+  const localStream = useRef(null);
+  const sessionId = useRef(null);
 
   useEffect(() => {
     const token = localStorage.getItem("access_token").replace("Bearer ", "");
@@ -15,9 +17,21 @@ const LiveTeacherComponent = () => {
       `${process.env.REACT_APP_API_URL}/screen-share?token=${token}`
     );
     const client = Stomp.over(socket);
+    client.connect({}, () => {
+      setStompClient(client);
+      sessionId.current = client.ws._transport.url.split("/").slice(-1)[0];
+      client.subscribe(`/topic/${sessionId.current}`, (message) => {
+        const signal = JSON.parse(message.body);
+        handleSignal(signal);
+      });
+    });
 
-    setStompClient(client);
-    setFlag(true);
+    navigator.mediaDevices
+      .getDisplayMedia({ video: true, audio: true })
+      .then((stream) => {
+        localStream.current = stream;
+        localVideoRef.current.srcObject = stream;
+      });
 
     return () => {
       if (client) {
@@ -26,89 +40,78 @@ const LiveTeacherComponent = () => {
     };
   }, []);
 
-  useEffect(() => {
-    if (stompClient && flag) {
-      setFlag(false);
-      const pc = new RTCPeerConnection();
-      setPeerConnection(pc);
+  const handleSignal = (signal) => {
+    const { from, sdp, candidate } = signal;
+
+    if (from === sessionId.current) return;
+
+    if (!peerConnections[from]) {
+      createPeerConnection(from);
     }
-  }, [flag]);
 
-  useEffect(() => {
-    if (peerConnection) {
-      stompClient.connect({}, () => {
-        console.log("Connected to STOMP");
-        stompClient.subscribe("/topic/answer", (message) => {
-          console.log("Received answer:", message.body);
-          handleAnswer(JSON.parse(message.body));
-        });
-        stompClient.subscribe("/topic/candidate", (message) => {
-          console.log("Received candidate:", message.body);
-          handleCandidate(JSON.parse(message.body));
-        });
-      });
-    }
-  }, [peerConnection]);
+    const pc = peerConnections[from];
 
-  const startScreenShare = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getDisplayMedia({
-        video: { width: 1280, height: 720, frameRate: 15 },
-      });
-      localVideoRef.current.srcObject = stream;
-
-      stream
-        .getTracks()
-        .forEach((track) => peerConnection.addTrack(track, stream));
-
-      peerConnection.onicecandidate = (event) => {
-        if (event.candidate) {
-          console.log("Sending candidate:", event.candidate);
-          sendSignal("/app/sendCandidate", { candidate: event.candidate });
+    if (sdp) {
+      pc.setRemoteDescription(new RTCSessionDescription(sdp)).then(() => {
+        if (sdp.type === "offer") {
+          pc.createAnswer().then((answer) => {
+            pc.setLocalDescription(answer);
+            sendSignal({
+              type: "answer",
+              sdp: answer,
+              from: sessionId.current,
+              to: from,
+            });
+          });
         }
-      };
+      });
+    }
 
-      const offer = await peerConnection.createOffer();
-      await peerConnection.setLocalDescription(offer);
-
-      console.log("Sending offer:", offer);
-      sendSignal("/app/sendOffer", { offer });
-    } catch (error) {
-      console.error("Error sharing screen:", error);
-      alert("Screen sharing is not supported on this device.");
+    if (candidate) {
+      pc.addIceCandidate(new RTCIceCandidate(candidate));
     }
   };
 
-  const sendSignal = (destination, message) => {
-    console.log(`Sending signal to ${destination}:`, message);
-    stompClient.send(destination, {}, JSON.stringify(message));
+  const createPeerConnection = (peerId) => {
+    const pc = new RTCPeerConnection();
+
+    pc.onicecandidate = (event) => {
+      if (event.candidate) {
+        sendSignal({
+          type: "candidate",
+          candidate: event.candidate,
+          from: sessionId.current,
+          to: peerId,
+        });
+      }
+    };
+
+    localStream.current.getTracks().forEach((track) => {
+      pc.addTrack(track, localStream.current);
+    });
+
+    setPeerConnections((prev) => ({ ...prev, [peerId]: pc }));
   };
 
-  const handleAnswer = async (message) => {
-    if (peerConnection) {
-      console.log("똑바로 보내고 있나");
-      await peerConnection.setRemoteDescription(
-        new RTCSessionDescription(message.answer)
-      );
-    }
-  };
-
-  const handleCandidate = async (message) => {
-    if (peerConnection) {
-      console.log("핸들 캔디데이트 : {}", message.candidate);
-      await peerConnection.addIceCandidate(
-        new RTCIceCandidate(message.candidate)
+  const sendSignal = (signal) => {
+    if (stompClient) {
+      stompClient.send(
+        `/app/signal/${sessionId.current}`,
+        {},
+        JSON.stringify(signal)
       );
     }
   };
 
   return (
     <div>
-      <button onClick={startScreenShare}>Start Screen Share</button>
-      <div>
-        <h3>Local Stream (Your screen)</h3>
-        <video ref={localVideoRef} autoPlay playsInline></video>
-      </div>
+      <h3>Local Stream (Your screen)</h3>
+      <video
+        ref={localVideoRef}
+        autoPlay
+        playsInline
+        style={{ width: "100%", height: "auto" }}
+      />
     </div>
   );
 };

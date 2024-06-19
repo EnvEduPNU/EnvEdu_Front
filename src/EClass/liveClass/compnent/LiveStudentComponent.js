@@ -6,7 +6,7 @@ const LiveStudentComponent = () => {
   const remoteVideoRef = useRef(null);
   const [stompClient, setStompClient] = useState(null);
   const [peerConnection, setPeerConnection] = useState(null);
-  const [flag, setFlag] = useState(false);
+  const sessionId = useRef(null);
 
   useEffect(() => {
     const token = localStorage.getItem("access_token").replace("Bearer ", "");
@@ -16,86 +16,92 @@ const LiveStudentComponent = () => {
     );
     const client = Stomp.over(socket);
 
-    setStompClient(client);
-    setFlag(true);
+    client.connect({}, () => {
+      setStompClient(client);
+      sessionId.current = client.ws._transport.url.split("/").slice(-1)[0];
+      client.subscribe(`/topic/${sessionId.current}`, (message) => {
+        const signal = JSON.parse(message.body);
+        handleSignal(signal);
+      });
+    });
 
     return () => {
-      if (client) {
-        client.disconnect(() => {
-          console.log("Disconnected from STOMP");
-        });
-      }
+      if (client) client.disconnect();
     };
   }, []);
 
-  useEffect(() => {
-    if (stompClient && flag) {
-      setFlag(false);
-      const pc = new RTCPeerConnection();
-      setPeerConnection(pc);
-    }
-  }, [flag]);
+  const handleSignal = (signal) => {
+    const { from, sdp, candidate } = signal;
 
-  useEffect(() => {
-    if (peerConnection) {
-      stompClient.connect({}, () => {
-        stompClient.subscribe("/topic/offer", (message) => {
-          console.log("handleOffer에 들어갈 message:", message.body);
-          handleOffer(JSON.parse(message.body));
-        });
-        stompClient.subscribe("/topic/candidate", (message) => {
-          console.log("handleCandidate에 들어갈 message:", message.body);
-          handleCandidate(JSON.parse(message.body));
-        });
+    if (from === sessionId.current) return;
+
+    if (!peerConnection) {
+      createPeerConnection(from);
+    }
+
+    const pc = peerConnection;
+
+    if (sdp) {
+      pc.setRemoteDescription(new RTCSessionDescription(sdp)).then(() => {
+        if (sdp.type === "offer") {
+          pc.createAnswer().then((answer) => {
+            pc.setLocalDescription(answer);
+            sendSignal({
+              type: "answer",
+              sdp: answer,
+              from: sessionId.current,
+              to: from,
+            });
+          });
+        }
       });
     }
-  }, [peerConnection]);
 
-  const sendSignal = (destination, message) => {
-    console.log("샌드시그널");
-    stompClient.send(destination, {}, JSON.stringify(message));
+    if (candidate) {
+      pc.addIceCandidate(new RTCIceCandidate(candidate));
+    }
   };
 
-  const handleOffer = async (message) => {
-    console.log("샌드오퍼");
+  const createPeerConnection = (peerId) => {
+    const pc = new RTCPeerConnection();
 
-    peerConnection.onicecandidate = (event) => {
-      console.log("온 아이스 candidate : {}", event.candidate);
+    pc.onicecandidate = (event) => {
       if (event.candidate) {
-        sendSignal("/app/sendCandidate", { candidate: event.candidate });
+        sendSignal({
+          type: "candidate",
+          candidate: event.candidate,
+          from: sessionId.current,
+          to: peerId,
+        });
       }
     };
 
-    peerConnection.ontrack = (event) => {
-      console.log("온트랙");
+    pc.ontrack = (event) => {
       remoteVideoRef.current.srcObject = event.streams[0];
     };
 
-    await peerConnection.setRemoteDescription(
-      new RTCSessionDescription(message.offer)
-    );
-
-    const answer = await peerConnection.createAnswer();
-    await peerConnection.setLocalDescription(answer);
-
-    sendSignal("/app/sendAnswer", { answer });
+    setPeerConnection(pc);
   };
 
-  const handleCandidate = async (message) => {
-    if (peerConnection) {
-      console.log("핸들 캔디데이트 : {}", message.candidate);
-      await peerConnection.addIceCandidate(
-        new RTCIceCandidate(message.candidate)
+  const sendSignal = (signal) => {
+    if (stompClient) {
+      stompClient.send(
+        `/app/signal/${sessionId.current}`,
+        {},
+        JSON.stringify(signal)
       );
     }
   };
 
   return (
     <div>
-      <div>
-        <h3>Remote Stream (Shared screen)</h3>
-        <video ref={remoteVideoRef} autoPlay playsInline></video>
-      </div>
+      <h3>Remote Stream (Shared screen)</h3>
+      <video
+        ref={remoteVideoRef}
+        autoPlay
+        playsInline
+        style={{ width: "100%", height: "auto" }}
+      />
     </div>
   );
 };
