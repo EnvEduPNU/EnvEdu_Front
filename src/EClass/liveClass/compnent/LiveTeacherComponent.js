@@ -6,6 +6,7 @@ const LiveTeacherComponent = () => {
   const localVideoRef = useRef(null);
   const [stompClient, setStompClient] = useState(null);
   const [peerConnection, setPeerConnection] = useState(null);
+  const [flag, setFlag] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("access_token").replace("Bearer ", "");
@@ -14,18 +15,9 @@ const LiveTeacherComponent = () => {
       `${process.env.REACT_APP_API_URL}/screen-share?token=${token}`
     );
     const client = Stomp.over(socket);
-    client.connect({}, () => {
-      console.log("Connected to STOMP");
-      client.subscribe("/topic/answer", (message) => {
-        console.log("Received answer:", message.body);
-        handleAnswer(JSON.parse(message.body));
-      });
-      client.subscribe("/topic/candidate", (message) => {
-        console.log("Received candidate:", message.body);
-        handleCandidate(JSON.parse(message.body));
-      });
-    });
+
     setStompClient(client);
+    setFlag(true);
 
     return () => {
       if (client) {
@@ -34,6 +26,30 @@ const LiveTeacherComponent = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (stompClient && flag) {
+      setFlag(false);
+      const pc = new RTCPeerConnection();
+      setPeerConnection(pc);
+    }
+  }, [flag]);
+
+  useEffect(() => {
+    if (peerConnection) {
+      client.connect({}, () => {
+        console.log("Connected to STOMP");
+        client.subscribe("/topic/answer", (message) => {
+          console.log("Received answer:", message.body);
+          handleAnswer(JSON.parse(message.body));
+        });
+        client.subscribe("/topic/candidate", (message) => {
+          console.log("Received candidate:", message.body);
+          handleCandidate(JSON.parse(message.body));
+        });
+      });
+    }
+  }, [peerConnection]);
+
   const startScreenShare = async () => {
     try {
       const stream = await navigator.mediaDevices.getDisplayMedia({
@@ -41,20 +57,19 @@ const LiveTeacherComponent = () => {
       });
       localVideoRef.current.srcObject = stream;
 
-      const pc = new RTCPeerConnection();
-      setPeerConnection(pc);
+      stream
+        .getTracks()
+        .forEach((track) => peerConnection.addTrack(track, stream));
 
-      stream.getTracks().forEach((track) => pc.addTrack(track, stream));
-
-      pc.onicecandidate = (event) => {
+      peerConnection.onicecandidate = (event) => {
         if (event.candidate) {
           console.log("Sending candidate:", event.candidate);
           sendSignal("/app/sendCandidate", { candidate: event.candidate });
         }
       };
 
-      const offer = await pc.createOffer();
-      await pc.setLocalDescription(offer);
+      const offer = await peerConnection.createOffer();
+      await peerConnection.setLocalDescription(offer);
 
       console.log("Sending offer:", offer);
       sendSignal("/app/sendOffer", { offer });
