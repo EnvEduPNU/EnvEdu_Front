@@ -43,8 +43,9 @@ const LiveStudentComponent = (props) => {
   const handleSignal = (signal) => {
     const { from, sdp, candidate } = signal;
 
-    if (from === sessionId) return;
     console.log("from 이 어디야 : {}", from);
+
+    if (from === sessionId) return;
 
     if (!peerConnection) {
       createPeerConnection(from);
