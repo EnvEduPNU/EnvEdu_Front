@@ -24,8 +24,9 @@ const LiveStudentComponent = () => {
         console.log("Received candidate:", message.body);
         handleCandidate(JSON.parse(message.body));
       });
+
+      setStompClient(client);
     });
-    setStompClient(client);
 
     return () => {
       if (client) {
