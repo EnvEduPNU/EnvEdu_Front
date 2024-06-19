@@ -49,6 +49,9 @@ const LiveTeacherComponent = (props) => {
   const handleSignal = (signal) => {
     const { from, sdp, candidate } = signal;
 
+    console.log("from : " + from);
+    console.log("session id : " + sessionId);
+
     if (from === sessionId) return;
 
     if (!peerConnections[from]) {
@@ -60,6 +63,7 @@ const LiveTeacherComponent = (props) => {
     if (sdp) {
       pc.setRemoteDescription(new RTCSessionDescription(sdp)).then(() => {
         if (sdp.type === "offer") {
+          console.log("setRemoteDescription 되나");
           pc.createAnswer().then((answer) => {
             pc.setLocalDescription(answer);
             sendSignal({
@@ -83,6 +87,8 @@ const LiveTeacherComponent = (props) => {
 
     pc.onicecandidate = (event) => {
       if (event.candidate) {
+        console.log("ice candidate 이다 :  {}", event.candidate);
+
         sendSignal({
           type: "candidate",
           candidate: event.candidate,
@@ -103,6 +109,7 @@ const LiveTeacherComponent = (props) => {
 
   const sendSignal = (signal) => {
     if (stompClient) {
+      console.log("시그널은 보내지나 ");
       stompClient.send(
         `/app/screen-share/${sessionId}`,
         {},

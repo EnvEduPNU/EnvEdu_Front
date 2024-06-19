@@ -31,6 +31,9 @@ const LiveStudentComponent = (props) => {
       stompClient.connect({}, () => {
         stompClient.subscribe(`/topic/${sessionId}`, (message) => {
           const signal = JSON.parse(message.body);
+
+          console.log("커넥션 되나 : {}", signal);
+
           handleSignal(signal);
         });
       });
@@ -41,6 +44,7 @@ const LiveStudentComponent = (props) => {
     const { from, sdp, candidate } = signal;
 
     if (from === sessionId) return;
+    console.log("from 이 어디야 : {}", from);
 
     if (!peerConnection) {
       createPeerConnection(from);
@@ -49,9 +53,13 @@ const LiveStudentComponent = (props) => {
     const pc = peerConnection;
 
     if (sdp) {
+      console.log("sdp 는 있어? : {}", sdp);
+
       pc.setRemoteDescription(new RTCSessionDescription(sdp)).then(() => {
         if (sdp.type === "offer") {
           pc.createAnswer().then((answer) => {
+            console.log("anwser 보내는곳 : {}", answer);
+
             pc.setLocalDescription(answer);
             sendSignal({
               type: "answer",
@@ -65,6 +73,8 @@ const LiveStudentComponent = (props) => {
     }
 
     if (candidate) {
+      console.log("아이스 캔디데잇");
+
       pc.addIceCandidate(new RTCIceCandidate(candidate));
     }
   };
@@ -73,6 +83,8 @@ const LiveStudentComponent = (props) => {
     const pc = new RTCPeerConnection();
 
     pc.onicecandidate = (event) => {
+      console.log("피어 커넥션 생성");
+
       if (event.candidate) {
         sendSignal({
           type: "candidate",
@@ -84,6 +96,8 @@ const LiveStudentComponent = (props) => {
     };
 
     pc.ontrack = (event) => {
+      console.log("온트랙");
+
       remoteVideoRef.current.srcObject = event.streams[0];
     };
 
@@ -92,6 +106,8 @@ const LiveStudentComponent = (props) => {
 
   const sendSignal = (signal) => {
     if (stompClient) {
+      console.log("샌드 시그널");
+
       stompClient.send(
         `/app/screen-share/${sessionId}`,
         {},
