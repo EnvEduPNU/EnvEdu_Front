@@ -66,7 +66,6 @@ import EClassLivePage from "./EClass/Page/EClassPage/EClassLivePage";
 
 import LiveTeacherComponent from "./EClass/liveClass/compnent/LiveTeacherComponent";
 import LiveStudentComponent from "./EClass/liveClass/compnent/LiveStudentComponent";
-import SessionCreatePage from "./EClass/Page/EClassPage/SessionCreatePage";
 
 function App() {
   const navigate = useNavigate();
@@ -214,7 +213,6 @@ function App() {
               path="/student/:sessionId"
               component={LiveStudentComponent}
             />
-            <Route path="/" component={SessionCreatePage} />
           </Switch>
           <Route path="/E-Classes">
             {" "}

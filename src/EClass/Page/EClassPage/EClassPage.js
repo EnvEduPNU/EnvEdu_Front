@@ -9,7 +9,6 @@ import {
   getEclassDetail,
   getEclassList,
 } from "../../api/eclassApi";
-import { useEffect } from "react";
 
 // const gradeObj = {
 //   초등학생: ["1학년", "2학년", "3학년", "4학년", "5학년", "6학년", "공통"],
@@ -65,8 +64,8 @@ const EClassPage = () => {
   } = useEClassStore();
 
   const onClickSaveBtn = () => {
-    const noRemoveEclassData = eClassData.map(page =>
-      page.filter(data => !data["isRemove"])
+    const noRemoveEclassData = eClassData.map((page) =>
+      page.filter((data) => !data["isRemove"])
     );
 
     const saveData = {
@@ -80,11 +79,11 @@ const EClassPage = () => {
 
     // localStorage.setItem("eclass", JSON.stringify(saveData));
     createEclass(saveData)
-      .then(res => {
+      .then((res) => {
         console.log(res);
         alert("저장되었습니다.");
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
         alert("저장하는데 문제가 생겼습니다.");
       });
@@ -103,7 +102,7 @@ const EClassPage = () => {
               <Styled.InputWrapper>
                 <Styled.Input
                   value={title}
-                  onChange={e => changeFieldValue("title", e.target.value)}
+                  onChange={(e) => changeFieldValue("title", e.target.value)}
                 />
               </Styled.InputWrapper>
             </Styled.Block>
@@ -123,11 +122,11 @@ const EClassPage = () => {
             <Styled.SubSection>
               <Styled.Label>학년</Styled.Label>
               <Dropdown title={gradeLabel}>
-                {Object.keys(gradeObj).map(item => (
+                {Object.keys(gradeObj).map((item) => (
                   <Dropdown.Item key={item}>
                     {item}
                     <Dropdown.Submenu position="right">
-                      {gradeObj[item].map(subItem => (
+                      {gradeObj[item].map((subItem) => (
                         <Dropdown.Item
                           onClick={() => {
                             if (subItem === "공통") {
@@ -155,7 +154,7 @@ const EClassPage = () => {
             <Styled.SubSection>
               <Styled.Label>과목</Styled.Label>
               <Dropdown title={subjectLabel}>
-                {Object.keys(subjectObj).map(item => (
+                {Object.keys(subjectObj).map((item) => (
                   <Dropdown.Item
                     key={item}
                     onClick={() => changeFieldValue("subjectLabel", `${item}`)}
@@ -163,9 +162,9 @@ const EClassPage = () => {
                     {item}
                     {subjectObj[item].length > 0 && (
                       <Dropdown.Submenu position="right">
-                        {subjectObj[item].map(subItem => (
+                        {subjectObj[item].map((subItem) => (
                           <Dropdown.Item
-                            onClick={e => {
+                            onClick={(e) => {
                               e.stopPropagation();
                               changeFieldValue("subjectLabel", `${subItem}`);
                             }}
@@ -183,7 +182,7 @@ const EClassPage = () => {
             <Styled.SubSection>
               <Styled.Label>데이터 종류</Styled.Label>
               <Dropdown title={dataTypeLabel}>
-                {dataTypeArr.map(type => (
+                {dataTypeArr.map((type) => (
                   <Dropdown.Item
                     key={type}
                     onClick={() => changeFieldValue("dataTypeLabel", type)}
@@ -197,7 +196,9 @@ const EClassPage = () => {
               <Styled.Label>설명</Styled.Label>
               <Styled.Textarea
                 value={description}
-                onChange={e => changeFieldValue("description", e.target.value)}
+                onChange={(e) =>
+                  changeFieldValue("description", e.target.value)
+                }
               />
             </Styled.SubSection>
             <Styled.SubSection>
@@ -217,9 +218,13 @@ const EClassPage = () => {
               <Styled.SaveButton onClick={appendPage}>
                 + 페이지 추가
               </Styled.SaveButton>
-              
-              <a href="/invite" target="_blank" style={{ textDecoration: 'none' }}>
-                <Styled.SaveButton style={{ marginTop: '20px' }}>
+
+              <a
+                href="/invite"
+                target="_blank"
+                style={{ textDecoration: "none" }}
+              >
+                <Styled.SaveButton style={{ marginTop: "20px" }}>
                   초대 코드 생성
                 </Styled.SaveButton>
               </a>
