@@ -31,8 +31,8 @@ const LiveTeacherComponent = (props) => {
     if (stompClient && flag) {
       setFlag(false);
 
-      client.connect({}, () => {
-        client.subscribe(`/topic/${sessionId}`, (message) => {
+      stompClient.connect({}, () => {
+        stompClient.subscribe(`/topic/${sessionId}`, (message) => {
           const signal = JSON.parse(message.body);
           console.log("커넥션 되나 : {}", signal);
 
