@@ -29,7 +29,7 @@ const LiveStudentComponent = (props) => {
       setFlag(false);
 
       if (!peerConnection) {
-        createPeerConnection(from);
+        createPeerConnection(sessionId);
       }
 
       stompClient.connect({}, () => {
