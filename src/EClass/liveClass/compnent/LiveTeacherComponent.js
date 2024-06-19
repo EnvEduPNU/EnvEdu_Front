@@ -1,14 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
-import { useParams } from "react-router-dom";
 
 const LiveTeacherComponent = () => {
   const localVideoRef = useRef(null);
   const [stompClient, setStompClient] = useState(null);
   const [peerConnections, setPeerConnections] = useState({});
   const localStream = useRef(null);
-  const { sessionId } = useParams();
+  const [sessionId] = useState(props.newSessionId);
 
   useEffect(() => {
     const token = localStorage.getItem("access_token").replace("Bearer ", "");

@@ -3,11 +3,11 @@ import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 import { useParams } from "react-router-dom";
 
-const LiveStudentComponent = () => {
+const LiveStudentComponent = (props) => {
   const remoteVideoRef = useRef(null);
   const [stompClient, setStompClient] = useState(null);
   const [peerConnection, setPeerConnection] = useState(null);
-  const { sessionId } = useParams();
+  const [sessionId] = useState(props.newSessionId);
 
   useEffect(() => {
     const token = localStorage.getItem("access_token").replace("Bearer ", "");
