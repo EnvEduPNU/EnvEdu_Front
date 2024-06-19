@@ -18,6 +18,14 @@ const LiveStudentComponent = () => {
 
     setStompClient(client);
     setFlag(true);
+
+    return () => {
+      if (client) {
+        client.disconnect(() => {
+          console.log("Disconnected from STOMP");
+        });
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -34,12 +42,6 @@ const LiveStudentComponent = () => {
         );
       });
     }
-
-    return () => {
-      if (stompClient) {
-        stompClient.disconnect();
-      }
-    };
   }, [flag]);
 
   const sendSignal = (destination, message) => {
