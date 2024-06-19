@@ -9,7 +9,6 @@ function LiveStudentPage() {
   const [page, setPage] = useState("defaultPage");
 
   useEffect(() => {
-    // const sock = new SockJS("http://localhost:8080/ws");
     const token = localStorage.getItem("access_token").replace("Bearer ", "");
 
     const sock = new SockJS(

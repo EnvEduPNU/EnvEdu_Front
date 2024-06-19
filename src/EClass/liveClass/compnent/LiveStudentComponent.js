@@ -8,7 +8,11 @@ const LiveStudentComponent = () => {
   const stompClient = useRef(null);
 
   useEffect(() => {
-    const socket = new SockJS("/ws");
+    const token = localStorage.getItem("access_token").replace("Bearer ", "");
+
+    const socket = new SockJS(
+      `${process.env.REACT_APP_API_URL}/screen-share?token=${token}`
+    );
     stompClient.current = Stomp.over(socket);
 
     stompClient.current.connect({}, () => {
