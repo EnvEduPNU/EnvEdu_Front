@@ -70,9 +70,11 @@ const LiveTeacherComponent = () => {
   };
 
   const handleAnswer = async (message) => {
-    await peerConnection.setRemoteDescription(
-      new RTCSessionDescription(message.answer)
-    );
+    if (peerConnection) {
+      await peerConnection.setRemoteDescription(
+        new RTCSessionDescription(message.answer)
+      );
+    }
   };
 
   const handleCandidate = async (message) => {
