@@ -15,17 +15,27 @@ const LiveStudentComponent = () => {
     );
     const client = Stomp.over(socket);
     client.connect({}, () => {
-      client.subscribe("/topic/offer", (message) =>
-        handleOffer(JSON.parse(message.body))
-      );
-      client.subscribe("/topic/candidate", (message) =>
-        handleCandidate(JSON.parse(message.body))
-      );
+      console.log("Connected to STOMP");
+      client.subscribe("/topic/offer", (message) => {
+        console.log("Received offer:", message.body);
+        handleOffer(JSON.parse(message.body));
+      });
+      client.subscribe("/topic/candidate", (message) => {
+        console.log("Received candidate:", message.body);
+        handleCandidate(JSON.parse(message.body));
+      });
     });
     setStompClient(client);
+
+    return () => {
+      if (client) {
+        client.disconnect();
+      }
+    };
   }, []);
 
   const sendSignal = (destination, message) => {
+    console.log(`Sending signal to ${destination}:`, message);
     stompClient.send(destination, {}, JSON.stringify(message));
   };
 
@@ -35,26 +45,33 @@ const LiveStudentComponent = () => {
 
     pc.onicecandidate = (event) => {
       if (event.candidate) {
+        console.log("Sending candidate:", event.candidate);
         sendSignal("/app/sendCandidate", { candidate: event.candidate });
       }
     };
 
     pc.ontrack = (event) => {
+      console.log("Received remote track", event.streams);
       remoteVideoRef.current.srcObject = event.streams[0];
     };
 
     await pc.setRemoteDescription(new RTCSessionDescription(message.offer));
+    console.log("Set remote description");
 
     const answer = await pc.createAnswer();
     await pc.setLocalDescription(answer);
+    console.log("Created and set local description");
 
     sendSignal("/app/sendAnswer", { answer });
   };
 
   const handleCandidate = async (message) => {
-    await peerConnection.addIceCandidate(
-      new RTCIceCandidate(message.candidate)
-    );
+    if (peerConnection) {
+      console.log("Adding ICE candidate:", message.candidate);
+      await peerConnection.addIceCandidate(
+        new RTCIceCandidate(message.candidate)
+      );
+    }
   };
 
   return (

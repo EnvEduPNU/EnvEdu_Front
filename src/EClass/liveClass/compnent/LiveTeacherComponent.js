@@ -15,14 +15,23 @@ const LiveTeacherComponent = () => {
     );
     const client = Stomp.over(socket);
     client.connect({}, () => {
-      client.subscribe("/topic/answer", (message) =>
-        handleAnswer(JSON.parse(message.body))
-      );
-      client.subscribe("/topic/candidate", (message) =>
-        handleCandidate(JSON.parse(message.body))
-      );
+      console.log("Connected to STOMP");
+      client.subscribe("/topic/answer", (message) => {
+        console.log("Received answer:", message.body);
+        handleAnswer(JSON.parse(message.body));
+      });
+      client.subscribe("/topic/candidate", (message) => {
+        console.log("Received candidate:", message.body);
+        handleCandidate(JSON.parse(message.body));
+      });
     });
     setStompClient(client);
+
+    return () => {
+      if (client) {
+        client.disconnect();
+      }
+    };
   }, []);
 
   const startScreenShare = async () => {
@@ -38,6 +47,7 @@ const LiveTeacherComponent = () => {
 
     pc.onicecandidate = (event) => {
       if (event.candidate) {
+        console.log("Sending candidate:", event.candidate);
         sendSignal("/app/sendCandidate", { candidate: event.candidate });
       }
     };
@@ -45,10 +55,12 @@ const LiveTeacherComponent = () => {
     const offer = await pc.createOffer();
     await pc.setLocalDescription(offer);
 
+    console.log("Sending offer:", offer);
     sendSignal("/app/sendOffer", { offer });
   };
 
   const sendSignal = (destination, message) => {
+    console.log(`Sending signal to ${destination}:`, message);
     stompClient.send(destination, {}, JSON.stringify(message));
   };
 
@@ -59,9 +71,11 @@ const LiveTeacherComponent = () => {
   };
 
   const handleCandidate = async (message) => {
-    await peerConnection.addIceCandidate(
-      new RTCIceCandidate(message.candidate)
-    );
+    if (peerConnection) {
+      await peerConnection.addIceCandidate(
+        new RTCIceCandidate(message.candidate)
+      );
+    }
   };
 
   return (
