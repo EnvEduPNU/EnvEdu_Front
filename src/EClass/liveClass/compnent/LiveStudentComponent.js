@@ -25,11 +25,11 @@ const LiveStudentComponent = () => {
       console.log("버퍼대신");
       setFlag(false);
 
-      client.connect({}, () => {
-        client.subscribe("/topic/offer", (message) =>
+      stompClient.connect({}, () => {
+        stompClient.subscribe("/topic/offer", (message) =>
           handleOffer(JSON.parse(message.body))
         );
-        client.subscribe("/topic/candidate", (message) =>
+        stompClient.subscribe("/topic/candidate", (message) =>
           handleCandidate(JSON.parse(message.body))
         );
       });
