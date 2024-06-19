@@ -204,8 +204,14 @@ function App() {
             <Route path="new" exact={true} element={<CreateEClassPage />} />
           </Route> */}
           {/* E-Class 화면 공유 */}
-          <Route path="/teacher/:sessionId" component={LiveTeacherComponent} />
-          <Route path="/student/:sessionId" component={LiveStudentComponent} />
+          <Route
+            path="/teacher/:sessionId"
+            element={<LiveTeacherComponent />}
+          />
+          <Route
+            path="/student/:sessionId"
+            element={<LiveStudentComponent />}
+          />
           <Route path="/E-Classes">
             {" "}
             {/*E-Class*/}
