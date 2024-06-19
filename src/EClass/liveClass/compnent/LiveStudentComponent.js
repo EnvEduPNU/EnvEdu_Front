@@ -113,7 +113,7 @@ const LiveStudentComponent = (props) => {
     if (client) {
       console.log("시그널 보내기: ", signal);
       client.send(
-        `/app/screen-share/${studentSessionId}`,
+        `/app/screen-share/${teacherSessionId}`,
         {},
         JSON.stringify(signal)
       );
