@@ -6,7 +6,6 @@ const LiveStudentComponent = () => {
   const remoteVideoRef = useRef(null);
   const [stompClient, setStompClient] = useState(null);
   const [peerConnection, setPeerConnection] = useState(null);
-  const messageBuffer = useRef([]);
 
   useEffect(() => {
     const token = localStorage.getItem("access_token").replace("Bearer ", "");
@@ -15,108 +14,64 @@ const LiveStudentComponent = () => {
       `${process.env.REACT_APP_API_URL}/screen-share?token=${token}`
     );
     const client = Stomp.over(socket);
-    client.connect({}, () => {
-      console.log("Connected to STOMP");
-      client.subscribe("/topic/offer", (message) => {
-        console.log("Received offer:", message.body);
-        bufferMessage("offer", JSON.parse(message.body));
+
+    setStompClient(client);
+
+    if (stompClient) {
+      console.log("버퍼대신");
+      client.connect({}, () => {
+        client.subscribe("/topic/offer", (message) =>
+          handleOffer(JSON.parse(message.body))
+        );
+        client.subscribe("/topic/candidate", (message) =>
+          handleCandidate(JSON.parse(message.body))
+        );
       });
-      client.subscribe("/topic/candidate", (message) => {
-        console.log("Received candidate:", message.body);
-        bufferMessage("candidate", JSON.parse(message.body));
-      });
-
-      setStompClient(client);
-    });
-
-    return () => {
-      if (client) {
-        client.disconnect();
-      }
-    };
-  }, []);
-
-  const bufferMessage = (type, message) => {
-    if (!stompClient) {
-      messageBuffer.current.push({ type, message });
-    } else {
-      processMessage(type, message);
     }
-  };
-
-  const processMessage = (type, message) => {
-    if (type === "offer") {
-      handleOffer(message);
-    } else if (type === "candidate") {
-      handleCandidate(message);
-    }
-  };
+  }, [stompClient]);
 
   const sendSignal = (destination, message) => {
-    if (stompClient && stompClient.connected) {
-      console.log(`Sending signal to ${destination}:`, message);
-      stompClient.send(destination, {}, JSON.stringify(message));
-    } else {
-      console.error("STOMP client is not connected");
-    }
+    console.log("샌드시그널");
+    stompClient.send(destination, {}, JSON.stringify(message));
   };
 
   const handleOffer = async (message) => {
+    console.log("샌드오퍼");
     const pc = new RTCPeerConnection();
     setPeerConnection(pc);
 
-    console.log("handleoffer에 들어왔는지");
-
     pc.onicecandidate = (event) => {
+      console.log("온 아이스 candidate");
       if (event.candidate) {
-        console.log("Sending candidate:", event.candidate);
         sendSignal("/app/sendCandidate", { candidate: event.candidate });
       }
     };
 
     pc.ontrack = (event) => {
-      console.log("Received remote track", event.streams);
+      console.log("온트랙");
       remoteVideoRef.current.srcObject = event.streams[0];
     };
 
     await pc.setRemoteDescription(new RTCSessionDescription(message.offer));
-    console.log("Set remote description");
 
     const answer = await pc.createAnswer();
     await pc.setLocalDescription(answer);
-    console.log("Created and set local description");
 
     sendSignal("/app/sendAnswer", { answer });
   };
 
   const handleCandidate = async (message) => {
-    if (peerConnection) {
-      console.log("Adding ICE candidate:", message.candidate);
-      await peerConnection.addIceCandidate(
-        new RTCIceCandidate(message.candidate)
-      );
-    }
+    console.log("핸들 캔디데이트");
+    await peerConnection.addIceCandidate(
+      new RTCIceCandidate(message.candidate)
+    );
   };
-
-  useEffect(() => {
-    if (stompClient) {
-      messageBuffer.current.forEach(({ type, message }) => {
-        processMessage(type, message);
-      });
-      messageBuffer.current = [];
-    }
-  }, [stompClient]);
 
   return (
     <div>
       <div>
         <h3>Remote Stream (Shared screen)</h3>
-        <video
-          ref={remoteVideoRef}
-          autoPlay
-          playsInline
-          style={{ width: "100%", height: "auto" }} // 크기를 명시적으로 설정
-        ></video>
+        <video ref={remoteVideoRef} autoPlay playsInline></video>
       </div>
     </div>
   );
