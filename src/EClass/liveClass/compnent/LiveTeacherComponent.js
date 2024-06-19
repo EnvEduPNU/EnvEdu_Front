@@ -11,7 +11,7 @@ const LiveTeacherComponent = (props) => {
   const [flag, setFlag] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("access_token").replace("Bearer ", "");
+    const token = localStorage.getItem("access_token")?.replace("Bearer ", "");
     const socket = new SockJS(
       `${process.env.REACT_APP_API_URL}/screen-share?token=${token}`
     );
@@ -22,7 +22,9 @@ const LiveTeacherComponent = (props) => {
 
     return () => {
       if (client) {
-        client.disconnect();
+        client.disconnect(() => {
+          console.log("STOMP 클라이언트 연결 끊김");
+        });
       }
     };
   }, []);
@@ -31,22 +33,20 @@ const LiveTeacherComponent = (props) => {
     if (stompClient && flag) {
       setFlag(false);
 
-      console.log("커넥션 연결 들어오긴 했나");
-
-      console.log("커넥션 생성");
-
-      createPeerConnection(sessionId);
-
       stompClient.connect({}, () => {
+        console.log("STOMP 클라이언트 연결됨");
+
         stompClient.subscribe(`/topic/${sessionId}`, (message) => {
           const signal = JSON.parse(message.body);
-          console.log("커넥션 되나 : {}", signal);
+          console.log("받은 시그널: ", signal);
 
           handleSignal(signal);
         });
+
+        console.log("구독 시작: /topic/" + sessionId);
       });
     }
-  }, [flag]);
+  }, [stompClient, flag]);
 
   const startScreenShare = () => {
     console.log("스크린 쉐어 시작");
@@ -56,10 +56,10 @@ const LiveTeacherComponent = (props) => {
         localStream.current = stream;
         localVideoRef.current.srcObject = stream;
 
-        stream.getTracks().forEach((track) => {
-          for (const peerId in peerConnections) {
-            peerConnections[peerId].addTrack(track, localStream.current);
-          }
+        Object.values(peerConnections).forEach((pc) => {
+          stream.getTracks().forEach((track) => {
+            pc.addTrack(track, stream);
+          });
         });
       });
   };
@@ -67,20 +67,17 @@ const LiveTeacherComponent = (props) => {
   const handleSignal = (signal) => {
     const { from, sdp, candidate } = signal;
 
-    console.log("from : " + from);
-    console.log("session id : " + sessionId);
+    if (from === sessionId) return; // 자기 자신이 보낸 시그널 무시
 
-    // if (from === sessionId) return;
-    console.log("from 이 어디야 : {}", from);
+    if (!peerConnections[from]) {
+      createPeerConnection(from);
+    }
 
     const pc = peerConnections[from];
 
     if (sdp) {
-      console.log("sdp 는 있어? : {}", sdp);
-
       pc.setRemoteDescription(new RTCSessionDescription(sdp)).then(() => {
         if (sdp.type === "offer") {
-          console.log("setRemoteDescription 되나");
           pc.createAnswer().then((answer) => {
             pc.setLocalDescription(answer);
             sendSignal({
@@ -95,8 +92,6 @@ const LiveTeacherComponent = (props) => {
     }
 
     if (candidate) {
-      console.log("아이스 캔디데잇");
-
       pc.addIceCandidate(new RTCIceCandidate(candidate));
     }
   };
@@ -106,8 +101,7 @@ const LiveTeacherComponent = (props) => {
 
     pc.onicecandidate = (event) => {
       if (event.candidate) {
-        console.log("ice candidate 이다 :  {}", event.candidate);
-
+        console.log(`ICE candidate: ${JSON.stringify(event.candidate)}`);
         sendSignal({
           type: "candidate",
           candidate: event.candidate,
@@ -115,6 +109,10 @@ const LiveTeacherComponent = (props) => {
           to: peerId,
         });
       }
+    };
+
+    pc.ontrack = (event) => {
+      console.log("ontrack 이벤트 발생", event);
     };
 
     if (localStream.current) {
@@ -128,7 +126,7 @@ const LiveTeacherComponent = (props) => {
 
   const sendSignal = (signal) => {
     if (stompClient) {
-      console.log("시그널은 보내지나 ");
+      console.log("시그널 보내기: ", signal);
       stompClient.send(
         `/app/screen-share/${sessionId}`,
         {},
