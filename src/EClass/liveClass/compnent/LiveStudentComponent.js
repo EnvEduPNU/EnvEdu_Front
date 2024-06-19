@@ -77,10 +77,12 @@ const LiveStudentComponent = () => {
   };
 
   const handleCandidate = async (message) => {
-    console.log("핸들 캔디데이트");
-    await peerConnection.addIceCandidate(
-      new RTCIceCandidate(message.candidate)
-    );
+    if (peerConnection) {
+      console.log("핸들 캔디데이트 : {}", message.candidate);
+      await peerConnection.addIceCandidate(
+        new RTCIceCandidate(message.candidate)
+      );
+    }
   };
 
   return (
