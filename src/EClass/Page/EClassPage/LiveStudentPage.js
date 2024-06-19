@@ -16,10 +16,12 @@ const LiveStudentComponent = () => {
     const client = Stomp.over(socket);
     client.connect({}, () => {
       console.log("Connected to STOMP");
+
       client.subscribe("/topic/offer", (message) => {
         console.log("Received offer:", message.body);
         handleOffer(JSON.parse(message.body));
       });
+
       client.subscribe("/topic/candidate", (message) => {
         console.log("Received candidate:", message.body);
         handleCandidate(JSON.parse(message.body));
