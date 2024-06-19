@@ -34,12 +34,14 @@ const LiveStudentComponent = () => {
       setFlag(false);
 
       stompClient.connect({}, () => {
-        stompClient.subscribe("/topic/offer", (message) =>
-          handleOffer(JSON.parse(message.body))
-        );
-        stompClient.subscribe("/topic/candidate", (message) =>
-          handleCandidate(JSON.parse(message.body))
-        );
+        stompClient.subscribe("/topic/offer", (message) => {
+          console.log("handleOffer에 들어갈 message:", message.body);
+          handleOffer(JSON.parse(message.body));
+        });
+        stompClient.subscribe("/topic/candidate", (message) => {
+          console.log("handleCandidate에 들어갈 message:", message.body);
+          handleCandidate(JSON.parse(message.body));
+        });
       });
     }
   }, [flag]);
