@@ -6,6 +6,7 @@ const LiveStudentComponent = () => {
   const remoteVideoRef = useRef(null);
   const [stompClient, setStompClient] = useState(null);
   const [peerConnection, setPeerConnection] = useState(null);
+  const messageBuffer = useRef([]);
 
   useEffect(() => {
     const token = localStorage.getItem("access_token").replace("Bearer ", "");
@@ -16,15 +17,13 @@ const LiveStudentComponent = () => {
     const client = Stomp.over(socket);
     client.connect({}, () => {
       console.log("Connected to STOMP");
-
       client.subscribe("/topic/offer", (message) => {
         console.log("Received offer:", message.body);
-        handleOffer(JSON.parse(message.body));
+        bufferMessage("offer", JSON.parse(message.body));
       });
-
       client.subscribe("/topic/candidate", (message) => {
         console.log("Received candidate:", message.body);
-        handleCandidate(JSON.parse(message.body));
+        bufferMessage("candidate", JSON.parse(message.body));
       });
 
       setStompClient(client);
@@ -36,6 +35,22 @@ const LiveStudentComponent = () => {
       }
     };
   }, []);
+
+  const bufferMessage = (type, message) => {
+    if (!stompClient) {
+      messageBuffer.current.push({ type, message });
+    } else {
+      processMessage(type, message);
+    }
+  };
+
+  const processMessage = (type, message) => {
+    if (type === "offer") {
+      handleOffer(message);
+    } else if (type === "candidate") {
+      handleCandidate(message);
+    }
+  };
 
   const sendSignal = (destination, message) => {
     if (stompClient && stompClient.connected) {
@@ -80,6 +95,15 @@ const LiveStudentComponent = () => {
       );
     }
   };
+
+  useEffect(() => {
+    if (stompClient) {
+      messageBuffer.current.forEach(({ type, message }) => {
+        processMessage(type, message);
+      });
+      messageBuffer.current = [];
+    }
+  }, [stompClient]);
 
   return (
     <div>
