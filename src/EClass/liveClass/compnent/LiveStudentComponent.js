@@ -24,14 +24,14 @@ const LiveStudentComponent = (props) => {
       // 초기 신호를 보냅니다.
       sendInitialSignal(client);
 
-      client.subscribe(`/topic/${studentSessionId}`, (message) => {
+      client.subscribe(`/topic/${teacherSessionId}`, (message) => {
         const signal = JSON.parse(message.body);
         console.log("받은 시그널: ", signal);
 
         handleSignal(signal);
       });
 
-      console.log("구독 시작: /topic/" + studentSessionId);
+      console.log("구독 시작: /topic/" + teacherSessionId);
     });
 
     return () => {
