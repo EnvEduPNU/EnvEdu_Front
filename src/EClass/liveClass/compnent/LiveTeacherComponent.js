@@ -8,6 +8,7 @@ const LiveTeacherComponent = (props) => {
   const [peerConnections, setPeerConnections] = useState({});
   const localStream = useRef(null);
   const [sessionId] = useState(props.newSessionId);
+  const [flag, setFlag] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("access_token").replace("Bearer ", "");
@@ -16,22 +17,33 @@ const LiveTeacherComponent = (props) => {
     );
     const client = Stomp.over(socket);
 
-    client.connect({}, () => {
-      setStompClient(client);
-      client.subscribe(`/topic/${sessionId}`, (message) => {
-        const signal = JSON.parse(message.body);
-        handleSignal(signal);
-      });
-    });
+    setStompClient(client);
+    setFlag(true);
 
     return () => {
       if (client) {
         client.disconnect();
       }
     };
-  }, [sessionId]);
+  }, []);
+
+  useEffect(() => {
+    if (stompClient && flag) {
+      setFlag(false);
+
+      client.connect({}, () => {
+        client.subscribe(`/topic/${sessionId}`, (message) => {
+          const signal = JSON.parse(message.body);
+          console.log("커넥션 되나 : {}", signal);
+
+          handleSignal(signal);
+        });
+      });
+    }
+  }, [flag]);
 
   const startScreenShare = () => {
+    console.log("스크린 쉐어 시작");
     navigator.mediaDevices
       .getDisplayMedia({ video: true, audio: true })
       .then((stream) => {
@@ -53,6 +65,7 @@ const LiveTeacherComponent = (props) => {
     console.log("session id : " + sessionId);
 
     if (from === sessionId) return;
+    console.log("from 이 어디야 : {}", from);
 
     if (!peerConnections[from]) {
       createPeerConnection(from);
@@ -61,6 +74,8 @@ const LiveTeacherComponent = (props) => {
     const pc = peerConnections[from];
 
     if (sdp) {
+      console.log("sdp 는 있어? : {}", sdp);
+
       pc.setRemoteDescription(new RTCSessionDescription(sdp)).then(() => {
         if (sdp.type === "offer") {
           console.log("setRemoteDescription 되나");
@@ -78,6 +93,8 @@ const LiveTeacherComponent = (props) => {
     }
 
     if (candidate) {
+      console.log("아이스 캔디데잇");
+
       pc.addIceCandidate(new RTCIceCandidate(candidate));
     }
   };
