@@ -6,6 +6,7 @@ const LiveStudentComponent = () => {
   const remoteVideoRef = useRef(null);
   const [stompClient, setStompClient] = useState(null);
   const [peerConnection, setPeerConnection] = useState(null);
+  const [flag, setFlag] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("access_token").replace("Bearer ", "");
@@ -16,9 +17,14 @@ const LiveStudentComponent = () => {
     const client = Stomp.over(socket);
 
     setStompClient(client);
+    setFlag(true);
+  }, []);
 
-    if (stompClient) {
+  useEffect(() => {
+    if (stompClient && flag) {
       console.log("버퍼대신");
+      setFlag(false);
+
       client.connect({}, () => {
         client.subscribe("/topic/offer", (message) =>
           handleOffer(JSON.parse(message.body))
@@ -34,7 +40,7 @@ const LiveStudentComponent = () => {
         client.disconnect();
       }
     };
-  }, []);
+  }, [flag]);
 
   const sendSignal = (destination, message) => {
     console.log("샌드시그널");
