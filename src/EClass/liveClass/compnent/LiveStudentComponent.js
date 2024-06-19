@@ -28,6 +28,10 @@ const LiveStudentComponent = (props) => {
     if (stompClient && flag) {
       setFlag(false);
 
+      if (!peerConnection) {
+        createPeerConnection(from);
+      }
+
       stompClient.connect({}, () => {
         stompClient.subscribe(`/topic/${sessionId}`, (message) => {
           const signal = JSON.parse(message.body);
@@ -46,10 +50,6 @@ const LiveStudentComponent = (props) => {
     console.log("from 이 어디야 : {}", from);
 
     // if (from === sessionId) return;
-
-    if (!peerConnection) {
-      createPeerConnection(from);
-    }
 
     const pc = peerConnection;
 

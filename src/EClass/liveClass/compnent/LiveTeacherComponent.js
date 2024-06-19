@@ -33,6 +33,12 @@ const LiveTeacherComponent = (props) => {
 
       console.log("커넥션 연결 들어오긴 했나");
 
+      if (!peerConnections[sessionId]) {
+        console.log("커넥션 생성");
+
+        createPeerConnection(sessionId);
+      }
+
       stompClient.connect({}, () => {
         stompClient.subscribe(`/topic/${sessionId}`, (message) => {
           const signal = JSON.parse(message.body);
@@ -68,10 +74,6 @@ const LiveTeacherComponent = (props) => {
 
     // if (from === sessionId) return;
     console.log("from 이 어디야 : {}", from);
-
-    if (!peerConnections[from]) {
-      createPeerConnection(from);
-    }
 
     const pc = peerConnections[from];
 
