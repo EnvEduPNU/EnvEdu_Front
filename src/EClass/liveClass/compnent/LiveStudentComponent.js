@@ -7,6 +7,7 @@ const LiveStudentComponent = (props) => {
   const [stompClient, setStompClient] = useState(null);
   const [peerConnection, setPeerConnection] = useState(null);
   const [sessionId] = useState(props.newSessionId);
+  const [flag, setFlag] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("access_token").replace("Bearer ", "");
@@ -15,18 +16,32 @@ const LiveStudentComponent = (props) => {
     );
     const client = Stomp.over(socket);
 
-    client.connect({}, () => {
-      setStompClient(client);
-      client.subscribe(`/topic/${sessionId}`, (message) => {
-        const signal = JSON.parse(message.body);
-        handleSignal(signal);
-      });
-    });
+    setStompClient(client);
+    setFlag(true);
 
     return () => {
       if (client) client.disconnect();
     };
-  }, [sessionId]);
+  }, []);
+
+  useEffect(() => {
+    if (stompClient && flag) {
+      setFlag(false);
+      const pc = new RTCPeerConnection();
+      setPeerConnection(pc);
+    }
+  }, [flag]);
+
+  useEffect(() => {
+    if (peerConnection) {
+      stompClient.connect({}, () => {
+        stompClient.subscribe(`/topic/${sessionId}`, (message) => {
+          const signal = JSON.parse(message.body);
+          handleSignal(signal);
+        });
+      });
+    }
+  }, [peerConnection]);
 
   const handleSignal = (signal) => {
     const { from, sdp, candidate } = signal;
@@ -61,8 +76,6 @@ const LiveStudentComponent = (props) => {
   };
 
   const createPeerConnection = (peerId) => {
-    const pc = new RTCPeerConnection();
-
     pc.onicecandidate = (event) => {
       if (event.candidate) {
         sendSignal({
