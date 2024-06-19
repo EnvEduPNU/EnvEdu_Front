@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
-import { useParams } from "react-router-dom";
 
 const LiveStudentComponent = (props) => {
   const remoteVideoRef = useRef(null);

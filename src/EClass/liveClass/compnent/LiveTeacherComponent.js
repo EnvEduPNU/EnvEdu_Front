@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 
-const LiveTeacherComponent = () => {
+const LiveTeacherComponent = (props) => {
   const localVideoRef = useRef(null);
   const [stompClient, setStompClient] = useState(null);
   const [peerConnections, setPeerConnections] = useState({});
