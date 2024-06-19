@@ -86,7 +86,7 @@ const LiveStudentComponent = () => {
   const sendSignal = (signal) => {
     if (stompClient) {
       stompClient.send(
-        `/app/signal/${sessionId.current}`,
+        `/app/screen-share/${sessionId.current}`,
         {},
         JSON.stringify(signal)
       );
