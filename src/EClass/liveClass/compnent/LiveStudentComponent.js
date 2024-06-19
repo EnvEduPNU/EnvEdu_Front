@@ -32,6 +32,8 @@ const LiveStudentComponent = () => {
     if (stompClient && flag) {
       console.log("버퍼대신");
       setFlag(false);
+      const pc = new RTCPeerConnection();
+      setPeerConnection(pc);
 
       stompClient.connect({}, () => {
         stompClient.subscribe("/topic/offer", (message) => {
@@ -53,25 +55,25 @@ const LiveStudentComponent = () => {
 
   const handleOffer = async (message) => {
     console.log("샌드오퍼");
-    const pc = new RTCPeerConnection();
-    setPeerConnection(pc);
 
-    pc.onicecandidate = (event) => {
+    peerConnection.onicecandidate = (event) => {
       console.log("온 아이스 candidate : {}", event.candidate);
       if (event.candidate) {
         sendSignal("/app/sendCandidate", { candidate: event.candidate });
       }
     };
 
-    pc.ontrack = (event) => {
+    peerConnection.ontrack = (event) => {
       console.log("온트랙");
       remoteVideoRef.current.srcObject = event.streams[0];
     };
 
-    await pc.setRemoteDescription(new RTCSessionDescription(message.offer));
+    await peerConnection.setRemoteDescription(
+      new RTCSessionDescription(message.offer)
+    );
 
-    const answer = await pc.createAnswer();
-    await pc.setLocalDescription(answer);
+    const answer = await peerConnection.createAnswer();
+    await peerConnection.setLocalDescription(answer);
 
     sendSignal("/app/sendAnswer", { answer });
   };
