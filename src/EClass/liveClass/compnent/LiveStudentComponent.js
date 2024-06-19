@@ -21,6 +21,9 @@ const LiveStudentComponent = (props) => {
 
       setStompClient(client);
 
+      // 초기 신호를 보냅니다.
+      sendInitialSignal(client);
+
       client.subscribe(`/topic/${studentSessionId}`, (message) => {
         const signal = JSON.parse(message.body);
         console.log("받은 시그널: ", signal);
@@ -40,6 +43,17 @@ const LiveStudentComponent = (props) => {
     };
   }, [props]);
 
+  const sendInitialSignal = (client) => {
+    // 초기 신호를 보냅니다.
+    sendSignal(client, {
+      type: "initial",
+      from: studentSessionId,
+      to: teacherSessionId,
+      sdp: null,
+      candidate: null,
+    });
+  };
+
   const handleSignal = (signal) => {
     const { from, sdp, candidate } = signal;
 
@@ -56,7 +70,7 @@ const LiveStudentComponent = (props) => {
         if (sdp.type === "offer") {
           pc.createAnswer().then((answer) => {
             pc.setLocalDescription(answer);
-            sendSignal({
+            sendSignal(stompClient, {
               type: "answer",
               sdp: answer,
               from: studentSessionId,
@@ -78,7 +92,7 @@ const LiveStudentComponent = (props) => {
     pc.onicecandidate = (event) => {
       if (event.candidate) {
         console.log(`ICE candidate: ${JSON.stringify(event.candidate)}`);
-        sendSignal({
+        sendSignal(stompClient, {
           type: "candidate",
           candidate: event.candidate,
           from: studentSessionId,
@@ -95,10 +109,10 @@ const LiveStudentComponent = (props) => {
     setPeerConnection(pc);
   };
 
-  const sendSignal = (signal) => {
-    if (stompClient) {
+  const sendSignal = (client, signal) => {
+    if (client) {
       console.log("시그널 보내기: ", signal);
-      stompClient.send(
+      client.send(
         `/app/screen-share/${studentSessionId}`,
         {},
         JSON.stringify(signal)
