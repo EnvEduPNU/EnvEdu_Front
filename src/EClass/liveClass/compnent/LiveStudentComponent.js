@@ -27,13 +27,7 @@ const LiveStudentComponent = (props) => {
   useEffect(() => {
     if (stompClient && flag) {
       setFlag(false);
-      const pc = new RTCPeerConnection();
-      setPeerConnection(pc);
-    }
-  }, [flag]);
 
-  useEffect(() => {
-    if (peerConnection) {
       stompClient.connect({}, () => {
         stompClient.subscribe(`/topic/${sessionId}`, (message) => {
           const signal = JSON.parse(message.body);
@@ -41,7 +35,7 @@ const LiveStudentComponent = (props) => {
         });
       });
     }
-  }, [peerConnection]);
+  }, [flag]);
 
   const handleSignal = (signal) => {
     const { from, sdp, candidate } = signal;
@@ -76,6 +70,8 @@ const LiveStudentComponent = (props) => {
   };
 
   const createPeerConnection = (peerId) => {
+    const pc = new RTCPeerConnection();
+
     pc.onicecandidate = (event) => {
       if (event.candidate) {
         sendSignal({
