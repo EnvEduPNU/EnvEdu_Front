@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
-import axios from "../../../Common/CustomAxios";
+import { customAxios } from "../../../Common/CustomAxios";
 import { v4 as uuidv4 } from "uuid"; // UUID 패키지를 사용하여 세션 ID 생성
 
 const LiveStudentComponent = () => {
@@ -41,9 +41,12 @@ const LiveStudentComponent = () => {
   // 세션 ID를 DB에 등록하는 함수
   const registerSessionId = async (sessionId) => {
     try {
-      await axios.post(`${process.env.REACT_APP_API_URL}/register-session`, {
-        sessionId,
-      });
+      await customAxios.post(
+        `${process.env.REACT_APP_API_URL}/register-session`,
+        {
+          sessionId,
+        }
+      );
       console.log("Session ID registered:", sessionId);
     } catch (error) {
       console.error("Error registering session ID:", error);
@@ -53,10 +56,8 @@ const LiveStudentComponent = () => {
   // 세션 ID를 DB에서 삭제하는 함수
   const deleteSessionId = async (sessionId) => {
     try {
-      const token = localStorage.getItem("access_token").replace("Bearer ", "");
-
-      await axios.delete(
-        `${process.env.REACT_APP_API_URL}/delete-session?token=${token}`,
+      await customAxios.delete(
+        `${process.env.REACT_APP_API_URL}/delete-session`,
         {
           data: { sessionId },
         }
