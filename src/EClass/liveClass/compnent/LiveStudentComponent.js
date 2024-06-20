@@ -18,6 +18,7 @@ const LiveStudentComponent = () => {
     const client = Stomp.over(socket);
 
     const newSessionId = uuidv4(); // 새 세션 ID 생성
+
     setSessionId(newSessionId);
     registerSessionId(newSessionId); // DB에 세션 ID 등록
 
@@ -41,10 +42,14 @@ const LiveStudentComponent = () => {
   // 세션 ID를 DB에 등록하는 함수
   const registerSessionId = async (sessionId) => {
     try {
+      const dataToSend = {
+        sessionId: sessionId,
+      };
+
       await customAxios.post(
         `${process.env.REACT_APP_API_URL}/api/sessions/register-session`,
         {
-          sessionId,
+          dataToSend,
         }
       );
       console.log("Session ID registered:", sessionId);
