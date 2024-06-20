@@ -1,12 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
+import axios from "axios"; // axios를 사용하여 HTTP 요청을 처리
+import { v4 as uuidv4 } from "uuid"; // UUID 패키지를 사용하여 세션 ID 생성
 
 const LiveStudentComponent = () => {
   const remoteVideoRef = useRef(null);
   const [stompClient, setStompClient] = useState(null);
   const [peerConnection, setPeerConnection] = useState(null);
-  const [flag, setFlag] = useState(false);
+  const [sessionId, setSessionId] = useState(""); // 세션 ID 상태 추가
 
   useEffect(() => {
     const token = localStorage.getItem("access_token").replace("Bearer ", "");
@@ -15,8 +17,12 @@ const LiveStudentComponent = () => {
     );
     const client = Stomp.over(socket);
 
+    const newSessionId = uuidv4(); // 새 세션 ID 생성
+    setSessionId(newSessionId);
+    registerSessionId(newSessionId); // DB에 세션 ID 등록
+
     setStompClient(client);
-    setFlag(true);
+    setPeerConnection(new RTCPeerConnection());
 
     return () => {
       if (client) {
@@ -24,25 +30,55 @@ const LiveStudentComponent = () => {
           console.log("Disconnected from STOMP");
         });
       }
+
+      // 컴포넌트 해제 시 세션 아이디도 삭제해줌
+      deleteSessionId(newSessionId);
+      setSessionId("");
     };
   }, []);
 
-  useEffect(() => {
-    if (stompClient && flag) {
-      setFlag(false);
-      const pc = new RTCPeerConnection();
-      setPeerConnection(pc);
+  // 세션 ID를 DB에 등록하는 함수
+  const registerSessionId = async (sessionId) => {
+    try {
+      const token = localStorage.getItem("access_token").replace("Bearer ", "");
+
+      await axios.post(
+        `${process.env.REACT_APP_API_URL}/register-session?token=${token}`,
+        {
+          sessionId,
+        }
+      );
+      console.log("Session ID registered:", sessionId);
+    } catch (error) {
+      console.error("Error registering session ID:", error);
     }
-  }, [flag]);
+  };
+
+  // 세션 ID를 DB에서 삭제하는 함수
+  const deleteSessionId = async (sessionId) => {
+    try {
+      const token = localStorage.getItem("access_token").replace("Bearer ", "");
+
+      await axios.delete(
+        `${process.env.REACT_APP_API_URL}/delete-session?token=${token}`,
+        {
+          data: { sessionId },
+        }
+      );
+      console.log("Session ID deleted:", sessionId);
+    } catch (error) {
+      console.error("Error deleting session ID:", error);
+    }
+  };
 
   useEffect(() => {
-    if (peerConnection) {
+    if (peerConnection && stompClient && sessionId) {
       stompClient.connect({}, () => {
-        stompClient.subscribe("/topic/offer", (message) => {
+        stompClient.subscribe(`/topic/offer/${sessionId}`, (message) => {
           console.log("Received offer:", message.body);
           handleOffer(JSON.parse(message.body));
         });
-        stompClient.subscribe("/topic/candidate", (message) => {
+        stompClient.subscribe(`/topic/candidate/${sessionId}`, (message) => {
           console.log("Received candidate:", message.body);
           handleCandidate(JSON.parse(message.body));
         });
@@ -56,11 +92,13 @@ const LiveStudentComponent = () => {
       peerConnection.onicecandidate = (event) => {
         if (event.candidate) {
           console.log("Sending ICE candidate");
-          sendSignal("/app/sendCandidate", { candidate: event.candidate });
+          sendSignal(`/app/sendCandidate/${sessionId}`, {
+            candidate: event.candidate,
+          });
         }
       };
     }
-  }, [peerConnection]);
+  }, [peerConnection, stompClient, sessionId]);
 
   const sendSignal = (destination, message) => {
     console.log(`Sending signal to ${destination}:`, message);
@@ -73,7 +111,7 @@ const LiveStudentComponent = () => {
     );
     const answer = await peerConnection.createAnswer();
     await peerConnection.setLocalDescription(answer);
-    sendSignal("/app/sendAnswer", { answer });
+    sendSignal(`/app/sendAnswer/${sessionId}`, { answer });
   };
 
   const handleCandidate = async (message) => {

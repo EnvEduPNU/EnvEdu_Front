@@ -1,23 +1,29 @@
 import React, { useEffect, useRef, useState } from "react";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
+import axios from "axios"; // API 요청을 위한 axios
 
 const LiveTeacherComponent = () => {
   const localVideoRef = useRef(null);
   const [stompClient, setStompClient] = useState(null);
-  const [peerConnection, setPeerConnection] = useState(null);
-  const [flag, setFlag] = useState(false);
+  const [peerConnections, setPeerConnections] = useState({}); // 여러 PeerConnection 객체 관리
+  const [sessionIds, setSessionIds] = useState([]); // 세션 ID 배열 상태
+  const [activeSessionId, setActiveSessionId] = useState(""); // 활성화된 세션 ID
 
   useEffect(() => {
     const token = localStorage.getItem("access_token").replace("Bearer ", "");
-
     const socket = new SockJS(
       `${process.env.REACT_APP_API_URL}/screen-share?token=${token}`
     );
     const client = Stomp.over(socket);
-
     setStompClient(client);
-    setFlag(true);
+
+    fetchSessionIds().then((ids) => {
+      setSessionIds(ids);
+      if (ids.length > 0) {
+        setActiveSessionId(ids[0]); // 첫 번째 세션을 활성 세션으로 설정
+      }
+    });
 
     return () => {
       if (client) {
@@ -26,54 +32,75 @@ const LiveTeacherComponent = () => {
     };
   }, []);
 
-  useEffect(() => {
-    if (stompClient && flag) {
-      setFlag(false);
-      const pc = new RTCPeerConnection();
-      setPeerConnection(pc);
+  const fetchSessionIds = async () => {
+    try {
+      const token = localStorage.getItem("access_token").replace("Bearer ", "");
+
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/get-session-ids?token=${token}`
+      );
+      return response.data; // 세션 ID 배열 반환
+    } catch (error) {
+      console.error("Failed to fetch session IDs:", error);
+      alert("Failed to fetch session IDs");
+      return [];
     }
-  }, [flag]);
+  };
 
   useEffect(() => {
-    if (peerConnection) {
-      stompClient.connect({}, () => {
-        console.log("Connected to STOMP");
+    if (stompClient && sessionIds.length > 0) {
+      sessionIds.forEach((sessionId) => {
+        const pc = new RTCPeerConnection();
+        peerConnections[sessionId] = pc;
+        setPeerConnections(peerConnections);
 
-        stompClient.subscribe("/topic/answer", (message) => {
-          console.log("Received answer:", message.body);
-          handleAnswer(JSON.parse(message.body));
+        stompClient.connect({}, () => {
+          console.log("Connected to STOMP");
+          stompClient.subscribe(`/topic/answer/${sessionId}`, (message) => {
+            handleAnswer(JSON.parse(message.body), sessionId);
+          });
+          stompClient.subscribe(`/topic/candidate/${sessionId}`, (message) => {
+            handleCandidate(JSON.parse(message.body), sessionId);
+          });
         });
-        stompClient.subscribe("/topic/candidate", (message) => {
-          console.log("Received candidate:", message.body);
-          handleCandidate(JSON.parse(message.body));
-        });
+
+        pc.ontrack = (event) => {
+          if (sessionId === activeSessionId) {
+            console.log("Received remote stream from active session");
+            localVideoRef.current.srcObject = event.streams[0];
+          }
+        };
+
+        pc.onicecandidate = (event) => {
+          if (event.candidate) {
+            sendSignal(`/app/sendCandidate/${sessionId}`, {
+              candidate: event.candidate,
+            });
+          }
+        };
       });
     }
-  }, [peerConnection]);
+  }, [stompClient, sessionIds]);
 
   const startScreenShare = async () => {
     try {
       const stream = await navigator.mediaDevices.getDisplayMedia({
         video: { width: 1280, height: 720, frameRate: 15 },
       });
-      localVideoRef.current.srcObject = stream;
 
-      stream
-        .getTracks()
-        .forEach((track) => peerConnection.addTrack(track, stream));
+      Object.keys(peerConnections).forEach((sessionId) => {
+        const pc = peerConnections[sessionId];
+        stream.getTracks().forEach((track) => pc.addTrack(track, stream));
 
-      peerConnection.onicecandidate = (event) => {
-        if (event.candidate) {
-          console.log("Sending candidate:", event.candidate);
-          sendSignal("/app/sendCandidate", { candidate: event.candidate });
-        }
-      };
+        pc.createOffer().then((offer) => {
+          pc.setLocalDescription(offer);
+          sendSignal(`/app/sendOffer/${sessionId}`, { offer });
+        });
+      });
 
-      const offer = await peerConnection.createOffer();
-      await peerConnection.setLocalDescription(offer);
-
-      console.log("Sending offer:", offer);
-      sendSignal("/app/sendOffer", { offer });
+      if (activeSessionId) {
+        localVideoRef.current.srcObject = stream;
+      }
     } catch (error) {
       console.error("Error sharing screen:", error);
       alert("Screen sharing is not supported on this device.");
@@ -85,21 +112,19 @@ const LiveTeacherComponent = () => {
     stompClient.send(destination, {}, JSON.stringify(message));
   };
 
-  const handleAnswer = async (message) => {
-    if (peerConnection) {
-      console.log("똑바로 보내고 있나");
-      await peerConnection.setRemoteDescription(
-        new RTCSessionDescription(message.answer)
-      );
+  const handleAnswer = async (message, sessionId) => {
+    const pc = peerConnections[sessionId];
+    if (pc) {
+      console.log(`Processing answer for session ${sessionId}`);
+      await pc.setRemoteDescription(new RTCSessionDescription(message.answer));
     }
   };
 
-  const handleCandidate = async (message) => {
-    if (peerConnection) {
-      console.log("핸들 캔디데이트 : {}", message.candidate);
-      await peerConnection.addIceCandidate(
-        new RTCIceCandidate(message.candidate)
-      );
+  const handleCandidate = async (message, sessionId) => {
+    const pc = peerConnections[sessionId];
+    if (pc) {
+      console.log(`Processing candidate for session ${sessionId}`);
+      await pc.addIceCandidate(new RTCIceCandidate(message.candidate));
     }
   };
 
