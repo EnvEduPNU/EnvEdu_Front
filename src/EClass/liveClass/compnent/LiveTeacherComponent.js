@@ -34,9 +34,7 @@ const LiveTeacherComponent = () => {
 
   const fetchSessionIds = async () => {
     try {
-      const response = await customAxios.get(
-        `${process.env.REACT_APP_API_URL}/api/sessions/get-session-ids`
-      );
+      const response = await customAxios.get("/api/sessions/get-session-ids");
       return response.data; // 세션 ID 배열 반환
     } catch (error) {
       console.error("Failed to fetch session IDs:", error);
