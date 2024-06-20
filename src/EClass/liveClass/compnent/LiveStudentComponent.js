@@ -42,15 +42,9 @@ const LiveStudentComponent = () => {
   // 세션 ID를 DB에 등록하는 함수
   const registerSessionId = async (sessionId) => {
     try {
-      const dataToSend = {
-        sessionId: sessionId,
-      };
-
-      await customAxios.post(
+      await axios.post(
         `${process.env.REACT_APP_API_URL}/api/sessions/register-session`,
-        {
-          dataToSend,
-        }
+        JSON.stringify({ sessionId: sessionId })
       );
       console.log("Session ID registered:", sessionId);
     } catch (error) {
