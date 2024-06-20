@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
-import axios from "axios"; // API 요청을 위한 axios
+import axios from "../../../Common/CustomAxios";
 
 const LiveTeacherComponent = () => {
   const localVideoRef = useRef(null);
@@ -34,10 +34,8 @@ const LiveTeacherComponent = () => {
 
   const fetchSessionIds = async () => {
     try {
-      const token = localStorage.getItem("access_token").replace("Bearer ", "");
-
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/get-session-ids?token=${token}`
+        `${process.env.REACT_APP_API_URL}/get-session-ids`
       );
       return response.data; // 세션 ID 배열 반환
     } catch (error) {
