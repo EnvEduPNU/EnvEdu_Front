@@ -44,10 +44,9 @@ const LiveStudentComponent = () => {
   // 세션 ID를 DB에 등록하는 함수
   const registerSessionId = async (sessionId) => {
     try {
-      await customAxios.post(
-        "/api/sessions/register-session",
-        JSON.stringify({ sessionId: sessionId })
-      );
+      await customAxios.post("/api/sessions/register-session", {
+        sessionId: sessionId,
+      });
       console.log("Session ID registered:", sessionId);
     } catch (error) {
       console.error("Error registering session ID:", error);
@@ -57,10 +56,9 @@ const LiveStudentComponent = () => {
   // 세션 ID를 DB에서 삭제하는 함수
   const deleteSessionId = async (sessionId) => {
     try {
-      await customAxios.delete(
-        "/api/sessions/delete-session",
-        JSON.stringify({ sessionId: sessionId })
-      );
+      await customAxios.delete("/api/sessions/delete-session", {
+        sessionId: sessionId,
+      });
       console.log("Session ID deleted:", sessionId);
     } catch (error) {
       console.error("Error deleting session ID:", error);
