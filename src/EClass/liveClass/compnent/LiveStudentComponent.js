@@ -42,7 +42,7 @@ const LiveStudentComponent = () => {
   const registerSessionId = async (sessionId) => {
     try {
       await customAxios.post(
-        `${process.env.REACT_APP_API_URL}/register-session`,
+        `${process.env.REACT_APP_API_URL}/api/sessions/register-session`,
         {
           sessionId,
         }
@@ -57,7 +57,7 @@ const LiveStudentComponent = () => {
   const deleteSessionId = async (sessionId) => {
     try {
       await customAxios.delete(
-        `${process.env.REACT_APP_API_URL}/delete-session`,
+        `${process.env.REACT_APP_API_URL}/api/sessions/delete-session`,
         {
           data: { sessionId },
         }
