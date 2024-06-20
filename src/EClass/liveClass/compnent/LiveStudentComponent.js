@@ -19,6 +19,8 @@ const LiveStudentComponent = () => {
 
     const newSessionId = uuidv4(); // 새 세션 ID 생성
 
+    console.log("세션 아이디 : {}", newSessionId);
+
     setSessionId(newSessionId);
     registerSessionId(newSessionId); // DB에 세션 ID 등록
 
