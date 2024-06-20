@@ -2,18 +2,15 @@ import React, { useEffect, useRef, useState } from "react";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 
-const LiveTeacherComponent = (props) => {
+const LiveTeacherComponent = () => {
   const localVideoRef = useRef(null);
   const [stompClient, setStompClient] = useState(null);
-  const [peerConnections, setPeerConnections] = useState({});
-  const localStream = useRef(null);
-  const teacherSessionId = props.teacherSessionId;
-  const studentSessionId = props.studentSessionId;
-
+  const [peerConnection, setPeerConnection] = useState(null);
   const [flag, setFlag] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("access_token")?.replace("Bearer ", "");
+    const token = localStorage.getItem("access_token").replace("Bearer ", "");
+
     const socket = new SockJS(
       `${process.env.REACT_APP_API_URL}/screen-share?token=${token}`
     );
@@ -24,129 +21,84 @@ const LiveTeacherComponent = (props) => {
 
     return () => {
       if (client) {
-        client.disconnect(() => {
-          console.log("STOMP 클라이언트 연결 끊김");
-        });
+        client.disconnect();
       }
     };
-  }, [props]);
+  }, []);
 
   useEffect(() => {
     if (stompClient && flag) {
       setFlag(false);
+      const pc = new RTCPeerConnection();
+      setPeerConnection(pc);
+    }
+  }, [flag]);
 
+  useEffect(() => {
+    if (peerConnection) {
       stompClient.connect({}, () => {
-        console.log("STOMP 클라이언트 연결됨");
+        console.log("Connected to STOMP");
 
-        // 신호를 보내고 구독을 설정합니다.
-        sendInitialSignal();
-
-        stompClient.subscribe(`/topic/${teacherSessionId}`, (message) => {
-          const signal = JSON.parse(message.body);
-          console.log("받은 시그널: ", signal);
-
-          handleSignal(signal);
+        stompClient.subscribe("/topic/answer", (message) => {
+          console.log("Received answer:", message.body);
+          handleAnswer(JSON.parse(message.body));
         });
-
-        console.log("구독 시작: /topic/" + teacherSessionId);
-      });
-    }
-  }, [stompClient, flag]);
-
-  const sendInitialSignal = () => {
-    // 초기 신호를 보냅니다.
-    sendSignal({
-      type: "initial",
-      from: teacherSessionId,
-      to: studentSessionId,
-      sdp: null,
-      candidate: null,
-    });
-  };
-
-  const startScreenShare = () => {
-    console.log("스크린 쉐어 시작");
-    navigator.mediaDevices
-      .getDisplayMedia({ video: true, audio: true })
-      .then((stream) => {
-        localStream.current = stream;
-        localVideoRef.current.srcObject = stream;
-
-        Object.values(peerConnections).forEach((pc) => {
-          stream.getTracks().forEach((track) => {
-            pc.addTrack(track, stream);
-          });
+        stompClient.subscribe("/topic/candidate", (message) => {
+          console.log("Received candidate:", message.body);
+          handleCandidate(JSON.parse(message.body));
         });
       });
-  };
-
-  const handleSignal = (signal) => {
-    const { from, sdp, candidate } = signal;
-
-    if (from === teacherSessionId) return; // 자기 자신이 보낸 시그널 무시
-
-    if (!peerConnections[from]) {
-      createPeerConnection(from);
     }
+  }, [peerConnection]);
 
-    const pc = peerConnections[from];
+  const startScreenShare = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getDisplayMedia({
+        video: { width: 1280, height: 720, frameRate: 15 },
+      });
+      localVideoRef.current.srcObject = stream;
 
-    if (sdp) {
-      pc.setRemoteDescription(new RTCSessionDescription(sdp)).then(() => {
-        if (sdp.type === "offer") {
-          pc.createAnswer().then((answer) => {
-            pc.setLocalDescription(answer);
-            sendSignal({
-              type: "answer",
-              sdp: answer,
-              from: teacherSessionId,
-              to: from,
-            });
-          });
+      stream
+        .getTracks()
+        .forEach((track) => peerConnection.addTrack(track, stream));
+
+      peerConnection.onicecandidate = (event) => {
+        if (event.candidate) {
+          console.log("Sending candidate:", event.candidate);
+          sendSignal("/app/sendCandidate", { candidate: event.candidate });
         }
-      });
-    }
+      };
 
-    if (candidate) {
-      pc.addIceCandidate(new RTCIceCandidate(candidate));
+      const offer = await peerConnection.createOffer();
+      await peerConnection.setLocalDescription(offer);
+
+      console.log("Sending offer:", offer);
+      sendSignal("/app/sendOffer", { offer });
+    } catch (error) {
+      console.error("Error sharing screen:", error);
+      alert("Screen sharing is not supported on this device.");
     }
   };
 
-  const createPeerConnection = (peerId) => {
-    const pc = new RTCPeerConnection();
-
-    pc.onicecandidate = (event) => {
-      if (event.candidate) {
-        console.log(`ICE candidate: ${JSON.stringify(event.candidate)}`);
-        sendSignal({
-          type: "candidate",
-          candidate: event.candidate,
-          from: teacherSessionId,
-          to: peerId,
-        });
-      }
-    };
-
-    pc.ontrack = (event) => {
-      console.log("ontrack 이벤트 발생", event);
-    };
-
-    if (localStream.current) {
-      localStream.current.getTracks().forEach((track) => {
-        pc.addTrack(track, localStream.current);
-      });
-    }
-
-    setPeerConnections((prev) => ({ ...prev, [peerId]: pc }));
+  const sendSignal = (destination, message) => {
+    console.log(`Sending signal to ${destination}:`, message);
+    stompClient.send(destination, {}, JSON.stringify(message));
   };
 
-  const sendSignal = (signal) => {
-    if (stompClient) {
-      console.log("시그널 보내기: ", signal);
-      stompClient.send(
-        `/app/screen-share/${teacherSessionId}`,
-        {},
-        JSON.stringify(signal)
+  const handleAnswer = async (message) => {
+    if (peerConnection) {
+      console.log("똑바로 보내고 있나");
+      await peerConnection.setRemoteDescription(
+        new RTCSessionDescription(message.answer)
+      );
+    }
+  };
+
+  const handleCandidate = async (message) => {
+    if (peerConnection) {
+      console.log("핸들 캔디데이트 : {}", message.candidate);
+      await peerConnection.addIceCandidate(
+        new RTCIceCandidate(message.candidate)
       );
     }
   };
@@ -154,13 +106,10 @@ const LiveTeacherComponent = (props) => {
   return (
     <div>
       <button onClick={startScreenShare}>Start Screen Share</button>
-      <h3>Local Stream (Your screen)</h3>
-      <video
-        ref={localVideoRef}
-        autoPlay
-        playsInline
-        style={{ width: "100%", height: "auto" }}
-      />
+      <div>
+        <h3>Local Stream (Your screen)</h3>
+        <video ref={localVideoRef} autoPlay playsInline></video>
+      </div>
     </div>
   );
 };
