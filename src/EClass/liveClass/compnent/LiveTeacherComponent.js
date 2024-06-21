@@ -46,10 +46,12 @@ const LiveTeacherComponent = () => {
 
   useEffect(() => {
     if (stompClient && sessionIds.length > 0) {
+      const peerConnectionTemp = {};
+
       sessionIds.forEach((sessionId) => {
         const pc = new RTCPeerConnection();
-        peerConnections[sessionId] = pc;
-        setPeerConnections(peerConnections);
+        peerConnectionTemp[sessionId] = pc;
+        setPeerConnections(peerConnectionTemp);
 
         stompClient.connect({}, () => {
           console.log("Connected to STOMP");
