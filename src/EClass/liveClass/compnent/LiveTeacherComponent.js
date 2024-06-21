@@ -81,6 +81,38 @@ const LiveTeacherComponent = () => {
     };
   };
 
+  const startScreenShare = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getDisplayMedia({
+        video: { width: 1280, height: 720, frameRate: 15 },
+      });
+      localVideoRef.current.srcObject = stream;
+
+      Object.values(peerConnections).forEach((pc) => {
+        stream.getTracks().forEach((track) => {
+          pc.addTrack(track, stream);
+        });
+
+        pc.createOffer().then((offer) => {
+          pc.setLocalDescription(offer);
+          const sessionId = Object.keys(peerConnections).find(
+            (key) => peerConnections[key] === pc
+          );
+          if (sessionId) {
+            stompClients[sessionId].send(
+              `/app/sendOffer/${sessionId}`,
+              {},
+              JSON.stringify({ offer })
+            );
+          }
+        });
+      });
+    } catch (error) {
+      console.error("Error sharing screen:", error);
+      alert("Screen sharing is not supported on this device.");
+    }
+  };
+
   return (
     <div>
       <button onClick={startScreenShare}>Start Screen Share</button>
