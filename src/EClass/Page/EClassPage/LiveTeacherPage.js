@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
-import LiveTeacherComponent from "../../liveClass/compnent/LiveTeacherComponent";
+// import LiveTeacherComponent from "../../liveClass/compnent/LiveTeacherComponent";
+import TestTeacherComponent from "../../liveClass/compnent/TestTeacherComponent";
 
 let globalStompClient;
 
@@ -62,7 +63,8 @@ function LiveTeacherPage() {
   return (
     <>
       <button onClick={sendMessage}>Switch Student Page</button>
-      <LiveTeacherComponent />
+      {/* <LiveTeacherComponent /> */}
+      <TestTeacherComponent />
     </>
   );
 }

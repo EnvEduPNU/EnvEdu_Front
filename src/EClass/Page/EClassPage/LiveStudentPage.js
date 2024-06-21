@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 import DataInChartPage from "../../../Data/DataInChart/Page/DataInChartPage";
-import LiveStudentComponent from "../../liveClass/compnent/LiveStudentComponent";
+// import LiveStudentComponent from "../../liveClass/compnent/LiveStudentComponent";
+import TestStudentComponent from "../../liveClass/compnent/TestStudentComponent";
 
 function LiveStudentPage() {
   const [page, setPage] = useState("defaultPage");
@@ -33,7 +34,8 @@ function LiveStudentPage() {
     <div>
       {page === "newPage" ? <DataInChartPage /> : <DefaultPageComponent />}
 
-      <LiveStudentComponent />
+      {/* <LiveStudentComponent />/ */}
+      <TestStudentComponent />
     </div>
   );
 }

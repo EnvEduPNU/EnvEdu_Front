@@ -95,6 +95,7 @@ const LiveTeacherComponent = () => {
     }
   };
 
+  // 화면 공유 시작
   const startScreenShare = async () => {
     try {
       const stream = await navigator.mediaDevices.getDisplayMedia({
