@@ -67,6 +67,7 @@ const LiveStudentComponent = () => {
 
   useEffect(() => {
     if (peerConnection && stompClient && sessionId) {
+      console.log("Initializing STOMP client and PeerConnection");
       stompClient.connect({}, () => {
         stompClient.subscribe(`/topic/offer/${sessionId}`, (message) => {
           console.log("Received offer:", message.body);
@@ -79,8 +80,12 @@ const LiveStudentComponent = () => {
       });
 
       peerConnection.ontrack = (event) => {
-        console.log("Received remote stream");
+        console.log("Received remote stream", event.streams[0]);
         remoteVideoRef.current.srcObject = event.streams[0];
+        console.log(
+          "Video element srcObject set",
+          remoteVideoRef.current.srcObject
+        );
       };
 
       peerConnection.onicecandidate = (event) => {
