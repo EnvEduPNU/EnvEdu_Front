@@ -1,8 +1,6 @@
 import React, { useState } from "react";
-// import LiveTeacherComponent from "../../liveClass/compnent/LiveTeacherComponent";
-// import LiveStudentComponent from "../../liveClass/compnent/LiveStudentComponent";
-import TestTeacherComponent from "../../liveClass/compnent/TestTeacherComponent";
-import TestStudentComponent from "../../liveClass/compnent/TestStudentComponent";
+import LiveTeacherComponent from "../../liveClass/compnent/LiveTeacherComponent";
+import LiveStudentComponent from "../../liveClass/compnent/LiveStudentComponent";
 
 function EClassLivePage() {
   const role = localStorage.getItem("role");
@@ -14,18 +12,16 @@ function EClassLivePage() {
   return (
     <>
       {role === "ROLE_EDUCATOR" && (
-        // <LiveTeacherComponent
-        //   teacherSessionId={teacherSessionId}
-        //   studentSessionId={studentSessionId}
-        // />
-        <TestTeacherComponent />
+        <LiveTeacherComponent
+          teacherSessionId={teacherSessionId}
+          studentSessionId={studentSessionId}
+        />
       )}
       {role === "ROLE_STUDENT" && (
-        // <LiveStudentComponent
-        //   teacherSessionId={teacherSessionId}
-        //   studentSessionId={studentSessionId}
-        // />
-        <TestStudentComponent />
+        <LiveStudentComponent
+          teacherSessionId={teacherSessionId}
+          studentSessionId={studentSessionId}
+        />
       )}
     </>
   );
