@@ -128,7 +128,13 @@ const LiveStudentComponent = () => {
     <div>
       <div>
         <h3>Remote Stream (Shared screen)</h3>
-        <video ref={remoteVideoRef} autoPlay playsInline></video>
+        <video
+          ref={remoteVideoRef}
+          autoPlay
+          playsInline
+          width="640"
+          height="480"
+        ></video>
       </div>
     </div>
   );
