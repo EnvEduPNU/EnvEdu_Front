@@ -16,12 +16,7 @@ const LiveTeacherComponent = () => {
     });
 
     return () => {
-      if (stompClients.length > 0) {
-        stompClients.forEach((clientObj) => {
-          const [sessionId, client] = Object.entries(clientObj)[0];
-          client.disconnect();
-        });
-      }
+      stompClients.disconnect();
     };
   }, []);
 
