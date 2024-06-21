@@ -17,8 +17,10 @@ const LiveTeacherComponent = () => {
     });
 
     return () => {
-      if (client) {
-        client.disconnect();
+      if (stompClient) {
+        stompClient.forEach(({ sessionId, client }) => {
+          client.disconnect();
+        });
       }
     };
   }, []);
