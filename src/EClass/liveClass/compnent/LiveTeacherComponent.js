@@ -8,7 +8,6 @@ const LiveTeacherComponent = () => {
   const [stompClient, setStompClient] = useState(null);
   const [peerConnections, setPeerConnections] = useState({}); // 여러 PeerConnection 객체 관리
   const [sessionIds, setSessionIds] = useState([]); // 세션 ID 배열 상태
-  const [activeSessionId, setActiveSessionId] = useState(""); // 활성화된 세션 ID
 
   useEffect(() => {
     const token = localStorage.getItem("access_token").replace("Bearer ", "");
@@ -20,9 +19,6 @@ const LiveTeacherComponent = () => {
 
     fetchSessionIds().then((ids) => {
       setSessionIds(ids);
-      if (ids.length > 0) {
-        setActiveSessionId(ids[0]); // 첫 번째 세션을 활성 세션으로 설정
-      }
     });
 
     return () => {
@@ -63,10 +59,8 @@ const LiveTeacherComponent = () => {
         });
 
         pc.ontrack = (event) => {
-          if (sessionId === activeSessionId) {
-            console.log("Received remote stream from active session");
-            localVideoRef.current.srcObject = event.streams[0];
-          }
+          console.log("Received remote stream from active session");
+          localVideoRef.current.srcObject = event.streams[0];
         };
 
         pc.onicecandidate = (event) => {
@@ -98,9 +92,7 @@ const LiveTeacherComponent = () => {
         });
       });
 
-      if (activeSessionId) {
-        localVideoRef.current.srcObject = stream;
-      }
+      localVideoRef.current.srcObject = stream;
     } catch (error) {
       console.error("Error sharing screen:", error);
       alert("Screen sharing is not supported on this device.");
