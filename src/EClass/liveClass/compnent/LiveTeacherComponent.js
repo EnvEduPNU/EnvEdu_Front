@@ -6,9 +6,9 @@ import { customAxios } from "../../../Common/CustomAxios";
 const LiveTeacherComponent = () => {
   const localVideoRef = useRef(null);
   const [stompClient, setStompClient] = useState(null);
-  const [peerConnections, setPeerConnections] = useState({});
-  const [sessionIds, setSessionIds] = useState([]);
-  const [activeSessionId, setActiveSessionId] = useState("");
+  const [peerConnections, setPeerConnections] = useState({}); // 여러 PeerConnection 객체 관리
+  const [sessionIds, setSessionIds] = useState([]); // 세션 ID 배열 상태
+  const [activeSessionId, setActiveSessionId] = useState(""); // 활성화된 세션 ID
 
   useEffect(() => {
     const token = localStorage.getItem("access_token").replace("Bearer ", "");
@@ -21,7 +21,7 @@ const LiveTeacherComponent = () => {
     fetchSessionIds().then((ids) => {
       setSessionIds(ids);
       if (ids.length > 0) {
-        setActiveSessionId(ids[0]);
+        setActiveSessionId(ids[0]); // 첫 번째 세션을 활성 세션으로 설정
       }
     });
 
@@ -35,25 +35,24 @@ const LiveTeacherComponent = () => {
   const fetchSessionIds = async () => {
     try {
       const response = await customAxios.get("/api/sessions/get-session-ids");
-      console.log("받아온 세션들: " + response.data);
-      return response.data;
+      console.log("받아온 세션들 : " + response.data);
+      return response.data; // 세션 ID 배열 반환
     } catch (error) {
-      console.error("세션 ID를 가져오는 데 실패했습니다:", error);
-      alert("세션 ID를 가져오는 데 실패했습니다");
+      console.error("Failed to fetch session IDs:", error);
+      alert("Failed to fetch session IDs");
       return [];
     }
   };
 
   useEffect(() => {
     if (stompClient && sessionIds.length > 0) {
-      const newPeerConnections = {};
-
       sessionIds.forEach((sessionId) => {
         const pc = new RTCPeerConnection();
-        newPeerConnections[sessionId] = pc;
+        peerConnections[sessionId] = pc;
+        setPeerConnections(peerConnections);
 
         stompClient.connect({}, () => {
-          console.log(`STOMP에 연결됨: 세션 ${sessionId}`);
+          console.log("Connected to STOMP");
           stompClient.subscribe(`/topic/answer/${sessionId}`, (message) => {
             handleAnswer(JSON.parse(message.body), sessionId);
           });
@@ -64,7 +63,7 @@ const LiveTeacherComponent = () => {
 
         pc.ontrack = (event) => {
           if (sessionId === activeSessionId) {
-            console.log("활성 세션에서 원격 스트림 수신");
+            console.log("Received remote stream from active session");
             localVideoRef.current.srcObject = event.streams[0];
           }
         };
@@ -77,8 +76,6 @@ const LiveTeacherComponent = () => {
           }
         };
       });
-
-      setPeerConnections(newPeerConnections);
     }
   }, [stompClient, sessionIds]);
 
@@ -88,7 +85,7 @@ const LiveTeacherComponent = () => {
         video: { width: 1280, height: 720, frameRate: 15 },
       });
 
-      sessionIds.forEach((sessionId) => {
+      Object.keys(peerConnections).forEach((sessionId) => {
         const pc = peerConnections[sessionId];
         stream.getTracks().forEach((track) => pc.addTrack(track, stream));
 
@@ -102,20 +99,20 @@ const LiveTeacherComponent = () => {
         localVideoRef.current.srcObject = stream;
       }
     } catch (error) {
-      console.error("화면 공유 중 오류 발생:", error);
-      alert("이 장치에서는 화면 공유를 지원하지 않습니다.");
+      console.error("Error sharing screen:", error);
+      alert("Screen sharing is not supported on this device.");
     }
   };
 
   const sendSignal = (destination, message) => {
-    console.log(`신호를 ${destination}로 보냄:`, message);
+    console.log(`Sending signal to ${destination}:`, message);
     stompClient.send(destination, {}, JSON.stringify(message));
   };
 
   const handleAnswer = async (message, sessionId) => {
     const pc = peerConnections[sessionId];
     if (pc) {
-      console.log(`세션 ${sessionId}의 답변 처리 중`);
+      console.log(`Processing answer for session ${sessionId}`);
       await pc.setRemoteDescription(new RTCSessionDescription(message.answer));
     }
   };
@@ -123,16 +120,16 @@ const LiveTeacherComponent = () => {
   const handleCandidate = async (message, sessionId) => {
     const pc = peerConnections[sessionId];
     if (pc) {
-      console.log(`세션 ${sessionId}의 후보 처리 중`);
+      console.log(`Processing candidate for session ${sessionId}`);
       await pc.addIceCandidate(new RTCIceCandidate(message.candidate));
     }
   };
 
   return (
     <div>
-      <button onClick={startScreenShare}>화면 공유 시작</button>
+      <button onClick={startScreenShare}>Start Screen Share</button>
       <div>
-        <h3>로컬 스트림 (내 화면)</h3>
+        <h3>Local Stream (Your screen)</h3>
         <video ref={localVideoRef} autoPlay playsInline></video>
       </div>
     </div>
