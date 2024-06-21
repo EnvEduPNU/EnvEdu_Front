@@ -5,9 +5,10 @@ import { customAxios } from "../../../Common/CustomAxios";
 
 const LiveTeacherComponent = () => {
   const localVideoRef = useRef(null);
-  const [stompClient, setStompClient] = useState([]);
+  const [stompClients, setStompClients] = useState([]);
   const [peerConnections, setPeerConnections] = useState([]); // 여러 PeerConnection 객체 관리
   const [sessionIds, setSessionIds] = useState([]); // 세션 ID 배열 상태
+  const [activeSessionId, setActiveSessionId] = useState(""); // 활성화된 세션 ID
 
   useEffect(() => {
     // 1. 세션 아이디 들을 가져와서 각 세션 마다 소켓 생성
@@ -16,8 +17,9 @@ const LiveTeacherComponent = () => {
     });
 
     return () => {
-      if (stompClient) {
-        stompClient.forEach(({ sessionId, client }) => {
+      if (stompClients.length > 0) {
+        stompClients.forEach((clientObj) => {
+          const [sessionId, client] = Object.entries(clientObj)[0];
           client.disconnect();
         });
       }
@@ -26,12 +28,13 @@ const LiveTeacherComponent = () => {
 
   // 2. 각 세션의 소켓 마다 peerConnection 생성
   useEffect(() => {
-    if (stompClient.length > 0 && sessionIds.length > 0) {
-      const newPeerConnections = { ...peerConnections };
+    if (stompClients.length > 0 && sessionIds.length > 0) {
+      const newPeerConnections = [];
 
-      stompClient.forEach(({ sessionId, client }) => {
+      stompClients.forEach((clientObj) => {
+        const [sessionId, client] = Object.entries(clientObj)[0];
         const pc = new RTCPeerConnection();
-        newPeerConnections[sessionId] = pc;
+        newPeerConnections.push({ sessionId, pc });
 
         client.connect({}, () => {
           console.log(`Connected to STOMP for session: ${sessionId}`);
@@ -44,8 +47,10 @@ const LiveTeacherComponent = () => {
         });
 
         pc.ontrack = (event) => {
-          console.log("Received remote stream from active session");
-          localVideoRef.current.srcObject = event.streams[0];
+          if (sessionId === activeSessionId) {
+            console.log("Received remote stream from active session");
+            localVideoRef.current.srcObject = event.streams[0];
+          }
         };
 
         pc.onicecandidate = (event) => {
@@ -59,7 +64,7 @@ const LiveTeacherComponent = () => {
 
       setPeerConnections(newPeerConnections);
     }
-  }, [stompClient, sessionIds]);
+  }, [stompClients, sessionIds]);
 
   // db의 세션 아이디를 받아서 각 세션 마다 소켓 생성 메서드
   const fetchSessionIds = async () => {
@@ -83,7 +88,7 @@ const LiveTeacherComponent = () => {
         clientTemp.push(client);
       });
 
-      setStompClient(clientTemp);
+      setStompClients(clientTemp);
 
       return sessionIds;
     } catch (error) {
@@ -99,8 +104,7 @@ const LiveTeacherComponent = () => {
         video: { width: 1280, height: 720, frameRate: 15 },
       });
 
-      Object.keys(peerConnections).forEach((sessionId) => {
-        const pc = peerConnections[sessionId];
+      peerConnections.forEach(({ sessionId, pc }) => {
         stream.getTracks().forEach((track) => pc.addTrack(track, stream));
 
         pc.createOffer().then((offer) => {
@@ -109,7 +113,9 @@ const LiveTeacherComponent = () => {
         });
       });
 
-      localVideoRef.current.srcObject = stream;
+      if (activeSessionId) {
+        localVideoRef.current.srcObject = stream;
+      }
     } catch (error) {
       console.error("Error sharing screen:", error);
       alert("Screen sharing is not supported on this device.");
@@ -118,20 +124,29 @@ const LiveTeacherComponent = () => {
 
   const sendSignal = (destination, message) => {
     console.log(`Sending signal to ${destination}:`, message);
-    stompClient.send(destination, {}, JSON.stringify(message));
+    stompClients.forEach((clientObj) => {
+      const client = Object.values(clientObj)[0];
+      client.send(destination, {}, JSON.stringify(message));
+    });
   };
 
   const handleAnswer = async (message, sessionId) => {
-    const pc = peerConnections[sessionId];
-    if (pc) {
+    const connection = peerConnections.find(
+      (conn) => conn.sessionId === sessionId
+    );
+    if (connection) {
+      const { pc } = connection;
       console.log(`Processing answer for session ${sessionId}`);
       await pc.setRemoteDescription(new RTCSessionDescription(message.answer));
     }
   };
 
   const handleCandidate = async (message, sessionId) => {
-    const pc = peerConnections[sessionId];
-    if (pc) {
+    const connection = peerConnections.find(
+      (conn) => conn.sessionId === sessionId
+    );
+    if (connection) {
+      const { pc } = connection;
       console.log(`Processing candidate for session ${sessionId}`);
       await pc.addIceCandidate(new RTCIceCandidate(message.candidate));
     }
