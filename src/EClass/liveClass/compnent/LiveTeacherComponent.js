@@ -5,24 +5,15 @@ import { customAxios } from "../../../Common/CustomAxios";
 
 const LiveTeacherComponent = () => {
   const localVideoRef = useRef(null);
-  const [stompClient, setStompClient] = useState(null);
+  const [stompClient, setStompClient] = useState({});
   const [peerConnections, setPeerConnections] = useState({}); // 여러 PeerConnection 객체 관리
   const [sessionIds, setSessionIds] = useState([]); // 세션 ID 배열 상태
   const [activeSessionId, setActiveSessionId] = useState(""); // 활성화된 세션 ID
 
   useEffect(() => {
-    const token = localStorage.getItem("access_token").replace("Bearer ", "");
-    const socket = new SockJS(
-      `${process.env.REACT_APP_API_URL}/screen-share?token=${token}`
-    );
-    const client = Stomp.over(socket);
-    setStompClient(client);
-
+    // 1. 세션 아이디 들을 가져와서 각 세션 마다 소켓 생성
     fetchSessionIds().then((ids) => {
       setSessionIds(ids);
-      if (ids.length > 0) {
-        setActiveSessionId(ids[0]); // 첫 번째 세션을 활성 세션으로 설정
-      }
     });
 
     return () => {
@@ -32,34 +23,21 @@ const LiveTeacherComponent = () => {
     };
   }, []);
 
-  const fetchSessionIds = async () => {
-    try {
-      const response = await customAxios.get("/api/sessions/get-session-ids");
-      console.log("받아온 세션들 : " + response.data);
-      return response.data; // 세션 ID 배열 반환
-    } catch (error) {
-      console.error("Failed to fetch session IDs:", error);
-      alert("Failed to fetch session IDs");
-      return [];
-    }
-  };
-
+  // 2. 각 세션의 소켓 마다 peerConnection 생성
   useEffect(() => {
-    if (stompClient && sessionIds.length > 0) {
-      let peerConnectionTotal = [];
+    if (stompClient.length > 0 && sessionIds.length > 0) {
+      const newPeerConnections = { ...peerConnections };
 
-      sessionIds.forEach((sessionId) => {
+      stompClient.forEach(({ sessionId, client }) => {
         const pc = new RTCPeerConnection();
-        const peerConnectionTemp = {};
-        peerConnectionTemp[sessionId] = pc;
-        peerConnectionTotal.push(peerConnectionTemp);
+        newPeerConnections[sessionId] = pc;
 
-        stompClient.connect({}, () => {
-          console.log("Connected to STOMP");
-          stompClient.subscribe(`/topic/answer/${sessionId}`, (message) => {
+        client.connect({}, () => {
+          console.log(`Connected to STOMP for session: ${sessionId}`);
+          client.subscribe(`/topic/answer/${sessionId}`, (message) => {
             handleAnswer(JSON.parse(message.body), sessionId);
           });
-          stompClient.subscribe(`/topic/candidate/${sessionId}`, (message) => {
+          client.subscribe(`/topic/candidate/${sessionId}`, (message) => {
             handleCandidate(JSON.parse(message.body), sessionId);
           });
         });
@@ -80,9 +58,41 @@ const LiveTeacherComponent = () => {
         };
       });
 
-      setPeerConnections(peerConnectionTotal);
+      setPeerConnections(newPeerConnections);
     }
   }, [stompClient, sessionIds]);
+
+  // db의 세션 아이디를 받아서 각 세션 마다 소켓 생성 메서드
+  const fetchSessionIds = async () => {
+    try {
+      const response = await customAxios.get("/api/sessions/get-session-ids");
+      const sessionIds = response.data;
+
+      console.log("받아온 세션들 : " + sessionIds);
+
+      let clientTemp = [];
+
+      sessionIds.forEach((sessionId) => {
+        const token = localStorage
+          .getItem("access_token")
+          .replace("Bearer ", "");
+        const socket = new SockJS(
+          `${process.env.REACT_APP_API_URL}/screen-share?token=${token}`
+        );
+        const client = {};
+        client[sessionId] = Stomp.over(socket);
+        clientTemp.push(client);
+      });
+
+      setStompClient(clientTemp);
+
+      return sessionIds;
+    } catch (error) {
+      console.error("Failed to fetch session IDs:", error);
+      alert("Failed to fetch session IDs");
+      return [];
+    }
+  };
 
   const startScreenShare = async () => {
     try {
@@ -91,8 +101,6 @@ const LiveTeacherComponent = () => {
       });
 
       Object.keys(peerConnections).forEach((sessionId) => {
-        console.log("startScreenShare에서 session id : " + sessionId);
-
         const pc = peerConnections[sessionId];
         stream.getTracks().forEach((track) => pc.addTrack(track, stream));
 
