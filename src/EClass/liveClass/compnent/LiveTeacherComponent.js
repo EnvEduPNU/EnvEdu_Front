@@ -8,7 +8,6 @@ const LiveTeacherComponent = () => {
   const [stompClients, setStompClients] = useState([]);
   const [peerConnections, setPeerConnections] = useState([]); // 여러 PeerConnection 객체 관리
   const [sessionIds, setSessionIds] = useState([]); // 세션 ID 배열 상태
-  const [activeSessionId, setActiveSessionId] = useState(""); // 활성화된 세션 ID
 
   useEffect(() => {
     // 1. 세션 아이디 들을 가져와서 각 세션 마다 소켓 생성
@@ -47,10 +46,8 @@ const LiveTeacherComponent = () => {
         });
 
         pc.ontrack = (event) => {
-          if (sessionId === activeSessionId) {
-            console.log("Received remote stream from active session");
-            localVideoRef.current.srcObject = event.streams[0];
-          }
+          console.log("Received remote stream from active session");
+          localVideoRef.current.srcObject = event.streams[0];
         };
 
         pc.onicecandidate = (event) => {
@@ -113,9 +110,7 @@ const LiveTeacherComponent = () => {
         });
       });
 
-      if (activeSessionId) {
-        localVideoRef.current.srcObject = stream;
-      }
+      localVideoRef.current.srcObject = stream;
     } catch (error) {
       console.error("Error sharing screen:", error);
       alert("Screen sharing is not supported on this device.");
