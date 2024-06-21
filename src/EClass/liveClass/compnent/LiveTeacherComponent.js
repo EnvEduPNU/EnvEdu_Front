@@ -46,12 +46,13 @@ const LiveTeacherComponent = () => {
 
   useEffect(() => {
     if (stompClient && sessionIds.length > 0) {
-      const peerConnectionTemp = {};
+      let peerConnectionTotal = [];
 
       sessionIds.forEach((sessionId) => {
         const pc = new RTCPeerConnection();
+        const peerConnectionTemp = {};
         peerConnectionTemp[sessionId] = pc;
-        setPeerConnections(peerConnectionTemp);
+        peerConnectionTotal.push(peerConnectionTemp);
 
         stompClient.connect({}, () => {
           console.log("Connected to STOMP");
@@ -78,6 +79,8 @@ const LiveTeacherComponent = () => {
           }
         };
       });
+
+      setPeerConnections(peerConnectionTotal);
     }
   }, [stompClient, sessionIds]);
 
@@ -88,6 +91,8 @@ const LiveTeacherComponent = () => {
       });
 
       Object.keys(peerConnections).forEach((sessionId) => {
+        console.log("startScreenShare에서 session id : " + sessionId);
+
         const pc = peerConnections[sessionId];
         stream.getTracks().forEach((track) => pc.addTrack(track, stream));
 
