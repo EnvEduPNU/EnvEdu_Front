@@ -2,13 +2,13 @@ import React, { useEffect, useRef, useState } from "react";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 import { customAxios } from "../../../Common/CustomAxios";
-import { v4 as uuidv4 } from "uuid"; // UUID 패키지를 사용하여 세션 ID 생성
+import { v4 as uuidv4 } from "uuid";
 
 const LiveStudentComponent = () => {
   const remoteVideoRef = useRef(null);
   const [stompClient, setStompClient] = useState(null);
   const [peerConnection, setPeerConnection] = useState(null);
-  const [sessionId, setSessionId] = useState(""); // 세션 ID 상태 추가
+  const [sessionId, setSessionId] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("access_token").replace("Bearer ", "");
@@ -16,15 +16,14 @@ const LiveStudentComponent = () => {
       `${process.env.REACT_APP_API_URL}/screen-share?token=${token}`
     );
     const client = Stomp.over(socket);
-
-    const newSessionId = uuidv4(); // 새 세션 ID 생성
-
+    const newSessionId = uuidv4();
     console.log("세션 아이디 : ", newSessionId);
 
     setSessionId(newSessionId);
-    registerSessionId(newSessionId); // DB에 세션 ID 등록
+    registerSessionId(newSessionId);
 
     setStompClient(client);
+
     setPeerConnection(new RTCPeerConnection());
 
     return () => {
@@ -33,15 +32,12 @@ const LiveStudentComponent = () => {
           console.log("Disconnected from STOMP");
         });
       }
-
       console.log("세션 해제");
-      // 컴포넌트 해제 시 세션 아이디도 삭제해줌
       deleteSessionId(newSessionId);
       setSessionId("");
     };
   }, []);
 
-  // 세션 ID를 DB에 등록하는 함수
   const registerSessionId = async (sessionId) => {
     try {
       await customAxios.post("/api/sessions/register-session", {
@@ -53,7 +49,6 @@ const LiveStudentComponent = () => {
     }
   };
 
-  // 세션 ID를 DB에서 삭제하는 함수
   const deleteSessionId = async (sessionId) => {
     try {
       await customAxios.delete("/api/sessions/delete-session", {
@@ -82,10 +77,6 @@ const LiveStudentComponent = () => {
       peerConnection.ontrack = (event) => {
         console.log("Received remote stream", event.streams[0]);
         remoteVideoRef.current.srcObject = event.streams[0];
-        console.log(
-          "Video element srcObject set",
-          remoteVideoRef.current.srcObject
-        );
       };
 
       peerConnection.onicecandidate = (event) => {
@@ -110,17 +101,23 @@ const LiveStudentComponent = () => {
       new RTCSessionDescription(message.offer)
     );
     const answer = await peerConnection.createAnswer();
-    console.log("Created answer SDP:", answer);
     await peerConnection.setLocalDescription(answer);
+    console.log("Created answer SDP:", answer);
     sendSignal(`/app/sendAnswer/${sessionId}`, { answer });
   };
 
   const handleCandidate = async (message) => {
-    if (peerConnection) {
+    if (peerConnection && peerConnection.remoteDescription) {
       console.log("Received ICE candidate:", message.candidate);
       await peerConnection.addIceCandidate(
         new RTCIceCandidate(message.candidate)
       );
+    } else {
+      console.log(
+        "Remote description not set. Candidate saved for later:",
+        message.candidate
+      );
+      // 여기에 지연된 후보자를 추가하는 로직 구현 필요
     }
   };
 
