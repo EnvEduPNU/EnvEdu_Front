@@ -19,7 +19,7 @@ const LiveStudentComponent = () => {
 
     const newSessionId = uuidv4(); // 새 세션 ID 생성
 
-    console.log("세션 아이디 : {}", newSessionId);
+    console.log("세션 아이디 : ", newSessionId);
 
     setSessionId(newSessionId);
     registerSessionId(newSessionId); // DB에 세션 ID 등록
@@ -100,17 +100,19 @@ const LiveStudentComponent = () => {
   };
 
   const handleOffer = async (message) => {
+    console.log("Received offer SDP:", message.offer);
     await peerConnection.setRemoteDescription(
       new RTCSessionDescription(message.offer)
     );
     const answer = await peerConnection.createAnswer();
+    console.log("Created answer SDP:", answer);
     await peerConnection.setLocalDescription(answer);
     sendSignal(`/app/sendAnswer/${sessionId}`, { answer });
   };
 
   const handleCandidate = async (message) => {
     if (peerConnection) {
-      console.log("Adding ICE candidate");
+      console.log("Received ICE candidate:", message.candidate);
       await peerConnection.addIceCandidate(
         new RTCIceCandidate(message.candidate)
       );
