@@ -6,8 +6,10 @@ import { v4 as uuidv4 } from "uuid"; // UUID 패키지를 사용하여 세션 ID
 
 const LiveStudentComponent = () => {
   const remoteVideoRef = useRef(null);
-  const [stompClient, setStompClient] = useState(null);
-  const [peerConnection, setPeerConnection] = useState(null);
+  // const [stompClient, setStompClient] = useState(null);
+  // const [peerConnection, setPeerConnection] = useState(null);
+  const stompClient = useRef({});
+  const peerConnection = useRef({});
   const [sessionId, setSessionId] = useState(""); // 세션 ID 상태 추가
 
   useEffect(() => {
@@ -24,12 +26,14 @@ const LiveStudentComponent = () => {
     setSessionId(newSessionId);
     registerSessionId(newSessionId); // DB에 세션 ID 등록
 
-    setStompClient(client);
-    setPeerConnection(new RTCPeerConnection());
+    // setStompClient(client);
+    // setPeerConnection(new RTCPeerConnection());
+    stompClient.current = client;
+    peerConnection.current = new RTCPeerConnection();
 
     return () => {
-      if (client) {
-        client.disconnect(() => {
+      if (stompClient.current) {
+        stompClient.current.disconnect(() => {
           console.log("Disconnected from STOMP");
         });
       }
@@ -56,9 +60,7 @@ const LiveStudentComponent = () => {
   // 세션 ID를 DB에서 삭제하는 함수
   const deleteSessionId = async (sessionId) => {
     try {
-      await customAxios.delete("/api/sessions/delete-session", {
-        sessionId: sessionId,
-      });
+      await customAxios.delete(`/api/sessions/delete-session/${sessionId}`);
       console.log("Session ID deleted:", sessionId);
     } catch (error) {
       console.error("Error deleting session ID:", error);
@@ -66,24 +68,30 @@ const LiveStudentComponent = () => {
   };
 
   useEffect(() => {
-    if (peerConnection && stompClient && sessionId) {
-      stompClient.connect({}, () => {
-        stompClient.subscribe(`/topic/offer/${sessionId}`, (message) => {
-          console.log("Received offer:", message.body);
-          handleOffer(JSON.parse(message.body));
-        });
-        stompClient.subscribe(`/topic/candidate/${sessionId}`, (message) => {
-          console.log("Received candidate:", message.body);
-          handleCandidate(JSON.parse(message.body));
-        });
+    if (peerConnection.current && stompClient.current && sessionId) {
+      stompClient.current.connect({}, () => {
+        stompClient.current.subscribe(
+          `/topic/offer/${sessionId}`,
+          (message) => {
+            console.log("Received offer:", message.body);
+            handleOffer(JSON.parse(message.body));
+          }
+        );
+        stompClient.current.subscribe(
+          `/topic/candidate/${sessionId}`,
+          (message) => {
+            console.log("Received candidate:", message.body);
+            handleCandidate(JSON.parse(message.body));
+          }
+        );
       });
 
-      peerConnection.ontrack = (event) => {
+      peerConnection.current.ontrack = (event) => {
         console.log("Received remote stream");
         remoteVideoRef.current.srcObject = event.streams[0];
       };
 
-      peerConnection.onicecandidate = (event) => {
+      peerConnection.current.onicecandidate = (event) => {
         if (event.candidate) {
           console.log("Sending ICE candidate");
           sendSignal(`/app/sendCandidate/${sessionId}`, {
@@ -92,26 +100,26 @@ const LiveStudentComponent = () => {
         }
       };
     }
-  }, [peerConnection, stompClient, sessionId]);
+  }, [peerConnection.current, stompClient.current, sessionId]);
 
   const sendSignal = (destination, message) => {
     console.log(`Sending signal to ${destination}:`, message);
-    stompClient.send(destination, {}, JSON.stringify(message));
+    stompClient.current.send(destination, {}, JSON.stringify(message));
   };
 
   const handleOffer = async (message) => {
-    await peerConnection.setRemoteDescription(
+    await peerConnection.current.setRemoteDescription(
       new RTCSessionDescription(message.offer)
     );
-    const answer = await peerConnection.createAnswer();
-    await peerConnection.setLocalDescription(answer);
+    const answer = await peerConnection.current.createAnswer();
+    await peerConnection.current.setLocalDescription(answer);
     sendSignal(`/app/sendAnswer/${sessionId}`, { answer });
   };
 
   const handleCandidate = async (message) => {
-    if (peerConnection) {
+    if (peerConnection.current) {
       console.log("Adding ICE candidate");
-      await peerConnection.addIceCandidate(
+      await peerConnection.current.addIceCandidate(
         new RTCIceCandidate(message.candidate)
       );
     }
