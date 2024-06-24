@@ -8,6 +8,7 @@ import { useGraphDataStore } from "../store/graphStore";
 const StyledDiv = styled.div`
   display: flex;
   padding: 0;
+  width: 100%;
 `;
 
 // Data & Chart 메인 페이지
