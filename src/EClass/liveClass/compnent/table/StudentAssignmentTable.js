@@ -368,10 +368,6 @@ export default function StudentAssignmentTable() {
               },
             }}
           />
-
-          <button style={{ width: "30%", height: "80%", margin: "0 10px 0 0" }}>
-            과제선택
-          </button>
         </div>
       </Paper>
     </Box>

@@ -170,6 +170,7 @@ const LiveStudentComponent = () => {
         <button style={{ margin: "10px 0 0 10px ", width: "20%" }}>
           과제 시작
         </button>
+        <button style={{ margin: "10px 0 0 10px ", width: "20%" }}>제출</button>
       </div>
     </>
   );
