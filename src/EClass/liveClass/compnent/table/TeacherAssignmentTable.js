@@ -22,6 +22,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
 import { DisabledByDefault } from "@mui/icons-material";
+import LiveTeacherPage from "../../page/LiveTeacherPage";
 
 function createData(id, name, calories, fat) {
   return {
@@ -369,9 +370,13 @@ export default function TeacherAssignmentTable() {
             }}
           />
 
-          <button style={{ width: "30%", height: "80%", margin: "0 10px 0 0" }}>
+          {/* <button
+            style={{ width: "30%", height: "80%", margin: "0 10px 0 0" }}
+            onClick={<LiveTeacherPage />}
+          >
             과제선택
-          </button>
+          </button> */}
+          <LiveTeacherPage />
         </div>
       </Paper>
     </Box>

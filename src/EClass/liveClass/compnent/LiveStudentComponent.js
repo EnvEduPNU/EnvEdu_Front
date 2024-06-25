@@ -5,6 +5,7 @@ import { customAxios } from "../../../Common/CustomAxios";
 import { v4 as uuidv4 } from "uuid"; // UUID 패키지를 사용하여 세션 ID 생성
 import StudentAssignmentTable from "./table/StudentAssignmentTable";
 import StudentAssignmentCheckTable from "./table/StudentAssignmentCheckTable";
+import LiveStudentPage from "../page/LiveStudentPage";
 
 const LiveStudentComponent = () => {
   const remoteVideoRef = useRef(null);
@@ -150,21 +151,7 @@ const LiveStudentComponent = () => {
         {" "}
         <h2>{"[ step2 ]"}</h2>
         <div style={{ border: "1px solid grey" }}>
-          {/* {sessionIdCheck.current === true ? (
-      ""
-    ) : (
-      <div
-        style={{
-          display: "flex", // Flexbox 레이아웃 사용
-          justifyContent: "center", // 수평 중앙 정렬
-          alignItems: "center", // 수직 중앙 정렬
-          minHeight: "430px", // 최소 높이 설정
-          width: "100%", // 너비 100%
-        }}
-      >
-        <Typography variant="h6">수업 시작 전입니다.</Typography>
-    )} */}
-
+          <LiveStudentPage />
           <video ref={remoteVideoRef} autoPlay playsInline></video>
         </div>
         <button style={{ margin: "10px 0 0 10px ", width: "20%" }}>

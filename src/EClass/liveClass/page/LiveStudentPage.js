@@ -34,8 +34,6 @@ function LiveStudentPage() {
   return (
     <div>
       {page === "newPage" ? <DataInChartPage /> : <DefaultPageComponent />}
-
-      <LiveStudentComponent />
     </div>
   );
 }
@@ -45,7 +43,7 @@ function NewPageComponent() {
 }
 
 function DefaultPageComponent() {
-  return <h1>Default Page</h1>;
+  return <></>;
 }
 
 export default LiveStudentPage;

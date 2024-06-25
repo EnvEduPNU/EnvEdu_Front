@@ -251,9 +251,6 @@ const LiveTeacherComponent = () => {
         >
           화면 공유
         </button>
-        <button style={{ margin: "10px 0 0 10px ", width: "20%" }}>
-          과제 시작
-        </button>
       </div>
     </>
   );
