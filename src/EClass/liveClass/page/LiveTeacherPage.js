@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
-import LiveTeacherComponent from "../../liveClass/compnent/LiveTeacherComponent";
+import LiveTeacherComponent from "../compnent/LiveTeacherComponent";
 
 let globalStompClient;
 
+// 학생의 화면을 바꾸게 할 수 있는 소켓 통신이 있는 페이지
+// 나중에 필요한 기능만 추출해서 LiveTeacherComponent에 적용하기
 function LiveTeacherPage() {
   useEffect(() => {
     // SockJS 연결 설정

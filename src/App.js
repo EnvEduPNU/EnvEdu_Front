@@ -62,7 +62,7 @@ import ViewReward from "./Education/Survey/Respondent/ViewReward";
 import ViewResponse from "./Education/Survey/Admin/ViewResponse";
 
 import { useNavigate } from "react-router-dom";
-import EClassLivePage from "./EClass/Page/EClassPage/EClassLivePage";
+import EClassLivePage from "./EClass/liveClass/page/EClassLivePage";
 
 function App() {
   const navigate = useNavigate();

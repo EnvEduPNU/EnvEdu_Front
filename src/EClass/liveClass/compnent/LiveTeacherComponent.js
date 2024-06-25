@@ -2,6 +2,9 @@ import React, { useEffect, useRef, useState } from "react";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 import { customAxios } from "../../../Common/CustomAxios";
+import TeacherAssignmentTable from "./table/TeacherAssignmentTable";
+import TeacherAssignmentCheckTable from "./table/TeacherAssignmentCheckTable";
+import { Typography } from "@mui/material";
 
 const LiveTeacherComponent = () => {
   const localVideoRef = useRef(null);
@@ -91,7 +94,7 @@ const LiveTeacherComponent = () => {
         }
 
         if (message.includes("퇴장")) {
-          alert("학생이 감히 퇴장 했습니다.");
+          alert("학생이 퇴장 했습니다.");
         }
       });
     });
@@ -213,13 +216,46 @@ const LiveTeacherComponent = () => {
   };
 
   return (
-    <div>
-      <button onClick={startScreenShare}>Start Screen Share</button>
-      <div>
-        <h3>Local Stream (Your screen)</h3>
-        <video ref={localVideoRef} autoPlay playsInline></video>
+    <>
+      {/* 수업 셋리스트 & step 제출 리스트 블럭 */}
+      <div style={{ width: "25%", marginRight: "30px" }}>
+        <TeacherAssignmentTable />
+        <TeacherAssignmentCheckTable />
       </div>
-    </div>
+
+      {/* 화면 공유 블럭 */}
+      <div style={{ display: "inline-block", width: "100%", height: "100%" }}>
+        {" "}
+        <h2>{"[ step2 ]"}</h2>
+        <div style={{ border: "1px solid grey" }}>
+          {/* {sessionIdCheck.current === true ? (
+            ""
+          ) : (
+            <div
+              style={{
+                display: "flex", // Flexbox 레이아웃 사용
+                justifyContent: "center", // 수평 중앙 정렬
+                alignItems: "center", // 수직 중앙 정렬
+                minHeight: "430px", // 최소 높이 설정
+                width: "100%", // 너비 100%
+              }}
+            >
+              <Typography variant="h6">수업 시작 전입니다.</Typography>
+          )} */}
+
+          <video ref={localVideoRef} autoPlay playsInline></video>
+        </div>
+        <button
+          onClick={startScreenShare}
+          style={{ margin: "10px 0 ", width: "20%" }}
+        >
+          화면 공유
+        </button>
+        <button style={{ margin: "10px 0 0 10px ", width: "20%" }}>
+          과제 시작
+        </button>
+      </div>
+    </>
   );
 };
 
