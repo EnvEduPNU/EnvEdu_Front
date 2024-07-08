@@ -35,6 +35,7 @@ export const CreateLectureSourcePage = (props) => {
 
           await customAxios.post("/api/steps/saveLectureContent", payload);
           alert("저장 요청이 완료되었습니다.");
+          window.location.reload();
         } else {
           console.log("데이터 로드중");
         }

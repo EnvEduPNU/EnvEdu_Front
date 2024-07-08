@@ -12,12 +12,16 @@ import {
   InputLabel,
   FormControl,
   Button,
+  IconButton,
 } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const MyData = () => {
   const [summary, setSummary] = useState([]);
   const [lectureSummary, setLectureSummary] = useState([]);
   const [showWordProcessor, setShowWordProcessor] = useState(false);
+
+  const [myDataTable, setMyDataTable] = useState(false);
   const [dataType, setDataType] = useState(null);
   const [dataId, setDataId] = useState(null);
 
@@ -75,12 +79,16 @@ const MyData = () => {
 
   const getTable = (type, id) => {
     setShowWordProcessor(false);
+    setMyDataTable(true);
+
     setDataType(type);
     setDataId(id);
   };
 
   const getLectureDataTable = (stepName, stepCount, contents) => {
     setShowWordProcessor(false);
+    setMyDataTable(false);
+
     setStepName(stepName);
     setStepCountLoad(stepCount);
     setStepContents(contents);
@@ -97,6 +105,19 @@ const MyData = () => {
   const handleModalConfirm = () => {
     setOpenModal(false);
     setShowWordProcessor(true);
+  };
+
+  const handleDeleteLecture = async (index, stepName) => {
+    try {
+      await customAxios.delete(`/api/steps/deleteLectureContent/${stepName}`);
+      const updatedLectures = [...lectureSummary];
+      updatedLectures.splice(index, 1);
+      setLectureSummary(updatedLectures);
+      alert("수업 자료가 성공적으로 삭제되었습니다.");
+    } catch (error) {
+      console.error("Error deleting lecture:", error);
+      alert("수업 자료 삭제 중 오류가 발생했습니다.");
+    }
   };
 
   return (
@@ -157,8 +178,9 @@ const MyData = () => {
               <table className="summary-table">
                 <thead>
                   <tr>
-                    <th key="saveDate">순번</th>
-                    <th key="dataLabel">수업 이름</th>
+                    <th key="index">순번</th>
+                    <th key="stepName">수업 이름</th>
+                    <th key="delete">삭제</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -172,9 +194,22 @@ const MyData = () => {
                           item.contents
                         )
                       }
+                      s
                     >
                       <td>{index}</td>
                       <td>{item.stepName}</td>
+                      <td>
+                        <IconButton
+                          onClick={() =>
+                            handleDeleteLecture(index, item.stepName)
+                          }
+                          aria-label="delete"
+                          color="secondary"
+                          sx={{ width: "30px" }}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -205,8 +240,10 @@ const MyData = () => {
           />
         ) : (
           <>
-            {dataType && dataId && <DataTable type={dataType} id={dataId} />}
-            {stepName && (
+            {myDataTable && dataType && dataId && (
+              <DataTable type={dataType} id={dataId} />
+            )}
+            {!myDataTable && stepName && (
               <>
                 {console.log(
                   "컨텐츠 내용 " + JSON.stringify(stepContents, null, 2)

@@ -15,6 +15,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import DataTableButton from "./button/DataTableButton";
 import { customAxios } from "../../../../Common/CustomAxios";
 import { useCreateLectureSourceStore } from "../../store/CreateLectureSourceStore";
+import { DndProvider, useDrag, useDrop } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 Quill.register("modules/imageActions", ImageActions);
 Quill.register("modules/imageFormats", ImageFormats);
@@ -52,7 +54,6 @@ const formats = [
   "height",
   "width",
 ];
-
 export default function TeacherWordProcessor({
   summary,
   lectureName,
@@ -65,6 +66,7 @@ export default function TeacherWordProcessor({
   const [contentName, setContentName] = useState("");
   const { contents, addContent, updateContent } = useCreateLectureSourceStore();
   const [isEditing, setIsEditing] = useState(false);
+  const [addTableFlag, setAddTableFlag] = useState(false);
 
   useEffect(() => {
     // activeStep이 변경될 때마다 localContents를 초기화
@@ -234,6 +236,8 @@ export default function TeacherWordProcessor({
         ...localContents,
         { type: "data", content: tableContent },
       ]);
+
+      setAddTableFlag(true);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -297,25 +301,36 @@ export default function TeacherWordProcessor({
         return null;
       }
     };
+    let parsedContent = null;
 
-    const parsedContent = parseContent(content);
+    if (addTableFlag) {
+      parsedContent = content;
+    } else {
+      parsedContent = parseContent(content);
+    }
+
+    if (
+      !parsedContent ||
+      !parsedContent.props ||
+      !parsedContent.props.children
+    ) {
+      return <div>Invalid content</div>;
+    }
 
     const dataContent =
       parsedContent.props.children.props.children.props.children;
+
+    if (!Array.isArray(dataContent) || dataContent.length < 1) {
+      return <div>Invalid data content</div>;
+    }
 
     const headers = dataContent[0].props.children.props.children.map(
       (header) => header.key
     );
 
-    // const body = dataContent[1].props.children.map(
-    //   (body) => body.props.children
-    // );
-
     const body = dataContent[1].props.children.map((body) =>
       body.props.children.map((node) => node.props.children)
     );
-
-    console.log("확인스 : " + JSON.stringify(body, null, 2));
 
     return (
       <div style={{ width: "auto", overflowX: "auto" }}>
@@ -371,219 +386,281 @@ export default function TeacherWordProcessor({
     );
   };
 
-  return (
-    <Container>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-        }}
-      >
-        <Typography
-          sx={{
-            fontSize: "3vh",
-            padding: "20px 0 0 0 ",
-          }}
-        >
-          {lectureName}
-        </Typography>
-      </div>
-      <div style={{ display: "flex", alignItems: "center", marginBottom: 16 }}>
-        <TextField
-          label="콘텐츠 이름"
-          value={contentName}
-          onChange={(e) => setContentName(e.target.value)}
-          variant="outlined"
-          fullWidth
-          sx={{ marginRight: 2 }}
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleAddTitle}
-          sx={{ height: "56px" }} // TextField와 버튼 높이를 맞춤
-        >
-          제목 추가
-        </Button>
-      </div>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          width: "70rem",
-          height: "36.5rem",
-        }}
-      >
-        {/* 왼쪽에 과제 만드는 미리보기란에 랜더링 되는 곳 */}
-        <Paper
-          style={{
-            padding: 20,
-            width: "100%",
-            height: "100%",
-            boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
-            overflowY: "auto",
-          }}
-        >
-          {localContents.map((item, index) => (
-            <div key={index} style={{ position: "relative", margin: "10px 0" }}>
-              {item.type === "html" ? (
-                <div style={{ display: "flex", flexDirection: "row" }}>
-                  <div
-                    style={{ whiteSpace: "pre-wrap" }}
-                    dangerouslySetInnerHTML={{ __html: item.content }}
-                  />
-                  <IconButton
-                    onClick={() => handleDeleteContent(index)}
-                    aria-label="delete"
-                    color="secondary"
-                    sx={{ width: "30px" }}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </div>
-              ) : item.type === "textBox" ? (
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    position: "relative",
-                    width: "100%",
-                  }}
-                >
-                  <TextField
-                    value={item.content}
-                    onChange={(event) => handleTextBoxChange(index, event)}
-                    variant="outlined"
-                    fullWidth
-                    multiline
-                    minRows={5}
-                    maxRows={10}
-                  />
-                  <IconButton
-                    onClick={() => handleDeleteContent(index)}
-                    aria-label="delete"
-                    color="secondary"
-                    sx={{ width: "30px" }}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </div>
-              ) : item.type === "title" ? (
-                <Typography variant="h4" sx={{ marginBottom: 2 }}>
-                  {item.content}
-                </Typography>
-              ) : item.type === "data" ? (
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    position: "relative",
-                    width: "100%",
-                  }}
-                >
-                  <DataTableLoad content={item.content} />
-                  <IconButton
-                    onClick={() => handleDeleteContent(index)}
-                    aria-label="delete"
-                    color="secondary"
-                    sx={{ width: "30px" }}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </div>
-              ) : null}
-            </div>
-          ))}
-        </Paper>
+  const DraggableItem = ({
+    item,
+    index,
+    moveItem,
+    handleDeleteContent,
+    handleTextBoxChange,
+  }) => {
+    const ref = React.useRef(null);
+    const [, drop] = useDrop({
+      accept: "content",
+      hover: (draggedItem) => {
+        if (draggedItem.index !== index) {
+          moveItem(draggedItem.index, index);
+          draggedItem.index = index;
+        }
+      },
+    });
 
-        {/* 오른쪽 WordProcessor 편집창 */}
-        <ReactQuill
-          value={value}
-          style={{ width: "55%", height: "88%", margin: "0 0 0 10px" }}
-          onChange={setValue}
-          modules={modules}
-          formats={formats}
-          placeholder="내용을 입력하세요..."
-        />
-      </div>
+    const [{ isDragging }, drag] = useDrag({
+      type: "content",
+      item: { index },
+      collect: (monitor) => ({
+        isDragging: monitor.isDragging(),
+      }),
+    });
+
+    drag(drop(ref));
+
+    return (
       <div
+        ref={ref}
         style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
+          opacity: isDragging ? 0.5 : 1,
+          position: "relative",
+          margin: "10px 0",
         }}
       >
+        {item.type === "html" ? (
+          <div style={{ display: "flex", flexDirection: "row" }}>
+            <div
+              style={{ whiteSpace: "pre-wrap" }}
+              dangerouslySetInnerHTML={{ __html: item.content }}
+            />
+            <IconButton
+              onClick={() => handleDeleteContent(index)}
+              aria-label="delete"
+              color="secondary"
+              sx={{ width: "30px" }}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </div>
+        ) : item.type === "textBox" ? (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              position: "relative",
+              width: "100%",
+            }}
+          >
+            <TextField
+              value={item.content}
+              onChange={(event) => handleTextBoxChange(index, event)}
+              variant="outlined"
+              fullWidth
+              multiline
+              minRows={5}
+              maxRows={10}
+            />
+            <IconButton
+              onClick={() => handleDeleteContent(index)}
+              aria-label="delete"
+              color="secondary"
+              sx={{ width: "30px" }}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </div>
+        ) : item.type === "title" ? (
+          <Typography variant="h4" sx={{ marginBottom: 2 }}>
+            {item.content}
+          </Typography>
+        ) : item.type === "data" ? (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              position: "relative",
+              width: "100%",
+            }}
+          >
+            <DataTableLoad content={item.content} />
+            <IconButton
+              onClick={() => handleDeleteContent(index)}
+              aria-label="delete"
+              color="secondary"
+              sx={{ width: "30px" }}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </div>
+        ) : null}
+      </div>
+    );
+  };
+
+  const moveItem = (dragIndex, hoverIndex) => {
+    const draggedItem = localContents[dragIndex];
+    const newContents = [...localContents];
+    newContents.splice(dragIndex, 1);
+    newContents.splice(hoverIndex, 0, draggedItem);
+    setLocalContents(newContents);
+  };
+
+  return (
+    <DndProvider backend={HTML5Backend}>
+      <Container>
         <div
           style={{
             display: "flex",
-            justifyContent: "flex-start",
-            width: "30%",
+            flexDirection: "row",
+            justifyContent: "space-between",
           }}
         >
-          {/* 데이터 추가하기 버튼 */}
-          <DataTableButton summary={summary} onSelectData={handleSelectData} />
-
+          <Typography
+            sx={{
+              fontSize: "3vh",
+              padding: "20px 0 0 0 ",
+            }}
+          >
+            {lectureName}
+          </Typography>
+        </div>
+        <div
+          style={{ display: "flex", alignItems: "center", marginBottom: 16 }}
+        >
+          <TextField
+            label="콘텐츠 이름"
+            value={contentName}
+            onChange={(e) => setContentName(e.target.value)}
+            variant="outlined"
+            fullWidth
+            sx={{ marginRight: 2 }}
+          />
           <Button
             variant="contained"
             color="primary"
-            onClick={handleAddTextBox}
-            sx={{ margin: "20px 10px 0 10px", width: "50%" }}
+            onClick={handleAddTitle}
+            sx={{ height: "56px" }} // TextField와 버튼 높이를 맞춤
           >
-            답변 박스 추가
+            제목 추가
           </Button>
         </div>
         <div
           style={{
             display: "flex",
-            justifyContent: "flex-end",
-            margin: "20px 0 0 0",
+            flexDirection: "row",
+            width: "70rem",
+            height: "36.5rem",
           }}
         >
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSave}
-            sx={{ width: "100%" }}
+          {/* 왼쪽에 과제 만드는 미리보기란에 랜더링 되는 곳 */}
+          <Paper
+            style={{
+              padding: 20,
+              width: "100%",
+              height: "100%",
+              boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
+              overflowY: "auto",
+            }}
           >
-            포함하기
-          </Button>
+            {localContents.map((item, index) => (
+              <DraggableItem
+                key={index}
+                index={index}
+                item={item}
+                moveItem={moveItem}
+                handleDeleteContent={handleDeleteContent}
+                handleTextBoxChange={handleTextBoxChange}
+              />
+            ))}
+          </Paper>
 
-          {isEditing ? (
-            // 다음 단계라고 써있지만 사실상 수정하기
+          {/* 오른쪽 WordProcessor 편집창 */}
+          <ReactQuill
+            value={value}
+            style={{ width: "55%", height: "88%", margin: "0 0 0 10px" }}
+            onChange={setValue}
+            modules={modules}
+            formats={formats}
+            placeholder="내용을 입력하세요..."
+          />
+        </div>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-start",
+              width: "30%",
+            }}
+          >
+            {/* 데이터 추가하기 버튼 */}
+            <DataTableButton
+              summary={summary}
+              onSelectData={handleSelectData}
+            />
+
             <Button
               variant="contained"
-              color="secondary"
-              onClick={handleNext}
-              sx={{ width: "100%", marginLeft: "10px" }}
+              color="primary"
+              onClick={handleAddTextBox}
+              sx={{ margin: "20px 10px 0 10px", width: "50%" }}
             >
-              다음단계
+              답변 박스 추가
             </Button>
-          ) : (
-            <>
-              {stepCount == activeStep ? (
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={handleNext}
-                  sx={{ width: "100%", marginLeft: "10px" }}
-                >
-                  Finish
-                </Button>
-              ) : (
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={handleNext}
-                  sx={{ width: "100%", marginLeft: "10px" }}
-                >
-                  다음 단계
-                </Button>
-              )}
-            </>
-          )}
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              margin: "20px 0 0 0",
+            }}
+          >
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSave}
+              sx={{ width: "100%" }}
+            >
+              포함하기
+            </Button>
+
+            {isEditing ? (
+              // 다음 단계라고 써있지만 사실상 수정하기
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={handleNext}
+                sx={{ width: "100%", marginLeft: "10px" }}
+              >
+                다음단계
+              </Button>
+            ) : (
+              <>
+                {stepCount === activeStep ? (
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={handleNext}
+                    sx={{ width: "100%", marginLeft: "10px" }}
+                  >
+                    Finish
+                  </Button>
+                ) : (
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={handleNext}
+                    sx={{ width: "100%", marginLeft: "10px" }}
+                  >
+                    다음 단계
+                  </Button>
+                )}
+              </>
+            )}
+          </div>
         </div>
-      </div>
-    </Container>
+      </Container>
+    </DndProvider>
   );
 }
