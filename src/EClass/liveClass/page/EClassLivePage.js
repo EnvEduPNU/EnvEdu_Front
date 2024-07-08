@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import LiveTeacherComponent from "../compnent/LiveTeacherComponent";
-import LiveStudentComponent from "../compnent/LiveStudentComponent";
+import React from "react";
+import { LiveTeacherPage } from "./LiveTeacherPage";
+import LiveStudentComponent from "../student/component/LiveStudentComponent";
 import styled from "@emotion/styled";
 
 const StyledDiv = styled.div`
   display: flex;
-  margin: 30px;
-  width: 90%;
+  margin: 0 0 0 10px;
+  width: 100%;
 `;
 
 // E-Class 화면 공유 페이지
@@ -17,7 +17,7 @@ function EClassLivePage() {
 
   return (
     <StyledDiv>
-      {role === "ROLE_EDUCATOR" && <LiveTeacherComponent />}
+      {role === "ROLE_EDUCATOR" && <LiveTeacherPage />}
       {role === "ROLE_STUDENT" && <LiveStudentComponent />}
     </StyledDiv>
   );

@@ -2,6 +2,8 @@
   display: flex;
 
   .myData-left {
+    margin: 0 2rem 0 2rem;
+
     .yellow-btn {
       font-weight: 600;
       background: #f3b634;
@@ -11,15 +13,17 @@
       width: 10rem;
       //border: none;
     }
+
     /*folder*/
     .myData-folder {
       //overflow-y: scroll;
+      display: flex;
+      flex-direction: column;
       border-radius: 0.625rem;
       border: 1px solid #d1d1d1;
       box-shadow: 3px 3px 10px 0px rgba(0, 0, 0, 0.125);
       //width: 20%;
       //height: 20rem;
-      padding: 1rem 0.5rem;
     }
 
     /*데이터 요약 정보*/
@@ -39,18 +43,22 @@
         width: 100%;
         border-collapse: collapse;
         border: 1px solid #ddd;
+
         th,
         td {
           border: 1px solid #ddd;
           padding: 8px;
           text-align: center;
         }
+
         th {
           background-color: #fdeecf;
         }
+
         tr:nth-child(even) {
           background-color: #f2f2f2;
         }
+
         tr:hover {
           background-color: #ccc;
           cursor: pointer;
@@ -60,9 +68,8 @@
   }
 
   .myData-right {
-    flex: 1;
-    overflow-y: scroll;
-    margin-left: 2rem;
+    margin: 0 2rem 0 2rem;
+
     .excel-download {
       border: none;
       border-radius: 0.3125rem;
@@ -70,54 +77,68 @@
       background: #f3b634;
       font-weight: 600;
     }
+
     .myData-detail {
       //font-size: 0.8em;
       margin-top: 0.5rem;
       width: 100%;
       border-collapse: collapse;
       border: 1px solid #ddd;
+
       th,
       td {
         border: 1px solid #ddd;
         padding: 8px;
         text-align: center;
       }
+
       th {
         background-color: #fdeecf;
       }
+
       tr:nth-child(even) {
         background-color: #f2f2f2;
       }
+
       tr:hover {
         background-color: #ccc;
         cursor: pointer;
       }
+
       input[type="checkbox"] {
         accent-color: #f3b634;
       }
     }
+
     .myData-detail-empty {
       //font-size: 0.8em;
       margin-top: 0.5rem;
       width: 100%;
+      height: 20rem;
+
       border-collapse: collapse;
       border: 1px solid #ddd;
+
       th,
       td {
         border: 1px solid #ddd;
         padding: 20px;
         text-align: center;
       }
+
       th {
         background-color: #fdeecf;
       }
+
       tr:nth-child(even) {
         background-color: #f2f2f2;
       }
+
       tr:hover {
         background-color: #ccc;
         cursor: pointer;
       }
+
       input[type="checkbox"] {
         accent-color: #f3b634;
       }
