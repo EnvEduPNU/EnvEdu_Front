@@ -45,9 +45,9 @@ customAxios.interceptors.response.use(
   },
   function (error) {
     if (error.response.request.status === RESPONSE_UNAUTHORIZED) {
-      alert("로그인 해주세요");
-      window.location.reload();
-      localStorage.clear();
+      alert("요청이 거절되었습니다.");
+      // window.location.reload();
+      // localStorage.clear();
     } else if (error.response.request.status === RESPONSE_FORBIDDEN) {
       alert("권한이 없습니다");
     } else if (error.response.request.status === RESPONSE_BAD_REQ) {

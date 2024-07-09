@@ -114,6 +114,7 @@ const MyData = () => {
       updatedLectures.splice(index, 1);
       setLectureSummary(updatedLectures);
       alert("수업 자료가 성공적으로 삭제되었습니다.");
+      window.location.reload();
     } catch (error) {
       console.error("Error deleting lecture:", error);
       alert("수업 자료 삭제 중 오류가 발생했습니다.");
