@@ -15,6 +15,7 @@ import {
   IconButton,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import MultiTablePage from "./MultiTablePage";
 
 const MyData = () => {
   const [summary, setSummary] = useState([]);
@@ -133,9 +134,7 @@ const MyData = () => {
               margin: "10px",
               backgroundColor: "white",
             }}
-            onClick={() =>
-              console.log("여기에 My Data 메인으로 가는 부분 넣기")
-            }
+            onClick={() => window.location.reload()}
           >
             My Data
           </button>
@@ -244,6 +243,7 @@ const MyData = () => {
             {myDataTable && dataType && dataId && (
               <DataTable type={dataType} id={dataId} />
             )}
+
             {!myDataTable && stepName && (
               <>
                 {console.log(
@@ -257,6 +257,12 @@ const MyData = () => {
                   eClassType={eClassType}
                 />
               </>
+            )}
+
+            {!myDataTable && !stepName && (
+              <div>
+                <MultiTablePage />
+              </div>
             )}
           </>
         )}
