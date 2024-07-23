@@ -14,6 +14,7 @@ const LiveStudentComponent = () => {
   const sessionId = useRef("");
   const [sessionIdState, setSessionIdState] = useState("");
   const [finished, setFinished] = useState(false);
+  const iceConnectionCheckInterval = useRef(null);
 
   useEffect(() => {
     const initializeSession = async () => {
@@ -36,6 +37,12 @@ const LiveStudentComponent = () => {
 
     initializeSession();
 
+    const handleBeforeUnload = async () => {
+      await deleteSessionId(sessionId.current);
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
     return () => {
       if (stompClient.current) {
         stompClient.current.disconnect(() => {
@@ -44,6 +51,13 @@ const LiveStudentComponent = () => {
       }
       deleteSessionId(sessionId.current);
       setSessionIdState("");
+
+      // 주기적 체크 인터벌 종료
+      if (iceConnectionCheckInterval.current) {
+        clearInterval(iceConnectionCheckInterval.current);
+      }
+
+      window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, []);
 
@@ -82,6 +96,13 @@ const LiveStudentComponent = () => {
           handleCandidate(JSON.parse(message.body));
         }
       );
+      stompClient.current.subscribe(
+        `/topic/stopShare/${sessionId.current}`,
+        () => {
+          console.log("Received stopShare");
+          handleStopShare();
+        }
+      );
     });
   };
 
@@ -101,8 +122,7 @@ const LiveStudentComponent = () => {
           peerConnection.current.iceConnectionState === "closed"
         ) {
           console.log("ICE connection state is disconnected, failed or closed");
-          remoteVideoRef.current.srcObject = null; // 공유된 화면 제거
-          window.location.reload();
+          handleIceConnectionStateChange();
         }
       };
 
@@ -122,6 +142,19 @@ const LiveStudentComponent = () => {
         }
       };
     }
+  };
+
+  const handleStopShare = () => {
+    console.log("Handling stop share");
+    if (peerConnection.current) {
+      peerConnection.current.close();
+      remoteVideoRef.current.srcObject = null;
+    }
+  };
+
+  const handleIceConnectionStateChange = () => {
+    remoteVideoRef.current.srcObject = null; // 공유된 화면 제거
+    window.location.reload();
   };
 
   // 세션 ID를 DB에 등록하는 함수
@@ -174,6 +207,8 @@ const LiveStudentComponent = () => {
     }
   };
 
+  const [page, setPage] = useState("defaultPage");
+
   return (
     <>
       {/* 수업 셋리스트 & step 제출 리스트 블럭 */}
@@ -186,8 +221,12 @@ const LiveStudentComponent = () => {
       <div style={{ display: "inline-block", width: "100%", height: "100%" }}>
         <h2>{"[ step2 ]"}</h2>
         <div style={{ border: "1px solid grey" }}>
-          <StudentStepCompnent />
-          <video ref={remoteVideoRef} autoPlay playsInline></video>
+          {page == "newPage" ? (
+            setPage("defaultPage")
+          ) : (
+            <video ref={remoteVideoRef} autoPlay playsInline></video>
+          )}
+          <StudentStepCompnent setPage={setPage} page={page} />
         </div>
         <button style={{ margin: "10px 0 0 10px ", width: "20%" }}>
           과제 시작

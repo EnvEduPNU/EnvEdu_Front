@@ -18,16 +18,17 @@ export default function TeacherStepper({
   };
 
   const handleReset = () => {
-    setActiveStep(0);
+    setActiveStep(1);
   };
 
   return (
     <Box sx={{ width: "100%" }}>
-      <Stepper activeStep={activeStep} sx={{ margin: "10px 0 20px 0" }}>
+      {/* active step은 기본적으로 배열 0 부터 시작되니 step을 1부터 시작하게 해놓았기 때문에 -1 해줌 */}
+      <Stepper activeStep={activeStep - 1} sx={{ margin: "10px 0 20px 0" }}>
         {steps.map((label, index) => (
           <Step key={label}>
             <StepLabel
-              onClick={handleStep(index)}
+              onClick={handleStep(index + 1)}
               sx={{
                 cursor: "pointer",
                 "& .MuiStepLabel-label, & .MuiStepIcon-root": {

@@ -56,10 +56,10 @@ const MyData = () => {
     customAxios
       .get("/api/steps/getLectureContent")
       .then((res) => {
-        console.log("호출 완료 : " + JSON.stringify(res, null, 2));
-
         const formattedData = res.data.map((data) => ({
           ...data,
+          uuid: data.uuid,
+          timestamp: data.timestamp,
           stepName: data.stepName, // data[0].stepName이 아니라 data.stepName
           stepCount: data.stepCount,
           contents: data.contents.map((content) => ({
@@ -69,6 +69,8 @@ const MyData = () => {
               ? content.contents.map((c) => ({
                   type: c.type,
                   content: c.content,
+                  x: c.x,
+                  y: c.y,
                 }))
               : [], // contents가 null일 경우 빈 배열로 대체
           })),
@@ -90,6 +92,9 @@ const MyData = () => {
     setShowWordProcessor(false);
     setMyDataTable(false);
 
+    console.log("스텝 네임 : " + stepName);
+    console.log("스텝 카운트 : " + stepCount);
+
     setStepName(stepName);
     setStepCountLoad(stepCount);
     setStepContents(contents);
@@ -108,9 +113,11 @@ const MyData = () => {
     setShowWordProcessor(true);
   };
 
-  const handleDeleteLecture = async (index, stepName) => {
+  const handleDeleteLecture = async (index, uuid, timestamp) => {
     try {
-      await customAxios.delete(`/api/steps/deleteLectureContent/${stepName}`);
+      await customAxios.delete(
+        `/api/steps/deleteLectureContent/${uuid}/${timestamp}`
+      );
       const updatedLectures = [...lectureSummary];
       updatedLectures.splice(index, 1);
       setLectureSummary(updatedLectures);
@@ -178,58 +185,67 @@ const MyData = () => {
               <table className="summary-table">
                 <thead>
                   <tr>
-                    <th key="index">순번</th>
+                    <th key="index">날짜</th>
                     <th key="stepName">수업 이름</th>
                     <th key="delete">삭제</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {lectureSummary.map((item, index) => (
-                    <tr
-                      key={index}
-                      onClick={() =>
-                        getLectureDataTable(
-                          item.stepName,
-                          item.stepCount,
-                          item.contents
-                        )
-                      }
-                      s
-                    >
-                      <td>{index}</td>
-                      <td>{item.stepName}</td>
-                      <td>
-                        <IconButton
-                          onClick={() =>
-                            handleDeleteLecture(index, item.stepName)
-                          }
-                          aria-label="delete"
-                          color="secondary"
-                          sx={{ width: "30px" }}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </td>
-                    </tr>
-                  ))}
+                  {lectureSummary
+                    .sort(
+                      (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+                    )
+                    .map((item, index) => (
+                      <tr
+                        key={index}
+                        onClick={() =>
+                          getLectureDataTable(
+                            item.stepName,
+                            item.stepCount,
+                            item.contents
+                          )
+                        }
+                      >
+                        <td>{item.timestamp.split("T")[0]}</td>
+                        <td>{item.stepName}</td>
+                        <td>
+                          <IconButton
+                            onClick={(e) => {
+                              e.stopPropagation(); // Prevent triggering the row's onClick
+                              handleDeleteLecture(
+                                index,
+                                item.uuid,
+                                item.timestamp
+                              );
+                            }}
+                            aria-label="delete"
+                            color="secondary"
+                            sx={{ width: "30px" }}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
-              <button
-                style={{
-                  border: "none",
-                  fontWeight: "600",
-                  borderRadius: "0.625rem",
-                  margin: "10px",
-                }}
-                onClick={handleCreateLecture}
-              >
-                수업 자료 만들기
-              </button>
             </>
           </div>
+          <button
+            style={{
+              border: "none",
+              fontWeight: "600",
+              borderRadius: "0.625rem",
+              margin: "10px",
+            }}
+            onClick={handleCreateLecture}
+          >
+            수업 자료 만들기
+          </button>
         </div>
       </div>
 
+      {/* 왼쪽 메뉴 리스트 제외 한 오른쪽 페이지 */}
       <div className="myData-right">
         {showWordProcessor ? (
           <CreateLectureSourcePage
@@ -251,6 +267,7 @@ const MyData = () => {
                 )}
                 <CreateLectureSourcePage
                   summary={summary}
+                  lectureSummary={lectureSummary}
                   lectureName={stepName}
                   stepCount={stepCountLoad}
                   stepContents={stepContents}

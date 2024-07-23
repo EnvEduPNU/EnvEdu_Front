@@ -23,6 +23,7 @@ export const LiveTeacherPage = () => {
   const updateShareStatus = useLiveClassPartStore(
     (state) => state.updateShareStatus
   );
+
   const hasSessionId = useLiveClassPartStore((state) => state.hasSessionId);
 
   useEffect(() => {
@@ -178,6 +179,10 @@ export const LiveTeacherPage = () => {
 
   //화면 공유 시작 메서드
   const startScreenShare = async () => {
+    if (sharedScreenState) {
+      await stopScreenShare();
+    }
+
     setSharedScreenState(true);
 
     try {
@@ -222,7 +227,7 @@ export const LiveTeacherPage = () => {
     }
   };
 
-  //화면 공유 중지 메서드
+  // 화면 공유 중지 메서드
   const stopScreenShare = async () => {
     try {
       const stream = localVideoRef.current.srcObject;
@@ -239,6 +244,10 @@ export const LiveTeacherPage = () => {
             {},
             JSON.stringify({ message: "stop" })
           );
+
+          // peer connection 닫기
+          pc.close();
+          delete peerConnections.current[sessionId];
         }
 
         sessionIdCheck.current = false;
