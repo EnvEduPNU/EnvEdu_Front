@@ -113,7 +113,6 @@ export default function TeacherWordProcessor({
   const quillRef = useRef(null);
 
   useEffect(() => {
-    console.log("변경 : " + activeStep);
     imageFile = null;
 
     // activeStep이 변경될 때마다 localContents를 초기화(맨처음 스텝 만들때)
@@ -123,38 +122,52 @@ export default function TeacherWordProcessor({
     setIsEditing(false);
     setAddTableFlag(false);
 
+    const stepNumbers = contents.map((contentss) => contentss.stepNum);
+    console.log("step 넘버들: " + stepNumbers);
+    console.log("activeStep : " + activeStep);
+
     // store에서 현재 activeStep에 해당하는 내용을 로드(이전의 데이터 로드, 혹은 스텝 이동시 이전 데이터 로드 할때)
-    const stepData = contents.find((content) => content.stepNum === activeStep);
-    if (stepData) {
+    if (stepNumbers.includes(activeStep)) {
+      let stepData = null;
+
+      contents.forEach((contentss) => {
+        if (contentss.stepNum === activeStep) {
+          stepData = contentss;
+        }
+      });
+
+      stepData.contents.forEach((content) => {
+        if (content.type === "file") {
+          console.log("step 데이터 이름: " + content.content.name);
+        }
+      });
+
       console.log("처음 stepData : " + JSON.stringify(stepData, null, 2));
 
       const contentsArray = Array.isArray(stepData.contents)
         ? stepData.contents
         : [stepData.contents];
 
+      // ----------------------------------------------------------------------------------------
+      // 이 부분 때문에 엑박 뜨는 것이었음
+      // file 형식에서 stringify 할때 형식 구조가 손상이 된다. 따라서 name 등 file의 제 역할을 잃어버리고
+      // 문자열 형식화 되기 때문에 다시 file을 s3에 올릴때 정상적으로 작동하지 않는다.
+      // 따라서 file의 content는 stringify 하지 않도록 예외 처리해줘야 한다.
       const formattedContents = contentsArray.map((item, index) => {
-        // 만약 테이블이 있다면 object 형식이기 때문에 바꿔주기 위해서
-        if (typeof item.content === "object") {
+        // 파일 객체가 아닌 경우에만 JSON.stringify를 사용하여 변환
+        if (typeof item.content === "object" && item.type !== "file") {
           item.content = JSON.stringify(item.content);
         }
 
         return item;
       });
 
-      // img file 로그 체크용
-      const fileLogCheck = formattedContents.map((item, index) => {
-        if (item.type === "file") {
-          console.log(
-            "이미지파일 확인11 : " + JSON.stringify(item.content, null, 2)
-          );
-
-          return item.content;
+      // 변환 후 stepData.contents 다시 확인
+      formattedContents.forEach((content) => {
+        if (content.type === "file") {
+          console.log("step 저장전 이미지 확인 : " + content.content.name);
         }
-
-        return "noName";
       });
-
-      console.log("파일 이름: " + fileLogCheck);
 
       setLocalContents(formattedContents);
       setContentName(stepData.contentName);
@@ -238,6 +251,8 @@ export default function TeacherWordProcessor({
   const handleDeleteContent = (index, deleteImage) => {
     // 특정 인덱스를 제외한 새로운 콘텐츠 배열 생성
     const newContents = localContents.filter((_, i) => i !== index);
+
+    console.log("컨텐츠 지을 부분 : " + JSON.stringify(newContents, null, 2));
 
     // deleteImage가 제공된 경우 새로운 객체를 추가
     if (deleteImage) {
@@ -386,7 +401,6 @@ export default function TeacherWordProcessor({
       stepNum: activeStep,
       contentName,
       contents: [],
-      images: [],
     };
     let newLocalContents = [...localContents];
 
@@ -434,22 +448,57 @@ export default function TeacherWordProcessor({
         });
         stepData.contents.push(item);
       } else {
-        if (item.type !== "deleteImage") {
+        if (item.type !== "deleteImage" && item.type !== "file") {
+          stepData.contents.push(item);
+        }
+
+        // item은 localContent것이고 stepData는 store에 저장할 content이다.
+        // 따라서 현재 localContent에 있는 것을 stepData에 옮겨주는 작업 필요
+        // 그런데 문제는 위의 deleteImage 부분에서 stepData에 모두 저장을 해주어 file이 존재할텐데
+        // 아래의 최종 저장 Data쪽에서 이미지가 안나온다.
+        if (item.type === "file") {
+          console.log("이미지 이름 나와야할텐데 : " + item.content.name);
           stepData.contents.push(item);
         }
       }
     }
 
+    // localContents.map((content) => {
+    //   if (content.type == "file") {
+    //     console.log("local 저장전 이미지 확인 : " + content.content.name);
+    //   }
+    // });
+
+    // 해야 할 일 : 여기까지 localContent가 잘 들어오는데 Step 넘어가면서 초기화 됨
+    // 따라서 이미지같은 경우는 따로 store에 저장해 두었다가 위의 stepData.contents.push(item); 이 부분 넣어서
+    // 완전한 저장으로 넘길때 다시 추가해주어야 됨.
+    // 이유는 localContent의 초기화 때문이었고 최종 저장은 CreateLectureSource 컴포넌트에서 처리하기 때문에
+    // 모든 스텝을 다 지나서 넘길때 쯤에는 file이 초기화 되어있어 아무것도 없기 때문
+    // 그렇기 때문에 step을 저장하고 step뒤로가기로 하면 사진이 안보이게 되는 것임
+    // 이 부분 해결하면 사진쪽 대부분 해결 될듯 .
+    // 근데 이상한건 이미지를 제외한 다른 컨텐츠들은 왜 모두 저장이되는것인지?
+
     // Finish 스텝에서는 빈 배열 저장 안함
+    // 다음 스텝으로 넘어갈때 content 여기 저장 하는 곳
     if (stepCount >= activeStep) {
       console.log("스텝 카운트 : " + stepCount);
       console.log("액티브 스텝 : " + activeStep);
       console.log("최종 저장 stepData : " + JSON.stringify(stepData, null, 2));
+      stepData.contents.forEach((content) => {
+        if (content.type === "file") {
+          console.log("step 저장전 이미지 확인2222 : " + content.content.name);
+        }
+      });
 
       if (isEditing) {
-        updateContent(activeStep - 1, stepData);
+        clearContents();
+        if (activeStep > 0) {
+          updateContent(activeStep - 1, stepData);
+        } else {
+          updateContent(activeStep, stepData);
+        }
 
-        alert("Step 업데이트 완료");
+        alert("Step 업데이트 완료 activeStep : " + activeStep);
         console.log("업데이트된 데이터:", stepData);
       } else {
         addContent(stepData);
@@ -457,10 +506,6 @@ export default function TeacherWordProcessor({
         console.log("저장된 데이터:", stepData);
       }
     }
-
-    console.log(
-      "이미지 숫자 확인 : " + JSON.stringify(stepData.images.length, null, 2)
-    );
 
     handleNextStep();
   };
