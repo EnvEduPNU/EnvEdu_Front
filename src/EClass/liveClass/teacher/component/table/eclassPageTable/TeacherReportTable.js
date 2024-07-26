@@ -1,30 +1,49 @@
-import * as React from "react";
-import { useState, useEffect } from "react";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
+import React, { useState, useEffect } from "react";
 import { TableVirtuoso } from "react-virtuoso";
-import { Typography } from "@mui/material";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Typography,
+} from "@mui/material";
 
-const sample = [["수업 자료 1"], ["수업 자료 2"]];
+const sample = [
+  ["1", "홍길동", "A1", "미제출"],
+  ["2", "김민우", "A1", "제출"],
+];
 
 const columns = [
   {
-    width: 200,
-    label: "Step",
-    dataKey: "Step",
+    label: "번호",
+    dataKey: "Num",
+    width: "15%",
+  },
+  {
+    label: "이름",
+    dataKey: "Name",
+    width: "25%",
+  },
+  {
+    label: "수업자료",
+    dataKey: "LectureData",
+    width: "25%",
+  },
+  {
+    label: "상태",
+    dataKey: "Status",
+    width: "25%",
   },
 ];
 
-function createData(id, Step) {
-  return { id, Step };
+function createData(index, [Num, Name, LectureData, Status]) {
+  return { id: index, Num, Name, LectureData, Status };
 }
 
-const rows = sample.map((item, index) => createData(index, ...item));
+const rows = sample.map((item, index) => createData(index, item));
 
 const VirtuosoTableComponents = {
   Scroller: React.forwardRef((props, ref) => (
@@ -36,7 +55,7 @@ const VirtuosoTableComponents = {
       sx={{ borderCollapse: "separate", tableLayout: "fixed" }}
     />
   ),
-  TableHead,
+  TableHead: (props) => <TableHead {...props} />,
   TableRow: ({ item: _item, ...props }) => <TableRow {...props} />,
   TableBody: React.forwardRef((props, ref) => (
     <TableBody {...props} ref={ref} />
@@ -51,7 +70,7 @@ function fixedHeaderContent() {
           <TableCell
             key={column.dataKey}
             variant="head"
-            align={column.numeric || false ? "right" : "left"}
+            align="center"
             style={{ width: column.width }}
             sx={{
               backgroundColor: "#dcdcdc",
@@ -65,18 +84,25 @@ function fixedHeaderContent() {
   );
 }
 
-function rowContent(_index, row, handleClick, selectedRow) {
+function rowContent(index, row, handleClick, selectedRow) {
   return (
     <React.Fragment>
       {columns.map((column) => (
         <TableCell
           key={column.dataKey}
-          align={column.numeric || false ? "right" : "left"}
-          onClick={() => handleClick(row.id, row.Step)}
+          align="center"
+          style={{ width: column.width }}
           sx={{
             backgroundColor: selectedRow === row.id ? "#f0f0f0" : "inherit",
-            cursor: "pointer",
+            cursor: column.dataKey !== "Action" ? "pointer" : "default",
+            "&:hover": {
+              backgroundColor:
+                column.dataKey !== "Action" ? "#e0e0e0" : "inherit",
+            },
           }}
+          onClick={() =>
+            column.dataKey !== "Action" && handleClick(row.id, row)
+          }
         >
           {row[column.dataKey]}
         </TableCell>
@@ -85,13 +111,13 @@ function rowContent(_index, row, handleClick, selectedRow) {
   );
 }
 
-export default function TeacherStudentList(props) {
+export default function TeacherReportTable(props) {
   const [selectedRow, setSelectedRow] = useState(null);
 
-  const handleRowClick = (id, Step) => {
+  const handleRowClick = (id, row) => {
     setSelectedRow((prevSelectedRow) => (prevSelectedRow === id ? null : id));
-    props.setCourseStep(Step);
-    console.log(Step);
+    props.setCourseStep(row);
+    console.log(row);
   };
 
   const handleClickOutside = (event) => {
@@ -110,9 +136,9 @@ export default function TeacherStudentList(props) {
   return (
     <div>
       <Typography variant="h5" sx={{ margin: "20px 0 10px 0" }}>
-        {"[ 참여 학생 ]"}
+        {"[ 보고서 상태 ]"}
       </Typography>
-      <Paper style={{ height: 300, width: "100%" }} className="virtuoso-table">
+      <Paper style={{ height: 250, width: "100%" }} className="virtuoso-table">
         <TableContainer component={Paper}>
           <Table stickyHeader>{fixedHeaderContent()}</Table>
         </TableContainer>
@@ -122,7 +148,7 @@ export default function TeacherStudentList(props) {
           itemContent={(index, row) =>
             rowContent(index, row, handleRowClick, selectedRow)
           }
-          style={{ height: 250 }}
+          style={{ height: 200 }}
         />
       </Paper>
     </div>

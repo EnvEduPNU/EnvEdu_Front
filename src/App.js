@@ -63,6 +63,7 @@ import ViewResponse from "./Education/Survey/Admin/ViewResponse";
 
 import { useNavigate } from "react-router-dom";
 import EClassLivePage from "./EClass/liveClass/page/EClassLivePage";
+import ClassData from "./EClass/classData/ClassData";
 
 function App() {
   const navigate = useNavigate();
@@ -117,15 +118,17 @@ function App() {
             exact={true}
             element={<AddMACForm />}
           />
-          {/*ABOUT*/}
+          {/*-------------------------------------------------- ABOUT ----------------------------------------------------*/}
           <Route path="/what" exact={true} element={<What />} />{" "}
           {/*What We Do*/}
           <Route path="/team" exact={true} element={<Team />} /> {/*Team*/}
           {/*GET STARTED*/}
           {/*DATA*/}
           <Route path="/socket" exact={true} element={<SEEdAppMain />} />{" "}
-          {/*SEEd App*/}
+          {/*------------------------------------------------- myData -----------------------------------------------------*/}
           <Route path="/myData" exact={true} element={<MyData />} />{" "}
+          {/*------------------------------------------------- Class Data -----------------------------------------------------*/}
+          <Route path="/classData" exact={true} element={<ClassData />} />{" "}
           {/*My Data*/}
           <Route path="/readExcel" exact={true} element={<ReadExcel />} />
           <Route path="/search" exact={true} element={<Search />} />
@@ -198,7 +201,7 @@ function App() {
             <Route path="" exact={true} element={<EClassList />} />
             <Route path="new" exact={true} element={<CreateEClassPage />} />
           </Route> */}
-          {/* E-Class 화면 공유 */}
+          {/*------------------------------------------------------ E-Class 화면 공유 ----------------------------------------*/}
           <Route path="/E-Classes">
             {" "}
             {/*E-Class*/}

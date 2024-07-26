@@ -17,9 +17,9 @@ import {
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import { useLiveClassPartStore } from "../../../store/LiveClassPartStore";
+import { useLiveClassPartStore } from "../../../../store/LiveClassPartStore";
 
-import { customAxios } from "../../../../../Common/CustomAxios";
+import { customAxios } from "../../../../../../Common/CustomAxios";
 
 function createData(name, sessionId, shared) {
   return {

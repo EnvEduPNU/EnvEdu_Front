@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { customAxios } from "../../../../../Common/CustomAxios";
-import { engToKor } from "../../../../../Data/MyData/engToKor";
+import { customAxios } from "../../../../../../Common/CustomAxios";
+import { engToKor } from "../../../../../../Data/MyData/engToKor";
 
 // 수업 자료 생성 페이지의 paper에 나오는 테이블
 const DataTable = ({ type, id, setContent }) => {

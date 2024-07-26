@@ -179,6 +179,9 @@ function Header() {
                           <NavLink className={"nav-link"} to="/myData">
                             My Data
                           </NavLink>
+                          <NavLink className={"nav-link"} to="/classData">
+                            Class Data
+                          </NavLink>
                         </>
                       );
                     case "learnMore":
