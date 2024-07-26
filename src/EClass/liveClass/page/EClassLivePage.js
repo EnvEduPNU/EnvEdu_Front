@@ -1,7 +1,7 @@
 import React from "react";
-import { LiveTeacherPage } from "./LiveTeacherPage";
 import LiveStudentComponent from "../student/component/LiveStudentComponent";
 import styled from "@emotion/styled";
+import { TeacherClassroomPage } from "./TeacherClassroomPage";
 
 const StyledDiv = styled.div`
   display: flex;
@@ -17,7 +17,7 @@ function EClassLivePage() {
 
   return (
     <StyledDiv>
-      {role === "ROLE_EDUCATOR" && <LiveTeacherPage />}
+      {role === "ROLE_EDUCATOR" && <TeacherClassroomPage />}
       {role === "ROLE_STUDENT" && <LiveStudentComponent />}
     </StyledDiv>
   );

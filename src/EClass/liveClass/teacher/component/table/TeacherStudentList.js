@@ -85,7 +85,7 @@ function rowContent(_index, row, handleClick, selectedRow) {
   );
 }
 
-export default function TeacherAssignmentTable(props) {
+export default function TeacherStudentList(props) {
   const [selectedRow, setSelectedRow] = useState(null);
 
   const handleRowClick = (id, Step) => {
@@ -110,7 +110,7 @@ export default function TeacherAssignmentTable(props) {
   return (
     <div>
       <Typography variant="h5" sx={{ margin: "20px 0 10px 0" }}>
-        {"[ 수업 자료 ]"}
+        {"[ 참여 학생 ]"}
       </Typography>
       <Paper style={{ height: 300, width: "100%" }} className="virtuoso-table">
         <TableContainer component={Paper}>

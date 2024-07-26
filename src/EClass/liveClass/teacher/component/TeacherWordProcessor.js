@@ -153,14 +153,21 @@ export default function TeacherWordProcessor({
       // file 형식에서 stringify 할때 형식 구조가 손상이 된다. 따라서 name 등 file의 제 역할을 잃어버리고
       // 문자열 형식화 되기 때문에 다시 file을 s3에 올릴때 정상적으로 작동하지 않는다.
       // 따라서 file의 content는 stringify 하지 않도록 예외 처리해줘야 한다.
-      const formattedContents = contentsArray.map((item, index) => {
-        // 파일 객체가 아닌 경우에만 JSON.stringify를 사용하여 변환
-        if (typeof item.content === "object" && item.type !== "file") {
-          item.content = JSON.stringify(item.content);
-        }
+      const formattedContents = contentsArray
+        .filter((content) => {
+          if (content.type === "img" && !content.content) {
+            return false; // content.type이 "img"이고 content가 없으면 제거
+          }
+          return true; // 나머지 항목은 유지
+        })
+        .map((item, index) => {
+          // 파일 객체가 아닌 경우에만 JSON.stringify를 사용하여 변환
+          if (typeof item.content === "object" && item.type !== "file") {
+            item.content = JSON.stringify(item.content);
+          }
 
-        return item;
-      });
+          return item;
+        });
 
       // 변환 후 stepData.contents 다시 확인
       formattedContents.forEach((content) => {
