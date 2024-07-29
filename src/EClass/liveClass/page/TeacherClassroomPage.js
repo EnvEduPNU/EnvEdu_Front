@@ -1,11 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import TeacherReportTable from "../teacher/component/table/eclassPageTable/TeacherReportTable";
 import { Divider, Typography } from "@mui/material";
 import TeacherStudentList from "../teacher/component/table/eclassPageTable/TeacherStudentList";
+import CreateLectureModal from "../teacher/modal/CreateLectureModal";
 import EClassTable from "../teacher/component/table/eclassPageTable/EClassTable";
 
 // Teacher E-Class 페이지
 export function TeacherClassroomPage() {
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const handleCreateLecture = (lecture) => {
+    console.log("Lecture created:", lecture);
+    // 여기에 강의 생성 후 처리 로직 추가
+  };
   return (
     <div style={{ display: "flex", width: "100%", margin: "0 25vh" }}>
       <>
@@ -17,12 +24,20 @@ export function TeacherClassroomPage() {
           <div style={{ minHeight: "40rem" }}>
             <EClassTable />
           </div>
+
           <button
-            //   onClick={}
+            variant="contained"
+            onClick={() => setModalOpen(true)}
             style={{ margin: "10px 0 ", width: "20%" }}
           >
+            {" "}
             E-Class 생성
           </button>
+          <CreateLectureModal
+            open={isModalOpen}
+            onClose={() => setModalOpen(false)}
+            onCreate={handleCreateLecture}
+          />
         </div>
 
         {/* [오른쪽 블럭] 수업 Step 테이블, 수업 상태 테이블 */}
@@ -39,8 +54,8 @@ export function TeacherClassroomPage() {
 }
 
 // 박스 중앙 정렬 예시
-{
-  /* <div
+/*{
+   <div
 style={{
   display: "flex",
   justifyContent: "center",
@@ -52,5 +67,5 @@ style={{
 }}
 >
 
-</div> */
-}
+</div> 
+}*/

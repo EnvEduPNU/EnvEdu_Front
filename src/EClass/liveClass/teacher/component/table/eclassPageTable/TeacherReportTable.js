@@ -136,7 +136,7 @@ export default function TeacherReportTable(props) {
   return (
     <div>
       <Typography variant="h5" sx={{ margin: "20px 0 10px 0" }}>
-        {"[ 보고서 상태 ]"}
+        {"[ 보고서 제출 ]"}
       </Typography>
       <Paper style={{ height: 250, width: "100%" }} className="virtuoso-table">
         <TableContainer component={Paper}>

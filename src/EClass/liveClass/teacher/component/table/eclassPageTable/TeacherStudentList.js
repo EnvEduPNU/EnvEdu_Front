@@ -13,8 +13,8 @@ import {
 } from "@mui/material";
 
 const sample = [
-  ["1", "홍길동", "A1", "미제출"],
-  ["2", "김민우", "A1", "제출"],
+  ["1", "홍길동", "부산중", "2024-07-16"],
+  ["2", "김민우", "해운대중", "2024-06-16"],
 ];
 
 const columns = [
@@ -29,17 +29,17 @@ const columns = [
     width: "20%",
   },
   {
-    label: "수업자료",
+    label: "소속",
     dataKey: "LectureData",
     width: "20%",
   },
   {
-    label: "상태",
+    label: "참여일",
     dataKey: "Status",
     width: "20%",
   },
   {
-    label: "액션",
+    label: "",
     dataKey: "Action",
     width: "20%",
   },

@@ -8,14 +8,9 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Typography,
   Button,
 } from "@mui/material";
-
-const sample = [
-  ["1", "홍길동", "A1", "미제출"],
-  ["2", "김민우", "A1", "제출"],
-];
+import { customAxios } from "../../../../../../Common/CustomAxios";
 
 const columns = [
   {
@@ -26,12 +21,22 @@ const columns = [
   {
     label: "이름",
     dataKey: "Name",
-    width: "20%",
+    width: "15%",
+  },
+  {
+    label: "강사",
+    dataKey: "Teacher",
+    width: "15%",
+  },
+  {
+    label: "개설일",
+    dataKey: "CreateEclassDate",
+    width: "15%",
   },
   {
     label: "수업자료",
-    dataKey: "LectureData",
-    width: "20%",
+    dataKey: "LectureDataName",
+    width: "15%",
   },
   {
     label: "상태",
@@ -39,17 +44,43 @@ const columns = [
     width: "10%",
   },
   {
-    label: "액션",
+    label: "",
     dataKey: "Action",
     width: "20%",
   },
 ];
 
-function createData(index, [Num, Name, LectureData, Status]) {
-  return { id: index, Num, Name, LectureData, Status };
-}
+const createData = (index, item) => {
+  if (typeof item !== "object" || item === null) {
+    throw new TypeError("item must be an object");
+  }
 
-const rows = sample.map((item, index) => createData(index, item));
+  return {
+    Num: index + 1,
+    eClassUuid: item.eClassUuid,
+    Status: item.eclassAssginSubmitNum,
+    LectureData: item.lectureDataUuid,
+    LectureDataName: item.lectureDataName,
+    Name: item.lectureName,
+    CreateEclassDate: item.startDate,
+    Teacher: item.username,
+  };
+};
+
+const deleteData = async (row, handleDelete) => {
+  // console.log("row는 : " + JSON.stringify(row, null, 2));
+
+  // E-Class List에서 삭제
+  await customAxios
+    .delete(`/api/eclass/delete?eClassUuid=${row.eClassUuid}`)
+    .then((response) => {
+      console.log(response.data);
+      handleDelete(row);
+    })
+    .catch((error) => {
+      console.error("Eclass 리스트 삭제 에러:", error);
+    });
+};
 
 const VirtuosoTableComponents = {
   Scroller: React.forwardRef((props, ref) => (
@@ -100,11 +131,11 @@ function rowContent(index, row, handleClick, handleDelete, selectedRow) {
           style={{ width: column.width }}
           sx={{
             backgroundColor: selectedRow === row.id ? "#f0f0f0" : "inherit",
-            cursor: column.dataKey !== "Action" ? "pointer" : "default",
-            "&:hover": {
-              backgroundColor:
-                column.dataKey !== "Action" ? "#e0e0e0" : "inherit",
-            },
+            // cursor: column.dataKey !== "Action" ? "pointer" : "default",
+            // "&:hover": {
+            //   backgroundColor:
+            //     column.dataKey !== "Action" ? "#e0e0e0" : "inherit",
+            // },
           }}
         >
           {column.dataKey === "Action" ? (
@@ -120,7 +151,7 @@ function rowContent(index, row, handleClick, handleDelete, selectedRow) {
               <Button
                 variant="outlined"
                 color="secondary"
-                onClick={() => handleDelete(row.id)}
+                onClick={() => deleteData(row, handleDelete)}
               >
                 삭제
               </Button>
@@ -142,7 +173,7 @@ function rowContent(index, row, handleClick, handleDelete, selectedRow) {
 
 export default function EClassTable(props) {
   const [selectedRow, setSelectedRow] = useState(null);
-  const [rowData, setRowData] = useState(rows);
+  const [rowData, setRowData] = useState([]);
 
   const handleRowClick = (id, row) => {
     setSelectedRow((prevSelectedRow) => (prevSelectedRow === id ? null : id));
@@ -150,9 +181,13 @@ export default function EClassTable(props) {
     console.log(row);
   };
 
-  const handleDelete = (id) => {
-    setRowData((prevRowData) => prevRowData.filter((row) => row.id !== id));
-    console.log(`Row with id ${id} deleted`);
+  const handleDelete = (row) => {
+    // console.log("로우데이터 : " + JSON.stringify(row, null, 2));
+
+    setRowData((prevRowData) =>
+      prevRowData.filter((prevRow) => prevRow.Num !== row.Num)
+    );
+    console.log(`Row with id ${row.Num} deleted`);
   };
 
   const handleClickOutside = (event) => {
@@ -163,6 +198,23 @@ export default function EClassTable(props) {
 
   useEffect(() => {
     document.addEventListener("click", handleClickOutside);
+
+    //EClass 리스트 가져오기
+    customAxios
+      .get("/api/eclass/list")
+      .then((response) => {
+        const list = response.data;
+
+        const rows = list.map((item, index) => createData(index, item));
+
+        console.log("Eclass list :", rows);
+
+        setRowData(rows);
+      })
+      .catch((error) => {
+        console.error("Eclass 리스트 조회 에러:", error);
+      });
+
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
