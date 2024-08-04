@@ -64,6 +64,8 @@ import ViewResponse from "./Education/Survey/Admin/ViewResponse";
 import { useNavigate } from "react-router-dom";
 import EClassLivePage from "./EClass/liveClass/page/EClassLivePage";
 import ClassData from "./EClass/classData/ClassData";
+import { TeacherClassroomPage } from "./EClass/liveClass/page/TeacherClassroomPage";
+import { LiveTeacherPage } from "./EClass/liveClass/page/LiveTeacherPage";
 
 function App() {
   const navigate = useNavigate();
@@ -139,6 +141,17 @@ function App() {
           />{" "}
           {/*Data & Chart*/}
           <Route path="/openAPI" exact={true} element={<OpenApi />} />{" "}
+          {/* --------------------------------------------------- E-Class------------------------------------------------------ */}
+          <Route
+            path="/EClassLivePage"
+            exact={true}
+            element={<EClassLivePage />}
+          />
+          <Route
+            path="/LiveTeacherPage/:eClassUuid"
+            exact={true}
+            element={<LiveTeacherPage />}
+          />
           {/*OPEN API*/}
           <Route path="/openAPI/past" exact={true} element={<OpenApiPast />} />
           <Route
@@ -196,17 +209,6 @@ function App() {
             exact={true}
             element={<CheckCompareData />}
           />
-          {/* <Route path="/E-Classes">
-
-            <Route path="" exact={true} element={<EClassList />} />
-            <Route path="new" exact={true} element={<CreateEClassPage />} />
-          </Route> */}
-          {/*------------------------------------------------------ E-Class 화면 공유 ----------------------------------------*/}
-          <Route path="/E-Classes">
-            {" "}
-            {/*E-Class*/}
-            <Route path="" exact={true} element={<EClassLivePage />} />
-          </Route>
           <Route path="/slide/:id" exact={true} element={<SlidePage />} />
           <Route path="/dataLiteracy">
             {" "}

@@ -137,7 +137,7 @@ const modalStyle = {
   p: 4,
 };
 
-export default function TeacherStudentList({ eclassUuid }) {
+export default function StudentStudentList({ eclassUuid }) {
   const [selectedRow, setSelectedRow] = useState(null);
   const [rowData, setRowData] = useState([]);
   const [open, setOpen] = useState(false);
@@ -186,8 +186,7 @@ export default function TeacherStudentList({ eclassUuid }) {
                 JSON.stringify(newStudents, null, 2)
             );
 
-            // 기존 rowData에 추가
-            setRowData((prevRowData) => [...prevRowData, ...newStudents]);
+            setRowData(newStudents);
           })
           .catch((error) => {
             console.error("Error fetching student list:", error);
@@ -236,7 +235,17 @@ export default function TeacherStudentList({ eclassUuid }) {
     if (selectedStudent) {
       console.log("선택된 학생 : " + JSON.stringify(selectedStudent, null, 2));
 
-      const newStudent = createData(rowData.length, [
+      // 이미 rowData에 해당 학생이 있는지 확인
+      const isStudentExists = rowData.some(
+        (row) => row.Num === selectedStudent.id
+      );
+
+      if (isStudentExists) {
+        console.log("이 학생은 이미 목록에 있습니다.");
+        return; // 중복된 경우 함수 종료
+      }
+
+      const newStudent = createData(rowData.length + 1, [
         selectedStudent.id,
         selectedStudent.username,
         selectedStudent.studentGroup,
@@ -297,68 +306,6 @@ export default function TeacherStudentList({ eclassUuid }) {
           style={{ height: 200 }}
         />
       </Paper>
-      {eclassUuidCheck.length > 0 && (
-        <Button
-          onClick={handleOpen}
-          style={{ margin: "10px 0 0 0", width: "30%" }}
-        >
-          학생추가
-        </Button>
-      )}
-
-      <Modal open={open} onClose={handleClose}>
-        <Box sx={modalStyle} className="modal-table">
-          <Typography variant="h6" component="h2">
-            학생 리스트
-          </Typography>
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell sx={{ backgroundColor: "#dcdcdc" }}>
-                    번호
-                  </TableCell>
-                  <TableCell sx={{ backgroundColor: "#dcdcdc" }}>
-                    이름
-                  </TableCell>
-                  <TableCell sx={{ backgroundColor: "#dcdcdc" }}>
-                    소속
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {studentList.map((student) => (
-                  <TableRow
-                    key={student.id}
-                    selected={selectedStudent?.id === student.id}
-                    onClick={(event) => handleStudentSelect(event, student)} // event 객체 전달
-                    sx={{
-                      cursor: "pointer",
-                      backgroundColor:
-                        selectedStudent?.id === student.id
-                          ? "#e0e0e0"
-                          : "inherit",
-                    }}
-                  >
-                    <TableCell>{student.id}</TableCell>
-                    <TableCell>{student.username}</TableCell>
-                    <TableCell>{student.studentGroup}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <Button
-            onClick={handleAddStudent}
-            disabled={!selectedStudent}
-            variant="contained"
-            color="primary"
-            style={{ marginTop: "20px" }}
-          >
-            추가
-          </Button>
-        </Box>
-      </Modal>
     </div>
   );
 }

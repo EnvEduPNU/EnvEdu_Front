@@ -36,13 +36,21 @@ function ClassData() {
   const [eClassType, setEClassType] = useState("");
 
   useEffect(() => {
+    const TeacherName = localStorage.getItem("username");
+
     // 수업 자료 리스트 가져오는 요청
     customAxios
       .get("/api/steps/getLectureContent")
       .then((res) => {
-        const formattedData = res.data.map((data) => ({
+        // TeacherName과 username이 같은 항목들만 필터링
+        const filteredData = res.data.filter(
+          (data) => data.username === TeacherName
+        );
+
+        const formattedData = filteredData.map((data) => ({
           ...data,
           uuid: data.uuid,
+          username: data.username,
           timestamp: data.timestamp,
           stepName: data.stepName, // data[0].stepName이 아니라 data.stepName
           stepCount: data.stepCount,

@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import TeacherReportTable from "../teacher/component/table/eclassPageTable/TeacherReportTable";
 import { Divider, Typography } from "@mui/material";
 import TeacherStudentList from "../teacher/component/table/eclassPageTable/TeacherStudentList";
-import CreateLectureModal from "../teacher/modal/CreateLectureModal";
-import TeacherEclassTable from "../teacher/component/table/eclassPageTable/TeacherEclassTable";
+import SearchLectureModal from "../teacher/modal/SearchLectureModal";
+import StudentEclassTable from "../teacher/component/table/eclassPageTable/StudentEclassTable";
+import StudentStudentList from "../teacher/component/table/eclassPageTable/StudentStudentList";
 
-// Teacher E-Class 페이지
-export function TeacherClassroomPage() {
+// Student E-Class 페이지
+export function StudentClassroomPage() {
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedEClassUuid, setSelectedEClassUuid] = useState(null);
   const [studentListUuid, setStudentListUuid] = useState([]);
@@ -29,7 +30,7 @@ export function TeacherClassroomPage() {
             {`[ E-Class ]`}
           </Typography>
           <div style={{ minHeight: "40rem" }}>
-            <TeacherEclassTable setSelectedEClassUuid={setSelectedEClassUuid} />
+            <StudentEclassTable setSelectedEClassUuid={setSelectedEClassUuid} />
           </div>
 
           <button
@@ -38,9 +39,9 @@ export function TeacherClassroomPage() {
             style={{ margin: "10px 0 ", width: "20%" }}
           >
             {" "}
-            E-Class 생성
+            E-Class 조회
           </button>
-          <CreateLectureModal
+          <SearchLectureModal
             open={isModalOpen}
             onClose={() => setModalOpen(false)}
             onCreate={handleCreateLecture}
@@ -49,7 +50,7 @@ export function TeacherClassroomPage() {
 
         {/* [오른쪽 블럭] 수업 Step 테이블, 수업 상태 테이블 */}
         <div style={{ margin: "0 30px ", height: "40rem", width: "35%" }}>
-          <TeacherStudentList eclassUuid={studentListUuid} />
+          <StudentStudentList eclassUuid={studentListUuid} />
 
           <Divider sx={{ margin: "20px 0" }} />
 
@@ -59,20 +60,3 @@ export function TeacherClassroomPage() {
     </div>
   );
 }
-
-// 박스 중앙 정렬 예시
-/*{
-   <div
-style={{
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  width: "100%",
-  height: "40rem",
-  minHeight: "40rem", // 부모 요소의 높이를 설정해야 전체 높이에 대해 중앙 정렬이 가능
-  border: "1px solid grey",
-}}
->
-
-</div> 
-}*/

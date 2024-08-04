@@ -31,15 +31,23 @@ const CreateLectureModal = ({ open, onClose, onCreate }) => {
   const [eClassAssginSubmitNum, setEClassAssginSubmitNum] = useState(0);
 
   useEffect(() => {
+    const TeacherName = localStorage.getItem("username");
+
     // 수업 자료 리스트 가져오는 요청
     customAxios
       .get("/api/steps/getLectureContent")
       .then((res) => {
-        const formattedData = res.data.map((data) => ({
+        // TeacherName과 username이 같은 항목들만 필터링
+        const filteredData = res.data.filter(
+          (data) => data.username === TeacherName
+        );
+
+        // 필터링된 데이터를 원하는 형식으로 변환
+        const formattedData = filteredData.map((data) => ({
           ...data,
           uuid: data.uuid,
           timestamp: data.timestamp,
-          stepName: data.stepName, // data[0].stepName이 아니라 data.stepName
+          stepName: data.stepName,
           stepCount: data.stepCount,
           contents: data.contents.map((content) => ({
             stepNum: content.stepNum,
@@ -54,6 +62,8 @@ const CreateLectureModal = ({ open, onClose, onCreate }) => {
               : [], // contents가 null일 경우 빈 배열로 대체
           })),
         }));
+
+        // 상태에 저장
         setLectureSummary(formattedData);
       })
       .catch((err) => console.log(err));
@@ -79,9 +89,18 @@ const CreateLectureModal = ({ open, onClose, onCreate }) => {
     };
 
     getSeoulTime();
-  }, [open]); // open 상태가 변경될 때마다 실행
+  }, [open]);
 
   const handleCreate = () => {
+    if (!lectureName) {
+      alert("수업 이름을 입력해 주세요.");
+      return;
+    }
+    if (!selectedMaterial) {
+      alert("수업 자료를 선택해 주세요.");
+      return;
+    }
+
     const eClassUuids = uuidv4();
 
     const lectureData = {

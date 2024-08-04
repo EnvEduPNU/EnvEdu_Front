@@ -111,6 +111,9 @@ export const CreateLectureSourcePage = (props) => {
           let changedPayload;
           let payload;
 
+          //TODO 1 : localStorage 에서 username payload에 같이 저장요청보내기(수업자료 각 교사별 구분용)
+          const teacherName = localStorage.getItem("username");
+
           // 수정 저장이면 drilling한 uuid 와 timestamp 설정
           if (lectureSummary) {
             console.log("체크 : " + JSON.stringify(lectureSummary, null, 2));
@@ -129,6 +132,7 @@ export const CreateLectureSourcePage = (props) => {
 
             changedPayload = {
               uuid: lectureSummary[0].uuid,
+              username: teacherName,
               timestamp: lectureSummary[0].timestamp,
               stepName: lectureSummary[0].stepName,
               stepCount: lectureSummary[0].stepCount,
@@ -173,6 +177,7 @@ export const CreateLectureSourcePage = (props) => {
 
             payload = {
               uuid: contentUuid, // UUID 추가
+              username: teacherName,
               timestamp: moment()
                 .tz("Asia/Seoul")
                 .format("YYYY-MM-DDTHH:mm:ssZ"), // 현재 서울 시각을 ISO 8601 포맷으로 추가

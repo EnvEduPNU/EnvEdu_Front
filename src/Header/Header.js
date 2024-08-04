@@ -7,6 +7,8 @@ import { PiPlant } from "react-icons/pi";
 
 function Header() {
   const [username, setUsername] = useState(null);
+  const [userRole, setUserRole] = useState(null);
+
   const [open, setOpen] = useState({
     about: false,
     app: false,
@@ -47,6 +49,7 @@ function Header() {
 
   useEffect(() => {
     setUsername(localStorage.getItem("username"));
+    setUserRole(localStorage.getItem("role"));
   }, []);
 
   const navigate = useNavigate();
@@ -173,15 +176,17 @@ function Header() {
                     case "eClass":
                       return (
                         <>
-                          <NavLink className={"nav-link"} to="/E-Classes">
+                          <NavLink className={"nav-link"} to="/EClassLivePage">
                             E-Class
                           </NavLink>
                           <NavLink className={"nav-link"} to="/myData">
                             My Data
                           </NavLink>
-                          <NavLink className={"nav-link"} to="/classData">
-                            Class Data
-                          </NavLink>
+                          {userRole === "ROLE_EDUCATOR" && (
+                            <NavLink className={"nav-link"} to="/classData">
+                              Class Data
+                            </NavLink>
+                          )}
                         </>
                       );
                     case "learnMore":

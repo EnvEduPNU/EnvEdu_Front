@@ -1,12 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useParams, useLocation } from "react-router-dom";
+
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 import { customAxios } from "../../../Common/CustomAxios";
-import TeacherAssignmentTable from "../teacher/component/table/TeacherAssignmentTable";
-import TeacherCourseStatusTable from "../teacher/component/table/TeacherCourseStatusTable";
+import TeacherAssignmentTable from "../teacher/component/table/myDataPageTable/TeacherAssignmentTable";
+import TeacherCourseStatusTable from "../teacher/component/table/myDataPageTable/TeacherCourseStatusTable";
 import { Typography } from "@mui/material";
 import { useLiveClassPartStore } from "../store/LiveClassPartStore";
 import { TeacherStepShareButton } from "../teacher/component/button/TeacherStepShareButton";
+import TeacherRenderAssign from "../teacher/component/TeacherRenderAssign";
 
 export const LiveTeacherPage = () => {
   const localVideoRef = useRef(null);
@@ -15,6 +18,9 @@ export const LiveTeacherPage = () => {
   const sessionIdCheck = useRef(false);
   const [sharedScreenState, setSharedScreenState] = useState(false);
   const [courseStep, setCourseStep] = useState();
+
+  // Step 리스트에서 가져오는 데이터
+  const [tableData, setTableData] = useState([]);
 
   const addSessionId = useLiveClassPartStore((state) => state.addSessionId);
   const removeSessionId = useLiveClassPartStore(
@@ -26,12 +32,18 @@ export const LiveTeacherPage = () => {
 
   const hasSessionId = useLiveClassPartStore((state) => state.hasSessionId);
 
+  const { eClassUuid } = useParams(); // 경로 파라미터 받아오기
+  const location = useLocation();
+  const { lectureDataUuid } = location.state || {};
+
   useEffect(() => {
     // 학생의 참여와 퇴장을 소켓으로 받아오는 메서드
     studentCheckStompClient();
 
     // 초기 학생들 세션을 소켓을 세팅하는 메서드
     fetchSessionIds();
+
+    console.log("클래스로 제대로 uuid 넘어옴 : " + eClassUuid);
 
     return () => {
       Object.values(stompClients.current).forEach((client) => {
@@ -262,14 +274,8 @@ export const LiveTeacherPage = () => {
   };
 
   return (
-    <>
-      {/* [왼쪽 블럭] 수업 Step 테이블, 수업 상태 테이블 */}
-      <div style={{ width: "25%", marginRight: "30px" }}>
-        <TeacherAssignmentTable setCourseStep={setCourseStep} />
-        <TeacherCourseStatusTable />
-      </div>
-
-      {/* [오른쪽 블럭] 화면 공유 블럭 */}
+    <div style={{ display: "flex", margin: "0 20vh" }}>
+      {/* [왼쪽 블럭] 화면 공유 블럭 */}
       <div style={{ display: "inline-block", width: "100%", height: "100%" }}>
         <Typography variant="h4" sx={{ margin: "10px 0 10px 0" }}>
           {`[ ${courseStep} ]`}
@@ -300,7 +306,7 @@ export const LiveTeacherPage = () => {
                 border: "1px solid grey",
               }}
             >
-              <Typography>수업을 시작해 주세요.</Typography>
+              <TeacherRenderAssign data={tableData} />
             </div>
           )}
         </div>
@@ -322,6 +328,16 @@ export const LiveTeacherPage = () => {
           과제 중지
         </button>
       </div>
-    </>
+
+      {/* [오른쪽 블럭] 수업 Step 테이블, 수업 상태 테이블 */}
+      <div style={{ width: "25%", marginRight: "30px" }}>
+        <TeacherAssignmentTable
+          setCourseStep={setCourseStep}
+          setTableData={setTableData}
+          lectureDataUuid={lectureDataUuid}
+        />
+        <TeacherCourseStatusTable />
+      </div>
+    </div>
   );
 };

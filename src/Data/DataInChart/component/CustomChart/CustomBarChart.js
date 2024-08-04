@@ -4,12 +4,10 @@ import useBarData from "../../hooks/useBarData";
 import VerticalSlider from "../CustomTable/VerticalSlider";
 import DiscreteSliderLabel from "../CustomTable/DiscreteSliderLabel";
 import makePdf from "../../../../DataLiteracy/utils/makePdf";
-import GraphOpinionText from "../DrawGraph/GraphOpinionText";
 
 import html2canvas from "html2canvas";
 
 import { useRef, useEffect } from "react";
-import GraphOpinionTempate from "../DrawGraph/GraphOpinionTemplate";
 
 function CustomBarChart(props) {
   const { labels, createDataset, createOptions, errorMessage, isError } =
@@ -89,7 +87,6 @@ function CustomBarChart(props) {
               <DiscreteSliderLabel />
             </div>
           </div>
-          <GraphOpinionTempate />
         </div>
       )}
     </Styled.Wrapper>
