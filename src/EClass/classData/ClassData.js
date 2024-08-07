@@ -20,6 +20,8 @@ import MultiTablePage from "./MultiTablePage";
 function ClassData() {
   const [summary, setSummary] = useState([]);
   const [lectureSummary, setLectureSummary] = useState([]);
+  const [lectureUuid, setLectureUuid] = useState();
+  const [timeStamp, setTimeStamp] = useState();
   const [showWordProcessor, setShowWordProcessor] = useState(false);
 
   const [myDataTable, setMyDataTable] = useState(false);
@@ -35,6 +37,7 @@ function ClassData() {
   const [stepCountLoad, setStepCountLoad] = useState();
   const [eClassType, setEClassType] = useState("");
 
+  // 수업 자료 가져오는 useEffect
   useEffect(() => {
     const TeacherName = localStorage.getItem("username");
 
@@ -72,24 +75,47 @@ function ClassData() {
       .catch((err) => console.log(err));
   }, []);
 
-  const getTable = (type, id) => {
-    setShowWordProcessor(false);
-    setMyDataTable(true);
+  // 데이터 테이블 가져오는 useEffect
+  useEffect(() => {
+    customAxios
+      .get("/mydata/list")
+      .then((res) => {
+        const formattedData = res.data.map((data) => ({
+          ...data,
+          saveDate: data.saveDate.split("T")[0],
+          dataLabel:
+            data.dataLabel === "AIRQUALITY"
+              ? "대기질 데이터"
+              : data.dataLabel === "OCEANQUALITY"
+              ? "수질 데이터"
+              : data.dataLabel,
+        }));
+        setSummary(formattedData);
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
-    setDataType(type);
-    setDataId(id);
-  };
-
-  const getLectureDataTable = (stepName, stepCount, contents) => {
+  const getLectureDataTable = (
+    stepName,
+    stepCount,
+    contents,
+    uuid,
+    timestamp
+  ) => {
     setShowWordProcessor(false);
     setMyDataTable(false);
 
     console.log("스텝 네임 : " + stepName);
     console.log("스텝 카운트 : " + stepCount);
+    console.log("스텝 uuid : " + uuid);
+    console.log("스텝 timestamp : " + timestamp);
+    console.log("스텝 stepCount : " + stepCount);
 
     setStepName(stepName);
     setStepCountLoad(stepCount);
     setStepContents(contents);
+    setLectureUuid(uuid);
+    setTimeStamp(timestamp);
   };
 
   const handleCreateLecture = () => {
@@ -113,6 +139,7 @@ function ClassData() {
       const updatedLectures = [...lectureSummary];
       updatedLectures.splice(index, 1);
       setLectureSummary(updatedLectures);
+      setLectureUuid(uuid);
       alert("수업 자료가 성공적으로 삭제되었습니다.");
       window.location.reload();
     } catch (error) {
@@ -166,7 +193,9 @@ function ClassData() {
                           getLectureDataTable(
                             item.stepName,
                             item.stepCount,
-                            item.contents
+                            item.contents,
+                            item.uuid,
+                            item.timestamp
                           )
                         }
                       >
@@ -234,6 +263,8 @@ function ClassData() {
                   stepCount={stepCountLoad}
                   stepContents={stepContents}
                   eClassType={eClassType}
+                  lectureUuid={lectureUuid}
+                  timeStamp={timeStamp}
                 />
               </>
             )}
@@ -278,18 +309,6 @@ function ClassData() {
             fullWidth
             sx={{ marginBottom: 2 }}
           />
-          <FormControl fullWidth sx={{ marginBottom: 2 }}>
-            <InputLabel id="eclass-select-label">E-Class 종류</InputLabel>
-            <Select
-              labelId="eclass-select-label"
-              value={eClassType}
-              onChange={(e) => setEClassType(e.target.value)}
-            >
-              <MenuItem value="type1">E-Class 타입 1</MenuItem>
-              <MenuItem value="type2">E-Class 타입 2</MenuItem>
-              <MenuItem value="type3">E-Class 타입 3</MenuItem>
-            </Select>
-          </FormControl>
           <Box sx={{ display: "flex", flexDirection: "row" }}>
             <Button
               variant="contained"

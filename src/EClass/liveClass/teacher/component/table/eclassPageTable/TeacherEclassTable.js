@@ -35,6 +35,7 @@ const createData = (index, item) => ({
   Teacher: item.username,
 });
 
+// E-Class 테이블에서도 삭제, eclassUuid_list 테이블 에서도 삭제
 const deleteData = async (row, handleDelete) => {
   try {
     const response = await customAxios.delete(

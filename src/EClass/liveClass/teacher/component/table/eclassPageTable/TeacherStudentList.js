@@ -187,7 +187,7 @@ export default function TeacherStudentList({ eclassUuid }) {
             );
 
             // 기존 rowData에 추가
-            setRowData((prevRowData) => [...prevRowData, ...newStudents]);
+            setRowData(newStudents);
           })
           .catch((error) => {
             console.error("Error fetching student list:", error);
@@ -263,6 +263,8 @@ export default function TeacherStudentList({ eclassUuid }) {
           setRowData((prevRowData) => [...prevRowData, newStudent]);
           setSelectedStudent(null);
           handleClose();
+
+          window.location.reload();
         })
         .catch((error) => {
           console.error("Error adding student:", error);

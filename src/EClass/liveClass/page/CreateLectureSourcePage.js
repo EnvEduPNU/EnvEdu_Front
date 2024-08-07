@@ -8,7 +8,14 @@ import moment from "moment"; // 날짜 처리 라이브러리
 import axios from "axios";
 
 export const CreateLectureSourcePage = (props) => {
-  const { stepCount, summary, lectureName, lectureSummary } = props;
+  const {
+    stepCount,
+    summary,
+    lectureName,
+    lectureSummary,
+    lectureUuid,
+    timeStamp,
+  } = props;
   const [activeStep, setActiveStep] = useState(1);
   const { contents, clearContents, setContents, updateContent } =
     useCreateLectureSourceStore();
@@ -116,8 +123,15 @@ export const CreateLectureSourcePage = (props) => {
 
           // 수정 저장이면 drilling한 uuid 와 timestamp 설정
           if (lectureSummary) {
-            console.log("체크 : " + JSON.stringify(lectureSummary, null, 2));
-            console.log("컨텐츠 체크 : " + JSON.stringify(contents, null, 2));
+            console.log(
+              "lectureUuid 체크 : " + JSON.stringify(lectureUuid, null, 2)
+            );
+            console.log(
+              "timestamp 체크 : " + JSON.stringify(timeStamp, null, 2)
+            );
+            console.log(
+              "stepContents 체크 : " + JSON.stringify(stepCount, null, 2)
+            );
 
             // deletedImage URL 추출
             const deletedImageUrls = contents.flatMap((content) =>
@@ -130,12 +144,13 @@ export const CreateLectureSourcePage = (props) => {
               "삭제 할 url : " + JSON.stringify(deletedImageUrls, null, 2)
             );
 
+            // 여기문제 있음 -- 배열 0으로 하면 무조건 맨 앞에 있는 애들만 고쳐짐
             changedPayload = {
-              uuid: lectureSummary[0].uuid,
+              uuid: lectureUuid,
               username: teacherName,
-              timestamp: lectureSummary[0].timestamp,
-              stepName: lectureSummary[0].stepName,
-              stepCount: lectureSummary[0].stepCount,
+              timestamp: timeStamp,
+              stepName: contents[0].stepName,
+              stepCount: stepCount,
               contents: contents.map((content) => ({
                 stepNum: content.stepNum,
                 contentName: content.contentName,
@@ -157,6 +172,10 @@ export const CreateLectureSourcePage = (props) => {
                   })),
               })),
             };
+
+            console.log(
+              "이미지 어레이 확인 : " + JSON.stringify(imageUrlArray, null, 2)
+            );
 
             if (imageUrlArray && imageUrlArray.length > 0) {
               imageUrlArray.forEach((image, index) => {

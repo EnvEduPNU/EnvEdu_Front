@@ -66,6 +66,7 @@ import EClassLivePage from "./EClass/liveClass/page/EClassLivePage";
 import ClassData from "./EClass/classData/ClassData";
 import { TeacherClassroomPage } from "./EClass/liveClass/page/TeacherClassroomPage";
 import { LiveTeacherPage } from "./EClass/liveClass/page/LiveTeacherPage";
+import { LiveStudentPage } from "./EClass/liveClass/page/LiveStudentPage";
 
 function App() {
   const navigate = useNavigate();
@@ -151,6 +152,11 @@ function App() {
             path="/LiveTeacherPage/:eClassUuid"
             exact={true}
             element={<LiveTeacherPage />}
+          />
+          <Route
+            path="/LiveStudentPage/:eClassUuid"
+            exact={true}
+            element={<LiveStudentPage />}
           />
           {/*OPEN API*/}
           <Route path="/openAPI/past" exact={true} element={<OpenApiPast />} />

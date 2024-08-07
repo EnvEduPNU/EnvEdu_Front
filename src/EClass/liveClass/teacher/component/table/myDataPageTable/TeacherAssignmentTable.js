@@ -132,6 +132,7 @@ export default function TeacherAssignmentTable(props) {
     props.setCourseStep(Step);
 
     console.log("몇번째 스텝? : " + JSON.stringify(stepNum, null, 2));
+    props.setStepCount(stepNum);
 
     const filteredTableData = allTableData
       .map((data) => {

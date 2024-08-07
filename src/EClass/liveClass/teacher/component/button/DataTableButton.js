@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   Box,
@@ -50,6 +50,10 @@ export default function DataTableButton({ summary, onSelectData }) {
     onSelectData(type, id);
     handleClose();
   };
+
+  useEffect(() => {
+    console.log("summary 체크 : " + JSON.stringify(summary, null, 2));
+  }, []);
 
   return (
     <>

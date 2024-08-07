@@ -1,6 +1,42 @@
 import React, { useState } from "react";
 import { Paper, TextField, Typography, Button } from "@mui/material";
 
+// TeacherRenderAssign 컴포넌트는 데이터 배열을 받아 각 항목을 Paper에 렌더링합니다.
+function TeacherRenderAssign({ data }) {
+  const handleTextBoxSubmit = (text) => {
+    console.log("TextBox Submitted:", text);
+  };
+
+  return (
+    <div>
+      {data.map((item) => (
+        <Paper
+          key={item.uuid}
+          style={{
+            padding: 20,
+            margin: "20px 0",
+            boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          {item.contents.map((contentItem, index) => (
+            <div key={index} style={{ marginBottom: "20px" }}>
+              {contentItem.contents.map((content, idx) => (
+                <RenderContent
+                  key={idx}
+                  content={content}
+                  onSubmitTextBox={handleTextBoxSubmit}
+                />
+              ))}
+            </div>
+          ))}
+        </Paper>
+      ))}
+    </div>
+  );
+}
+
+//-----------------------------------------------------------------------------------------------------------------
+
 // RenderContent 컴포넌트는 다양한 콘텐츠 타입을 처리합니다.
 function RenderContent({ content, onSubmitTextBox }) {
   const [textBoxValue, setTextBoxValue] = useState(content.content);
@@ -12,6 +48,8 @@ function RenderContent({ content, onSubmitTextBox }) {
   const handleSubmit = () => {
     onSubmitTextBox(textBoxValue);
   };
+
+  console.log("컨텐츠 확인 : " + JSON.stringify(content, null, 2));
 
   switch (content.type) {
     case "title":
@@ -55,29 +93,15 @@ function RenderContent({ content, onSubmitTextBox }) {
           <img
             src={content.content}
             alt="Assignment Content"
-            style={{ maxWidth: "100%" }}
+            style={{ width: content.x, height: content.y }}
           />
         </div>
       );
     case "data":
-      return (
-        <div
-          style={{
-            width: "auto",
-            overflowX: "auto",
-            marginBottom: "20px",
-          }}
-        >
-          <div
-            style={{
-              transform: "scale(1)",
-              transformOrigin: "top left",
-            }}
-          >
-            {content.content}
-          </div>
-        </div>
-      );
+      // 여기서 content.content는 React 엘리먼트 트리로 구성된 객체이므로
+      // renderElement를 사용하여 동적으로 렌더링.
+      return <div>{renderElement(content.content)}</div>;
+
     case "emptyBox":
       return (
         <div
@@ -98,40 +122,21 @@ function RenderContent({ content, onSubmitTextBox }) {
   }
 }
 
-// TeacherRenderAssign 컴포넌트는 데이터 배열을 받아 각 항목을 Paper에 렌더링합니다.
-function TeacherRenderAssign({ data }) {
-  const handleTextBoxSubmit = (text) => {
-    console.log("TextBox Submitted:", text);
-  };
+// React 엘리먼트를 동적으로 생성하는 함수
+function renderElement(node) {
+  if (typeof node !== "object" || node === null) {
+    return node;
+  }
 
-  return (
-    <div>
-      {data.map((item) => (
-        <Paper
-          key={item.uuid}
-          style={{
-            padding: 20,
-            margin: "20px 0",
-            boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
-          }}
-        >
-          <Typography variant="h5" gutterBottom>
-            {item.stepName}
-          </Typography>
-          {item.contents.map((contentItem, index) => (
-            <div key={index} style={{ marginBottom: "20px" }}>
-              {contentItem.contents.map((content, idx) => (
-                <RenderContent
-                  key={idx}
-                  content={content}
-                  onSubmitTextBox={handleTextBoxSubmit}
-                />
-              ))}
-            </div>
-          ))}
-        </Paper>
-      ))}
-    </div>
+  const { type, props, key } = node;
+  const children = props?.children || null;
+
+  return React.createElement(
+    type,
+    { ...props, key },
+    Array.isArray(children)
+      ? children.map(renderElement)
+      : renderElement(children)
   );
 }
 

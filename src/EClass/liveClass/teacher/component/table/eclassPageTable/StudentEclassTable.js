@@ -158,8 +158,13 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
     );
 
     const eClassUuid = row.eClassUuid;
+    const lectureDataUuid = row.LectureData;
 
-    navigate(`/LiveTeacherPage/${eClassUuid}`);
+    navigate(`/LiveStudentPage/${eClassUuid}`, {
+      state: {
+        lectureDataUuid,
+      },
+    });
   };
 
   function rowContent(

@@ -17,10 +17,11 @@ export const LiveTeacherPage = () => {
   const peerConnections = useRef({});
   const sessionIdCheck = useRef(false);
   const [sharedScreenState, setSharedScreenState] = useState(false);
-  const [courseStep, setCourseStep] = useState();
 
   // Step 리스트에서 가져오는 데이터
   const [tableData, setTableData] = useState([]);
+  const [courseStep, setCourseStep] = useState();
+  const [stepCount, setStepCount] = useState();
 
   const addSessionId = useLiveClassPartStore((state) => state.addSessionId);
   const removeSessionId = useLiveClassPartStore(
@@ -43,7 +44,7 @@ export const LiveTeacherPage = () => {
     // 초기 학생들 세션을 소켓을 세팅하는 메서드
     fetchSessionIds();
 
-    console.log("클래스로 제대로 uuid 넘어옴 : " + eClassUuid);
+    // console.log("클래스로 제대로 uuid 넘어옴 : " + eClassUuid);
 
     return () => {
       Object.values(stompClients.current).forEach((client) => {
@@ -58,6 +59,12 @@ export const LiveTeacherPage = () => {
   }, []);
 
   useEffect(() => {}, [sharedScreenState]);
+
+  useEffect(() => {
+    console.log(
+      "상위 스텝도 변경 할때 바뀌나 : " + JSON.stringify(stepCount, null, 2)
+    );
+  }, [stepCount]);
 
   const fetchSessionIds = async () => {
     try {
@@ -301,11 +308,13 @@ export const LiveTeacherPage = () => {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                maxWidth: "80rem",
+                maxWidth: "70rem",
                 minHeight: "40rem", // 부모 요소의 높이를 설정해야 전체 높이에 대해 중앙 정렬이 가능
+                margin: "0 10px 0 0",
                 border: "1px solid grey",
               }}
             >
+              {/* 각 스텝 내용 보여주는 컴포넌트 */}
               <TeacherRenderAssign data={tableData} />
             </div>
           )}
@@ -322,19 +331,17 @@ export const LiveTeacherPage = () => {
         >
           공유 중지
         </button>
-        {/* 과제 공유 버튼 */}
-        <TeacherStepShareButton />
-        <button onClick={""} style={{ margin: "10px 0 0 10px ", width: "20%" }}>
-          과제 중지
-        </button>
+        {/* 과제 공유/중지 버튼 */}
+        <TeacherStepShareButton stepCount={stepCount} />
       </div>
 
       {/* [오른쪽 블럭] 수업 Step 테이블, 수업 상태 테이블 */}
-      <div style={{ width: "25%", marginRight: "30px" }}>
+      <div style={{ width: "40  %", marginRight: "30px" }}>
         <TeacherAssignmentTable
           setCourseStep={setCourseStep}
           setTableData={setTableData}
           lectureDataUuid={lectureDataUuid}
+          setStepCount={setStepCount}
         />
         <TeacherCourseStatusTable />
       </div>

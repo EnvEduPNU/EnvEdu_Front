@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
-import { customAxios } from "../../../../Common/CustomAxios";
+import { customAxios } from "../../../Common/CustomAxios";
 import { v4 as uuidv4 } from "uuid"; // UUID 패키지를 사용하여 세션 ID 생성
-import StudentAssignmentTable from "./table/StudentAssignmentTable";
-import StudentAssignmentCheckTable from "./table/StudentAssignmentCheckTable";
-import { StudentStepCompnent } from "./StudentStepCompnent";
+import StudentAssignmentTable from "../student/component/table/StudentAssignmentTable";
+import StudentAssignmentCheckTable from "../student/component/table/StudentAssignmentCheckTable";
+import { StudentStepCompnent } from "../student/component/StudentStepCompnent";
+import { useLocation, useParams } from "react-router-dom";
 
-const LiveStudentComponent = () => {
+export const LiveStudentPage = () => {
   const remoteVideoRef = useRef(null);
   const stompClient = useRef(null);
   const peerConnection = useRef(null);
@@ -15,6 +16,14 @@ const LiveStudentComponent = () => {
   const [sessionIdState, setSessionIdState] = useState("");
   const [finished, setFinished] = useState(false);
   const iceConnectionCheckInterval = useRef(null);
+
+  const [tableData, setTableData] = useState([]);
+  const [courseStep, setCourseStep] = useState();
+  const [stepCount, setStepCount] = useState();
+
+  const { eClassUuid } = useParams(); // 경로 파라미터 받아오기
+  const location = useLocation();
+  const { lectureDataUuid } = location.state || {};
 
   useEffect(() => {
     const initializeSession = async () => {
@@ -210,31 +219,38 @@ const LiveStudentComponent = () => {
   const [page, setPage] = useState("defaultPage");
 
   return (
-    <>
-      {/* 수업 셋리스트 & step 제출 리스트 블럭 */}
-      <div style={{ width: "25%", marginRight: "30px" }}>
-        <StudentAssignmentTable />
-        <StudentAssignmentCheckTable />
-      </div>
-
+    <div style={{ display: "flex" }}>
       {/* 화면 공유 블럭 */}
       <div style={{ display: "inline-block", width: "100%", height: "100%" }}>
-        <h2>{"[ step2 ]"}</h2>
+        <h2>{`[ ${courseStep} ]`}</h2>
         <div style={{ border: "1px solid grey" }}>
           {page == "newPage" ? (
             setPage("defaultPage")
           ) : (
             <video ref={remoteVideoRef} autoPlay playsInline></video>
           )}
-          <StudentStepCompnent setPage={setPage} page={page} />
+          <StudentStepCompnent
+            setPage={setPage}
+            setStepCount={setStepCount}
+            page={page}
+            data={tableData}
+            uuid={lectureDataUuid}
+            stepCount={stepCount}
+          />
         </div>
-        <button style={{ margin: "10px 0 0 10px ", width: "20%" }}>
-          과제 시작
-        </button>
-        <button style={{ margin: "10px 0 0 10px ", width: "20%" }}>제출</button>
       </div>
-    </>
+
+      {/* 수업 셋리스트 & step 제출 리스트 블럭 */}
+      <div style={{ width: "25%", marginRight: "30px" }}>
+        <StudentAssignmentTable
+          setCourseStep={setCourseStep}
+          setTableData={setTableData}
+          lectureDataUuid={lectureDataUuid}
+          setStepCount={setStepCount}
+          stepCount={stepCount}
+        />
+        <StudentAssignmentCheckTable />
+      </div>
+    </div>
   );
 };
-
-export default LiveStudentComponent;
