@@ -1,10 +1,15 @@
 import React, { useState } from "react";
-import { Paper, TextField, Typography } from "@mui/material";
+import { Paper, Typography, Button, TextField } from "@mui/material";
 
-// TeacherRenderAssign 컴포넌트는 데이터 배열을 받아 각 항목을 Paper에 렌더링합니다.
-function TeacherRenderAssign({ data }) {
-  const handleTextBoxSubmit = (text) => {
-    console.log("TextBox Submitted:", text);
+function StudentRenderAssign({ data }) {
+  const [textBoxValues, setTextBoxValues] = useState({});
+
+  const handleTextBoxSubmit = (id, text) => {
+    setTextBoxValues((prev) => ({ ...prev, [id]: text }));
+  };
+
+  const handleSubmit = () => {
+    console.log("Final Submit:", textBoxValues);
   };
 
   return (
@@ -16,36 +21,44 @@ function TeacherRenderAssign({ data }) {
             padding: 20,
             margin: "20px 0",
             boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
+            width: "100%",
+            minHeight: "61vh",
           }}
         >
           {item.contents.map((contentItem, index) => (
-            <div key={index} style={{ marginBottom: "20px" }}>
+            <div key={index}>
               {contentItem.contents.map((content, idx) => (
                 <RenderContent
                   key={idx}
                   content={content}
-                  onSubmitTextBox={handleTextBoxSubmit}
+                  textBoxValue={textBoxValues[content.id] || ""}
+                  setTextBoxValue={(id, text) => handleTextBoxSubmit(id, text)}
                 />
               ))}
             </div>
           ))}
         </Paper>
       ))}
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleSubmit}
+        style={{ marginTop: "10px" }}
+      >
+        제출
+      </Button>
     </div>
   );
 }
 
-//-----------------------------------------------------------------------------------------------------------------
-
-// RenderContent 컴포넌트는 다양한 콘텐츠 타입을 처리합니다.
-function RenderContent({ content, onSubmitTextBox }) {
-  const [textBoxValue, setTextBoxValue] = useState(content.content);
+function RenderContent({ content, textBoxValue, setTextBoxValue }) {
+  const [localTextBoxValue, setLocalTextBoxValue] = useState(textBoxValue);
 
   const handleTextChange = (event) => {
-    setTextBoxValue(event.target.value);
+    const newText = event.target.value;
+    setLocalTextBoxValue(newText);
+    setTextBoxValue(content.id, newText);
   };
-
-  console.log("컨텐츠 확인 : " + JSON.stringify(content, null, 2));
 
   switch (content.type) {
     case "title":
@@ -63,17 +76,15 @@ function RenderContent({ content, onSubmitTextBox }) {
       );
     case "textBox":
       return (
-        <div>
-          <TextField
-            value={textBoxValue}
-            onChange={handleTextChange}
-            variant="outlined"
-            fullWidth
-            multiline
-            minRows={5}
-            maxRows={10}
-          />
-        </div>
+        <TextField
+          value={localTextBoxValue}
+          onChange={handleTextChange}
+          variant="outlined"
+          fullWidth
+          multiline
+          minRows={5}
+          maxRows={10}
+        />
       );
     case "img":
       return (
@@ -86,10 +97,7 @@ function RenderContent({ content, onSubmitTextBox }) {
         </div>
       );
     case "data":
-      // 여기서 content.content는 React 엘리먼트 트리로 구성된 객체이므로
-      // renderElement를 사용하여 동적으로 렌더링.
       return <div>{renderElement(content.content)}</div>;
-
     case "emptyBox":
       return (
         <div
@@ -110,7 +118,6 @@ function RenderContent({ content, onSubmitTextBox }) {
   }
 }
 
-// React 엘리먼트를 동적으로 생성하는 함수
 function renderElement(node) {
   if (typeof node !== "object" || node === null) {
     return node;
@@ -128,4 +135,4 @@ function renderElement(node) {
   );
 }
 
-export default TeacherRenderAssign;
+export default StudentRenderAssign;

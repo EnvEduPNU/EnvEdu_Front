@@ -223,12 +223,12 @@ export const LiveStudentPage = () => {
       {/* 화면 공유 블럭 */}
       <div style={{ display: "inline-block", width: "100%", height: "100%" }}>
         <h2>{`[ ${courseStep} ]`}</h2>
-        <div style={{ border: "1px solid grey" }}>
-          {page == "newPage" ? (
-            setPage("defaultPage")
-          ) : (
+        <div style={{ margin: "0 20px 0 20px" }}>
+          {page == "newPage" && !remoteVideoRef && setPage("defaultPage")}
+          {remoteVideoRef.current && (
             <video ref={remoteVideoRef} autoPlay playsInline></video>
           )}
+
           <StudentStepCompnent
             setPage={setPage}
             setStepCount={setStepCount}
