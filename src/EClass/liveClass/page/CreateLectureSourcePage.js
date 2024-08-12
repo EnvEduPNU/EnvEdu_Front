@@ -144,7 +144,6 @@ export const CreateLectureSourcePage = (props) => {
               "삭제 할 url : " + JSON.stringify(deletedImageUrls, null, 2)
             );
 
-            // 여기문제 있음 -- 배열 0으로 하면 무조건 맨 앞에 있는 애들만 고쳐짐
             changedPayload = {
               uuid: lectureUuid,
               username: teacherName,

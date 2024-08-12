@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Paper, TextField, Typography } from "@mui/material";
 
 // TeacherRenderAssign 컴포넌트는 데이터 배열을 받아 각 항목을 Paper에 렌더링합니다.
@@ -8,13 +8,14 @@ function TeacherRenderAssign({ data }) {
   };
 
   return (
-    <div>
+    <div style={{ width: "100%" }}>
       {data.map((item) => (
         <Paper
           key={item.uuid}
           style={{
-            padding: 20,
+            padding: 30,
             margin: "20px 0",
+            minHeight: "70vh",
             boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
           }}
         >
@@ -39,14 +40,6 @@ function TeacherRenderAssign({ data }) {
 
 // RenderContent 컴포넌트는 다양한 콘텐츠 타입을 처리합니다.
 function RenderContent({ content, onSubmitTextBox }) {
-  const [textBoxValue, setTextBoxValue] = useState(content.content);
-
-  const handleTextChange = (event) => {
-    setTextBoxValue(event.target.value);
-  };
-
-  console.log("컨텐츠 확인 : " + JSON.stringify(content, null, 2));
-
   switch (content.type) {
     case "title":
       return (
@@ -65,8 +58,6 @@ function RenderContent({ content, onSubmitTextBox }) {
       return (
         <div>
           <TextField
-            value={textBoxValue}
-            onChange={handleTextChange}
             variant="outlined"
             fullWidth
             multiline

@@ -64,9 +64,22 @@ function fixedHeaderContent() {
   );
 }
 
-function rowContent(_index, row, handleClick, selectedRow, stepCount) {
+function rowContent(
+  _index,
+  row,
+  handleClick,
+  selectedRow,
+  stepCount,
+  isDataAvailable
+) {
   const parseStepCount = parseInt(stepCount);
   const isDisabled = row.stepNum !== parseStepCount;
+
+  // console.log("디스에이블드 표시 : " + isDataAvailable);
+
+  // if (isDataAvailable) {
+  //   isDisabled = isDataAvailable;
+  // }
 
   return (
     <React.Fragment>
@@ -96,33 +109,65 @@ export default function StudentAssignmentTable(props) {
   const [selectedRow, setSelectedRow] = useState(null);
   const [tableData, setTableData] = useState([]);
   const [allTableData, setAllTableData] = useState([]);
+  const [isDataAvailable, setIsDataAvailable] = useState(false); // 데이터가 들어왔는지 여부를 확인하는 상태
 
   useEffect(() => {
     console.log("테이블에서 disable 제외 카운트 : " + props.stepCount);
 
     customAxios
-      .get("/api/steps/getLectureContent")
+      .get(`/api/assignment/get?uuid=${props.lectureDataUuid}`)
       .then((res) => {
-        const filteredData = res.data.filter(
-          (data) => data.uuid === props.lectureDataUuid
-        );
+        if (res.data && res.data.length > 0) {
+          console.log(
+            "오른쪽 리스트 가져온거 확인하기 : " +
+              JSON.stringify(res.data, null, 2)
+          );
 
-        // lectureSummary의 contents 배열을 펼쳐서 테이블에 표시할 수 있도록 변환
-        const formattedData = filteredData.flatMap((data) =>
-          data.contents.map((content) => ({
-            stepNum: content.stepNum,
-            contentName: content.contentName,
-            id: `${data.uuid}-${content.stepNum}`, // unique id 생성
-            Step: data.stepName,
-          }))
-        );
+          // lectureSummary의 contents 배열을 펼쳐서 테이블에 표시할 수 있도록 변환
+          const formattedData = res.data.flatMap((data) =>
+            data.contents.map((content) => ({
+              stepNum: content.stepNum,
+              contentName: content.contentName,
+              id: `${data.uuid}-${content.stepNum}`, // unique id 생성
+              Step: data.stepName,
+            }))
+          );
 
-        console.log(
-          "Formatted Data for Table: " + JSON.stringify(formattedData, null, 2)
-        );
+          setTableData(formattedData);
+          setAllTableData(res.data);
+          setIsDataAvailable(true); // 데이터가 들어왔음을 표시
 
-        setTableData(formattedData);
-        setAllTableData(filteredData);
+          // 첫 번째 요청의 데이터가 존재하면, 두 번째 요청은 실행하지 않음
+          return;
+        }
+
+        // 첫 번째 요청의 데이터가 존재하지 않으면, 두 번째 요청을 실행
+        customAxios
+          .get("/api/steps/getLectureContent")
+          .then((res) => {
+            const filteredData = res.data.filter(
+              (data) => data.uuid === props.lectureDataUuid
+            );
+
+            // lectureSummary의 contents 배열을 펼쳐서 테이블에 표시할 수 있도록 변환
+            const formattedData = filteredData.flatMap((data) =>
+              data.contents.map((content) => ({
+                stepNum: content.stepNum,
+                contentName: content.contentName,
+                id: `${data.uuid}-${content.stepNum}`, // unique id 생성
+                Step: data.stepName,
+              }))
+            );
+
+            console.log(
+              "Formatted Data for Table: " +
+                JSON.stringify(formattedData, null, 2)
+            );
+
+            setTableData(formattedData);
+            setAllTableData(filteredData);
+          })
+          .catch((err) => console.log(err));
       })
       .catch((err) => console.log(err));
   }, []);
@@ -184,7 +229,8 @@ export default function StudentAssignmentTable(props) {
                 row,
                 handleRowClick,
                 selectedRow,
-                props.stepCount
+                props.stepCount,
+                isDataAvailable
               ) // stepCount를 rowContent에 전달
           }
           style={{ height: 250 }}

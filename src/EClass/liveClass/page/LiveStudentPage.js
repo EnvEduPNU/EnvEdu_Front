@@ -136,7 +136,6 @@ export const LiveStudentPage = () => {
       };
 
       peerConnection.current.ontrack = (event) => {
-        console.log("비디오 설정은?");
         if (remoteVideoRef.current) {
           remoteVideoRef.current.srcObject = event.streams[0];
         }
@@ -219,10 +218,15 @@ export const LiveStudentPage = () => {
   const [page, setPage] = useState("defaultPage");
 
   return (
-    <div style={{ display: "flex" }}>
+    <div style={{ display: "flex", margin: "0 20vh" }}>
       {/* 화면 공유 블럭 */}
       <div style={{ display: "inline-block", width: "100%", height: "100%" }}>
-        <h2>{`[ ${courseStep} ]`}</h2>
+        {courseStep ? (
+          <h2>{`[ ${courseStep} ]`}</h2>
+        ) : (
+          <div style={{ padding: "3vh" }}></div>
+        )}
+
         <div style={{ margin: "0 20px 0 20px" }}>
           {page == "newPage" && !remoteVideoRef && setPage("defaultPage")}
           {remoteVideoRef.current && (

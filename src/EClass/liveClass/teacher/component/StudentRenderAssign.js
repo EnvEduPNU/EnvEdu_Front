@@ -1,63 +1,109 @@
 import React, { useState } from "react";
 import { Paper, Typography, Button, TextField } from "@mui/material";
+import { customAxios } from "../../../../Common/CustomAxios";
 
 function StudentRenderAssign({ data }) {
-  const [textBoxValues, setTextBoxValues] = useState({});
+  const [textBoxValues, setTextBoxValues] = useState([]); // 배열로 초기화
 
-  const handleTextBoxSubmit = (id, text) => {
-    setTextBoxValues((prev) => ({ ...prev, [id]: text }));
+  const handleTextBoxSubmit = (index, text) => {
+    setTextBoxValues((prev) => {
+      // prev가 배열인지 확인하고 아니면 빈 배열로 초기화
+      const newValues = Array.isArray(prev) ? [...prev] : [];
+      newValues[index] = text; // 해당 인덱스에 값 설정
+      return newValues;
+    });
   };
 
   const handleSubmit = () => {
-    console.log("Final Submit:", textBoxValues);
+    console.log("데이터 구조 일단 확인 : " + JSON.stringify(data, null, 2));
+    console.log(
+      "textBoxValues 확인 : " + JSON.stringify(textBoxValues, null, 2)
+    );
+
+    const studentName = localStorage.getItem("username");
+
+    const updatedDataArray = data.map((stepData) => {
+      return {
+        uuid: stepData.uuid,
+        timestamp: new Date().toISOString(), // 현재 시간으로 업데이트
+        username: studentName,
+        stepName: stepData.stepName,
+        stepCount: stepData.stepCount,
+        contents: stepData.contents.map((item) => {
+          return {
+            contentName: item.contentName,
+            stepNum: item.stepNum,
+            contents: item.contents.map((contentItem, index) => {
+              if (contentItem.type === "textBox") {
+                const updatedContent = {
+                  ...contentItem,
+                  content: textBoxValues[index] || "",
+                };
+                return updatedContent;
+              }
+              return contentItem;
+            }),
+          };
+        }),
+      };
+    });
+
+    const FormattedUpdateData = updatedDataArray[0];
+
+    setTextBoxValues({});
+
+    console.log("Final Submit:", JSON.stringify(FormattedUpdateData, null, 2));
+    customAxios.post("/api/assignment/save", FormattedUpdateData);
   };
 
   return (
     <div>
-      {data.map((item) => (
-        <Paper
-          key={item.uuid}
-          style={{
-            padding: 20,
-            margin: "20px 0",
-            boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
-            width: "100%",
-            minHeight: "61vh",
-          }}
-        >
-          {item.contents.map((contentItem, index) => (
-            <div key={index}>
-              {contentItem.contents.map((content, idx) => (
-                <RenderContent
-                  key={idx}
-                  content={content}
-                  textBoxValue={textBoxValues[content.id] || ""}
-                  setTextBoxValue={(id, text) => handleTextBoxSubmit(id, text)}
-                />
-              ))}
-            </div>
-          ))}
-        </Paper>
+      {data.map((stepData, stepIndex) => (
+        <>
+          <Paper
+            key={stepData.uuid}
+            style={{
+              padding: 20,
+              margin: "20px 0",
+              boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
+              width: "100%",
+              minHeight: "61vh",
+            }}
+          >
+            {stepData.contents.map((contentItem, contentIndex) => (
+              <div key={`${stepIndex}-${contentIndex}`}>
+                {contentItem.contents.map((content, idx) => (
+                  <RenderContent
+                    key={idx}
+                    content={content}
+                    textBoxValue={textBoxValues[`${idx}`] || ""}
+                    setTextBoxValue={(id, text) =>
+                      handleTextBoxSubmit(id, text)
+                    }
+                    index={`${idx}`}
+                  />
+                ))}
+              </div>
+            ))}
+          </Paper>
+
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSubmit}
+            style={{ marginTop: "10px" }}
+          >
+            제출
+          </Button>
+        </>
       ))}
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleSubmit}
-        style={{ marginTop: "10px" }}
-      >
-        제출
-      </Button>
     </div>
   );
 }
 
-function RenderContent({ content, textBoxValue, setTextBoxValue }) {
-  const [localTextBoxValue, setLocalTextBoxValue] = useState(textBoxValue);
-
+function RenderContent({ content, textBoxValue, setTextBoxValue, index }) {
   const handleTextChange = (event) => {
-    const newText = event.target.value;
-    setLocalTextBoxValue(newText);
-    setTextBoxValue(content.id, newText);
+    setTextBoxValue(index, event.target.value);
   };
 
   switch (content.type) {
@@ -77,7 +123,7 @@ function RenderContent({ content, textBoxValue, setTextBoxValue }) {
     case "textBox":
       return (
         <TextField
-          value={localTextBoxValue}
+          value={textBoxValue || content.content}
           onChange={handleTextChange}
           variant="outlined"
           fullWidth

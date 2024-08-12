@@ -3,6 +3,7 @@ import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 import { customAxios } from "../../../../Common/CustomAxios";
 import StudentRenderAssign from "../../teacher/component/StudentRenderAssign";
+import { Typography } from "@mui/material";
 
 // 선생님에 의해서 화면이 바뀌게 되는 학생의 소켓 통신이 있는 페이지
 // 나중에 필요한 기능만 추출해서 LiveStudentComponet에 적용하기
@@ -10,6 +11,8 @@ export function StudentStepCompnent(props) {
   const [page, setPage] = useState(props.page);
   const [stepCount, setStepCount] = useState();
   const [tableData, setTableData] = useState();
+
+  const [socketEclassUuid, setSocketEclassUuid] = useState();
 
   useEffect(() => {
     const token = localStorage.getItem("access_token").replace("Bearer ", "");
@@ -29,6 +32,7 @@ export function StudentStepCompnent(props) {
         props.setPage(parsedMessage.page);
         setStepCount(parsedMessage.stepCount);
         props.setStepCount(parsedMessage.stepCount);
+        setSocketEclassUuid(parsedMessage.lectureDataUuid);
       });
     });
 
@@ -41,6 +45,19 @@ export function StudentStepCompnent(props) {
   useEffect(() => {
     console.log("스텝카운트 : " + JSON.stringify(stepCount, null, 2));
     console.log("페이지 : " + JSON.stringify(page, null, 2));
+
+    // 여기서 먼저 EClassUuidTable 부터 조회해서 assginmentData 있는지 확인하고 없으면
+    // 기존 default로 정해진 수업 자료 axios로 가져오게하고
+    // 만약 저번에 만들어진 데이터가 있으면 그거로 랜더링하게 하기.
+    customAxios
+      .get(`/api/assignment/get?uuid=${props.uuid}`)
+      .then((res) => {
+        console.log("가져온거 확인하기 : " + JSON.stringify(res.data, null, 2));
+
+        setTableData(res.data);
+        return;
+      })
+      .catch((err) => console.log(err));
 
     customAxios
       .get("/api/steps/getLectureContent")
@@ -78,7 +95,7 @@ export function StudentStepCompnent(props) {
 
   return (
     <div>
-      {page === "newPage" ? (
+      {page === "newPage" && props.uuid == socketEclassUuid ? (
         <>
           <StudentRenderAssign data={tableData} />
         </>
@@ -90,5 +107,18 @@ export function StudentStepCompnent(props) {
 }
 
 function DefaultPageComponent() {
-  return <></>;
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "70vh", // 부모 요소의 높이를 설정해야 전체 높이에 대해 중앙 정렬이 가능
+        margin: "0 10px 0 0",
+        border: "1px solid grey",
+      }}
+    >
+      <Typography variant="h6">수업 시작 전 입니다.</Typography>
+    </div>
+  );
 }

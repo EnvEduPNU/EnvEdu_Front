@@ -5,7 +5,7 @@ import Stomp from "stompjs";
 let globalStompClient;
 
 // 선생님 페이지 과제 공유 버튼
-export function TeacherStepShareButton({ stepCount }) {
+export function TeacherStepShareButton({ stepCount, lectureDataUuid }) {
   useEffect(() => {
     // SockJS 연결 설정
 
@@ -55,6 +55,7 @@ export function TeacherStepShareButton({ stepCount }) {
       const message = {
         page: "newPage", // JSON 객체에서 "newPage"를 값으로 하는 'page' 키 생성
         stepCount: stepCount,
+        lectureDataUuid: lectureDataUuid,
       };
       globalStompClient.send("/app/switch", {}, JSON.stringify(message));
     }
