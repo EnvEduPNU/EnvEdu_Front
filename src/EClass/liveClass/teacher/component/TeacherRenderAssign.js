@@ -14,7 +14,7 @@ function TeacherRenderAssign({ data }) {
           key={item.uuid}
           style={{
             padding: 30,
-            margin: "20px 0",
+            margin: "20px 20px 0 0",
             minHeight: "70vh",
             boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
           }}

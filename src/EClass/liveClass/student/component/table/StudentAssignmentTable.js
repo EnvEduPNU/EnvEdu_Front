@@ -8,7 +8,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { TableVirtuoso } from "react-virtuoso";
-import { Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import { customAxios } from "../../../../../Common/CustomAxios";
 
 const columns = [
@@ -212,10 +212,13 @@ export default function StudentAssignmentTable(props) {
 
   return (
     <div>
-      <Typography variant="h5" sx={{ margin: "20px 0 10px 0" }}>
+      <Typography variant="h5" sx={{ margin: "0 0 10px 0" }}>
         {`${tableData[0]?.Step || "No Data"}`}
       </Typography>
-      <Paper style={{ height: 300, width: "100%" }} className="virtuoso-table">
+      <Paper
+        style={{ height: "60vh", width: "100%" }}
+        className="virtuoso-table"
+      >
         <TableContainer component={Paper}>
           <Table stickyHeader>{fixedHeaderContent()}</Table>
         </TableContainer>
@@ -233,9 +236,19 @@ export default function StudentAssignmentTable(props) {
                 isDataAvailable
               ) // stepCount를 rowContent에 전달
           }
-          style={{ height: 250 }}
+          style={{ height: "55vh" }}
         />
       </Paper>
+      {props.reportTable && props.reportTable.length > 0 && (
+        <Button
+          variant="contained"
+          color="primary"
+          // onClick={}
+          style={{ width: "100%", margin: "20px 0 0 0" }}
+        >
+          보고서
+        </Button>
+      )}
     </div>
   );
 }

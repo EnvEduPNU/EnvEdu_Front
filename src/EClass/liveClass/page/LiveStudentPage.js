@@ -4,9 +4,9 @@ import Stomp from "stompjs";
 import { customAxios } from "../../../Common/CustomAxios";
 import { v4 as uuidv4 } from "uuid"; // UUID 패키지를 사용하여 세션 ID 생성
 import StudentAssignmentTable from "../student/component/table/StudentAssignmentTable";
-import StudentAssignmentCheckTable from "../student/component/table/StudentAssignmentCheckTable";
 import { StudentStepCompnent } from "../student/component/StudentStepCompnent";
 import { useLocation, useParams } from "react-router-dom";
+import { Typography } from "@mui/material";
 
 export const LiveStudentPage = () => {
   const remoteVideoRef = useRef(null);
@@ -23,7 +23,9 @@ export const LiveStudentPage = () => {
 
   const { eClassUuid } = useParams(); // 경로 파라미터 받아오기
   const location = useLocation();
-  const { lectureDataUuid } = location.state || {};
+  const { lectureDataUuid, row } = location.state || {};
+
+  const [reportTable, setReportTable] = useState([]);
 
   useEffect(() => {
     const initializeSession = async () => {
@@ -219,14 +221,13 @@ export const LiveStudentPage = () => {
 
   return (
     <div style={{ display: "flex", margin: "0 20vh" }}>
+      {console.log("E-Class 정보 : " + JSON.stringify(row, null, 2))}
+
       {/* 화면 공유 블럭 */}
       <div style={{ display: "inline-block", width: "100%", height: "100%" }}>
-        {courseStep ? (
-          <h2>{`[ ${courseStep} ]`}</h2>
-        ) : (
-          <div style={{ padding: "3vh" }}></div>
-        )}
-
+        <Typography variant="h4" sx={{ margin: "0 20px 0 20px" }}>
+          {row.Name}
+        </Typography>
         <div style={{ margin: "0 20px 0 20px" }}>
           {page == "newPage" && !remoteVideoRef && setPage("defaultPage")}
           {remoteVideoRef.current && (
@@ -240,6 +241,7 @@ export const LiveStudentPage = () => {
             data={tableData}
             uuid={lectureDataUuid}
             stepCount={stepCount}
+            setReportTable={setReportTable}
           />
         </div>
       </div>
@@ -252,8 +254,8 @@ export const LiveStudentPage = () => {
           lectureDataUuid={lectureDataUuid}
           setStepCount={setStepCount}
           stepCount={stepCount}
+          reportTable={reportTable}
         />
-        <StudentAssignmentCheckTable />
       </div>
     </div>
   );

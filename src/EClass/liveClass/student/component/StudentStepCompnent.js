@@ -41,11 +41,11 @@ export function StudentStepCompnent(props) {
       stompClient.disconnect();
       console.log("Disconnected");
     };
-  }, [props]);
+  }, []);
 
-  // 이전에 수업자료로 생성한 테이블 있으면 가져오는 설정
+  // 이전에 수업자료로 생성한 테이블있으면 가져오는 설정
   useEffect(() => {
-    if (tableData.length === 0) return;
+    if (!tableData || tableData.length === 0) return;
 
     customAxios
       .get(`/api/assignment/get?uuid=${props.uuid}`)
@@ -70,6 +70,7 @@ export function StudentStepCompnent(props) {
         });
 
         setLatestTableData(updatedTableData);
+        props.setReportTable(updatedTableData);
         console.log(
           "업데이트된 수업자료 : " + JSON.stringify(updatedTableData, null, 2)
         );
@@ -77,7 +78,7 @@ export function StudentStepCompnent(props) {
         setAssignmentCheck(true);
       })
       .catch((err) => console.log(err));
-  }, [stepCount, tableData, props.uuid]);
+  }, [stepCount]);
 
   // E-Class에서 설정한 기본 수업자료 받아오는 설정
   useEffect(() => {
@@ -100,13 +101,13 @@ export function StudentStepCompnent(props) {
         setTableData(filteredData);
       })
       .catch((err) => console.log(err));
-  }, [props.uuid]);
+  }, []);
 
   return (
     <div>
-      {page === "newPage" && props.uuid === socketEclassUuid ? (
+      {page === "newPage" && props.uuid == socketEclassUuid ? (
         <StudentRenderAssign
-          tableData={latestTableData} // 변경된 부분
+          tableData={tableData}
           assginmentCheck={assginmentCheck}
           stepCount={stepCount}
         />
@@ -124,8 +125,8 @@ function DefaultPageComponent() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        minHeight: "70vh",
-        margin: "0 10px 0 0",
+        minHeight: "61vh",
+        margin: "0 10px 10vh 0",
         border: "1px solid grey",
       }}
     >

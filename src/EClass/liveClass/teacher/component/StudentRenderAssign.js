@@ -93,7 +93,6 @@ function StudentRenderAssign({ tableData, assginmentCheck, stepCount }) {
           <Paper
             style={{
               padding: 20,
-              margin: "20px 0",
               boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
               width: "100%",
               minHeight: "61vh",

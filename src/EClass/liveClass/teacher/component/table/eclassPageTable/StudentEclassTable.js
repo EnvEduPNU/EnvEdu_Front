@@ -160,9 +160,12 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
     const eClassUuid = row.eClassUuid;
     const lectureDataUuid = row.LectureData;
 
+    console.log("셀렉 확인 + " + JSON.stringify(row, null, 2));
+
     navigate(`/LiveStudentPage/${eClassUuid}`, {
       state: {
         lectureDataUuid,
+        row,
       },
     });
   };
