@@ -120,6 +120,7 @@ function ClassData() {
 
   const handleCreateLecture = () => {
     setOpenModal(true);
+    setShowWordProcessor(true);
   };
 
   const handleModalClose = () => {
@@ -280,7 +281,7 @@ function ClassData() {
       </div>
 
       {/* 수업 자료 만들기 모달 */}
-      <Modal open={openModal} onClose={handleModalClose}>
+      {/* <Modal open={openModal} onClose={handleModalClose}>
         <Box
           sx={{
             position: "absolute",
@@ -326,7 +327,7 @@ function ClassData() {
             </Button>
           </Box>
         </Box>
-      </Modal>
+      </Modal> */}
     </div>
   );
 }

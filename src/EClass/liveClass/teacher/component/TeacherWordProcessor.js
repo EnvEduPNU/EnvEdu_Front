@@ -99,6 +99,7 @@ export default function TeacherWordProcessor({
   summary,
   lectureName,
   handleNextStep,
+  onLectureNameChange,
   activeStep,
   stepCount,
 }) {
@@ -498,7 +499,7 @@ export default function TeacherWordProcessor({
       });
 
       if (isEditing) {
-        clearContents();
+        // clearContents();
         if (activeStep > 0) {
           updateContent(activeStep - 1, stepData);
         } else {
@@ -792,20 +793,27 @@ export default function TeacherWordProcessor({
             justifyContent: "space-between",
           }}
         >
-          <Typography
+          <TextField
+            label="Lecture Name"
+            value={lectureName} // lectureName을 value로 설정
+            onChange={onLectureNameChange} // 사용자가 변경할 수 있도록 onChange 핸들러 설정
+            fullWidth
+            margin="normal"
+          />
+          {/* <Typography
             sx={{
               fontSize: "3vh",
               padding: "20px 0 0 0 ",
             }}
           >
             {lectureName}
-          </Typography>
+          </Typography> */}
         </div>
         <div
           style={{ display: "flex", alignItems: "center", marginBottom: 16 }}
         >
           <TextField
-            label="콘텐츠 이름"
+            label="Step Name"
             value={contentName}
             onChange={(e) => setContentName(e.target.value)}
             variant="outlined"
