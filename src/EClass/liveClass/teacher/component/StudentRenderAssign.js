@@ -1,9 +1,31 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Paper, Typography, Button, TextField } from "@mui/material";
 import { customAxios } from "../../../../Common/CustomAxios";
 
-function StudentRenderAssign({ data }) {
+function StudentRenderAssign({ tableData, assginmentCheck, stepCount }) {
   const [textBoxValues, setTextBoxValues] = useState([]); // 배열로 초기화
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    console.log(
+      "StudentRenderAssign 넘어온 tableData  : " +
+        JSON.stringify(tableData, null, 2)
+    );
+
+    // 주의. stepCount는 String
+    const parseStepCount = parseInt(stepCount);
+
+    // 해당 데이터 내에서 stepNum이 stepCount와 일치하는 contents 필터링
+    const filteredContents = tableData
+      .flatMap((data) => data.contents)
+      .filter((content) => content.stepNum === parseStepCount);
+
+    console.log(
+      "필터링 된 데이터 구조 : " + JSON.stringify(filteredContents, null, 2)
+    );
+
+    setData(filteredContents);
+  }, [stepCount]);
 
   const handleTextBoxSubmit = (index, text) => {
     setTextBoxValues((prev) => {
@@ -15,53 +37,60 @@ function StudentRenderAssign({ data }) {
   };
 
   const handleSubmit = () => {
-    console.log("데이터 구조 일단 확인 : " + JSON.stringify(data, null, 2));
     console.log(
       "textBoxValues 확인 : " + JSON.stringify(textBoxValues, null, 2)
     );
 
     const studentName = localStorage.getItem("username");
 
-    const updatedDataArray = data.map((stepData) => {
-      return {
-        uuid: stepData.uuid,
-        timestamp: new Date().toISOString(), // 현재 시간으로 업데이트
-        username: studentName,
-        stepName: stepData.stepName,
-        stepCount: stepData.stepCount,
-        contents: stepData.contents.map((item) => {
-          return {
-            contentName: item.contentName,
-            stepNum: item.stepNum,
-            contents: item.contents.map((contentItem, index) => {
-              if (contentItem.type === "textBox") {
-                const updatedContent = {
-                  ...contentItem,
-                  content: textBoxValues[index] || "",
-                };
-                return updatedContent;
-              }
-              return contentItem;
-            }),
-          };
-        }),
-      };
-    });
-
-    const FormattedUpdateData = updatedDataArray[0];
+    const updatedData = tableData.map((data) => ({
+      uuid: data.uuid,
+      timestamp: new Date().toISOString(), // assignmentCheck에 따른 timestamp 설정
+      username: studentName,
+      stepName: data.stepName,
+      stepCount: data.stepCount,
+      contents: data.contents.map((item) => {
+        return {
+          contentName: item.contentName,
+          stepNum: item.stepNum,
+          contents: item.contents.map((contentItem, index) => {
+            if (contentItem.type === "textBox") {
+              const updatedContent = {
+                ...contentItem,
+                content: textBoxValues[index] || contentItem.content,
+              };
+              return updatedContent;
+            }
+            return contentItem;
+          }),
+        };
+      }),
+    }));
 
     setTextBoxValues({});
 
-    console.log("Final Submit:", JSON.stringify(FormattedUpdateData, null, 2));
-    customAxios.post("/api/assignment/save", FormattedUpdateData);
+    console.log("Final Submit:", JSON.stringify(updatedData, null, 2));
+    console.log("과제테이블 : " + assginmentCheck);
+
+    // 만약 이미 생성 되어있는 과제 테이블이 있다면 수정 요청으로 보냄
+    if (assginmentCheck === true) {
+      customAxios
+        .put("/api/assignment/update", updatedData)
+        .then(console.log("수정 완료"));
+    } else {
+      customAxios
+        .post("/api/assignment/save", updatedData)
+        .then(console.log("새로 저장 완료"));
+    }
+
+    // window.location.reload();
   };
 
   return (
     <div>
-      {data.map((stepData, stepIndex) => (
+      {data.map((stepData) => (
         <>
           <Paper
-            key={stepData.uuid}
             style={{
               padding: 20,
               margin: "20px 0",
@@ -70,21 +99,17 @@ function StudentRenderAssign({ data }) {
               minHeight: "61vh",
             }}
           >
-            {stepData.contents.map((contentItem, contentIndex) => (
-              <div key={`${stepIndex}-${contentIndex}`}>
-                {contentItem.contents.map((content, idx) => (
-                  <RenderContent
-                    key={idx}
-                    content={content}
-                    textBoxValue={textBoxValues[`${idx}`] || ""}
-                    setTextBoxValue={(id, text) =>
-                      handleTextBoxSubmit(id, text)
-                    }
-                    index={`${idx}`}
-                  />
-                ))}
-              </div>
-            ))}
+            <div>
+              {stepData.contents.map((content, idx) => (
+                <RenderContent
+                  key={idx}
+                  content={content}
+                  textBoxValue={textBoxValues[`${idx}`] || ""}
+                  setTextBoxValue={(id, text) => handleTextBoxSubmit(id, text)}
+                  index={`${idx}`}
+                />
+              ))}
+            </div>
           </Paper>
 
           <Button

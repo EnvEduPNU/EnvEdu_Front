@@ -280,13 +280,27 @@ export const LiveTeacherPage = () => {
     }
   };
 
+  function DefaultPageComponent() {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "70vh", // 부모 요소의 높이를 설정해야 전체 높이에 대해 중앙 정렬이 가능
+          margin: "0 10px 0 0",
+          border: "1px solid grey",
+        }}
+      >
+        <Typography variant="h6">수업을 시작해주세요.</Typography>
+      </div>
+    );
+  }
+
   return (
     <div style={{ display: "flex", margin: "0 30vh" }}>
       {/* [왼쪽 블럭] 화면 공유 블럭 */}
       <div style={{ display: "inline-block", width: "60%", height: "100%" }}>
-        <Typography variant="h4" sx={{ margin: "10px 0 10px 30px" }}>
-          {`[ ${courseStep} ]`}
-        </Typography>
         <div style={{ minHeight: "40rem" }}>
           {sharedScreenState ? (
             <video
@@ -303,9 +317,14 @@ export const LiveTeacherPage = () => {
               }}
             />
           ) : (
-            <div style={{ margin: "0 20px 0 20px" }}>
-              {/* 각 스텝 내용 보여주는 컴포넌트 */}
-              <TeacherRenderAssign data={tableData} />
+            <div>
+              {stepCount ? (
+                <>
+                  <TeacherRenderAssign data={tableData} />
+                </>
+              ) : (
+                <DefaultPageComponent />
+              )}
             </div>
           )}
         </div>

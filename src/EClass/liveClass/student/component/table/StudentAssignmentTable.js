@@ -159,10 +159,10 @@ export default function StudentAssignmentTable(props) {
               }))
             );
 
-            console.log(
-              "Formatted Data for Table: " +
-                JSON.stringify(formattedData, null, 2)
-            );
+            // console.log(
+            //   "Formatted Data for Table: " +
+            //     JSON.stringify(formattedData, null, 2)
+            // );
 
             setTableData(formattedData);
             setAllTableData(filteredData);
@@ -183,7 +183,7 @@ export default function StudentAssignmentTable(props) {
     setSelectedRow((prevSelectedRow) => (prevSelectedRow === id ? null : id));
     props.setCourseStep(Step);
 
-    console.log("몇번째 스텝? : " + JSON.stringify(stepNum, null, 2));
+    // console.log("몇번째 스텝? : " + JSON.stringify(stepNum, null, 2));
     props.setStepCount(stepNum);
 
     const filteredTableData = allTableData
@@ -198,7 +198,7 @@ export default function StudentAssignmentTable(props) {
       })
       .filter((data) => data.contents.length > 0); // 필터링 후 빈 contents가 있는 항목 제거
 
-    console.log("스텝 데이터 : " + JSON.stringify(filteredTableData, null, 2));
+    // console.log("스텝 데이터 : " + JSON.stringify(filteredTableData, null, 2));
 
     // 스텝 클릭하면 상위 컴포넌트로 해당 스텝 정보 올려주기
     props.setTableData(filteredTableData);
