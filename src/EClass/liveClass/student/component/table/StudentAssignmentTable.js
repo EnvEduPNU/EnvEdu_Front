@@ -72,35 +72,54 @@ function rowContent(
   stepCount,
   isDataAvailable
 ) {
-  const parseStepCount = parseInt(stepCount);
-  const isDisabled = row.stepNum !== parseStepCount;
+  // const parseStepCount = parseInt(stepCount);
+  // const isDisabled = row.stepNum !== parseStepCount;
 
-  // console.log("디스에이블드 표시 : " + isDataAvailable);
-
-  // if (isDataAvailable) {
-  //   isDisabled = isDataAvailable;
-  // }
+  // return (
+  //   <React.Fragment>
+  //     {columns.map((column, index) => {
+  //       return (
+  //         <TableCell
+  //           key={column.dataKey}
+  //           align="left"
+  //           onClick={() =>
+  //             !isDisabled && handleClick(row.id, row.Step, row.stepNum)
+  //           } // 비활성화된 셀은 클릭 무시
+  //           sx={{
+  //             backgroundColor: selectedRow === row.id ? "#f0f0f0" : "inherit",
+  //             cursor: isDisabled ? "not-allowed" : "pointer",
+  //             textAlign: "left",
+  //             color: isDisabled ? "gray" : "inherit", // 비활성화된 셀은 회색으로 표시
+  //             pointerEvents: isDisabled ? "none" : "auto", // 비활성화된 셀은 클릭 불가능
+  //           }}
+  //         >
+  //           {row[column.dataKey]}
+  //         </TableCell>
+  //       );
+  //     })}
+  //   </React.Fragment>
+  // );
 
   return (
     <React.Fragment>
-      {columns.map((column) => (
-        <TableCell
-          key={column.dataKey}
-          align="left"
-          onClick={() =>
-            !isDisabled && handleClick(row.id, row.Step, row.stepNum)
-          } // 비활성화된 셀은 클릭 무시
-          sx={{
-            backgroundColor: selectedRow === row.id ? "#f0f0f0" : "inherit",
-            cursor: isDisabled ? "not-allowed" : "pointer",
-            textAlign: "left",
-            color: isDisabled ? "gray" : "inherit", // 비활성화된 셀은 회색으로 표시
-            pointerEvents: isDisabled ? "none" : "auto", // 비활성화된 셀은 클릭 불가능
-          }}
-        >
-          {row[column.dataKey]}
-        </TableCell>
-      ))}
+      {columns.map((column, index) => {
+        return (
+          <TableCell
+            key={column.dataKey}
+            align="left"
+            onClick={() => handleClick(row.id, row.Step, row.stepNum)} // 비활성화된 셀은 클릭 무시
+            sx={{
+              backgroundColor: selectedRow === row.id ? "#f0f0f0" : "inherit",
+              cursor: "pointer",
+              textAlign: "left",
+              color: "inherit", // 비활성화된 셀은 회색으로 표시
+              pointerEvents: "auto", // 비활성화된 셀은 클릭 불가능
+            }}
+          >
+            {row[column.dataKey]}
+          </TableCell>
+        );
+      })}
     </React.Fragment>
   );
 }
@@ -114,6 +133,7 @@ export default function StudentAssignmentTable(props) {
   useEffect(() => {
     console.log("테이블에서 disable 제외 카운트 : " + props.stepCount);
 
+    // 진행 중인 스텝 과제 테이블이 존재하면 가져오기
     customAxios
       .get(`/api/assignment/get?uuid=${props.lectureDataUuid}`)
       .then((res) => {
@@ -130,6 +150,7 @@ export default function StudentAssignmentTable(props) {
               contentName: content.contentName,
               id: `${data.uuid}-${content.stepNum}`, // unique id 생성
               Step: data.stepName,
+              contents: content.contents,
             }))
           );
 
@@ -141,6 +162,7 @@ export default function StudentAssignmentTable(props) {
           return;
         }
 
+        // 진행중인 과제 테이블 없으면 수업자료 가져오기
         // 첫 번째 요청의 데이터가 존재하지 않으면, 두 번째 요청을 실행
         customAxios
           .get("/api/steps/getLectureContent")
@@ -156,6 +178,7 @@ export default function StudentAssignmentTable(props) {
                 contentName: content.contentName,
                 id: `${data.uuid}-${content.stepNum}`, // unique id 생성
                 Step: data.stepName,
+                contents: content.contents,
               }))
             );
 
@@ -183,7 +206,7 @@ export default function StudentAssignmentTable(props) {
     setSelectedRow((prevSelectedRow) => (prevSelectedRow === id ? null : id));
     props.setCourseStep(Step);
 
-    // console.log("몇번째 스텝? : " + JSON.stringify(stepNum, null, 2));
+    console.log("몇번째 스텝? : " + JSON.stringify(stepNum, null, 2));
     props.setStepCount(stepNum);
 
     const filteredTableData = allTableData

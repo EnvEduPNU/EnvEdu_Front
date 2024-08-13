@@ -221,7 +221,7 @@ export const LiveStudentPage = () => {
 
   return (
     <div style={{ display: "flex", margin: "0 20vh" }}>
-      {console.log("E-Class 정보 : " + JSON.stringify(row, null, 2))}
+      {/* {console.log("E-Class 정보 : " + JSON.stringify(row, null, 2))} */}
 
       {/* 화면 공유 블럭 */}
       <div style={{ display: "inline-block", width: "100%", height: "100%" }}>
@@ -232,6 +232,9 @@ export const LiveStudentPage = () => {
           {page == "newPage" && !remoteVideoRef && setPage("defaultPage")}
           {remoteVideoRef.current && (
             <video ref={remoteVideoRef} autoPlay playsInline></video>
+          )}
+          {console.log(
+            "E-Class stepCount : " + JSON.stringify(stepCount, null, 2)
           )}
 
           <StudentStepCompnent

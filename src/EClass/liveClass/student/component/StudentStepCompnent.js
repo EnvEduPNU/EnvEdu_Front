@@ -45,7 +45,17 @@ export function StudentStepCompnent(props) {
 
   // 이전에 수업자료로 생성한 테이블있으면 가져오는 설정
   useEffect(() => {
-    if (!tableData || tableData.length === 0) return;
+    console.log("들어오는겨 마는겨");
+    setStepCount(props.stepCount);
+    props.setStepCount(props.stepCount);
+
+    if (
+      !tableData ||
+      tableData.length === 0 ||
+      !props.data ||
+      props.data.length === 0
+    )
+      return;
 
     customAxios
       .get(`/api/assignment/get?uuid=${props.uuid}`)
@@ -71,14 +81,14 @@ export function StudentStepCompnent(props) {
 
         setLatestTableData(updatedTableData);
         props.setReportTable(updatedTableData);
-        console.log(
-          "업데이트된 수업자료 : " + JSON.stringify(updatedTableData, null, 2)
-        );
+        // console.log(
+        //   "업데이트된 수업자료 : " + JSON.stringify(updatedTableData, null, 2)
+        // );
 
         setAssignmentCheck(true);
       })
       .catch((err) => console.log(err));
-  }, [stepCount]);
+  }, [stepCount, props.stepCount]);
 
   // E-Class에서 설정한 기본 수업자료 받아오는 설정
   useEffect(() => {
@@ -105,7 +115,7 @@ export function StudentStepCompnent(props) {
 
   return (
     <div>
-      {page === "newPage" && props.uuid == socketEclassUuid ? (
+      {page === "newPage" || props.uuid == socketEclassUuid || stepCount ? (
         <StudentRenderAssign
           tableData={tableData}
           assginmentCheck={assginmentCheck}

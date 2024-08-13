@@ -7,10 +7,7 @@ function StudentRenderAssign({ tableData, assginmentCheck, stepCount }) {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    console.log(
-      "StudentRenderAssign 넘어온 tableData  : " +
-        JSON.stringify(tableData, null, 2)
-    );
+    console.log("stepCount : " + JSON.stringify(stepCount, null, 2));
 
     // 주의. stepCount는 String
     const parseStepCount = parseInt(stepCount);
@@ -20,9 +17,9 @@ function StudentRenderAssign({ tableData, assginmentCheck, stepCount }) {
       .flatMap((data) => data.contents)
       .filter((content) => content.stepNum === parseStepCount);
 
-    console.log(
-      "필터링 된 데이터 구조 : " + JSON.stringify(filteredContents, null, 2)
-    );
+    // console.log(
+    //   "필터링 된 데이터 구조 : " + JSON.stringify(filteredContents, null, 2)
+    // );
 
     setData(filteredContents);
   }, [stepCount]);
@@ -83,7 +80,7 @@ function StudentRenderAssign({ tableData, assginmentCheck, stepCount }) {
         .then(console.log("새로 저장 완료"));
     }
 
-    // window.location.reload();
+    window.location.reload();
   };
 
   return (
