@@ -118,10 +118,14 @@ export default function TeacherEclassTable({ setSelectedEClassUuid }) {
 
     const eClassUuid = row.eClassUuid;
     const lectureDataUuid = row.LectureData;
+    const eClassName = row.Name;
+
+    console.log("eClassName : " + eClassName);
 
     navigate(`/LiveTeacherPage/${eClassUuid}`, {
       state: {
         lectureDataUuid,
+        eClassName,
       },
     });
   };

@@ -18,17 +18,6 @@ import { useCreateLectureSourceStore } from "../../store/CreateLectureSourceStor
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
-import AWS from "aws-sdk";
-
-const s3 = new AWS.S3();
-
-// AWS SDK 초기화
-AWS.config.update({
-  accessKeyId: `${process.env.ACCESS_KEY_ID}`,
-  secretAccessKey: `${process.env.SECRET_ACCESS_KEY}`,
-  region: `${process.env.REGION}`,
-});
-
 Quill.register("modules/imageActions", ImageActions);
 Quill.register("modules/imageFormats", ImageFormats);
 
@@ -72,7 +61,6 @@ function imageHandler() {
     reader.readAsDataURL(file);
 
     imageFile = file;
-    console.log("이미지 파일 들어오나 보자 : " + imageFile);
   };
 }
 
@@ -95,6 +83,7 @@ const formats = [
   "height",
   "width",
 ];
+
 export default function TeacherWordProcessor({
   summary,
   lectureName,
@@ -149,11 +138,6 @@ export default function TeacherWordProcessor({
         ? stepData.contents
         : [stepData.contents];
 
-      // ----------------------------------------------------------------------------------------
-      // 이 부분 때문에 엑박 뜨는 것이었음
-      // file 형식에서 stringify 할때 형식 구조가 손상이 된다. 따라서 name 등 file의 제 역할을 잃어버리고
-      // 문자열 형식화 되기 때문에 다시 file을 s3에 올릴때 정상적으로 작동하지 않는다.
-      // 따라서 file의 content는 stringify 하지 않도록 예외 처리해줘야 한다.
       const formattedContents = contentsArray
         .filter((content) => {
           if (content.type === "img" && !content.content) {
@@ -243,7 +227,7 @@ export default function TeacherWordProcessor({
 
   const handleAddTitle = () => {
     const newContents = localContents.filter((item) => item.type !== "title");
-    setLocalContents([...newContents, { type: "title", content: contentName }]);
+    setLocalContents([{ type: "title", content: contentName }, ...newContents]); // title을 항상 맨 위에 추가
   };
 
   const handleAddTextBox = () => {
@@ -471,23 +455,6 @@ export default function TeacherWordProcessor({
       }
     }
 
-    // localContents.map((content) => {
-    //   if (content.type == "file") {
-    //     console.log("local 저장전 이미지 확인 : " + content.content.name);
-    //   }
-    // });
-
-    // 해야 할 일 : 여기까지 localContent가 잘 들어오는데 Step 넘어가면서 초기화 됨
-    // 따라서 이미지같은 경우는 따로 store에 저장해 두었다가 위의 stepData.contents.push(item); 이 부분 넣어서
-    // 완전한 저장으로 넘길때 다시 추가해주어야 됨.
-    // 이유는 localContent의 초기화 때문이었고 최종 저장은 CreateLectureSource 컴포넌트에서 처리하기 때문에
-    // 모든 스텝을 다 지나서 넘길때 쯤에는 file이 초기화 되어있어 아무것도 없기 때문
-    // 그렇기 때문에 step을 저장하고 step뒤로가기로 하면 사진이 안보이게 되는 것임
-    // 이 부분 해결하면 사진쪽 대부분 해결 될듯 .
-    // 근데 이상한건 이미지를 제외한 다른 컨텐츠들은 왜 모두 저장이되는것인지?
-
-    // Finish 스텝에서는 빈 배열 저장 안함
-    // 다음 스텝으로 넘어갈때 content 여기 저장 하는 곳
     if (stepCount >= activeStep) {
       console.log("스텝 카운트 : " + stepCount);
       console.log("액티브 스텝 : " + activeStep);
@@ -655,10 +622,12 @@ export default function TeacherWordProcessor({
     handleTextBoxChange,
   }) => {
     const ref = React.useRef(null);
+
+    // title 타입이 아닐 때만 드래그 기능을 적용
     const [, drop] = useDrop({
       accept: "content",
       hover: (draggedItem) => {
-        if (draggedItem.index !== index) {
+        if (draggedItem.index !== index && item.type !== "title") {
           moveItem(draggedItem.index, index);
           draggedItem.index = index;
         }
@@ -668,14 +637,17 @@ export default function TeacherWordProcessor({
     const [{ isDragging }, drag] = useDrag({
       type: "content",
       item: { index },
+      canDrag: item.type !== "title", // title 타입은 드래그 불가
       collect: (monitor) => ({
         isDragging: monitor.isDragging(),
       }),
     });
 
-    drag(drop(ref));
+    // title 타입이 아닌 경우에만 drag 기능을 적용
+    if (item.type !== "title") {
+      drag(drop(ref));
+    }
 
-    // paper 에 나오는 아이템들. 삭제 버튼을 통해서 지울 수 있다.
     return (
       <div
         ref={ref}
@@ -760,7 +732,6 @@ export default function TeacherWordProcessor({
             }}
           >
             <img src={item.content} style={{ width: item.x, height: item.y }} />
-
             <IconButton
               onClick={() => handleDeleteContent(index, item.content)}
               aria-label="delete"
@@ -800,14 +771,6 @@ export default function TeacherWordProcessor({
             fullWidth
             margin="normal"
           />
-          {/* <Typography
-            sx={{
-              fontSize: "3vh",
-              padding: "20px 0 0 0 ",
-            }}
-          >
-            {lectureName}
-          </Typography> */}
         </div>
         <div
           style={{ display: "flex", alignItems: "center", marginBottom: 16 }}
@@ -926,22 +889,14 @@ export default function TeacherWordProcessor({
                   Finish
                 </Button>
               ) : (
-                <>
-                  {/* {console.log(
-                    "스텝 카운트 : " +
-                      stepCount +
-                      " 액티브 스텝 : " +
-                      activeStep
-                  )} */}
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={handleNext}
-                    sx={{ width: "100%", marginLeft: "10px" }}
-                  >
-                    다음 단계
-                  </Button>
-                </>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={handleNext}
+                  sx={{ width: "100%", marginLeft: "10px" }}
+                >
+                  다음 단계
+                </Button>
               )}
             </>
           </div>

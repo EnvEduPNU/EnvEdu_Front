@@ -10,6 +10,7 @@ import { Typography } from "@mui/material";
 import { useLiveClassPartStore } from "../store/LiveClassPartStore";
 import { TeacherStepShareButton } from "../teacher/component/button/TeacherStepShareButton";
 import TeacherRenderAssign from "../teacher/component/TeacherRenderAssign";
+import { Button } from "bootstrap";
 
 export const LiveTeacherPage = () => {
   const localVideoRef = useRef(null);
@@ -35,7 +36,7 @@ export const LiveTeacherPage = () => {
 
   const { eClassUuid } = useParams(); // 경로 파라미터 받아오기
   const location = useLocation();
-  const { lectureDataUuid } = location.state || {};
+  const { lectureDataUuid, eClassName } = location.state || {};
 
   useEffect(() => {
     // 학생의 참여와 퇴장을 소켓으로 받아오는 메서드
@@ -287,7 +288,7 @@ export const LiveTeacherPage = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          minHeight: "70vh", // 부모 요소의 높이를 설정해야 전체 높이에 대해 중앙 정렬이 가능
+          minHeight: "65vh", // 부모 요소의 높이를 설정해야 전체 높이에 대해 중앙 정렬이 가능
           margin: "0 10px 0 0",
           border: "1px solid grey",
         }}
@@ -300,9 +301,12 @@ export const LiveTeacherPage = () => {
   return (
     <div style={{ display: "flex", margin: "0 30vh" }}>
       {/* [왼쪽 블럭] 화면 공유 블럭 */}
-      <div style={{ display: "inline-block", width: "60%", height: "100%" }}>
-        <div style={{ minHeight: "40rem" }}>
-          {sharedScreenState ? (
+      <div style={{ display: "inline-block", width: "100%", height: "100%" }}>
+        <Typography variant="h4" sx={{ margin: "0 0 10px 0" }}>
+          {eClassName}
+        </Typography>
+        {sharedScreenState ? (
+          <div>
             <video
               ref={localVideoRef}
               autoPlay
@@ -311,32 +315,31 @@ export const LiveTeacherPage = () => {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                maxWidth: "80rem",
+                maxWidth: "63rem",
                 minHeight: "40rem", // 부모 요소의 높이를 설정해야 전체 높이에 대해 중앙 정렬이 가능
-                border: "1px solid grey",
               }}
             />
-          ) : (
-            <div>
-              {stepCount ? (
-                <>
-                  <TeacherRenderAssign data={tableData} />
-                </>
-              ) : (
-                <DefaultPageComponent />
-              )}
-            </div>
-          )}
-        </div>
+          </div>
+        ) : (
+          <div>
+            {stepCount ? (
+              <>
+                <TeacherRenderAssign data={tableData} />
+              </>
+            ) : (
+              <DefaultPageComponent />
+            )}
+          </div>
+        )}
         <button
           onClick={startScreenShare}
-          style={{ margin: "10px 0 ", width: "20%" }}
+          style={{ margin: "10px 0 ", width: "18%" }}
         >
           화면 공유
         </button>
         <button
           onClick={stopScreenShare}
-          style={{ margin: "10px 0 0 10px ", width: "20%" }}
+          style={{ margin: "10px 0 0 10px ", width: "18%" }}
         >
           공유 중지
         </button>
@@ -345,6 +348,12 @@ export const LiveTeacherPage = () => {
           stepCount={stepCount}
           lectureDataUuid={lectureDataUuid}
         />
+        <button
+          // onClick={}
+          style={{ margin: "10px 0 0 10px ", width: "18%" }}
+        >
+          수업 종료
+        </button>
       </div>
 
       {/* [오른쪽 블럭] 수업 Step 테이블, 수업 상태 테이블 */}

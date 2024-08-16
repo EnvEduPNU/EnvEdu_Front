@@ -164,7 +164,7 @@ function ClassData() {
             }}
             onClick={() => window.location.reload()}
           >
-            Class Data
+            수업 자료
           </button>
         </div>
 
@@ -270,7 +270,7 @@ function ClassData() {
               </>
             )}
 
-            {/* 기본 class Data 메인페이지 */}
+            {/* 기본 수업자료 메인페이지 */}
             {!stepName && (
               <div>
                 <MultiTablePage />

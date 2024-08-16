@@ -116,6 +116,7 @@ export default function TeacherAssignmentTable(props) {
 
         setTableData(formattedData);
         setAllTableData(filteredData);
+        props.setTableData(filteredData);
       })
       .catch((err) => console.log(err));
   }, []);

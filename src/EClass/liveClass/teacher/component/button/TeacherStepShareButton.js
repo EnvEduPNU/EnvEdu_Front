@@ -72,12 +72,15 @@ export function TeacherStepShareButton({ stepCount, lectureDataUuid }) {
 
   return (
     <>
-      <button onClick={sendMessage} style={{ marginLeft: "10px" }}>
+      <button
+        onClick={sendMessage}
+        style={{ width: "18%", marginLeft: "10px" }}
+      >
         과제 공유
       </button>
       <button
         onClick={sendStopMessage}
-        style={{ margin: "10px 0 0 10px ", width: "20%" }}
+        style={{ width: "18%", margin: "10px 0 0 10px " }}
       >
         과제 중지
       </button>

@@ -5,7 +5,7 @@ const MultiTablePage = () => {
   return (
     <Container>
       <Typography variant="h4" sx={{ marginBottom: "3vh" }}>
-        Class Data 메인 페이지
+        수업자료 메인 페이지
       </Typography>
     </Container>
   );

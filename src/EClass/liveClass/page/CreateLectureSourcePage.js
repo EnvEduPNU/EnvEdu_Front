@@ -23,6 +23,13 @@ export const CreateLectureSourcePage = (props) => {
   const { contents, clearContents, setContents, updateContent } =
     useCreateLectureSourceStore();
 
+  // props.lectureName이 변경될 때마다 lectureName 상태를 업데이트
+  useEffect(() => {
+    if (initialLectureName !== undefined) {
+      setLectureName(initialLectureName);
+    }
+  }, [initialLectureName]);
+
   const handleLectureNameChange = (event) => {
     setLectureName(event.target.value);
   };

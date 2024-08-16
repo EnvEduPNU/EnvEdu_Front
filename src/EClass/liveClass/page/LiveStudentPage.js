@@ -219,6 +219,18 @@ export const LiveStudentPage = () => {
 
   const [page, setPage] = useState("defaultPage");
 
+  const [isVideoReady, setIsVideoReady] = useState(false);
+
+  const handleCanPlay = () => {
+    setIsVideoReady(true);
+  };
+
+  useEffect(() => {
+    if (!isVideoReady) {
+      setPage("defaultPage");
+    }
+  }, [isVideoReady, setPage]);
+
   return (
     <div style={{ display: "flex", margin: "0 20vh" }}>
       {/* {console.log("E-Class 정보 : " + JSON.stringify(row, null, 2))} */}
@@ -229,23 +241,26 @@ export const LiveStudentPage = () => {
           {row.Name}
         </Typography>
         <div style={{ margin: "0 20px 0 20px" }}>
-          {page == "newPage" && !remoteVideoRef && setPage("defaultPage")}
-          {remoteVideoRef.current && (
-            <video ref={remoteVideoRef} autoPlay playsInline></video>
+          <video
+            ref={remoteVideoRef}
+            autoPlay
+            playsInline
+            onCanPlay={handleCanPlay}
+            style={{
+              display: isVideoReady ? "block" : "none",
+            }}
+          ></video>
+          {!isVideoReady && (
+            <StudentStepCompnent
+              setPage={setPage}
+              setStepCount={setStepCount}
+              page={page}
+              data={tableData}
+              uuid={lectureDataUuid}
+              stepCount={stepCount}
+              setReportTable={setReportTable}
+            />
           )}
-          {console.log(
-            "E-Class stepCount : " + JSON.stringify(stepCount, null, 2)
-          )}
-
-          <StudentStepCompnent
-            setPage={setPage}
-            setStepCount={setStepCount}
-            page={page}
-            data={tableData}
-            uuid={lectureDataUuid}
-            stepCount={stepCount}
-            setReportTable={setReportTable}
-          />
         </div>
       </div>
 

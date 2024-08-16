@@ -11,10 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 
-const sample = [
-  ["1", "홍길동", "A1", "미제출"],
-  ["2", "김민우", "A1", "제출"],
-];
+const sample = [["1", "pnustudent1", "수업자료3", "미제출"]];
 
 const columns = [
   {

@@ -184,7 +184,7 @@ function Header() {
                           </NavLink>
                           {userRole === "ROLE_EDUCATOR" && (
                             <NavLink className={"nav-link"} to="/classData">
-                              Class Data
+                              수업 자료
                             </NavLink>
                           )}
                         </>

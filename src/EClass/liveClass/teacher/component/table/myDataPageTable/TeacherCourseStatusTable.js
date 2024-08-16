@@ -1,5 +1,4 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import {
   Table,
@@ -10,15 +9,11 @@ import {
   TableRow,
   Paper,
   Typography,
-  Collapse,
-  Box,
-  IconButton,
   Button,
 } from "@mui/material";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
 import { useLiveClassPartStore } from "../../../../store/LiveClassPartStore";
-
 import { customAxios } from "../../../../../../Common/CustomAxios";
 
 function createData(name, sessionId, shared) {
@@ -26,84 +21,41 @@ function createData(name, sessionId, shared) {
     name,
     sessionId,
     shared,
-    history: [
-      {
-        date: "2020-01-05",
-        customerId: "Step 1 과제",
-        amount: 3,
-      },
-      {
-        date: "2020-01-02",
-        customerId: "Step 2 과제",
-        amount: 1,
-      },
-    ],
   };
 }
 
-function Row(props) {
-  const { row } = props;
-  const [open, setOpen] = React.useState(false);
+function Row({ row }) {
   return (
-    <React.Fragment>
-      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
-        <TableCell>
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={() => setOpen(!open)}
-            sx={{ width: "10px" }}
-          >
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
-        </TableCell>
-        <TableCell component="th" scope="row">
-          {row.name}
-        </TableCell>
-        <TableCell>{row.shared ? "공유 중" : "미공유"}</TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 1 }}>
-              <Table size="small" aria-label="purchases">
-                <TableHead>
-                  <TableRow>
-                    {/* <TableCell>제출일</TableCell> */}
-                    <TableCell>과제이름</TableCell>
-                    <TableCell>상태</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {row.history.map((historyRow) => (
-                    <TableRow key={historyRow.date}>
-                      {/* <TableCell component="th" scope="row">
-                        {historyRow.date}
-                      </TableCell> */}
-                      <TableCell>{historyRow.customerId}</TableCell>
-                      <TableCell>{"완료"}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow>
-    </React.Fragment>
+    <TableRow sx={{ height: 50 }}>
+      <TableCell component="th" scope="row">
+        {row.name}
+      </TableCell>
+      <TableCell align="center">
+        {row.shared ? (
+          <CheckCircleIcon sx={{ color: "blue" }} />
+        ) : (
+          <CancelIcon sx={{ color: "red" }} />
+        )}
+      </TableCell>
+      <TableCell align="center">
+        <CancelIcon sx={{ color: "red" }} />
+      </TableCell>
+      <TableCell align="center">
+        <CheckCircleIcon sx={{ color: "blue" }} />
+      </TableCell>
+      {/* <TableCell align="center">
+        <CancelIcon sx={{ color: "red" }} />
+      </TableCell> */}
+      <TableCell align="center">
+        <Button sx={{ width: "3%" }}>확인</Button>
+      </TableCell>
+    </TableRow>
   );
 }
 
 Row.propTypes = {
   row: PropTypes.shape({
     name: PropTypes.string.isRequired,
-    history: PropTypes.arrayOf(
-      PropTypes.shape({
-        amount: PropTypes.number.isRequired,
-        customerId: PropTypes.string.isRequired,
-        date: PropTypes.string.isRequired,
-      })
-    ).isRequired,
     sessionId: PropTypes.string.isRequired,
     shared: PropTypes.bool.isRequired,
   }).isRequired,
@@ -114,7 +66,6 @@ const getStudent = async (sessionId) => {
     const response = await customAxios.get(
       `${process.env.REACT_APP_API_URL}/student?sessionId=${sessionId}`
     );
-    console.log("학생 확인 : ", JSON.stringify(response.data, null, 2));
     return response.data.username;
   } catch (error) {
     console.error("Error fetching student data: ", error);
@@ -132,7 +83,6 @@ export default function TeacherCourseStatusTable() {
         sessionData.map((session) => getStudent(session.id))
       );
       setStudents(studentData);
-      console.log("Student 확인 : ", studentData);
     };
     fetchStudents();
   }, [sessionData]);
@@ -146,37 +96,34 @@ export default function TeacherCourseStatusTable() {
   );
 
   const EmptyRows = ({ count }) => {
-    const emptyRows = Array.from({ length: count }, (_, index) => (
+    return Array.from({ length: count }, (_, index) => (
       <TableRow key={`empty-${index}`} sx={{ height: 50 }}>
-        <TableCell>&nbsp;</TableCell>
-        <TableCell>&nbsp;</TableCell>
-        <TableCell>&nbsp;</TableCell>
-        <TableCell>&nbsp;</TableCell>
+        <TableCell colSpan={5} />
       </TableRow>
     ));
-    return emptyRows;
   };
 
   return (
     <div style={{ margin: "2rem 0 0 0" }}>
-      <Typography variant="h5" sx={{ margin: "0 0 10px 0" }}>
+      <Typography variant="h5" sx={{ marginBottom: "10px" }}>
         {"[ 수업 상태 ]"}
       </Typography>
       <TableContainer component={Paper} sx={{ maxHeight: "300px" }}>
         <Table aria-label="collapsible table" size="small">
           <TableHead sx={{ backgroundColor: "#dcdcdc" }}>
             <TableRow sx={{ height: 50 }}>
-              <TableCell>과제</TableCell>
-              <TableCell>이름</TableCell>
-              <TableCell>화면공유</TableCell>
-              <TableCell>과제공유</TableCell>
+              <TableCell align="center">이름</TableCell>
+              <TableCell align="center">화면공유</TableCell>
+              <TableCell align="center">과제공유</TableCell>
+              <TableCell align="center">과제제출</TableCell>
+              <TableCell align="center">보고서제출</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {rows.map((row) => (
-              <Row key={row.name} row={row} />
+              <Row key={row.sessionId} row={row} />
             ))}
-            <EmptyRows count={5 - rows.length} />
+            <EmptyRows count={Math.max(0, 5 - rows.length)} />
           </TableBody>
         </Table>
       </TableContainer>
