@@ -39,7 +39,7 @@ const deleteData = async (row, handleDelete) => {
     const response = await customAxios.delete(
       `/api/eclass/delete?eClassUuid=${row.eClassUuid}`
     );
-    console.log(response.data);
+    console.log("delete data" + response.data);
     handleDelete(row);
   } catch (error) {
     console.error("Eclass 리스트 삭제 에러:", error);
@@ -159,15 +159,29 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
 
     const eClassUuid = row.eClassUuid;
     const lectureDataUuid = row.LectureData;
+    let eClassStatus = false;
 
-    console.log("셀렉 확인 + " + JSON.stringify(row, null, 2));
+    // E-Class 조회해서 flag가 true인지 확인하기
+    customAxios
+      .get(`/api/eclass/status-check?uuid=${eClassUuid}`)
+      .then((response) => {
+        console.log("Eclass Status :", response.data);
+        eClassStatus = response.data;
 
-    navigate(`/LiveStudentPage/${eClassUuid}`, {
-      state: {
-        lectureDataUuid,
-        row,
-      },
-    });
+        if (eClassStatus) {
+          navigate(`/LiveStudentPage/${eClassUuid}`, {
+            state: {
+              lectureDataUuid,
+              row,
+            },
+          });
+        } else {
+          alert("수업 시작을 기다려주세요!");
+        }
+      })
+      .catch((error) => {
+        console.error("Eclass 수업 존재 체크 에러:", error);
+      });
   };
 
   function rowContent(

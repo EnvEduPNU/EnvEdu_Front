@@ -5,7 +5,11 @@ import Stomp from "stompjs";
 let globalStompClient;
 
 // 선생님 페이지 과제 공유 버튼
-export function TeacherStepShareButton({ stepCount, lectureDataUuid }) {
+export function TeacherStepShareButton({
+  stepCount,
+  lectureDataUuid,
+  sharedScreenState,
+}) {
   useEffect(() => {
     // SockJS 연결 설정
 
@@ -51,7 +55,14 @@ export function TeacherStepShareButton({ stepCount, lectureDataUuid }) {
   }, []);
 
   const sendMessage = () => {
-    if (globalStompClient) {
+    if (!stepCount) {
+      alert("공유할 스텝을 선택해주세요");
+      return;
+    }
+
+    if (globalStompClient && !sharedScreenState) {
+      console.log("스텝카운트 " + stepCount);
+
       const message = {
         page: "newPage", // JSON 객체에서 "newPage"를 값으로 하는 'page' 키 생성
         stepCount: stepCount,
@@ -59,14 +70,22 @@ export function TeacherStepShareButton({ stepCount, lectureDataUuid }) {
       };
       globalStompClient.send("/app/switch", {}, JSON.stringify(message));
     }
+
+    if (sharedScreenState) {
+      alert("화면 공유 중 입니다!");
+    }
   };
 
   const sendStopMessage = () => {
-    if (globalStompClient) {
+    if (globalStompClient && !sharedScreenState) {
       const message = {
         page: "stop", // JSON 객체에서 "newPage"를 값으로 하는 'page' 키 생성
       };
       globalStompClient.send("/app/switch", {}, JSON.stringify(message));
+    }
+
+    if (sharedScreenState) {
+      alert("화면 공유 중 입니다!");
     }
   };
 

@@ -120,14 +120,23 @@ export default function TeacherEclassTable({ setSelectedEClassUuid }) {
     const lectureDataUuid = row.LectureData;
     const eClassName = row.Name;
 
-    console.log("eClassName : " + eClassName);
+    //E-Class 조회하기 flag true로 만들어주기
+    customAxios
+      .patch(`/api/eclass/eclass-start?uuid=${eClassUuid}`)
+      .then((response) => {
+        console.log("Eclass started :", response.data);
+        console.log("eClassName : " + eClassName);
 
-    navigate(`/LiveTeacherPage/${eClassUuid}`, {
-      state: {
-        lectureDataUuid,
-        eClassName,
-      },
-    });
+        navigate(`/LiveTeacherPage/${eClassUuid}`, {
+          state: {
+            lectureDataUuid,
+            eClassName,
+          },
+        });
+      })
+      .catch((error) => {
+        console.error("Eclass 시작 에러:", error);
+      });
   };
 
   function rowContent(

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
@@ -45,7 +45,8 @@ export const LiveTeacherPage = () => {
     // 초기 학생들 세션을 소켓을 세팅하는 메서드
     fetchSessionIds();
 
-    // console.log("클래스로 제대로 uuid 넘어옴 : " + eClassUuid);
+    // 화면 공유 여부를 소켓으로 전달하는 메서드
+    screenShareStatusStompClient();
 
     return () => {
       Object.values(stompClients.current).forEach((client) => {
@@ -106,6 +107,7 @@ export const LiveTeacherPage = () => {
     }
   };
 
+  // 학생의 참여와 퇴장을 소켓으로 받아오는 메서드
   const studentCheckStompClient = () => {
     const token = localStorage.getItem("access_token").replace("Bearer ", "");
     const socket = new SockJS(
@@ -138,6 +140,21 @@ export const LiveTeacherPage = () => {
         }
       });
     });
+  };
+
+  // 화면 공유 여부를 소켓으로 전달하는 메서드
+  const screenShareStatusStompClient = () => {
+    // const token = localStorage.getItem("access_token").replace("Bearer ", "");
+    // const socket = new SockJS(
+    //   `${process.env.REACT_APP_API_URL}/screen-share?token=${token}`
+    // );
+    // const stompClient = Stomp.over(socket);
+    // stompClient.connect({}, () => {
+    //   stompClient.subscribe(`/topic/changes`, (messages) => {
+    //     const message = messages.body;
+    //   });
+    // });
+    // ---------------  만들기 ------------------------
   };
 
   // 학생들에게 공유할 화면 소켓 생성
@@ -298,6 +315,23 @@ export const LiveTeacherPage = () => {
     );
   }
 
+  const navigate = useNavigate();
+
+  //E-Class 종료하기 flag false로 만들어주기
+  const closeEclass = () => {
+    customAxios
+      .patch(`/api/eclass/eclass-close?uuid=${eClassUuid}`)
+      .then((response) => {
+        console.log("Eclass closed :", response.data);
+        alert("수업을 종료하였습니다!");
+        navigate("/");
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.error("Eclass 종료 에러:", error);
+      });
+  };
+
   return (
     <div style={{ display: "flex", margin: "0 30vh" }}>
       {/* [왼쪽 블럭] 화면 공유 블럭 */}
@@ -347,9 +381,10 @@ export const LiveTeacherPage = () => {
         <TeacherStepShareButton
           stepCount={stepCount}
           lectureDataUuid={lectureDataUuid}
+          sharedScreenState={sharedScreenState}
         />
         <button
-          // onClick={}
+          onClick={closeEclass}
           style={{ margin: "10px 0 0 10px ", width: "18%" }}
         >
           수업 종료
