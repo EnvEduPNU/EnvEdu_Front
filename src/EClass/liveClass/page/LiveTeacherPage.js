@@ -15,6 +15,8 @@ import { Button } from "bootstrap";
 export const LiveTeacherPage = () => {
   const localVideoRef = useRef(null);
   const stompClients = useRef({});
+  const screenStatusStompClients = useRef({});
+
   const peerConnections = useRef({});
   const sessionIdCheck = useRef(false);
   const [sharedScreenState, setSharedScreenState] = useState(false);
@@ -144,17 +146,21 @@ export const LiveTeacherPage = () => {
 
   // 화면 공유 여부를 소켓으로 전달하는 메서드
   const screenShareStatusStompClient = () => {
-    // const token = localStorage.getItem("access_token").replace("Bearer ", "");
-    // const socket = new SockJS(
-    //   `${process.env.REACT_APP_API_URL}/screen-share?token=${token}`
-    // );
-    // const stompClient = Stomp.over(socket);
-    // stompClient.connect({}, () => {
-    //   stompClient.subscribe(`/topic/changes`, (messages) => {
-    //     const message = messages.body;
-    //   });
-    // });
-    // ---------------  만들기 ------------------------
+    const token = localStorage.getItem("access_token").replace("Bearer ", "");
+    const socket = new SockJS(
+      `${process.env.REACT_APP_API_URL}/ws?token=${token}`
+    );
+
+    screenStatusStompClients.current = Stomp.over(socket);
+
+    screenStatusStompClients.current.connect({}, () => {
+      screenStatusStompClients.current.subscribe(
+        `/topic/screen-share-status`,
+        (messages) => {
+          const message = messages.body;
+        }
+      );
+    });
   };
 
   // 학생들에게 공유할 화면 소켓 생성
@@ -214,6 +220,18 @@ export const LiveTeacherPage = () => {
     };
   };
 
+  // 화면 공유 소켓 전달 메서드
+  const sendMessage = (status) => {
+    const message = {
+      screenStatus: status,
+    };
+    screenStatusStompClients.current.send(
+      "/app/screen-share-status",
+      {},
+      JSON.stringify(message)
+    );
+  };
+
   //화면 공유 시작 메서드
   const startScreenShare = async () => {
     if (sharedScreenState) {
@@ -254,6 +272,10 @@ export const LiveTeacherPage = () => {
             }
           });
         });
+
+        // 공유시작 메세지
+        const shareStart = "start";
+        sendMessage(shareStart);
       } else {
         alert("화면을 공유할 사람이 없습니다!");
       }
@@ -289,6 +311,9 @@ export const LiveTeacherPage = () => {
 
         sessionIdCheck.current = false;
       }
+      // 공유시작 메세지
+      const shareStop = "stop";
+      sendMessage(shareStop);
 
       setSharedScreenState(false);
     } catch (error) {
@@ -318,14 +343,15 @@ export const LiveTeacherPage = () => {
   const navigate = useNavigate();
 
   //E-Class 종료하기 flag false로 만들어주기
-  const closeEclass = () => {
-    customAxios
+  const closeEclass = async () => {
+    await customAxios
       .patch(`/api/eclass/eclass-close?uuid=${eClassUuid}`)
       .then((response) => {
         console.log("Eclass closed :", response.data);
         alert("수업을 종료하였습니다!");
+        const finishedClass = "finish";
+        sendMessage(finishedClass);
         navigate("/");
-        window.location.reload();
       })
       .catch((error) => {
         console.error("Eclass 종료 에러:", error);

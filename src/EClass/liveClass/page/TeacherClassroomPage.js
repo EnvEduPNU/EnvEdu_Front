@@ -49,7 +49,10 @@ export function TeacherClassroomPage() {
 
         {/* [오른쪽 블럭] 수업 Step 테이블, 수업 상태 테이블 */}
         <div style={{ margin: "0 30px ", height: "40rem", width: "35%" }}>
-          <TeacherStudentList eclassUuid={studentListUuid} />
+          <TeacherStudentList
+            eclassUuid={studentListUuid}
+            selectedEClassUuid={selectedEClassUuid}
+          />
 
           <Divider sx={{ margin: "20px 0" }} />
 

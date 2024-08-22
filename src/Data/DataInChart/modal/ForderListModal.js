@@ -120,7 +120,6 @@ export default function ForderListModal(props) {
   const { setData } = useGraphDataStore();
 
   useEffect(() => {
-    console.log("모달모달 들어오나");
     const ModalOpen = props.modalOpen;
     if (ModalOpen) {
       handleOpen();
@@ -136,7 +135,6 @@ export default function ForderListModal(props) {
       setforderType(noneCheck);
     } else {
       setforderType(props.filteredData[0].dataLabel);
-      console.log("확인해보자" + JSON.stringify(props.filteredData));
     }
   }, [props]);
 

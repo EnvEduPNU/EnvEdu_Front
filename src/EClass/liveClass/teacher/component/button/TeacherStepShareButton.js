@@ -54,6 +54,7 @@ export function TeacherStepShareButton({
     };
   }, []);
 
+  // 과제 공유 소켓 전달
   const sendMessage = () => {
     if (!stepCount) {
       alert("공유할 스텝을 선택해주세요");
@@ -76,6 +77,7 @@ export function TeacherStepShareButton({
     }
   };
 
+  // 과제 중지 소켓 전달
   const sendStopMessage = () => {
     if (globalStompClient && !sharedScreenState) {
       const message = {

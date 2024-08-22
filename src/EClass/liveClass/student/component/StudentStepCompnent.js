@@ -140,7 +140,7 @@ function DefaultPageComponent() {
         border: "1px solid grey",
       }}
     >
-      <Typography variant="h6">수업 시작 전 입니다.</Typography>
+      <Typography variant="h6">수업을 기다려주세요.</Typography>
     </div>
   );
 }

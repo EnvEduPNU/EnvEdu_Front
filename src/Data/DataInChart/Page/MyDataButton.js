@@ -4,6 +4,7 @@ import Button from "@mui/material/Button";
 import MyDataList from "./MyDataList";
 import { Typography } from "@mui/material";
 
+// DATA 드롭다운
 export default function MyDataButton(props) {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -37,6 +38,7 @@ export default function MyDataButton(props) {
         </Typography>
       </Button>
 
+      {/* DATA 드롭다운 리스트 */}
       {open && <MyDataList />}
     </div>
   );

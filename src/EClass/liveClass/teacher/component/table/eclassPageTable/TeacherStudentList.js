@@ -17,31 +17,11 @@ import {
 import moment from "moment"; // 날짜 처리 라이브러리
 
 const columns = [
-  {
-    label: "번호",
-    dataKey: "Num",
-    width: "15%",
-  },
-  {
-    label: "이름",
-    dataKey: "Name",
-    width: "20%",
-  },
-  {
-    label: "소속",
-    dataKey: "LectureData",
-    width: "20%",
-  },
-  {
-    label: "참여일",
-    dataKey: "Status",
-    width: "20%",
-  },
-  {
-    label: "",
-    dataKey: "Action",
-    width: "20%",
-  },
+  { label: "번호", dataKey: "Num", width: "15%" },
+  { label: "이름", dataKey: "Name", width: "20%" },
+  { label: "소속", dataKey: "LectureData", width: "20%" },
+  { label: "참여일", dataKey: "Status", width: "20%" },
+  { label: "", dataKey: "Action", width: "20%" },
 ];
 
 function createData(index, [Num, Name, LectureData, Status]) {
@@ -58,9 +38,7 @@ function fixedHeaderContent() {
             variant="head"
             align="center"
             style={{ width: column.width }}
-            sx={{
-              backgroundColor: "#dcdcdc",
-            }}
+            sx={{ backgroundColor: "#dcdcdc" }}
           >
             {column.label}
           </TableCell>
@@ -76,6 +54,7 @@ function rowContent(index, row, handleClick, handleDelete, selectedRow) {
       .delete(`/api/eclass/student/delete?studentId=${studentId}`)
       .then((response) => {
         console.log("삭제 결과 : " + JSON.stringify(response.data, null, 2));
+        window.location.reload();
       })
       .catch((error) => {
         console.error("Error fetching student list:", error);
@@ -137,22 +116,17 @@ const modalStyle = {
   p: 4,
 };
 
-export default function TeacherStudentList({ eclassUuid }) {
+export default function TeacherStudentList({ eclassUuid, selectedEClassUuid }) {
   const [selectedRow, setSelectedRow] = useState(null);
   const [rowData, setRowData] = useState([]);
   const [open, setOpen] = useState(false);
   const [studentList, setStudentList] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState(null);
 
-  const [eclassUuidCheck, setEclassUuidCheck] = useState([]);
-
   useEffect(() => {
     customAxios
       .get("/api/eclass/student/allList")
       .then((response) => {
-        // console.log(
-        //   "전체학생리스트 : " + JSON.stringify(response.data, null, 2)
-        // );
         setStudentList(response.data);
       })
       .catch((error) => {
@@ -161,8 +135,8 @@ export default function TeacherStudentList({ eclassUuid }) {
   }, []);
 
   useEffect(() => {
-    if (Array.isArray(eclassUuid)) {
-      setEclassUuidCheck(eclassUuid);
+    if (Array.isArray(eclassUuid) && eclassUuid.length > 0) {
+      setRowData([]); // 이전 데이터를 지우고 새로운 데이터를 받기 위한 초기화
       console.log("유유아이디 확인 : " + eclassUuid);
 
       eclassUuid.forEach((uuid) => {
@@ -171,9 +145,14 @@ export default function TeacherStudentList({ eclassUuid }) {
           .then((response) => {
             const students = response.data;
 
+            console.log(
+              `EClass 참여학생 형식변환전 (UUID: ${uuid}) : ` +
+                JSON.stringify(students, null, 2)
+            );
+
             // 학생 리스트를 rowData 형식으로 변환
             const newStudents = students.map((student, index) =>
-              createData(index + 1, [
+              createData(index, [
                 student.studentId,
                 student.studentName,
                 student.studentGroup,
@@ -187,14 +166,14 @@ export default function TeacherStudentList({ eclassUuid }) {
             );
 
             // 기존 rowData에 추가
-            setRowData(newStudents);
+            setRowData((prevRowData) => [...prevRowData, ...newStudents]);
           })
           .catch((error) => {
             console.error("Error fetching student list:", error);
           });
       });
     }
-  }, [eclassUuid]);
+  }, [eclassUuid]); // eclassUuid가 변경될 때마다 실행
 
   const handleRowClick = (id, row) => {
     setSelectedRow((prevSelectedRow) => (prevSelectedRow === id ? null : id));
@@ -236,7 +215,7 @@ export default function TeacherStudentList({ eclassUuid }) {
     if (selectedStudent) {
       console.log("선택된 학생 : " + JSON.stringify(selectedStudent, null, 2));
 
-      const newStudent = createData(rowData.length, [
+      const newStudent = createData(rowData.length + 1, [
         selectedStudent.id,
         selectedStudent.username,
         selectedStudent.studentGroup,
@@ -244,7 +223,7 @@ export default function TeacherStudentList({ eclassUuid }) {
       ]);
 
       const enrollStudent = {
-        eclassUuid: eclassUuidCheck,
+        eclassUuid: eclassUuid,
         studentId: selectedStudent.id,
         studentName: selectedStudent.username,
         studentGroup: selectedStudent.studentGroup,
@@ -254,6 +233,11 @@ export default function TeacherStudentList({ eclassUuid }) {
       console.log(
         "요청보내기전 확인 : " + JSON.stringify(enrollStudent, null, 2)
       );
+
+      if (!eclassUuid) {
+        alert("EClass를 선택하세요!");
+        return;
+      }
 
       // customAxios로 POST 요청 보내기
       customAxios
@@ -271,6 +255,11 @@ export default function TeacherStudentList({ eclassUuid }) {
         });
     }
   };
+
+  // 이미 rowData에 있는 학생들을 제외한 학생 리스트 필터링
+  const availableStudents = studentList.filter(
+    (student) => !rowData.some((row) => row.Num === student.id)
+  );
 
   useEffect(() => {
     document.addEventListener("click", handleClickOutside);
@@ -299,7 +288,7 @@ export default function TeacherStudentList({ eclassUuid }) {
           style={{ height: 200 }}
         />
       </Paper>
-      {eclassUuidCheck.length > 0 && (
+      {selectedEClassUuid && (
         <Button
           onClick={handleOpen}
           style={{ margin: "10px 0 0 0", width: "30%" }}
@@ -329,11 +318,11 @@ export default function TeacherStudentList({ eclassUuid }) {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {studentList.map((student) => (
+                {availableStudents.map((student) => (
                   <TableRow
                     key={student.id}
                     selected={selectedStudent?.id === student.id}
-                    onClick={(event) => handleStudentSelect(event, student)} // event 객체 전달
+                    onClick={(event) => handleStudentSelect(event, student)}
                     sx={{
                       cursor: "pointer",
                       backgroundColor:

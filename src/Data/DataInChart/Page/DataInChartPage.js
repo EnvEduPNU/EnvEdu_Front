@@ -24,8 +24,10 @@ function DataInChartPage() {
 
   return (
     <StyledDiv>
+      {/* 왼쪽 사이드 메뉴 */}
       <LeftSlidePage setButton={setButton} />
 
+      {/* 오른쪽 테이블 및 그래프 */}
       <TableOrGraph button={button} />
     </StyledDiv>
   );

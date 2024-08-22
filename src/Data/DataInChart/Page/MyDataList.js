@@ -4,11 +4,12 @@ import "./leftSlidePage.scss";
 import FolderList from "../../MyData/folderList";
 import ForderListModal from "../modal/ForderListModal";
 
+// DATA 드롭다운 리스트
 export default function MyDataList(props) {
-  /*데이터 요약 정보*/
   const [summary, setSummary] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
 
+  // 가장 최초 테이블 요청
   useEffect(() => {
     customAxios
       .get("/mydata/list")
@@ -46,8 +47,6 @@ export default function MyDataList(props) {
     } else if (type == "CUSTOM") {
       filtered = summary.filter((data) => data.dataLabel === "CUSTOM");
     }
-    console.log("필터에 뭐가 있나 : " + filtered);
-    console.log("모달 오픈 : " + modalOpen);
 
     if (filtered == "") {
       filtered.unshift({ none: type });
@@ -64,7 +63,6 @@ export default function MyDataList(props) {
   const [selectedFolderId, setSelectedFolderId] = useState(null);
 
   const handleFolderSelect = (folderId) => {
-    console.log("뭐가 어떻게 되는거야 이건 : " + folderId);
     setSelectedFolderId(folderId);
   };
 
@@ -144,14 +142,15 @@ export default function MyDataList(props) {
           </label>
         </div>
 
-        <div className="myData-folder">
+        {/* <div className="myData-folder">
           <FolderList
             onSelectFolder={handleFolderSelect}
             onClicked={selectedFolderId}
           />
-        </div>
+        </div> */}
       </div>
 
+      {/* 해당 row 모달 */}
       {filteredData.length > 0 && (
         <ForderListModal
           filteredData={filteredData}

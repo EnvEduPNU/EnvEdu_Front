@@ -5,8 +5,9 @@ import { customAxios } from "../../../Common/CustomAxios";
 import { v4 as uuidv4 } from "uuid"; // UUID 패키지를 사용하여 세션 ID 생성
 import StudentAssignmentTable from "../student/component/table/StudentAssignmentTable";
 import { StudentStepCompnent } from "../student/component/StudentStepCompnent";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Typography } from "@mui/material";
+import ProgressCircular from "../student/component/ProgressCircular";
 
 export const LiveStudentPage = () => {
   const remoteVideoRef = useRef(null);
@@ -21,11 +22,14 @@ export const LiveStudentPage = () => {
   const [courseStep, setCourseStep] = useState();
   const [stepCount, setStepCount] = useState();
 
-  const { eClassUuid } = useParams(); // 경로 파라미터 받아오기
   const location = useLocation();
   const { lectureDataUuid, row } = location.state || {};
 
   const [reportTable, setReportTable] = useState([]);
+
+  const [screenShareStatus, setScreenShareStatus] = useState(true);
+
+  const [classProcess, setClassProcess] = useState(true);
 
   useEffect(() => {
     const initializeSession = async () => {
@@ -78,6 +82,51 @@ export const LiveStudentPage = () => {
       peerConnectionInit();
     }
   }, [finished]);
+
+  // 상태 메시지 받는 소켓 설정
+  useEffect(() => {
+    const token = localStorage.getItem("access_token").replace("Bearer ", "");
+
+    const sock = new SockJS(
+      `${process.env.REACT_APP_API_URL}/ws?token=${token}`
+    );
+
+    const stompClient = Stomp.over(sock);
+
+    stompClient.connect({}, function (frame) {
+      console.log("Connected: " + frame);
+      stompClient.subscribe("/topic/screen-share-status", function (message) {
+        const body = JSON.parse(message.body);
+        const status = body.screenStatus;
+        // alert("화면공유상태 : " + body.screenStatus);
+
+        if (status === "start") {
+          setScreenShareStatus(true);
+        }
+
+        if (status === "stop") {
+          setScreenShareStatus(false);
+        }
+
+        if (status === "finish") {
+          setClassProcess(false);
+        }
+      });
+    });
+
+    // return () => {
+    //   stompClient.disconnect();
+    //   console.log("Disconnected");
+    // };
+  }, []);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!classProcess) {
+      alert("수업이 종료되었습니다!");
+      navigate("/");
+    }
+  }, [classProcess]);
 
   const stompClientConnectionInit = () => {
     const token = localStorage.getItem("access_token").replace("Bearer ", "");
@@ -241,15 +290,17 @@ export const LiveStudentPage = () => {
           {row.Name}
         </Typography>
         <div style={{ margin: "0 20px 0 20px" }}>
+          {!screenShareStatus && <ProgressCircular />}
           <video
             ref={remoteVideoRef}
             autoPlay
             playsInline
             onCanPlay={handleCanPlay}
             style={{
-              display: isVideoReady ? "block" : "none",
+              display: screenShareStatus && isVideoReady ? "block" : "none",
             }}
-          ></video>
+          />
+
           {!isVideoReady && (
             <StudentStepCompnent
               setPage={setPage}

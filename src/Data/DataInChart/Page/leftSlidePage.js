@@ -18,11 +18,13 @@ export default function LeftSlidePage(props) {
       <Header />
       <div className="myData-left">
         <div className="myData-summary">
+          {/* DATA 드롭다운 */}
           <MyDataButton
             buttonName={"Data"}
             buttonCheck={buttonCheck}
             setButtonCheck={setButtonCheck}
           />
+          {/* Example 드롭다운(미완성) */}
           <ExpertDataButton
             buttonName={"Example"}
             buttonCheck={buttonCheck}
