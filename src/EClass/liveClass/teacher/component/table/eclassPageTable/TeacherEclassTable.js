@@ -38,10 +38,16 @@ const createData = (index, item) => ({
 // E-Class 테이블에서도 삭제, eclassUuid_list 테이블 에서도 삭제
 const deleteData = async (row, handleDelete) => {
   try {
-    const response = await customAxios.delete(
+    const respDeleteEclass = await customAxios.delete(
       `/api/eclass/delete?eClassUuid=${row.eClassUuid}`
     );
-    console.log(response.data);
+    console.log(respDeleteEclass.data);
+
+    const respDeleteEclassStudent = await customAxios.delete(
+      `/api/eclass/student/joined/delete?eClassUuid=${row.eClassUuid}`
+    );
+    console.log(respDeleteEclassStudent.data);
+
     handleDelete(row);
   } catch (error) {
     console.error("Eclass 리스트 삭제 에러:", error);

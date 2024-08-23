@@ -10,6 +10,7 @@ import Paper from "@mui/material/Paper";
 import { TableVirtuoso } from "react-virtuoso";
 import { Button, Typography } from "@mui/material";
 import { customAxios } from "../../../../../Common/CustomAxios";
+import StudentReportModal from "../../modal/StudentReportModal";
 
 const columns = [
   {
@@ -64,56 +65,22 @@ function fixedHeaderContent() {
   );
 }
 
-function rowContent(
-  _index,
-  row,
-  handleClick,
-  selectedRow,
-  stepCount,
-  isDataAvailable
-) {
-  // const parseStepCount = parseInt(stepCount);
-  // const isDisabled = row.stepNum !== parseStepCount;
-
-  // return (
-  //   <React.Fragment>
-  //     {columns.map((column, index) => {
-  //       return (
-  //         <TableCell
-  //           key={column.dataKey}
-  //           align="left"
-  //           onClick={() =>
-  //             !isDisabled && handleClick(row.id, row.Step, row.stepNum)
-  //           } // 비활성화된 셀은 클릭 무시
-  //           sx={{
-  //             backgroundColor: selectedRow === row.id ? "#f0f0f0" : "inherit",
-  //             cursor: isDisabled ? "not-allowed" : "pointer",
-  //             textAlign: "left",
-  //             color: isDisabled ? "gray" : "inherit", // 비활성화된 셀은 회색으로 표시
-  //             pointerEvents: isDisabled ? "none" : "auto", // 비활성화된 셀은 클릭 불가능
-  //           }}
-  //         >
-  //           {row[column.dataKey]}
-  //         </TableCell>
-  //       );
-  //     })}
-  //   </React.Fragment>
-  // );
-
+function rowContent(_index, row, handleClick, selectedRow) {
   return (
     <React.Fragment>
-      {columns.map((column, index) => {
+      {columns.map((column) => {
+        const cellKey = `${row.id}-${column.dataKey}`; // 고유하고 안정적인 key 생성
         return (
           <TableCell
-            key={column.dataKey}
+            key={cellKey}
             align="left"
-            onClick={() => handleClick(row.id, row.Step, row.stepNum)} // 비활성화된 셀은 클릭 무시
+            onClick={() => handleClick(row.id, row.Step, row.stepNum)}
             sx={{
               backgroundColor: selectedRow === row.id ? "#f0f0f0" : "inherit",
               cursor: "pointer",
               textAlign: "left",
-              color: "inherit", // 비활성화된 셀은 회색으로 표시
-              pointerEvents: "auto", // 비활성화된 셀은 클릭 불가능
+              color: "inherit",
+              pointerEvents: "auto",
             }}
           >
             {row[column.dataKey]}
@@ -129,22 +96,28 @@ export default function StudentAssignmentTable(props) {
   const [tableData, setTableData] = useState([]);
   const [allTableData, setAllTableData] = useState([]);
   const [isDataAvailable, setIsDataAvailable] = useState(false); // 데이터가 들어왔는지 여부를 확인하는 상태
-
   useEffect(() => {
-    console.log("테이블에서 disable 제외 카운트 : " + props.stepCount);
+    const fetchData = async () => {
+      try {
+        console.log("테이블에서 disable 제외 카운트 : " + props.stepCount);
+        console.log("들어갈때 lectureDataUuid ?? : " + props.lectureDataUuid);
 
-    // 진행 중인 스텝 과제 테이블이 존재하면 가져오기
-    customAxios
-      .get(`/api/assignment/get?uuid=${props.lectureDataUuid}`)
-      .then((res) => {
-        if (res.data && res.data.length > 0) {
+        // 진행 중인 스텝 과제 테이블이 존재하면 가져오기
+        const assignmentResponse = await customAxios.get(
+          `/api/assignment/getstep?uuid=${props.lectureDataUuid}`
+        );
+        console.log(
+          "들고올수나 : " + JSON.stringify(assignmentResponse.data, null, 2)
+        );
+
+        if (assignmentResponse.data) {
           console.log(
-            "오른쪽 리스트 가져온거 확인하기 : " +
-              JSON.stringify(res.data, null, 2)
+            "예전 작성한 과제 있음 : " +
+              JSON.stringify(assignmentResponse.data, null, 2)
           );
 
           // lectureSummary의 contents 배열을 펼쳐서 테이블에 표시할 수 있도록 변환
-          const formattedData = res.data.flatMap((data) =>
+          const formattedData = assignmentResponse.data.flatMap((data) =>
             data.contents.map((content) => ({
               stepNum: content.stepNum,
               contentName: content.contentName,
@@ -155,45 +128,47 @@ export default function StudentAssignmentTable(props) {
           );
 
           setTableData(formattedData);
-          setAllTableData(res.data);
+          setAllTableData(assignmentResponse.data);
           setIsDataAvailable(true); // 데이터가 들어왔음을 표시
 
           // 첫 번째 요청의 데이터가 존재하면, 두 번째 요청은 실행하지 않음
           return;
         }
+      } catch (err) {
+        console.error("첫 번째 요청에서 에러 발생:", err);
+      }
 
+      // 첫 번째 요청이 실패하거나 데이터가 없을 경우 두 번째 요청 실행
+      try {
         // 진행중인 과제 테이블 없으면 수업자료 가져오기
-        // 첫 번째 요청의 데이터가 존재하지 않으면, 두 번째 요청을 실행
-        customAxios
-          .get("/api/steps/getLectureContent")
-          .then((res) => {
-            const filteredData = res.data.filter(
-              (data) => data.uuid === props.lectureDataUuid
-            );
+        const lectureResponse = await customAxios.get(
+          "/api/steps/getLectureContent"
+        );
 
-            // lectureSummary의 contents 배열을 펼쳐서 테이블에 표시할 수 있도록 변환
-            const formattedData = filteredData.flatMap((data) =>
-              data.contents.map((content) => ({
-                stepNum: content.stepNum,
-                contentName: content.contentName,
-                id: `${data.uuid}-${content.stepNum}`, // unique id 생성
-                Step: data.stepName,
-                contents: content.contents,
-              }))
-            );
+        const filteredData = lectureResponse.data.filter(
+          (data) => data.uuid === props.lectureDataUuid
+        );
 
-            // console.log(
-            //   "Formatted Data for Table: " +
-            //     JSON.stringify(formattedData, null, 2)
-            // );
+        // lectureSummary의 contents 배열을 펼쳐서 테이블에 표시할 수 있도록 변환
+        const formattedLectureData = filteredData.flatMap((data) =>
+          data.contents.map((content) => ({
+            stepNum: content.stepNum,
+            contentName: content.contentName,
+            id: `${data.uuid}-${content.stepNum}`, // 고유한 id 사용
+            Step: data.stepName,
+            contents: content.contents,
+          }))
+        );
 
-            setTableData(formattedData);
-            setAllTableData(filteredData);
-          })
-          .catch((err) => console.log(err));
-      })
-      .catch((err) => console.log(err));
-  }, []);
+        setTableData(formattedLectureData);
+        setAllTableData(filteredData);
+      } catch (err) {
+        console.error("두 번째 요청에서 에러 발생:", err);
+      }
+    };
+
+    fetchData();
+  }, [props.stepCount, props.lectureDataUuid]);
 
   useEffect(() => {
     document.addEventListener("click", handleClickOutside);
@@ -233,6 +208,17 @@ export default function StudentAssignmentTable(props) {
     }
   };
 
+  const [openModal, setOpenModal] = useState(false); // 모달 열림 상태 관리
+
+  const handleAssignmentReport = () => {
+    console.log("과제 전부 확인 : " + JSON.stringify(allTableData, null, 2));
+    setOpenModal(true); // 모달 열기
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false); // 모달 닫기
+  };
+
   return (
     <div>
       <Typography variant="h5" sx={{ margin: "0 0 10px 0" }}>
@@ -266,12 +252,21 @@ export default function StudentAssignmentTable(props) {
         <Button
           variant="contained"
           color="primary"
-          // onClick={}
+          onClick={handleAssignmentReport}
           style={{ width: "100%", margin: "20px 0 0 0" }}
         >
           보고서
         </Button>
       )}
+      {/* 모달 컴포넌트 렌더링 */}
+      <StudentReportModal
+        open={openModal}
+        onClose={handleCloseModal}
+        tableData={allTableData}
+        latestTableData={props.latestTableData}
+        assginmentCheck={props.assginmentCheck}
+        stepCount={props.stepCount}
+      />
     </div>
   );
 }

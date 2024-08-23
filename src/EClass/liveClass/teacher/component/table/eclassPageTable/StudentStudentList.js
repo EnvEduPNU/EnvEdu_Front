@@ -70,18 +70,7 @@ function fixedHeaderContent() {
   );
 }
 
-function rowContent(index, row, handleClick, handleDelete, selectedRow) {
-  const requestDelete = (studentId) => {
-    customAxios
-      .delete(`/api/eclass/student/delete?studentId=${studentId}`)
-      .then((response) => {
-        console.log("삭제 결과 : " + JSON.stringify(response.data, null, 2));
-      })
-      .catch((error) => {
-        console.error("Error fetching student list:", error);
-      });
-  };
-
+function rowContent(index, row, handleClick, selectedRow) {
   return (
     <React.Fragment>
       {columns.map((column) => (
@@ -94,67 +83,27 @@ function rowContent(index, row, handleClick, handleDelete, selectedRow) {
             backgroundColor: selectedRow === row.id ? "#f0f0f0" : "inherit",
           }}
         >
-          {column.dataKey === "Action" ? (
-            <Button
-              variant="outlined"
-              color="secondary"
-              style={{ width: column.width }}
-              onClick={(e) => {
-                e.stopPropagation(); // 이벤트 전파 방지
-                console.log(
-                  "여기 삭제는 뭐지 : " + JSON.stringify(row, null, 2)
-                );
-                requestDelete(row.Num);
-                handleDelete(row.id);
-              }}
-            >
-              삭제
-            </Button>
-          ) : (
-            <span
-              onClick={() =>
-                column.dataKey !== "Action" && handleClick(row.id, row)
-              }
-            >
-              {row[column.dataKey]}
-            </span>
-          )}
+          <span
+            onClick={() =>
+              column.dataKey !== "Action" && handleClick(row.id, row)
+            }
+          >
+            {row[column.dataKey]}
+          </span>
         </TableCell>
       ))}
     </React.Fragment>
   );
 }
 
-const modalStyle = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
-
 export default function StudentStudentList({ eclassUuid }) {
   const [selectedRow, setSelectedRow] = useState(null);
   const [rowData, setRowData] = useState([]);
-  const [open, setOpen] = useState(false);
-  const [studentList, setStudentList] = useState([]);
-  const [selectedStudent, setSelectedStudent] = useState(null);
-
-  const [eclassUuidCheck, setEclassUuidCheck] = useState([]);
 
   useEffect(() => {
     customAxios
       .get("/api/eclass/student/allList")
-      .then((response) => {
-        // console.log(
-        //   "전체학생리스트 : " + JSON.stringify(response.data, null, 2)
-        // );
-        setStudentList(response.data);
-      })
+      .then((response) => {})
       .catch((error) => {
         console.error("Error fetching student list:", error);
       });
@@ -162,7 +111,6 @@ export default function StudentStudentList({ eclassUuid }) {
 
   useEffect(() => {
     if (Array.isArray(eclassUuid)) {
-      setEclassUuidCheck(eclassUuid);
       console.log("유유아이디 확인 : " + eclassUuid);
 
       eclassUuid.forEach((uuid) => {
@@ -211,71 +159,6 @@ export default function StudentStudentList({ eclassUuid }) {
       !event.target.closest(".modal-table")
     ) {
       setSelectedRow(null);
-      setSelectedStudent(null); // 모달에서도 선택 해제
-    }
-  };
-
-  const handleOpen = (e) => {
-    e.stopPropagation(); // 이벤트 전파 방지
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
-    setSelectedStudent(null); // 모달을 닫을 때 선택 해제
-  };
-
-  const handleStudentSelect = (event, student) => {
-    event.stopPropagation(); // 이벤트 전파 방지
-    setSelectedStudent((prevSelectedStudent) =>
-      prevSelectedStudent?.id === student.id ? null : student
-    );
-  };
-
-  const handleAddStudent = () => {
-    if (selectedStudent) {
-      console.log("선택된 학생 : " + JSON.stringify(selectedStudent, null, 2));
-
-      // 이미 rowData에 해당 학생이 있는지 확인
-      const isStudentExists = rowData.some(
-        (row) => row.Num === selectedStudent.id
-      );
-
-      if (isStudentExists) {
-        console.log("이 학생은 이미 목록에 있습니다.");
-        return; // 중복된 경우 함수 종료
-      }
-
-      const newStudent = createData(rowData.length + 1, [
-        selectedStudent.id,
-        selectedStudent.username,
-        selectedStudent.studentGroup,
-        moment().tz("Asia/Seoul").format("YYYY-MM-DD"), // 현재 서울 시각을 ISO 8601 포맷으로 추가
-      ]);
-
-      const enrollStudent = {
-        eclassUuid: eclassUuidCheck,
-        studentId: selectedStudent.id,
-        studentName: selectedStudent.username,
-        studentGroup: selectedStudent.studentGroup,
-        joinDate: moment().tz("Asia/Seoul").format("YYYY-MM-DDTHH:mm:ssZ"), // 현재 서울 시각을 ISO 8601 포맷으로 추가
-      };
-
-      console.log(
-        "요청보내기전 확인 : " + JSON.stringify(enrollStudent, null, 2)
-      );
-
-      // customAxios로 POST 요청 보내기
-      customAxios
-        .post("/api/eclass/student/enroll", enrollStudent)
-        .then((response) => {
-          console.log("Student added successfully:", response.data);
-          setRowData((prevRowData) => [...prevRowData, newStudent]);
-          setSelectedStudent(null);
-          handleClose();
-        })
-        .catch((error) => {
-          console.error("Error adding student:", error);
-        });
     }
   };
 

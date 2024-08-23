@@ -8,9 +8,7 @@ import { Typography } from "@mui/material";
 export function StudentStepCompnent(props) {
   const [page, setPage] = useState(props.page);
   const [stepCount, setStepCount] = useState();
-  const [tableData, setTableData] = useState([]);
-  const [latestTableData, setLatestTableData] = useState([]);
-
+  const [tableData, setTableData] = useState(props.data);
   const [socketEclassUuid, setSocketEclassUuid] = useState();
   const [assginmentCheck, setAssignmentCheck] = useState(false);
 
@@ -53,10 +51,15 @@ export function StudentStepCompnent(props) {
     const socket = new SockJS(
       `${process.env.REACT_APP_API_URL}/ws?token=${token}`
     );
+
     const message = {
       assginmentStatus: "success",
       sessionId: props.sessionIdState,
     };
+
+    console.log(
+      "[학생]세션 아이디 : " + JSON.stringify(props.sessionIdState, null, 2)
+    );
 
     console.log(
       "[학생]과제 공유 성공보내기 : " + JSON.stringify(message, null, 2)
@@ -71,72 +74,16 @@ export function StudentStepCompnent(props) {
 
   // 이전에 수업자료로 생성한 테이블있으면 가져오는 설정
   useEffect(() => {
+    console.log(
+      "데이터테이블 바뀌는지 확인 : " + JSON.stringify(props.data, null, 2)
+    );
+    console.log(
+      "스텝 카운트 확인 : " + JSON.stringify(props.stepCount, null, 2)
+    );
+    setTableData(props.data);
     setStepCount(props.stepCount);
     props.setStepCount(props.stepCount);
-
-    if (
-      !tableData ||
-      tableData.length === 0 ||
-      !props.data ||
-      props.data.length === 0
-    )
-      return;
-
-    customAxios
-      .get(`/api/assignment/get?uuid=${props.uuid}`)
-      .then((res) => {
-        if (res.data.length === 0) {
-          return;
-        }
-
-        const updatedTableData = tableData.map((existingStepData) => {
-          const updatedStepData = res.data.find(
-            (newStepData) => newStepData.stepNum === existingStepData.stepNum
-          );
-
-          if (updatedStepData) {
-            return {
-              ...existingStepData,
-              ...updatedStepData,
-            };
-          } else {
-            return existingStepData;
-          }
-        });
-
-        setLatestTableData(updatedTableData);
-        props.setReportTable(updatedTableData);
-        // console.log(
-        //   "업데이트된 수업자료 : " + JSON.stringify(updatedTableData, null, 2)
-        // );
-
-        setAssignmentCheck(true);
-      })
-      .catch((err) => console.log(err));
-  }, [stepCount, props.stepCount]);
-
-  // E-Class에서 설정한 기본 수업자료 받아오는 설정
-  useEffect(() => {
-    customAxios
-      .get("/api/steps/getLectureContent")
-      .then((res) => {
-        const filteredData = res.data.filter(
-          (data) => data.uuid === props.uuid
-        );
-
-        const dataWithMatchingUUID = res.data.find(
-          (data) => data.uuid === props.uuid
-        );
-
-        console.log(
-          "기본수업자료 가져온것 : " +
-            JSON.stringify(dataWithMatchingUUID, null, 2)
-        );
-
-        setTableData(filteredData);
-      })
-      .catch((err) => console.log(err));
-  }, []);
+  }, [props.data]);
 
   return (
     <div>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import "./Header.scss";
 import { Navbar, Nav, Container, NavDropdown } from "react-bootstrap";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { customAxios } from "../Common/CustomAxios";
 import { PiPlant } from "react-icons/pi";
 
@@ -17,7 +17,7 @@ function Header() {
     learnMore: false,
     contact: false,
   });
-  // 각 NavDropdown에 대한 ref 생성
+
   const refs = {
     about: useRef(null),
     app: useRef(null),
@@ -31,7 +31,17 @@ function Header() {
     setOpen((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  // 외부 클릭 감지를 위한 로직
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleNavLinkClick = (path) => {
+    if (location.pathname === path) {
+      window.location.reload(); // 현재 페이지와 동일한 경로일 경우 페이지를 리로드
+    } else {
+      navigate(path); // 다른 경로일 경우 해당 경로로 이동
+    }
+  };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       Object.entries(refs).forEach(([key, ref]) => {
@@ -45,14 +55,13 @@ function Header() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []); // 의존성 배열을 비워 초기 마운트 때만 이벤트 리스너 등록
+  }, []);
 
   useEffect(() => {
     setUsername(localStorage.getItem("username"));
     setUserRole(localStorage.getItem("role"));
   }, []);
 
-  const navigate = useNavigate();
   function logout() {
     localStorage.clear();
     navigate("/");
@@ -66,9 +75,9 @@ function Header() {
           <Nav>
             {username ? (
               <>
-                <NavLink className="nav-link" to="/" style={{ color: "black" }}>
+                <Nav.Link onClick={() => handleNavLinkClick("/")}>
                   {username}
-                </NavLink>
+                </Nav.Link>
                 <span
                   className="nav-link"
                   style={{ cursor: "pointer" }}
@@ -79,23 +88,21 @@ function Header() {
               </>
             ) : (
               <>
-                <NavLink className="nav-link" to="/login">
+                <Nav.Link onClick={() => handleNavLinkClick("/login")}>
                   LOGIN
-                </NavLink>
-                <NavLink
-                  className="nav-link"
-                  to="/auth"
+                </Nav.Link>
+                <Nav.Link
+                  onClick={() => handleNavLinkClick("/auth")}
                   state={{ role: "ROLE_STUDENT" }}
                 >
                   JOIN US(student)
-                </NavLink>
-                <NavLink
-                  className="nav-link"
-                  to="/auth"
+                </Nav.Link>
+                <Nav.Link
+                  onClick={() => handleNavLinkClick("/auth")}
                   state={{ role: "ROLE_EDUCATOR" }}
                 >
                   JOIN US(educator)
-                </NavLink>
+                </Nav.Link>
               </>
             )}
           </Nav>
@@ -107,7 +114,7 @@ function Header() {
           style={{ height: "5em" }}
         >
           <Nav>
-            <NavLink className="nav-link" to="/" style={{ display: "flex" }}>
+            <Nav.Link onClick={() => handleNavLinkClick("/")}>
               <PiPlant size="30" color="#2F5F3A" />
               <h4
                 style={{
@@ -118,7 +125,7 @@ function Header() {
               >
                 SEEd
               </h4>
-            </NavLink>
+            </Nav.Link>
           </Nav>
           <Nav>
             {Object.keys(open).map((key) => (
@@ -137,91 +144,125 @@ function Header() {
                     case "about":
                       return (
                         <>
-                          <NavLink className={"nav-link"} to="/what">
+                          <Nav.Link onClick={() => handleNavLinkClick("/what")}>
                             What We Do
-                          </NavLink>
-                          <NavLink className={"nav-link"} to="/team">
+                          </Nav.Link>
+                          <Nav.Link onClick={() => handleNavLinkClick("/team")}>
                             Team
-                          </NavLink>
+                          </Nav.Link>
                         </>
                       );
                     case "app":
                       return (
                         <>
-                          <NavLink className={"nav-link"} to="/socket">
+                          <Nav.Link
+                            onClick={() => handleNavLinkClick("/socket")}
+                          >
                             측정하기
-                          </NavLink>
+                          </Nav.Link>
                         </>
                       );
                     case "dataChart":
                       return (
                         <>
-                          <NavLink className={"nav-link"} to="/data-in-chart">
+                          <Nav.Link
+                            onClick={() => handleNavLinkClick("/data-in-chart")}
+                          >
                             Tutorial
-                          </NavLink>
-                          <NavLink className={"nav-link"} to="/data-in-chart">
+                          </Nav.Link>
+                          <Nav.Link
+                            onClick={() => handleNavLinkClick("/data-in-chart")}
+                          >
                             Data & Chart
-                          </NavLink>
-                          <NavLink className={"nav-link"} to="/openapi">
+                          </Nav.Link>
+                          <Nav.Link
+                            onClick={() => handleNavLinkClick("/openapi")}
+                          >
                             Open API Data
-                          </NavLink>
-                          <NavLink className={"nav-link"} to="/textbook">
+                          </Nav.Link>
+                          <Nav.Link
+                            onClick={() => handleNavLinkClick("/textbook")}
+                          >
                             Data In Textbooks
-                          </NavLink>
-                          <NavLink className={"nav-link"} to="/resource">
+                          </Nav.Link>
+                          <Nav.Link
+                            onClick={() => handleNavLinkClick("/resource")}
+                          >
                             Education Resources
-                          </NavLink>
+                          </Nav.Link>
                         </>
                       );
                     case "eClass":
                       return (
                         <>
-                          <NavLink className={"nav-link"} to="/EClassLivePage">
+                          <Nav.Link
+                            onClick={() =>
+                              handleNavLinkClick("/EClassLivePage")
+                            }
+                          >
                             E-Class
-                          </NavLink>
-                          <NavLink className={"nav-link"} to="/myData">
+                          </Nav.Link>
+                          <Nav.Link
+                            onClick={() => handleNavLinkClick("/myData")}
+                          >
                             My Data
-                          </NavLink>
+                          </Nav.Link>
                           {userRole === "ROLE_EDUCATOR" && (
-                            <NavLink className={"nav-link"} to="/classData">
+                            <Nav.Link
+                              onClick={() => handleNavLinkClick("/classData")}
+                            >
                               수업 자료
-                            </NavLink>
+                            </Nav.Link>
                           )}
                         </>
                       );
                     case "learnMore":
                       return (
                         <>
-                          <NavLink className={"nav-link"} to="/news">
+                          <Nav.Link onClick={() => handleNavLinkClick("/news")}>
                             News
-                          </NavLink>
-                          <NavLink className={"nav-link"} to="/research">
+                          </Nav.Link>
+                          <Nav.Link
+                            onClick={() => handleNavLinkClick("/research")}
+                          >
                             Research
-                          </NavLink>
-                          <NavLink className={"nav-link"} to="/training">
+                          </Nav.Link>
+                          <Nav.Link
+                            onClick={() => handleNavLinkClick("/training")}
+                          >
                             Training
-                          </NavLink>
-                          <NavLink className={"nav-link"} to="/implementation">
+                          </Nav.Link>
+                          <Nav.Link
+                            onClick={() =>
+                              handleNavLinkClick("/implementation")
+                            }
+                          >
                             Implementation
-                          </NavLink>
+                          </Nav.Link>
                         </>
                       );
                     case "contact":
                       return (
                         <>
-                          <NavLink className={"nav-link"} to="/contact">
+                          <Nav.Link
+                            onClick={() => handleNavLinkClick("/contact")}
+                          >
                             Contact us
-                          </NavLink>
-                          <NavLink className={"nav-link"} to="/notice">
+                          </Nav.Link>
+                          <Nav.Link
+                            onClick={() => handleNavLinkClick("/notice")}
+                          >
                             Announcement
-                          </NavLink>
-                          <NavLink className={"nav-link"} to="/board">
+                          </Nav.Link>
+                          <Nav.Link
+                            onClick={() => handleNavLinkClick("/board")}
+                          >
                             Board
-                          </NavLink>
+                          </Nav.Link>
                         </>
                       );
                     default:
-                      return null; // 기본적으로 아무 내용도 렌더링하지 않음
+                      return null;
                   }
                 })()}
               </NavDropdown>
