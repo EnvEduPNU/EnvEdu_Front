@@ -29,6 +29,10 @@ export function StudentStepCompnent(props) {
       stompClient.subscribe("/topic/switchPage", function (message) {
         const parsedMessage = JSON.parse(message.body);
 
+        if (parsedMessage.page === "newPage") {
+          assginmentCheckStompClient();
+        }
+
         setPage(parsedMessage.page);
         props.setPage(parsedMessage.page);
         setStepCount(parsedMessage.stepCount);
@@ -43,9 +47,30 @@ export function StudentStepCompnent(props) {
     };
   }, []);
 
+  // 과제 공유 성공시 응답 소켓 메서드
+  const assginmentCheckStompClient = () => {
+    const token = localStorage.getItem("access_token").replace("Bearer ", "");
+    const socket = new SockJS(
+      `${process.env.REACT_APP_API_URL}/ws?token=${token}`
+    );
+    const message = {
+      assginmentStatus: "success",
+      sessionId: props.sessionIdState,
+    };
+
+    console.log(
+      "[학생]과제 공유 성공보내기 : " + JSON.stringify(message, null, 2)
+    );
+
+    const stompClient = Stomp.over(socket);
+
+    stompClient.connect({}, () => {
+      stompClient.send("/app/assginment-status", {}, JSON.stringify(message));
+    });
+  };
+
   // 이전에 수업자료로 생성한 테이블있으면 가져오는 설정
   useEffect(() => {
-    console.log("들어오는겨 마는겨");
     setStepCount(props.stepCount);
     props.setStepCount(props.stepCount);
 

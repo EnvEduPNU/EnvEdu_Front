@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
+import { useLiveClassPartStore } from "../../../store/LiveClassPartStore";
 
 let globalStompClient;
 
@@ -10,6 +11,9 @@ export function TeacherStepShareButton({
   lectureDataUuid,
   sharedScreenState,
 }) {
+  const [sessionId, setSessionId] = useState();
+  const [shared, setShared] = useState();
+
   useEffect(() => {
     // SockJS 연결 설정
 
@@ -30,6 +34,24 @@ export function TeacherStepShareButton({
         {},
         () => {
           globalStompClient = stompClient;
+
+          // 학생에게 과제 공유 성공시 받는 소켓 메시지
+          stompClient.subscribe("/topic/assginment-status", function (message) {
+            const parsedMessage = JSON.parse(message.body);
+            console.log(
+              "과제 공유 : " + JSON.stringify(parsedMessage, null, 2)
+            );
+
+            setSessionId(parsedMessage.sessionId);
+            setShared(parsedMessage.shared);
+
+            //과제 공유 성공 메시지를 위한 zustand 값 변경
+            updateShareStatus(
+              parsedMessage.sessionId,
+              parsedMessage.shared,
+              true
+            );
+          });
         },
         onError
       );
@@ -53,6 +75,10 @@ export function TeacherStepShareButton({
       }
     };
   }, []);
+
+  const updateShareStatus = useLiveClassPartStore(
+    (state) => state.updateShareStatus
+  );
 
   // 과제 공유 소켓 전달
   const sendMessage = () => {
@@ -80,6 +106,9 @@ export function TeacherStepShareButton({
   // 과제 중지 소켓 전달
   const sendStopMessage = () => {
     if (globalStompClient && !sharedScreenState) {
+      // 과제 공유 상태 업데이트
+      updateShareStatus(sessionId, shared, false);
+
       const message = {
         page: "stop", // JSON 객체에서 "newPage"를 값으로 하는 'page' 키 생성
       };

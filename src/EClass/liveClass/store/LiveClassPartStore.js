@@ -4,7 +4,10 @@ export const useLiveClassPartStore = create((set, get) => ({
   sessionIds: [],
   addSessionId: (sessionId) =>
     set((state) => ({
-      sessionIds: [...state.sessionIds, { id: sessionId, shared: false }],
+      sessionIds: [
+        ...state.sessionIds,
+        { id: sessionId, shared: false, assginmentShared: false },
+      ],
     })),
   removeSessionId: (sessionId) =>
     set((state) => ({
@@ -13,11 +16,19 @@ export const useLiveClassPartStore = create((set, get) => ({
       ),
     })),
   setSessionIds: (sessionIds) =>
-    set({ sessionIds: sessionIds.map((id) => ({ id, shared: false })) }),
-  updateShareStatus: (sessionId, shared) =>
+    set({
+      sessionIds: sessionIds.map((id) => ({
+        id,
+        shared: false,
+        assginmentShared: false,
+      })),
+    }),
+  updateShareStatus: (sessionId, shared, assginmentShared) =>
     set((state) => ({
       sessionIds: state.sessionIds.map((session) =>
-        session.id === sessionId ? { ...session, shared } : session
+        session.id === sessionId
+          ? { ...session, shared, assginmentShared }
+          : session
       ),
     })),
   hasSessionId: (sessionId) =>

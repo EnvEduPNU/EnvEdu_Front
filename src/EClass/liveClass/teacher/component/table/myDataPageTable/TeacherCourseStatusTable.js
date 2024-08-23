@@ -16,11 +16,12 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import { useLiveClassPartStore } from "../../../../store/LiveClassPartStore";
 import { customAxios } from "../../../../../../Common/CustomAxios";
 
-function createData(name, sessionId, shared) {
+function createData(name, sessionId, shared, assginmentShared) {
   return {
     name,
     sessionId,
     shared,
+    assginmentShared,
   };
 }
 
@@ -38,7 +39,11 @@ function Row({ row }) {
         )}
       </TableCell>
       <TableCell align="center">
-        <CancelIcon sx={{ color: "red" }} />
+        {row.assginmentShared ? (
+          <CheckCircleIcon sx={{ color: "blue" }} />
+        ) : (
+          <CancelIcon sx={{ color: "red" }} />
+        )}
       </TableCell>
       <TableCell align="center">
         <CheckCircleIcon sx={{ color: "blue" }} />
@@ -58,6 +63,7 @@ Row.propTypes = {
     name: PropTypes.string.isRequired,
     sessionId: PropTypes.string.isRequired,
     shared: PropTypes.bool.isRequired,
+    assginmentShared: PropTypes.bool.isRequired,
   }).isRequired,
 };
 
@@ -65,6 +71,9 @@ const getStudent = async (sessionId) => {
   try {
     const response = await customAxios.get(
       `${process.env.REACT_APP_API_URL}/student?sessionId=${sessionId}`
+    );
+    console.log(
+      "어떻게 받아오는지 확인 : " + JSON.stringify(response.data, null, 2)
     );
     return response.data.username;
   } catch (error) {
@@ -82,6 +91,13 @@ export default function TeacherCourseStatusTable() {
       const studentData = await Promise.all(
         sessionData.map((session) => getStudent(session.id))
       );
+
+      console.log(
+        "[수업상태] 학생 확인 : " + JSON.stringify(studentData, null, 2)
+      );
+      console.log(
+        "[수업상태] 세션데이터 확인 : " + JSON.stringify(sessionData, null, 2)
+      );
       setStudents(studentData);
     };
     fetchStudents();
@@ -89,9 +105,10 @@ export default function TeacherCourseStatusTable() {
 
   const rows = sessionData.map((session, index) =>
     createData(
-      students[index] || `학생 ${index + 1}`,
+      students[index],
       session.id,
-      session.shared
+      session.shared,
+      session.assginmentShared
     )
   );
 

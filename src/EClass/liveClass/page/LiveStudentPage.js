@@ -52,12 +52,19 @@ export const LiveStudentPage = () => {
 
     initializeSession();
 
-    const handleBeforeUnload = async () => {
-      await deleteSessionId(sessionId.current);
+    // 뒤로가기 등 컴포넌트 내에서 해제가 아닌 브라우저를 직접적으로 exit 하려할때
+    const handleBeforeUnload = (event) => {
+      if (sessionId.current) {
+        deleteSessionId(sessionId.current);
+
+        // event.preventDefault();
+        // event.returnValue = ""; // 사용자에게 경고 메시지를 표시
+      }
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
 
+    // 뒤로가기 등 컴포넌트 내에서 해제 됐을때
     return () => {
       if (stompClient.current) {
         stompClient.current.disconnect(() => {
@@ -67,12 +74,12 @@ export const LiveStudentPage = () => {
       deleteSessionId(sessionId.current);
       setSessionIdState("");
 
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+
       // 주기적 체크 인터벌 종료
       if (iceConnectionCheckInterval.current) {
         clearInterval(iceConnectionCheckInterval.current);
       }
-
-      window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, []);
 
@@ -284,7 +291,7 @@ export const LiveStudentPage = () => {
     <div style={{ display: "flex", margin: "0 20vh" }}>
       {/* {console.log("E-Class 정보 : " + JSON.stringify(row, null, 2))} */}
 
-      {/* 화면 공유 블럭 */}
+      {/* [왼쪽] 화면 공유 블럭 */}
       <div style={{ display: "inline-block", width: "100%", height: "100%" }}>
         <Typography variant="h4" sx={{ margin: "0 20px 0 20px" }}>
           {row.Name}
@@ -310,12 +317,13 @@ export const LiveStudentPage = () => {
               uuid={lectureDataUuid}
               stepCount={stepCount}
               setReportTable={setReportTable}
+              sessionIdState={sessionIdState}
             />
           )}
         </div>
       </div>
 
-      {/* 수업 셋리스트 & step 제출 리스트 블럭 */}
+      {/* [오른쪽] 수업 셋리스트 & step 제출 리스트 블럭 */}
       <div style={{ width: "25%", marginRight: "30px" }}>
         <StudentAssignmentTable
           setCourseStep={setCourseStep}
