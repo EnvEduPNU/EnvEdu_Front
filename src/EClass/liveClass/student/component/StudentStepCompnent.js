@@ -74,9 +74,9 @@ export function StudentStepCompnent(props) {
 
   // 이전에 수업자료로 생성한 테이블있으면 가져오는 설정
   useEffect(() => {
-    console.log(
-      "데이터테이블 바뀌는지 확인 : " + JSON.stringify(props.data, null, 2)
-    );
+    // console.log(
+    //   "데이터테이블 바뀌는지 확인 : " + JSON.stringify(props.data, null, 2)
+    // );
     console.log(
       "스텝 카운트 확인 : " + JSON.stringify(props.stepCount, null, 2)
     );

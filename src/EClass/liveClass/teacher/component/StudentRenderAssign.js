@@ -45,6 +45,11 @@ function StudentRenderAssign({
     const studentName = localStorage.getItem("username");
     const dataToUse = latestTableData || tableData;
 
+    console.log("테이블데이터 : " + JSON.stringify(tableData, null, 2));
+    console.log(
+      "레이티스트데이터 : " + JSON.stringify(latestTableData, null, 2)
+    );
+
     const updatedData = dataToUse.map((data) => ({
       uuid: data.uuid,
       timestamp: new Date().toISOString(),
@@ -69,6 +74,7 @@ function StudentRenderAssign({
 
     console.log("Final Submit:", JSON.stringify(updatedData, null, 2));
     console.log("과제테이블 : " + assginmentCheck);
+    window.confirm("제출하시겠습니까?");
 
     const request = assginmentCheck
       ? customAxios.put("/api/assignment/update", updatedData)

@@ -96,6 +96,7 @@ export default function StudentAssignmentTable(props) {
   const [tableData, setTableData] = useState([]);
   const [allTableData, setAllTableData] = useState([]);
   const [isDataAvailable, setIsDataAvailable] = useState(false); // 데이터가 들어왔는지 여부를 확인하는 상태
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -106,32 +107,100 @@ export default function StudentAssignmentTable(props) {
         const assignmentResponse = await customAxios.get(
           `/api/assignment/getstep?uuid=${props.lectureDataUuid}`
         );
+
         console.log(
-          "들고올수나 : " + JSON.stringify(assignmentResponse.data, null, 2)
+          "예전 작성한 과제 있음 : " +
+            JSON.stringify(assignmentResponse.data, null, 2)
         );
 
-        if (assignmentResponse.data) {
+        if (assignmentResponse.data.length > 0) {
+          // 첫 번째 요청의 데이터를 저장
+          const assignmentData = assignmentResponse.data;
+
+          // 두 번째 요청 실행
+          const lectureResponse = await customAxios.get(
+            "/api/steps/getLectureContent"
+          );
+
+          const filteredData = lectureResponse.data.filter(
+            (data) => data.uuid === props.lectureDataUuid
+          );
+
+          // 첫 번째 요청 데이터와 두 번째 요청 데이터 비교 및 교체
+          const updatedData = filteredData.flatMap((data) =>
+            data.contents.map((content) => {
+              // 첫 번째 요청 데이터 중 일치하는 stepNum 찾기
+              const matchingAssignment = assignmentData
+                .flatMap((assignment) => assignment.contents)
+                .find(
+                  (assignmentContent) =>
+                    assignmentContent.stepNum === content.stepNum
+                );
+
+              // 리스트에 올려줄수 있게 정제하기
+              return matchingAssignment
+                ? {
+                    stepNum: content.stepNum,
+                    contentName: matchingAssignment.contentName, // 교체된 contentName
+                    id: `${data.uuid}-${content.stepNum}`, // 고유한 id 사용
+                    Step: data.stepName,
+                    contents: matchingAssignment.contents, // 교체된 contents
+                  }
+                : {
+                    stepNum: content.stepNum,
+                    contentName: content.contentName,
+                    id: `${data.uuid}-${content.stepNum}`, // 고유한 id 사용
+                    Step: data.stepName,
+                    contents: content.contents,
+                  };
+            })
+          );
+
+          // 정제되지 않은 matchingAssignment 객체들을 추출
+          const allMatchingAssignments = filteredData.flatMap((data) =>
+            data.contents.map((content) =>
+              assignmentData
+                .flatMap((assignment) => assignment.contents)
+                .find(
+                  (assignmentContent) =>
+                    assignmentContent.stepNum === content.stepNum
+                )
+            )
+          );
+
+          // 2. matchingAssignment와 filteredData의 contents 배열 교체
+          const updatedFilteredData = filteredData.map((data) => {
+            // 각 data의 contents 배열을 allMatchingAssignments와 비교하여 교체
+            const updatedContents = data.contents.map((content) => {
+              const matchingAssignment = allMatchingAssignments.find(
+                (assignmentContent) =>
+                  assignmentContent &&
+                  assignmentContent.stepNum === content.stepNum
+              );
+
+              // matchingAssignment가 있으면 교체, 없으면 기존 content 유지
+              return matchingAssignment ? matchingAssignment : content;
+            });
+
+            return {
+              ...data, // 기존 data 객체의 다른 속성들 유지
+              contents: updatedContents, // contents 배열 교체
+            };
+          });
+
           console.log(
-            "예전 작성한 과제 있음 : " +
-              JSON.stringify(assignmentResponse.data, null, 2)
+            "[있는]테이블 데이터 : " + JSON.stringify(updatedData, null, 2)
           );
 
-          // lectureSummary의 contents 배열을 펼쳐서 테이블에 표시할 수 있도록 변환
-          const formattedData = assignmentResponse.data.flatMap((data) =>
-            data.contents.map((content) => ({
-              stepNum: content.stepNum,
-              contentName: content.contentName,
-              id: `${data.uuid}-${content.stepNum}`, // unique id 생성
-              Step: data.stepName,
-              contents: content.contents,
-            }))
+          console.log(
+            "[있는]올테이블 데이터 : " +
+              JSON.stringify(updatedFilteredData, null, 2)
           );
 
-          setTableData(formattedData);
-          setAllTableData(assignmentResponse.data);
+          setTableData(updatedData);
+          setAllTableData(updatedFilteredData);
           setIsDataAvailable(true); // 데이터가 들어왔음을 표시
 
-          // 첫 번째 요청의 데이터가 존재하면, 두 번째 요청은 실행하지 않음
           return;
         }
       } catch (err) {
@@ -160,6 +229,14 @@ export default function StudentAssignmentTable(props) {
           }))
         );
 
+        console.log(
+          "[없는]테이블 데이터 : " +
+            JSON.stringify(formattedLectureData, null, 2)
+        );
+
+        console.log(
+          "[없는]올테이블 데이터 : " + JSON.stringify(filteredData, null, 2)
+        );
         setTableData(formattedLectureData);
         setAllTableData(filteredData);
       } catch (err) {
@@ -180,26 +257,9 @@ export default function StudentAssignmentTable(props) {
   const handleRowClick = (id, Step, stepNum) => {
     setSelectedRow((prevSelectedRow) => (prevSelectedRow === id ? null : id));
     props.setCourseStep(Step);
-
-    console.log("몇번째 스텝? : " + JSON.stringify(stepNum, null, 2));
     props.setStepCount(stepNum);
-
-    const filteredTableData = allTableData
-      .map((data) => {
-        const filteredContents = data.contents.filter(
-          (content) => content.stepNum === stepNum
-        );
-        return {
-          ...data,
-          contents: filteredContents,
-        };
-      })
-      .filter((data) => data.contents.length > 0); // 필터링 후 빈 contents가 있는 항목 제거
-
-    // console.log("스텝 데이터 : " + JSON.stringify(filteredTableData, null, 2));
-
     // 스텝 클릭하면 상위 컴포넌트로 해당 스텝 정보 올려주기
-    props.setTableData(filteredTableData);
+    props.setTableData(allTableData);
   };
 
   const handleClickOutside = (event) => {
@@ -248,16 +308,14 @@ export default function StudentAssignmentTable(props) {
           style={{ height: "55vh" }}
         />
       </Paper>
-      {props.reportTable && props.reportTable.length > 0 && (
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleAssignmentReport}
-          style={{ width: "100%", margin: "20px 0 0 0" }}
-        >
-          보고서
-        </Button>
-      )}
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleAssignmentReport}
+        style={{ width: "100%", margin: "20px 0 0 0" }}
+      >
+        보고서
+      </Button>
       {/* 모달 컴포넌트 렌더링 */}
       <StudentReportModal
         open={openModal}
