@@ -164,32 +164,23 @@ export default function Index() {
                             // 디바이스 데이터 보는 중에 다른 디바이스 보기 누르면 소켓 연결 종료
                             const clickCheck = index + elementIndex;
 
-                            console.log("뭔데이거 : " + clickCheck);
-                            console.log("그럼이거는 : " + globalClickCheck);
-
                             // 맨처음 누르는 것이 아니고 현재 버튼과 다르다면 현재 버튼을 연결 해제해야함
                             if (
                               globalClickCheck !== null &&
                               globalClickCheck !== clickCheck
                             ) {
-                              console.log("여기들어옴?");
                               handleShowing(clickCheck);
                             }
 
                             // 맨처음 누르는 것이면 현재 버튼을 연결해야함
                             if (globalClickCheck === null) {
-                              console.log("여기들어옴?2");
-
                               handleShowing(clickCheck);
                               globalClickCheck = clickCheck;
-                              console.log("디바이스 선택");
                               setClickedIndex(clickCheck);
                             }
 
                             // 같은 버튼 또 다시 들어오면 닫기 버튼 누르는거라 연결 해제해야함
                             if (globalClickCheck === clickedIndex) {
-                              console.log("여기들어옴?3");
-
                               handleShowing(clickCheck);
                               globalClickCheck = null;
                               console.log("디바이스 해제");

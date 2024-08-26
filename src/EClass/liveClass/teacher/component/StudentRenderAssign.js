@@ -7,12 +7,21 @@ function StudentRenderAssign({
   latestTableData,
   assginmentCheck,
   stepCount,
+  studentId,
 }) {
   const [textBoxValues, setTextBoxValues] = useState({}); // 객체로 초기화
   const [data, setData] = useState([]);
 
   useEffect(() => {
     console.log("stepCount : " + JSON.stringify(stepCount, null, 2));
+    console.log(
+      "학생 아이디 앞쪽에서는?? : " + JSON.stringify(studentId, null, 2)
+    );
+
+    console.log(
+      "[StudentRenderAssign] 테이블데이터 : " +
+        JSON.stringify(tableData, null, 2)
+    );
 
     const parseStepCount = parseInt(stepCount);
 
@@ -50,6 +59,9 @@ function StudentRenderAssign({
       "레이티스트데이터 : " + JSON.stringify(latestTableData, null, 2)
     );
 
+    const stepCount = tableData[0].stepCount;
+    const stepCheck = new Array(stepCount).fill(false); // 모든 스텝을 false로 초기화
+
     const updatedData = dataToUse.map((data) => ({
       uuid: data.uuid,
       timestamp: new Date().toISOString(),
@@ -61,10 +73,20 @@ function StudentRenderAssign({
         stepNum: item.stepNum,
         contents: item.contents.map((contentItem, index) => {
           if (contentItem.type === "textBox") {
+            const updatedContent =
+              textBoxValues[item.stepNum]?.[index] || contentItem.content;
+
+            // 값이 있는 경우 stepCheck를 true로 설정
+            if (updatedContent && updatedContent.trim() !== "") {
+              const stepIndex = item.stepNum - 1; // stepNum은 1부터 시작하므로, 인덱스는 0부터 시작
+              if (stepIndex >= 0 && stepIndex < stepCount) {
+                stepCheck[stepIndex] = true;
+              }
+            }
+
             return {
               ...contentItem,
-              content:
-                textBoxValues[item.stepNum]?.[index] || contentItem.content,
+              content: updatedContent,
             };
           }
           return contentItem;
@@ -72,18 +94,70 @@ function StudentRenderAssign({
       })),
     }));
 
+    console.log("업데이트 되는 데이터" + JSON.stringify(stepCheck, null, 2));
+    console.log("학생 아이디 : " + studentId);
+
+    const requestData = {
+      stepCheck: stepCheck,
+      studentId: studentId,
+    };
+
     console.log("Final Submit:", JSON.stringify(updatedData, null, 2));
     console.log("과제테이블 : " + assginmentCheck);
-    window.confirm("제출하시겠습니까?");
 
-    const request = assginmentCheck
-      ? customAxios.put("/api/assignment/update", updatedData)
-      : customAxios.post("/api/assignment/save", updatedData);
+    if (window.confirm("제출하시겠습니까?")) {
+      customAxios
+        .post("/api/eclass/student/assignment/stepCheck", requestData)
+        .then((resp) => {
+          alert("제출 완료했습니다.");
+          console.log("Step Check Response:", resp);
 
-    request.then(console.log(assginmentCheck ? "수정 완료" : "새로 저장 완료"));
+          const request = assginmentCheck
+            ? customAxios.put("/api/assignment/update", updatedData)
+            : customAxios.post("/api/assignment/save", updatedData);
 
-    window.location.reload();
+          return request;
+        })
+        .then((response) => {
+          console.log(
+            assginmentCheck ? "수정 완료" : "새로 저장 완료",
+            response
+          );
+          window.location.reload();
+        })
+        .catch((error) => {
+          console.error("Error during submission:", error);
+          alert("제출 중 오류가 발생했습니다. 다시 시도해주세요.");
+        });
+    }
   };
+
+  // 스텝 제출 성공시 응답 소켓 메서드
+  // const assginmentStompClient = () => {
+  //   const token = localStorage.getItem("access_token").replace("Bearer ", "");
+  //   const socket = new SockJS(
+  //     `${process.env.REACT_APP_API_URL}/ws?token=${token}`
+  //   );
+
+  //   const message = {
+  //     assginmentStatus: "success",
+  //     sessionId: props.sessionIdState,
+  //   };
+
+  //   console.log(
+  //     "[학생]세션 아이디 : " + JSON.stringify(props.sessionIdState, null, 2)
+  //   );
+
+  //   console.log(
+  //     "[학생]과제 공유 성공보내기 : " + JSON.stringify(message, null, 2)
+  //   );
+
+  //   const stompClient = Stomp.over(socket);
+
+  //   stompClient.connect({}, () => {
+  //     stompClient.send("/app/assginment-status", {}, JSON.stringify(message));
+  //   });
+  // };
 
   return (
     <div>

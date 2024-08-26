@@ -279,55 +279,6 @@ function ClassData() {
           </>
         )}
       </div>
-
-      {/* 수업 자료 만들기 모달 */}
-      {/* <Modal open={openModal} onClose={handleModalClose}>
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 400,
-            bgcolor: "background.paper",
-            border: "2px solid #000",
-            boxShadow: 24,
-            p: 4,
-          }}
-        >
-          <TextField
-            label="수업 자료 이름"
-            value={lectureName}
-            onChange={(e) => setLectureName(e.target.value)}
-            fullWidth
-            sx={{ marginBottom: 2 }}
-          />
-          <TextField
-            label="Step 개수"
-            type="number"
-            value={stepCount}
-            onChange={(e) => setStepCount(e.target.value)}
-            fullWidth
-            sx={{ marginBottom: 2 }}
-          />
-          <Box sx={{ display: "flex", flexDirection: "row" }}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleModalConfirm}
-            >
-              확인
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleModalClose}
-            >
-              취소
-            </Button>
-          </Box>
-        </Box>
-      </Modal> */}
     </div>
   );
 }

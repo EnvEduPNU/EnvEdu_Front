@@ -10,8 +10,10 @@ import {
   TableRow,
   Button,
   Paper,
+  Typography,
 } from "@mui/material";
 import { customAxios } from "../../../../Common/CustomAxios";
+import moment from "moment";
 
 const createData = (index, item) => ({
   Num: index + 1,
@@ -27,17 +29,29 @@ const createData = (index, item) => ({
 const SearchLectureModal = ({ open, onClose }) => {
   const [rowData, setRowData] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
+  const [userData, setUserData] = useState();
+
+  useEffect(() => {
+    const username = localStorage.getItem("username");
+
+    customAxios
+      .get(`/api/student/get/${username}`)
+      .then((response) => {
+        setUserData(response.data);
+      })
+      .catch((error) => {
+        console.error("조회 에러:", error);
+      });
+  }, []);
 
   useEffect(() => {
     if (open) {
-      //eclass의 모든 리스트 가져오기
       customAxios
         .get("/api/eclass/list")
         .then((response) => {
           const list = response.data;
-          console.log("Eclass list :", response.data);
+          console.log("Eclass list :", JSON.stringify(response.data, null, 2));
 
-          // 필터링된 항목들로 row 데이터 생성
           const rows = list.map((item, index) => createData(index, item));
 
           setRowData(rows);
@@ -48,32 +62,44 @@ const SearchLectureModal = ({ open, onClose }) => {
     }
   }, [open]);
 
-  const handleRowClick = (row) => {
+  const handleRowClick = (event, row) => {
+    event.stopPropagation(); // 이벤트 전파를 막아 TableContainer의 클릭 이벤트를 방지
     setSelectedRow(row);
   };
 
-  // 참여하기 누르면 해당 E-Class uuid 배열에 추가해주는 요청보내기
   const handleJoinClick = () => {
     if (selectedRow) {
-      console.log("Selected Row:", selectedRow);
+      console.log("클래스 데이터:", JSON.stringify(selectedRow, null, 2));
+      console.log("유저 데이터:", JSON.stringify(userData, null, 2));
 
-      const username = localStorage.getItem("username");
+      const enrollStudent = {
+        eclassUuid: [selectedRow.eClassUuid],
+        studentId: userData.id,
+        studentName: userData.username,
+        studentGroup: userData.studentGroup,
+        joinDate: moment().tz("Asia/Seoul").format("YYYY-MM-DDTHH:mm:ssZ"), // 현재 서울 시각을 ISO 8601 포맷으로 추가
+      };
 
+      console.log(
+        "요청보내기전 확인 : " + JSON.stringify(enrollStudent, null, 2)
+      );
+
+      // customAxios로 POST 요청 보내기
       customAxios
-        .get(`/api/eclass/student/addEclassUuid`, {
-          params: {
-            studentName: username,
-            eclassUuid: selectedRow.eClassUuid,
-          },
-        })
+        .post("/api/eclass/student/enroll", enrollStudent)
         .then((response) => {
-          console.log("결과는 : " + JSON.stringify(response.data, null, 2));
+          console.log("Student added successfully:", response.data);
+
           window.location.reload();
         })
         .catch((error) => {
-          console.error("Eclass 참여하기 에러:", error);
+          console.error("Error adding student:", error);
         });
     }
+  };
+
+  const handleModalClick = () => {
+    setSelectedRow(null); // 빈 곳 클릭 시 선택 해제
   };
 
   return (
@@ -89,16 +115,31 @@ const SearchLectureModal = ({ open, onClose }) => {
           boxShadow: 24,
           p: 4,
         }}
+        onClick={handleModalClick} // Box 클릭 시 선택 해제
       >
-        <TableContainer component={Paper}>
+        <Typography
+          variant="h6"
+          sx={{
+            margin: "10px 0 10px 0",
+            fontWeight: 600,
+            fontSize: "3rem",
+            letterSpacing: "0.013rem",
+            fontFamily: "'Montserrat', sans-serif",
+          }}
+        >
+          E-Class 찾기
+        </Typography>
+        <TableContainer
+          component={Paper}
+          onClick={(e) => e.stopPropagation()} // TableContainer 클릭 시 이벤트 전파를 막아 선택 해제 방지
+        >
           <Table sx={{ minWidth: 500 }} aria-label="lecture table">
-            <TableHead>
+            <TableHead sx={{ backgroundColor: "lightgray" }}>
               <TableRow>
                 <TableCell>번호</TableCell>
-                <TableCell>수업 자료</TableCell>
                 <TableCell>수업 이름</TableCell>
                 <TableCell>교사</TableCell>
-                <TableCell>상태</TableCell>
+                <TableCell>수업 자료</TableCell>
                 <TableCell>생성일</TableCell>
               </TableRow>
             </TableHead>
@@ -106,20 +147,19 @@ const SearchLectureModal = ({ open, onClose }) => {
               {rowData.map((row) => (
                 <TableRow
                   key={row.eClassUuid}
-                  onClick={() => handleRowClick(row)}
+                  onClick={(event) => handleRowClick(event, row)}
                   sx={{
                     cursor: "pointer",
                     bgcolor:
                       selectedRow?.eClassUuid === row.eClassUuid
-                        ? "lightgrey"
+                        ? "#f0f0f0"
                         : "inherit",
                   }}
                 >
                   <TableCell>{row.Num}</TableCell>
-                  <TableCell>{row.LectureDataName}</TableCell>
                   <TableCell>{row.Name}</TableCell>
                   <TableCell>{row.Teacher}</TableCell>
-                  <TableCell>{row.Status}</TableCell>
+                  <TableCell>{row.LectureDataName}</TableCell>
                   <TableCell>{row.CreateEclassDate}</TableCell>
                 </TableRow>
               ))}
@@ -128,10 +168,19 @@ const SearchLectureModal = ({ open, onClose }) => {
         </TableContainer>
         <Button
           variant="contained"
-          color="primary"
+          color="secondary"
           onClick={handleJoinClick}
           disabled={!selectedRow}
-          sx={{ mt: 2 }}
+          sx={{
+            mt: 2,
+            fontFamily: "'Asap', sans-serif", // 버튼에 Asap 폰트 적용
+            fontWeight: "600",
+            fontSize: "0.9rem",
+            color: "grey",
+            backgroundColor: "#feecfe",
+            borderRadius: "2.469rem",
+            border: "none",
+          }}
         >
           참여하기
         </Button>

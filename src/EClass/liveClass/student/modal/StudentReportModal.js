@@ -18,9 +18,29 @@ function StudentReportModal({
   tableData,
   latestTableData,
   assginmentCheck,
+  eclassUuid,
 }) {
   const [textBoxValues, setTextBoxValues] = useState({});
   const [data, setData] = useState([]);
+  const [studentId, setStudentId] = useState();
+
+  // 보고서 저장 할때 필요한 해당 클래스 학생 Id 가져오기
+  useEffect(() => {
+    const username = localStorage.getItem("username");
+    const fetchStudentId = async () => {
+      try {
+        const response = await customAxios.get(
+          `/api/student/getStudentId?username=${username}&uuid=${eclassUuid}`
+        );
+        const studentId = response.data; // studentId를 response에서 추출
+        console.log("과제 포함되어 있는 테이블의 학생Id : " + studentId);
+        setStudentId(studentId);
+      } catch (error) {
+        console.error("Error fetching student ID:", error);
+      }
+    };
+    fetchStudentId();
+  }, []);
 
   useEffect(() => {
     let allContents = latestTableData
@@ -72,14 +92,35 @@ function StudentReportModal({
 
     console.log("Final Submit:", JSON.stringify(updatedData, null, 2));
     console.log("과제테이블 : " + assginmentCheck);
+    console.log("과제 uuid : " + dataToUse[0].uuid);
 
-    const request = assginmentCheck
-      ? customAxios.put("/api/assignment/update", updatedData)
-      : customAxios.post("/api/assignment/save", updatedData);
+    if (window.confirm("제출하시겠습니까?")) {
+      // 보고서 제출 테이블에 저장
+      const requestData = {
+        reportUuid: dataToUse[0].uuid,
+        studentId: studentId,
+      };
+      customAxios
+        .post("/api/eclass/student/assignment/report/save", requestData)
+        .then(() => {
+          alert("제출 완료했습니다!");
+        })
+        .catch((error) => {
+          console.error("오류가 발생했습니다: ", error);
+          alert("제출에 실패했습니다. 다시 시도해 주세요.");
+        });
 
-    request.then(console.log(assginmentCheck ? "수정 완료" : "새로 저장 완료"));
+      // 원본 테이블에도 저장해줌
+      const request = assginmentCheck
+        ? customAxios.put("/api/report/update", updatedData)
+        : customAxios.post("/api/report/save", updatedData);
 
-    window.location.reload();
+      request.then(
+        console.log(assginmentCheck ? "수정 완료" : "새로 저장 완료")
+      );
+
+      // window.location.reload();
+    }
   };
 
   return (
@@ -141,10 +182,10 @@ function StudentReportModal({
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="secondary">
-          Cancel
+          취소
         </Button>
         <Button onClick={handleSubmit} color="primary">
-          Submit
+          제출
         </Button>
       </DialogActions>
     </Dialog>
@@ -173,7 +214,7 @@ function RenderContent({ content, textBoxValue, setTextBoxValue, index }) {
     case "textBox":
       return (
         <TextField
-          value={textBoxValue}
+          value={textBoxValue || content.content} // 기존 내용을 기본값으로 사용
           onChange={handleTextChange}
           variant="outlined"
           fullWidth

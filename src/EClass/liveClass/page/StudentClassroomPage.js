@@ -26,8 +26,17 @@ export function StudentClassroomPage() {
       <>
         {/* [왼쪽 블럭] E-Class 테이블 */}
         <div style={{ width: "80%", height: "100%" }}>
-          <Typography variant="h4" sx={{ margin: "10px 0 10px 0" }}>
-            {`[ E-Class ]`}
+          <Typography
+            variant="h4"
+            sx={{
+              margin: "10px 0 10px 0",
+              fontWeight: 600,
+              fontSize: "3rem",
+              letterSpacing: "0.013rem",
+              fontFamily: "'Montserrat', sans-serif",
+            }}
+          >
+            {` E-Class `}
           </Typography>
           <div style={{ minHeight: "40rem" }}>
             <StudentEclassTable setSelectedEClassUuid={setSelectedEClassUuid} />
@@ -36,10 +45,24 @@ export function StudentClassroomPage() {
           <button
             variant="contained"
             onClick={() => setModalOpen(true)}
-            style={{ margin: "10px 0 ", width: "20%" }}
+            style={{
+              margin: "10px 0",
+              width: "20%",
+              cursor: "pointer",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              fontSize: "0.9rem",
+              fontWeight: 600,
+              backgroundColor: "#feecfe",
+              borderRadius: "2.469rem",
+              border: "none",
+              height: "1.75rem",
+              fontFamily: "'Asap', sans-serif",
+            }}
           >
             {" "}
-            E-Class 조회
+            E-Class 찾기
           </button>
           <SearchLectureModal
             open={isModalOpen}
@@ -54,7 +77,7 @@ export function StudentClassroomPage() {
 
           <Divider sx={{ margin: "20px 0" }} />
 
-          <TeacherReportTable setCourseStep={3} />
+          <TeacherReportTable selectedEClassUuid={selectedEClassUuid} />
         </div>
       </>
     </div>

@@ -359,7 +359,7 @@ export const LiveTeacherPage = () => {
   };
 
   return (
-    <div style={{ display: "flex", margin: "0 30vh" }}>
+    <div style={{ display: "flex", margin: "0 20vh" }}>
       {/* [왼쪽 블럭] 화면 공유 블럭 */}
       <div style={{ display: "inline-block", width: "100%", height: "100%" }}>
         <Typography variant="h4" sx={{ margin: "0 0 10px 0" }}>
@@ -393,13 +393,35 @@ export const LiveTeacherPage = () => {
         )}
         <button
           onClick={startScreenShare}
-          style={{ margin: "10px 0 ", width: "18%" }}
+          style={{
+            margin: "10px 0 ",
+            width: "18%",
+            marginRight: 1,
+            fontFamily: "'Asap', sans-serif", // 버튼에 Asap 폰트 적용
+            fontWeight: "600",
+            fontSize: "0.9rem",
+            color: "grey",
+            backgroundColor: "#feecfe",
+            borderRadius: "2.469rem",
+            border: "none",
+          }}
         >
           화면 공유
         </button>
         <button
           onClick={stopScreenShare}
-          style={{ margin: "10px 0 0 10px ", width: "18%" }}
+          style={{
+            margin: "10px 0 0 10px ",
+            width: "18%",
+            marginRight: 1,
+            fontFamily: "'Asap', sans-serif", // 버튼에 Asap 폰트 적용
+            fontWeight: "600",
+            fontSize: "0.9rem",
+            color: "grey",
+            backgroundColor: "#feecfe",
+            borderRadius: "2.469rem",
+            border: "none",
+          }}
         >
           공유 중지
         </button>
@@ -411,7 +433,18 @@ export const LiveTeacherPage = () => {
         />
         <button
           onClick={closeEclass}
-          style={{ margin: "10px 0 0 10px ", width: "18%" }}
+          style={{
+            margin: "10px 0 0 10px ",
+            width: "18%",
+            marginRight: 1,
+            fontFamily: "'Asap', sans-serif", // 버튼에 Asap 폰트 적용
+            fontWeight: "600",
+            fontSize: "0.9rem",
+            color: "grey",
+            backgroundColor: "#feecfe",
+            borderRadius: "2.469rem",
+            border: "none",
+          }}
         >
           수업 종료
         </button>
@@ -425,7 +458,10 @@ export const LiveTeacherPage = () => {
           lectureDataUuid={lectureDataUuid}
           setStepCount={setStepCount}
         />
-        <TeacherCourseStatusTable />
+        <TeacherCourseStatusTable
+          stepCount={stepCount}
+          eclassUuid={eClassUuid}
+        />
       </div>
     </div>
   );

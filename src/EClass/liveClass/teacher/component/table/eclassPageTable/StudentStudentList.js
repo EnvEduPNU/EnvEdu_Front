@@ -37,11 +37,6 @@ const columns = [
     dataKey: "Status",
     width: "20%",
   },
-  {
-    label: "",
-    dataKey: "Action",
-    width: "20%",
-  },
 ];
 
 function createData(index, [Num, Name, LectureData, Status]) {
@@ -79,7 +74,7 @@ function rowContent(index, row, handleClick, selectedRow) {
           align="center"
           style={{ width: column.width }}
           sx={{
-            padding: "8px", // 패딩을 줄이기 위해 추가
+            padding: "12px", // 패딩을 줄이기 위해 추가
             backgroundColor: selectedRow === row.id ? "#f0f0f0" : "inherit",
           }}
         >
@@ -171,11 +166,19 @@ export default function StudentStudentList({ eclassUuid }) {
 
   return (
     <div>
-      <Typography variant="h5" sx={{ margin: "20px 0 10px 0" }}>
-        {"[ 참여학생리스트 ]"}
+      <Typography
+        variant="h5"
+        sx={{
+          margin: "38px 0 10px 0",
+          fontFamily: "'Montserrat', sans-serif", // 타이틀에 Montserrat 폰트 적용
+          fontWeight: "600", // 폰트 두께
+          fontSize: "1.5rem", // 폰트 크기
+        }}
+      >
+        {" 참여학생리스트 "}
       </Typography>
       <Paper
-        style={{ height: "100%", width: "100%" }}
+        style={{ height: "100%", width: "100%", marginBottom: "5.6vh" }}
         className="virtuoso-table"
       >
         <TableContainer component={Paper}>

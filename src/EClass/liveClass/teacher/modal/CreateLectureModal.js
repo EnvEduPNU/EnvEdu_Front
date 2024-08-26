@@ -20,29 +20,23 @@ import { v4 as uuidv4 } from "uuid";
 const CreateLectureModal = ({ open, onClose, onCreate }) => {
   const [lectureName, setLectureName] = useState("");
   const [startDate, setStartDate] = useState("");
-
   const [selectedMaterial, setSelectedMaterial] = useState(null);
   const [lectureDataUuid, setLectureDataUuid] = useState(null);
   const [lectureDataName, setLectureDataName] = useState(null);
-
   const [username, setUsername] = useState("");
-
   const [lectureSummary, setLectureSummary] = useState([]);
   const [eClassAssginSubmitNum, setEClassAssginSubmitNum] = useState(0);
 
   useEffect(() => {
     const TeacherName = localStorage.getItem("username");
 
-    // 수업 자료 리스트 가져오는 요청
     customAxios
       .get("/api/steps/getLectureContent")
       .then((res) => {
-        // TeacherName과 username이 같은 항목들만 필터링
         const filteredData = res.data.filter(
           (data) => data.username === TeacherName
         );
 
-        // 필터링된 데이터를 원하는 형식으로 변환
         const formattedData = filteredData.map((data) => ({
           ...data,
           uuid: data.uuid,
@@ -59,22 +53,19 @@ const CreateLectureModal = ({ open, onClose, onCreate }) => {
                   x: c.x,
                   y: c.y,
                 }))
-              : [], // contents가 null일 경우 빈 배열로 대체
+              : [],
           })),
         }));
 
-        // 상태에 저장
         setLectureSummary(formattedData);
       })
       .catch((err) => console.log(err));
   }, []);
 
   useEffect(() => {
-    // localStorage에서 username 가져오기
     const storedUsername = localStorage.getItem("username");
     setUsername(storedUsername);
 
-    // 서울의 현재 날짜를 받아오기
     const getSeoulTime = async () => {
       try {
         const response = await axios.get(
@@ -115,7 +106,6 @@ const CreateLectureModal = ({ open, onClose, onCreate }) => {
 
     console.log("body 확인 : " + JSON.stringify(lectureData, null, 2));
 
-    // POST 요청 보내기
     customAxios
       .post("/api/eclass/create", lectureData)
       .then((response) => {
@@ -142,26 +132,36 @@ const CreateLectureModal = ({ open, onClose, onCreate }) => {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: 500,
+          width: 600, // 크기 키우기
           bgcolor: "background.paper",
           boxShadow: 24,
           p: 4,
+          borderRadius: 2, // 모서리 둥글게
         }}
       >
-        <Typography variant="h4" component="h2">
+        <Typography
+          variant="h4"
+          component="h2"
+          sx={{
+            textAlign: "center",
+            marginBottom: 3,
+            fontWeight: "bold",
+            fontSize: "2rem",
+          }}
+        >
           E-Class 생성하기
         </Typography>
         <div
           style={{
             display: "flex",
             justifyContent: "space-between",
-            margin: "2vh 0",
+            marginBottom: "20px",
           }}
         >
-          <Typography variant="h6" component="h3" margin="normal">
+          <Typography variant="h6" component="h3">
             {startDate}
           </Typography>
-          <Typography variant="h6" component="h3" margin="normal">
+          <Typography variant="h6" component="h3">
             {username}
           </Typography>
         </div>
@@ -171,36 +171,44 @@ const CreateLectureModal = ({ open, onClose, onCreate }) => {
           onChange={(e) => setLectureName(e.target.value)}
           fullWidth
           margin="normal"
-          sx={{ margin: "0 0 20px 0" }}
+          sx={{
+            marginBottom: 3,
+            ".MuiInputBase-root": {
+              borderRadius: 2, // 입력 필드 모서리 둥글게
+            },
+          }}
         />
 
         <Typography
           variant="h6"
           component="h3"
-          margin="normal"
-          sx={{ margin: "0 0 20px 0" }}
+          sx={{
+            marginBottom: 2,
+            fontWeight: "bold",
+          }}
         >
           수업 자료 선택
         </Typography>
-        <TableContainer component={Paper} sx={{ maxHeight: 300 }}>
+        <TableContainer
+          component={Paper}
+          sx={{ maxHeight: 300, marginBottom: 3 }}
+        >
           <Table stickyHeader>
             <TableHead>
               <TableRow>
-                <TableCell></TableCell>
-                <TableCell>수업자료이름</TableCell>
-                <TableCell></TableCell>
+                <TableCell>날짜</TableCell>
+                <TableCell>수업 자료 이름</TableCell>
+                <TableCell align="center">선택</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {lectureSummary
                 .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
                 .map((item, index) => (
-                  <TableRow key={index}>
-                    <TableCell sx={{ width: "10%" }}>
-                      {item.timestamp.split("T")[0]}
-                    </TableCell>
-                    <TableCell sx={{ width: "30%" }}>{item.stepName}</TableCell>
-                    <TableCell sx={{ width: "10%" }}>
+                  <TableRow key={index} hover>
+                    <TableCell>{item.timestamp.split("T")[0]}</TableCell>
+                    <TableCell>{item.stepName}</TableCell>
+                    <TableCell align="center">
                       <Button
                         variant={
                           selectedMaterial?.stepName === item.stepName
@@ -208,7 +216,7 @@ const CreateLectureModal = ({ open, onClose, onCreate }) => {
                             : "outlined"
                         }
                         onClick={() => lectureSelection(item)}
-                        sx={{ width: "3vh" }}
+                        sx={{ width: "60px" }}
                       >
                         선택
                       </Button>
@@ -219,7 +227,7 @@ const CreateLectureModal = ({ open, onClose, onCreate }) => {
           </Table>
         </TableContainer>
 
-        <Box sx={{ display: "flex", justifyContent: "flex-end", marginTop: 2 }}>
+        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
           <Button onClick={onClose} sx={{ marginRight: 1 }}>
             취소
           </Button>

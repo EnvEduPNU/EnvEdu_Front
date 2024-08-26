@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { TableVirtuoso } from "react-virtuoso";
-
 import {
   Table,
   TableBody,
@@ -20,7 +19,7 @@ const columns = [
   { label: "강사", dataKey: "Teacher", width: "15%" },
   { label: "개설일", dataKey: "CreateEclassDate", width: "15%" },
   { label: "수업자료", dataKey: "LectureDataName", width: "15%" },
-  { label: "상태", dataKey: "Status", width: "10%" },
+  // { label: "상태", dataKey: "Status", width: "10%" },
   { label: "", dataKey: "Action", width: "20%" },
 ];
 
@@ -35,22 +34,23 @@ const createData = (index, item) => ({
   Teacher: item.username,
 });
 
-// E-Class 테이블에서도 삭제, eclassUuid_list 테이블 에서도 삭제
 const deleteData = async (row, handleDelete) => {
-  try {
-    const respDeleteEclass = await customAxios.delete(
-      `/api/eclass/delete?eClassUuid=${row.eClassUuid}`
-    );
-    console.log(respDeleteEclass.data);
+  if (window.confirm("정말 삭제하시겠습니까?")) {
+    try {
+      const respDeleteEclass = await customAxios.delete(
+        `/api/eclass/delete?eClassUuid=${row.eClassUuid}`
+      );
+      console.log(respDeleteEclass.data);
 
-    const respDeleteEclassStudent = await customAxios.delete(
-      `/api/eclass/student/joined/delete?eClassUuid=${row.eClassUuid}`
-    );
-    console.log(respDeleteEclassStudent.data);
+      const respDeleteEclassStudent = await customAxios.delete(
+        `/api/eclass/student/joined/delete?eClassUuid=${row.eClassUuid}`
+      );
+      console.log(respDeleteEclassStudent.data);
 
-    handleDelete(row);
-  } catch (error) {
-    console.error("Eclass 리스트 삭제 에러:", error);
+      handleDelete(row);
+    } catch (error) {
+      console.error("Eclass 리스트 삭제 에러:", error);
+    }
   }
 };
 
@@ -80,8 +80,13 @@ function fixedHeaderContent() {
             key={column.dataKey}
             variant="head"
             align="center"
-            style={{ width: column.width }}
-            sx={{ backgroundColor: "#dcdcdc" }}
+            style={{
+              width: column.width,
+              backgroundColor: "#dcdcdc",
+              fontFamily: "'Montserrat', sans-serif", // 타이틀에 Montserrat 폰트 적용
+              fontWeight: "600", // 폰트 두께
+              fontSize: "1rem", // 폰트 크기
+            }}
           >
             {column.label}
           </TableCell>
@@ -94,11 +99,14 @@ function fixedHeaderContent() {
 export default function TeacherEclassTable({ setSelectedEClassUuid }) {
   const [selectedRow, setSelectedRow] = useState(null);
   const [rowData, setRowData] = useState([]);
+  const [eclassUuid, setEclassUuid] = useState();
+
   const navigate = useNavigate();
 
   const handleRowClick = (id, row) => {
     setSelectedRow(id);
     setSelectedEClassUuid(row.eClassUuid);
+    setEclassUuid(row.eClassUuid);
     console.log("Selected eClassUuid:", row.eClassUuid);
   };
 
@@ -137,6 +145,7 @@ export default function TeacherEclassTable({ setSelectedEClassUuid }) {
           state: {
             lectureDataUuid,
             eClassName,
+            eClassUuid,
           },
         });
       })
@@ -159,10 +168,12 @@ export default function TeacherEclassTable({ setSelectedEClassUuid }) {
           <TableCell
             key={column.dataKey}
             align="center"
-            style={{ width: column.width }}
-            sx={{
+            style={{
+              width: column.width,
               backgroundColor: selectedRow === row.Num ? "#f0f0f0" : "inherit",
               cursor: "pointer",
+              fontFamily: "'Asap', sans-serif", // 셀에 Asap 폰트 적용
+              fontSize: "0.9rem", // 폰트 크기
             }}
             onClick={() =>
               column.dataKey !== "Action" && handleClick(row.Num, row)
@@ -172,9 +183,18 @@ export default function TeacherEclassTable({ setSelectedEClassUuid }) {
               <div style={{ display: "flex", justifyContent: "center" }}>
                 <Button
                   variant="contained"
-                  color="primary"
+                  color="secondary"
                   onClick={() => joinEclass(row, navigate)}
-                  sx={{ marginRight: 1 }}
+                  sx={{
+                    marginRight: 1,
+                    fontFamily: "'Asap', sans-serif", // 버튼에 Asap 폰트 적용
+                    fontWeight: "600",
+                    fontSize: "0.9rem",
+                    color: "grey",
+                    backgroundColor: "#feecfe",
+                    borderRadius: "2.469rem",
+                    border: "none",
+                  }}
                 >
                   들어가기
                 </Button>
@@ -182,6 +202,12 @@ export default function TeacherEclassTable({ setSelectedEClassUuid }) {
                   variant="outlined"
                   color="secondary"
                   onClick={() => deleteData(row, handleDelete)}
+                  sx={{
+                    fontFamily: "'Asap', sans-serif", // 버튼에 Asap 폰트 적용
+                    fontWeight: "600",
+                    fontSize: "0.9rem",
+                    borderRadius: "2.469rem",
+                  }}
                 >
                   삭제
                 </Button>

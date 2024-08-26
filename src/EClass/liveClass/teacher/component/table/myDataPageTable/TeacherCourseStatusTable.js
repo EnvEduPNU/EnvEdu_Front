@@ -15,6 +15,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { useLiveClassPartStore } from "../../../../store/LiveClassPartStore";
 import { customAxios } from "../../../../../../Common/CustomAxios";
+import ReportViewModal from "../../../modal/ReportViewModal";
 
 function createData(name, sessionId, shared, assginmentShared) {
   return {
@@ -24,48 +25,6 @@ function createData(name, sessionId, shared, assginmentShared) {
     assginmentShared,
   };
 }
-
-function Row({ row }) {
-  return (
-    <TableRow sx={{ height: 50 }}>
-      <TableCell component="th" scope="row">
-        {row.name}
-      </TableCell>
-      <TableCell align="center">
-        {row.shared ? (
-          <CheckCircleIcon sx={{ color: "blue" }} />
-        ) : (
-          <CancelIcon sx={{ color: "red" }} />
-        )}
-      </TableCell>
-      <TableCell align="center">
-        {row.assginmentShared ? (
-          <CheckCircleIcon sx={{ color: "blue" }} />
-        ) : (
-          <CancelIcon sx={{ color: "red" }} />
-        )}
-      </TableCell>
-      <TableCell align="center">
-        <CheckCircleIcon sx={{ color: "blue" }} />
-      </TableCell>
-      {/* <TableCell align="center">
-        <CancelIcon sx={{ color: "red" }} />
-      </TableCell> */}
-      <TableCell align="center">
-        <Button sx={{ width: "3%" }}>확인</Button>
-      </TableCell>
-    </TableRow>
-  );
-}
-
-Row.propTypes = {
-  row: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    sessionId: PropTypes.string.isRequired,
-    shared: PropTypes.bool.isRequired,
-    assginmentShared: PropTypes.bool.isRequired,
-  }).isRequired,
-};
 
 const getStudent = async (sessionId) => {
   try {
@@ -82,9 +41,21 @@ const getStudent = async (sessionId) => {
   }
 };
 
-export default function TeacherCourseStatusTable() {
+export default function TeacherCourseStatusTable({ stepCount, eclassUuid }) {
   const sessionData = useLiveClassPartStore((state) => state.sessionIds);
   const [students, setStudents] = useState([]);
+  const [eclassId, setEclassId] = useState(eclassUuid);
+  const [studentStepFlag, setStudentStepFlag] = useState();
+  const [reportData, setReportData] = useState();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -102,6 +73,103 @@ export default function TeacherCourseStatusTable() {
     };
     fetchStudents();
   }, [sessionData]);
+
+  // Eclass uuid와 학생 이름 리스트 보내서 과제 현황 리스트 가져오는 요청
+  useEffect(() => {
+    console.log("학생 있나 ? : " + JSON.stringify(students, null, 2));
+    console.log("EClassID 있나 ? : " + JSON.stringify(eclassId, null, 2));
+
+    const sendStudentData = async (students, eclassUuid) => {
+      try {
+        const requestData = {
+          studentData: students,
+          eclassUuid: eclassUuid,
+        };
+
+        const respCheckList = await customAxios.post(
+          "/api/eclass/student/assignment/getCheckList",
+          requestData
+        );
+
+        const respReportUuid = await customAxios.post(
+          "/api/eclass/student/assignment/reportUuid/get",
+          requestData
+        );
+
+        if (respReportUuid.data !== "") {
+          console.log(
+            "보고서 uuid 확인 : " + JSON.stringify(respReportUuid.data, null, 2)
+          );
+
+          const respReport = await customAxios.get(
+            `/api/report/getstep?uuid=${respReportUuid.data}`
+          );
+
+          console.log("보고서 확인 : " + JSON.stringify(respReport, null, 2));
+
+          setReportData(respReport.data);
+        }
+
+        setStudentStepFlag(respCheckList.data);
+        console.log("Response from server:", respCheckList.data);
+      } catch (error) {
+        console.error("Error sending data to server:", error);
+      }
+    };
+    sendStudentData(students, eclassUuid);
+  }, [stepCount]);
+
+  Row.propTypes = {
+    row: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      sessionId: PropTypes.string.isRequired,
+      shared: PropTypes.bool.isRequired,
+      assginmentShared: PropTypes.bool.isRequired,
+    }).isRequired,
+  };
+
+  function Row({ row, isMatch, reportData }) {
+    return (
+      <TableRow sx={{ height: 50 }}>
+        <TableCell component="th" scope="row">
+          {row.name}
+        </TableCell>
+        <TableCell align="center">
+          {row.shared ? (
+            <CheckCircleIcon sx={{ color: "blue" }} />
+          ) : (
+            <CancelIcon sx={{ color: "red" }} />
+          )}
+        </TableCell>
+        <TableCell align="center">
+          {row.assginmentShared ? (
+            <CheckCircleIcon sx={{ color: "blue" }} />
+          ) : (
+            <CancelIcon sx={{ color: "red" }} />
+          )}
+        </TableCell>
+        <TableCell align="center">
+          {isMatch ? (
+            <CheckCircleIcon sx={{ color: "blue" }} />
+          ) : (
+            <CancelIcon sx={{ color: "red" }} />
+          )}
+        </TableCell>
+        {/* <TableCell align="center">
+          <CancelIcon sx={{ color: "red" }} />
+        </TableCell> */}
+        <TableCell align="center">
+          {reportData ? (
+            <Button onClick={handleOpenModal} sx={{ width: "3%" }}>
+              확인
+            </Button>
+          ) : (
+            <CancelIcon sx={{ color: "red" }} />
+          )}
+        </TableCell>
+      </TableRow>
+    );
+  }
 
   const rows = sessionData.map((session, index) =>
     createData(
@@ -123,7 +191,7 @@ export default function TeacherCourseStatusTable() {
   return (
     <div style={{ margin: "2rem 0 0 0" }}>
       <Typography variant="h5" sx={{ marginBottom: "10px" }}>
-        {"[ 수업 상태 ]"}
+        {" 수업 상태 "}
       </Typography>
       <TableContainer component={Paper} sx={{ maxHeight: "300px" }}>
         <Table aria-label="collapsible table" size="small">
@@ -137,13 +205,37 @@ export default function TeacherCourseStatusTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
-              <Row key={row.sessionId} row={row} />
-            ))}
+            {rows.map((row, index) => {
+              const studentFlagArray = studentStepFlag?.[row.name] || [];
+              let stepValue = false;
+              if (studentFlagArray) {
+                // stepCount 위치의 값을 가져옴 (0-based index)
+                stepValue = studentFlagArray[stepCount - 1];
+              }
+
+              console.log("제출 확인  : " + stepValue);
+
+              return (
+                <Row
+                  key={row.sessionId}
+                  row={row}
+                  index={index}
+                  isMatch={stepValue}
+                  reportData={reportData}
+                />
+              );
+            })}
+
             <EmptyRows count={Math.max(0, 5 - rows.length)} />
           </TableBody>
         </Table>
       </TableContainer>
+
+      <ReportViewModal
+        open={isModalOpen}
+        onClose={handleCloseModal}
+        tableData={reportData}
+      />
     </div>
   );
 }

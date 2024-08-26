@@ -270,8 +270,16 @@ export default function TeacherStudentList({ eclassUuid, selectedEClassUuid }) {
 
   return (
     <div>
-      <Typography variant="h5" sx={{ margin: "20px 0 10px 0" }}>
-        {"[ 참여학생리스트 ]"}
+      <Typography
+        variant="h5"
+        sx={{
+          margin: "38px 0 10px 0",
+          fontFamily: "'Montserrat', sans-serif", // 타이틀에 Montserrat 폰트 적용
+          fontWeight: "600", // 폰트 두께
+          fontSize: "1.5rem", // 폰트 크기
+        }}
+      >
+        {" 참여학생리스트 "}
       </Typography>
       <Paper
         style={{ height: "100%", width: "100%" }}
@@ -288,13 +296,27 @@ export default function TeacherStudentList({ eclassUuid, selectedEClassUuid }) {
           style={{ height: 200 }}
         />
       </Paper>
-      {selectedEClassUuid && (
+      {selectedEClassUuid ? (
         <Button
           onClick={handleOpen}
-          style={{ margin: "10px 0 0 0", width: "30%" }}
+          style={{
+            margin: "10px 0 0 0",
+            width: "30%",
+            fontFamily: "'Asap', sans-serif", // 버튼에 Asap 폰트 적용
+            fontWeight: "600",
+            fontSize: "0.9rem",
+            color: "grey",
+            backgroundColor: "#feecfe",
+            borderRadius: "2.469rem",
+            border: "none",
+          }}
         >
           학생추가
         </Button>
+      ) : (
+        <div
+          style={{ margin: "10px 0 0 0", padding: "18px", width: "30%" }}
+        ></div>
       )}
 
       <Modal open={open} onClose={handleClose}>
@@ -344,7 +366,16 @@ export default function TeacherStudentList({ eclassUuid, selectedEClassUuid }) {
             disabled={!selectedStudent}
             variant="contained"
             color="primary"
-            style={{ marginTop: "20px" }}
+            style={{
+              marginTop: "20px",
+              fontFamily: "'Asap', sans-serif", // 버튼에 Asap 폰트 적용
+              fontWeight: "600",
+              fontSize: "0.9rem",
+              color: "grey",
+              backgroundColor: "#feecfe",
+              borderRadius: "2.469rem",
+              border: "none",
+            }}
           >
             추가
           </Button>

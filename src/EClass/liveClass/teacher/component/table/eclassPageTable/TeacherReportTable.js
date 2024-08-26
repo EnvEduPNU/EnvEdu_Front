@@ -9,9 +9,10 @@ import {
   TableRow,
   Paper,
   Typography,
+  Button,
 } from "@mui/material";
-
-const sample = [["1", "pnustudent1", "수업자료3", "미제출"]];
+import { customAxios } from "../../../../../../Common/CustomAxios";
+import ReportViewModal from "../../../modal/ReportViewModal";
 
 const columns = [
   {
@@ -25,22 +26,20 @@ const columns = [
     width: "25%",
   },
   {
-    label: "수업자료",
-    dataKey: "LectureData",
-    width: "25%",
-  },
-  {
     label: "상태",
     dataKey: "Status",
     width: "25%",
   },
+  {
+    label: "보고서",
+    dataKey: "Action",
+    width: "25%",
+  },
 ];
 
-function createData(index, [Num, Name, LectureData, Status]) {
-  return { id: index, Num, Name, LectureData, Status };
+function createData(index, Num, Name, Status, LectureData) {
+  return { id: index, Num, Name, Status, LectureData };
 }
-
-const rows = sample.map((item, index) => createData(index, item));
 
 const VirtuosoTableComponents = {
   Scroller: React.forwardRef((props, ref) => (
@@ -53,7 +52,14 @@ const VirtuosoTableComponents = {
     />
   ),
   TableHead: (props) => <TableHead {...props} />,
-  TableRow: ({ item: _item, ...props }) => <TableRow {...props} />,
+  TableRow: ({ item: _item, ...props }) => (
+    <TableRow
+      {...props}
+      sx={{
+        height: "36px", // 각 행의 높이 설정
+      }}
+    />
+  ),
   TableBody: React.forwardRef((props, ref) => (
     <TableBody {...props} ref={ref} />
   )),
@@ -71,6 +77,7 @@ function fixedHeaderContent() {
             style={{ width: column.width }}
             sx={{
               backgroundColor: "#dcdcdc",
+              padding: "13px 8px", // 헤더 셀의 패딩 조정
             }}
           >
             {column.label}
@@ -81,7 +88,7 @@ function fixedHeaderContent() {
   );
 }
 
-function rowContent(index, row, handleClick, selectedRow) {
+function rowContent(index, row, handleClick, selectedRow, handleOpenModal) {
   return (
     <React.Fragment>
       {columns.map((column) => (
@@ -91,30 +98,33 @@ function rowContent(index, row, handleClick, selectedRow) {
           style={{ width: column.width }}
           sx={{
             backgroundColor: selectedRow === row.id ? "#f0f0f0" : "inherit",
-            cursor: column.dataKey !== "Action" ? "pointer" : "default",
-            "&:hover": {
-              backgroundColor:
-                column.dataKey !== "Action" ? "#e0e0e0" : "inherit",
-            },
+            padding: "6px 8px", // 데이터 셀의 패딩 조정
           }}
-          onClick={() =>
-            column.dataKey !== "Action" && handleClick(row.id, row)
-          }
         >
-          {row[column.dataKey]}
+          {column.dataKey === "Action" ? (
+            <Button
+              onClick={() => handleOpenModal(row.LectureData)}
+              sx={{ width: "30%" }}
+            >
+              확인
+            </Button>
+          ) : (
+            row[column.dataKey]
+          )}
         </TableCell>
       ))}
     </React.Fragment>
   );
 }
 
-export default function TeacherReportTable(props) {
+export default function TeacherReportTable({ selectedEClassUuid }) {
   const [selectedRow, setSelectedRow] = useState(null);
+  const [rows, setRows] = useState([]);
+  const [reportData, setReportData] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleRowClick = (id, row) => {
     setSelectedRow((prevSelectedRow) => (prevSelectedRow === id ? null : id));
-    props.setCourseStep(row);
-    console.log(row);
   };
 
   const handleClickOutside = (event) => {
@@ -122,6 +132,62 @@ export default function TeacherReportTable(props) {
       setSelectedRow(null);
     }
   };
+
+  const handleOpenModal = async (lectureData) => {
+    try {
+      const response = await customAxios.get(
+        `/api/report/getstep?uuid=${lectureData}`
+      );
+      setReportData(response.data);
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error("Error fetching report data:", error);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setReportData(null);
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await customAxios.get(
+          `/api/eclass/student/assignment/report/get/${selectedEClassUuid}`
+        );
+        const reportInfoMap = response.data;
+
+        const newRows = Object.entries(reportInfoMap).map(
+          ([reportData, username], index) => {
+            const status = username && reportData ? "제출됨" : "미제출";
+            return createData(
+              index + 1,
+              index + 1,
+              username,
+              status,
+              reportData // LectureData로 저장 (액션 버튼에서 사용)
+            );
+          }
+        );
+
+        if (newRows.length === 0) {
+          setRows([]);
+        } else {
+          setRows(newRows);
+        }
+      } catch (error) {
+        console.error("Error fetching report data:", error);
+        setRows([]);
+      }
+    };
+
+    if (selectedEClassUuid) {
+      fetchData();
+    } else {
+      setRows([]);
+    }
+  }, [selectedEClassUuid]);
 
   useEffect(() => {
     document.addEventListener("click", handleClickOutside);
@@ -132,10 +198,18 @@ export default function TeacherReportTable(props) {
 
   return (
     <div>
-      <Typography variant="h5" sx={{ margin: "20px 0 10px 0" }}>
-        {"[ 보고서 제출 ]"}
+      <Typography
+        variant="h5"
+        sx={{
+          margin: "20px 0 10px 0",
+          fontFamily: "'Montserrat', sans-serif",
+          fontWeight: "600",
+          fontSize: "1.5rem",
+        }}
+      >
+        {" 보고서 제출 "}
       </Typography>
-      <Paper style={{ height: 250, width: "100%" }} className="virtuoso-table">
+      <Paper style={{ height: 200, width: "100%" }} className="virtuoso-table">
         <TableContainer component={Paper}>
           <Table stickyHeader>{fixedHeaderContent()}</Table>
         </TableContainer>
@@ -143,11 +217,18 @@ export default function TeacherReportTable(props) {
           data={rows}
           components={VirtuosoTableComponents}
           itemContent={(index, row) =>
-            rowContent(index, row, handleRowClick, selectedRow)
+            rowContent(index, row, handleRowClick, selectedRow, handleOpenModal)
           }
-          style={{ height: 200 }}
         />
       </Paper>
+
+      {isModalOpen && (
+        <ReportViewModal
+          open={isModalOpen}
+          onClose={handleCloseModal}
+          tableData={reportData}
+        />
+      )}
     </div>
   );
 }

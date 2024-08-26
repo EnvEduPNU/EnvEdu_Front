@@ -1,35 +1,31 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
-import { customAxios } from "../../../../Common/CustomAxios";
 import StudentRenderAssign from "../../teacher/component/StudentRenderAssign";
 import { Typography } from "@mui/material";
+import { customAxios } from "../../../../Common/CustomAxios";
 
 export function StudentStepCompnent(props) {
-  const [page, setPage] = useState(props.page);
+  const [page, setPage] = useState();
   const [stepCount, setStepCount] = useState();
   const [tableData, setTableData] = useState(props.data);
-  const [socketEclassUuid, setSocketEclassUuid] = useState();
+  const [socketEclassUuid, setSocketEclassUuid] = useState(null);
   const [assginmentCheck, setAssignmentCheck] = useState(false);
+  const [eclassUuid] = useState(props.eclassUuid);
+  const [studentId, setStudentId] = useState(null);
 
-  // 과제 공유 받는 소켓 설정
+  // WebSocket 연결 및 페이지 변경에 따른 처리
   useEffect(() => {
     const token = localStorage.getItem("access_token").replace("Bearer ", "");
-
     const sock = new SockJS(
       `${process.env.REACT_APP_API_URL}/ws?token=${token}`
     );
-
     const stompClient = Stomp.over(sock);
 
     stompClient.connect({}, function (frame) {
       console.log("Connected: " + frame);
       stompClient.subscribe("/topic/switchPage", function (message) {
         const parsedMessage = JSON.parse(message.body);
-
-        if (parsedMessage.page === "newPage") {
-          assginmentCheckStompClient();
-        }
 
         setPage(parsedMessage.page);
         props.setPage(parsedMessage.page);
@@ -45,53 +41,73 @@ export function StudentStepCompnent(props) {
     };
   }, []);
 
-  // 과제 공유 성공시 응답 소켓 메서드
-  const assginmentCheckStompClient = () => {
-    const token = localStorage.getItem("access_token").replace("Bearer ", "");
-    const socket = new SockJS(
-      `${process.env.REACT_APP_API_URL}/ws?token=${token}`
-    );
+  useEffect(() => {
+    const success = "success";
+    const failed = "failed";
+    assginmentCheckStompClient(success);
+    if (props.stepCount !== stepCount) {
+      assginmentCheckStompClient(failed);
+    }
+  }, [props]);
 
-    const message = {
-      assginmentStatus: "success",
-      sessionId: props.sessionIdState,
+  // 과제 공유 성공시 응답 소켓 메서드
+  const assginmentCheckStompClient = useCallback(
+    (success) => {
+      const token = localStorage.getItem("access_token").replace("Bearer ", "");
+      const socket = new SockJS(
+        `${process.env.REACT_APP_API_URL}/ws?token=${token}`
+      );
+
+      const message = {
+        assginmentStatus: success,
+        sessionId: props.sessionIdState,
+      };
+
+      const stompClient = Stomp.over(socket);
+
+      stompClient.connect({}, () => {
+        stompClient.send("/app/assginment-status", {}, JSON.stringify(message));
+      });
+    },
+    [props.sessionIdState]
+  );
+
+  // 학생 ID 및 테이블 데이터 가져오기
+  useEffect(() => {
+    const username = localStorage.getItem("username");
+
+    const fetchStudentId = async () => {
+      try {
+        const response = await customAxios.get(
+          `/api/student/getStudentId?username=${username}&uuid=${eclassUuid}`
+        );
+        setStudentId(response.data);
+      } catch (error) {
+        console.error("Error fetching student ID:", error);
+      }
     };
 
-    console.log(
-      "[학생]세션 아이디 : " + JSON.stringify(props.sessionIdState, null, 2)
-    );
+    if (!studentId) {
+      fetchStudentId();
+    }
 
-    console.log(
-      "[학생]과제 공유 성공보내기 : " + JSON.stringify(message, null, 2)
-    );
-
-    const stompClient = Stomp.over(socket);
-
-    stompClient.connect({}, () => {
-      stompClient.send("/app/assginment-status", {}, JSON.stringify(message));
-    });
-  };
-
-  // 이전에 수업자료로 생성한 테이블있으면 가져오는 설정
-  useEffect(() => {
-    // console.log(
-    //   "데이터테이블 바뀌는지 확인 : " + JSON.stringify(props.data, null, 2)
-    // );
-    console.log(
-      "스텝 카운트 확인 : " + JSON.stringify(props.stepCount, null, 2)
-    );
     setTableData(props.data);
     setStepCount(props.stepCount);
-    props.setStepCount(props.stepCount);
-  }, [props.data]);
+  }, [props.data, props.stepCount, eclassUuid, studentId]);
+
+  // // Page와 eClassUuid가 맞는지 여부를 메모이제이션
+  // const shouldRenderAssign = useMemo(() => {
+  //   return ;
+  // }, [page, props.uuid, socketEclassUuid, stepCount]);
 
   return (
     <div>
-      {page === "newPage" || props.uuid == socketEclassUuid || stepCount ? (
+      {page === "newPage" || props.uuid === socketEclassUuid || stepCount ? (
         <StudentRenderAssign
           tableData={tableData}
           assginmentCheck={assginmentCheck}
           stepCount={stepCount}
+          studentId={studentId}
         />
       ) : (
         <DefaultPageComponent />

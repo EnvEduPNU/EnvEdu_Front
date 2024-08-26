@@ -14,7 +14,7 @@ export const LiveStudentPage = () => {
   const stompClient = useRef(null);
   const peerConnection = useRef(null);
   const sessionId = useRef("");
-  const [sessionIdState, setSessionIdState] = useState("");
+  const [sessionIdState, setSessionIdState] = useState();
   const [finished, setFinished] = useState(false);
   const iceConnectionCheckInterval = useRef(null);
 
@@ -23,7 +23,8 @@ export const LiveStudentPage = () => {
   const [stepCount, setStepCount] = useState();
 
   const location = useLocation();
-  const { lectureDataUuid, row } = location.state || {};
+  // 넘어오는 파라미터들(props)
+  const { lectureDataUuid, row, eclassUuid } = location.state || {};
 
   const [reportTable, setReportTable] = useState([]);
 
@@ -32,6 +33,8 @@ export const LiveStudentPage = () => {
   const [classProcess, setClassProcess] = useState(true);
 
   useEffect(() => {
+    console.log("[LiveStudentpage] 유유 아이디 : " + eclassUuid);
+
     const initializeSession = async () => {
       const newSessionId = uuidv4(); // 새 세션 ID 생성
 
@@ -132,6 +135,7 @@ export const LiveStudentPage = () => {
     if (!classProcess) {
       alert("수업이 종료되었습니다!");
       navigate("/");
+      window.location.reload();
     }
   }, [classProcess]);
 
@@ -318,6 +322,8 @@ export const LiveStudentPage = () => {
               stepCount={stepCount}
               setReportTable={setReportTable}
               sessionIdState={sessionIdState}
+              eclassUuid={eclassUuid}
+              lectureDataUuid={lectureDataUuid}
             />
           )}
         </div>
@@ -332,6 +338,7 @@ export const LiveStudentPage = () => {
           setStepCount={setStepCount}
           stepCount={stepCount}
           reportTable={reportTable}
+          eclassUuid={eclassUuid}
         />
       </div>
     </div>

@@ -13,12 +13,7 @@ import { customAxios } from "../../../../../../Common/CustomAxios";
 
 const columns = [
   {
-    width: "10%",
-    label: "Step",
-    dataKey: "stepNum",
-  },
-  {
-    width: "90%",
+    width: "100%",
     label: "단계이름",
     dataKey: "contentName",
   },
@@ -49,11 +44,11 @@ function fixedHeaderContent() {
           <TableCell
             key={column.dataKey}
             variant="head"
-            align="center"
+            align="left"
             style={{ width: column.width }}
             sx={{
               backgroundColor: "#dcdcdc",
-              textAlign: "center", // 가운데 정렬 추가
+              textAlign: "left",
             }}
           >
             {column.label}
@@ -70,12 +65,12 @@ function rowContent(_index, row, handleClick, selectedRow) {
       {columns.map((column) => (
         <TableCell
           key={column.dataKey}
-          align="left" // 가운데 정렬 추가
+          align="left"
           onClick={() => handleClick(row.id, row.Step, row.stepNum)}
           sx={{
             backgroundColor: selectedRow === row.id ? "#f0f0f0" : "inherit",
             cursor: "pointer",
-            textAlign: "left", // 가운데 정렬 추가
+            textAlign: "left",
           }}
         >
           {row[column.dataKey]}
@@ -100,13 +95,12 @@ export default function TeacherAssignmentTable(props) {
           (data) => data.uuid === props.lectureDataUuid
         );
 
-        // lectureSummary의 contents 배열을 펼쳐서 테이블에 표시할 수 있도록 변환
         const formattedData = filteredData.flatMap((data) =>
           data.contents.map((content) => ({
-            stepNum: content.stepNum,
             contentName: content.contentName,
-            id: `${data.uuid}-${content.stepNum}`, // unique id 생성
+            id: `${data.uuid}-${content.stepNum}`,
             Step: data.stepName,
+            stepNum: content.stepNum, // stepNum은 handleRowClick에서 사용되므로 여전히 유지
           }))
         );
 
@@ -145,11 +139,10 @@ export default function TeacherAssignmentTable(props) {
           contents: filteredContents,
         };
       })
-      .filter((data) => data.contents.length > 0); // 필터링 후 빈 contents가 있는 항목 제거
+      .filter((data) => data.contents.length > 0);
 
     console.log("스텝 데이터 : " + JSON.stringify(filteredTableData, null, 2));
 
-    // 스텝 클릭하면 상위 컴포넌트로 해당 스텝 정보 올려주기
     props.setTableData(filteredTableData);
   };
 
@@ -162,7 +155,7 @@ export default function TeacherAssignmentTable(props) {
   return (
     <div>
       <Typography variant="h5" sx={{ margin: "20px 0 10px 0" }}>
-        {`${tableData[0]?.Step || "No Data"}`}
+        {`${tableData[0]?.Step || "수업자료가 없어요"}`}
       </Typography>
       <Paper style={{ height: 300, width: "100%" }} className="virtuoso-table">
         <TableContainer component={Paper}>

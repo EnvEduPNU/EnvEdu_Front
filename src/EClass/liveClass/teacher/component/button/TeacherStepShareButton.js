@@ -17,6 +17,8 @@ export function TeacherStepShareButton({
   useEffect(() => {
     // SockJS 연결 설정
 
+    updateShareStatus(sessionId, shared, false);
+
     const token = localStorage.getItem("access_token").replace("Bearer ", "");
 
     const sock = new SockJS(
@@ -45,12 +47,14 @@ export function TeacherStepShareButton({
             setSessionId(parsedMessage.sessionId);
             setShared(parsedMessage.shared);
 
-            //과제 공유 성공 메시지를 위한 zustand 값 변경
-            updateShareStatus(
-              parsedMessage.sessionId,
-              parsedMessage.shared,
-              true
-            );
+            if (parsedMessage.assginmentStatus == "success") {
+              //과제 공유 성공 메시지를 위한 zustand 값 변경
+              updateShareStatus(
+                parsedMessage.sessionId,
+                parsedMessage.shared,
+                true
+              );
+            }
           });
         },
         onError
@@ -74,7 +78,7 @@ export function TeacherStepShareButton({
         });
       }
     };
-  }, []);
+  }, [stepCount]);
 
   const updateShareStatus = useLiveClassPartStore(
     (state) => state.updateShareStatus
@@ -124,13 +128,35 @@ export function TeacherStepShareButton({
     <>
       <button
         onClick={sendMessage}
-        style={{ width: "18%", marginLeft: "10px" }}
+        style={{
+          width: "18%",
+          marginLeft: "10px",
+          marginRight: 1,
+          fontFamily: "'Asap', sans-serif", // 버튼에 Asap 폰트 적용
+          fontWeight: "600",
+          fontSize: "0.9rem",
+          color: "grey",
+          backgroundColor: "#feecfe",
+          borderRadius: "2.469rem",
+          border: "none",
+        }}
       >
         과제 공유
       </button>
       <button
         onClick={sendStopMessage}
-        style={{ width: "18%", margin: "10px 0 0 10px " }}
+        style={{
+          width: "18%",
+          margin: "10px 0 0 10px ",
+          marginRight: 1,
+          fontFamily: "'Asap', sans-serif", // 버튼에 Asap 폰트 적용
+          fontWeight: "600",
+          fontSize: "0.9rem",
+          color: "grey",
+          backgroundColor: "#feecfe",
+          borderRadius: "2.469rem",
+          border: "none",
+        }}
       >
         과제 중지
       </button>

@@ -19,7 +19,6 @@ const columns = [
   { label: "강사", dataKey: "Teacher", width: "15%" },
   { label: "개설일", dataKey: "CreateEclassDate", width: "15%" },
   { label: "수업자료", dataKey: "LectureDataName", width: "15%" },
-  { label: "상태", dataKey: "Status", width: "10%" },
   { label: "", dataKey: "Action", width: "20%" },
 ];
 
@@ -33,18 +32,6 @@ const createData = (index, item) => ({
   CreateEclassDate: item.startDate,
   Teacher: item.username,
 });
-
-const deleteData = async (row, handleDelete) => {
-  try {
-    const response = await customAxios.delete(
-      `/api/eclass/delete?eClassUuid=${row.eClassUuid}`
-    );
-    console.log("delete data" + response.data);
-    handleDelete(row);
-  } catch (error) {
-    console.error("Eclass 리스트 삭제 에러:", error);
-  }
-};
 
 const VirtuosoTableComponents = {
   Scroller: React.forwardRef((props, ref) => (
@@ -157,22 +144,25 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
       JSON.stringify(row, null, 2)
     );
 
-    const eClassUuid = row.eClassUuid;
+    const eclassUuid = row.eClassUuid;
     const lectureDataUuid = row.LectureData;
     let eClassStatus = false;
 
+    console.log("[StudentEclassTable] 유유아이디 : " + eclassUuid);
+
     // E-Class 조회해서 flag가 true인지 확인하기
     customAxios
-      .get(`/api/eclass/status-check?uuid=${eClassUuid}`)
+      .get(`/api/eclass/status-check?uuid=${eclassUuid}`)
       .then((response) => {
         console.log("Eclass Status :", response.data);
         eClassStatus = response.data;
 
         if (eClassStatus) {
-          navigate(`/LiveStudentPage/${eClassUuid}`, {
+          navigate(`/LiveStudentPage/${eclassUuid}`, {
             state: {
               lectureDataUuid,
               row,
+              eclassUuid,
             },
           });
         } else {
@@ -211,18 +201,20 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
               <div style={{ display: "flex", justifyContent: "center" }}>
                 <Button
                   variant="contained"
-                  color="primary"
+                  color="secondary"
                   onClick={() => joinEclass(row, navigate)}
-                  sx={{ marginRight: 1 }}
+                  sx={{
+                    marginRight: 1,
+                    fontFamily: "'Asap', sans-serif", // 버튼에 Asap 폰트 적용
+                    fontWeight: "600",
+                    fontSize: "0.9rem",
+                    color: "grey",
+                    backgroundColor: "#feecfe",
+                    borderRadius: "2.469rem",
+                    border: "none",
+                  }}
                 >
                   들어가기
-                </Button>
-                <Button
-                  variant="outlined"
-                  color="secondary"
-                  onClick={() => deleteData(row, handleDelete)}
-                >
-                  삭제
                 </Button>
               </div>
             ) : (
