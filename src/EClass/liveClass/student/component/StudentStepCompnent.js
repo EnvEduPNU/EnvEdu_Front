@@ -52,14 +52,14 @@ export function StudentStepCompnent(props) {
 
   // 과제 공유 성공시 응답 소켓 메서드
   const assginmentCheckStompClient = useCallback(
-    (success) => {
+    (state) => {
       const token = localStorage.getItem("access_token").replace("Bearer ", "");
       const socket = new SockJS(
         `${process.env.REACT_APP_API_URL}/ws?token=${token}`
       );
 
       const message = {
-        assginmentStatus: success,
+        assginmentStatus: state,
         sessionId: props.sessionIdState,
       };
 

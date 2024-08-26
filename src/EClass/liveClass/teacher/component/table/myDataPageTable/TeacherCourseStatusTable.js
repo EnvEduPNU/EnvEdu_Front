@@ -49,6 +49,10 @@ export default function TeacherCourseStatusTable({ stepCount, eclassUuid }) {
   const [reportData, setReportData] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const updateShareStatus = useLiveClassPartStore(
+    (state) => state.updateShareStatus
+  );
+
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
@@ -73,6 +77,12 @@ export default function TeacherCourseStatusTable({ stepCount, eclassUuid }) {
     };
     fetchStudents();
   }, [sessionData]);
+
+  useEffect(() => {
+    sessionData.forEach((session) => {
+      updateShareStatus(session.id, null, false);
+    });
+  }, [stepCount]);
 
   // Eclass uuid와 학생 이름 리스트 보내서 과제 현황 리스트 가져오는 요청
   useEffect(() => {

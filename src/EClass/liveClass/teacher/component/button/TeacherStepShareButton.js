@@ -17,8 +17,6 @@ export function TeacherStepShareButton({
   useEffect(() => {
     // SockJS 연결 설정
 
-    updateShareStatus(sessionId, shared, false);
-
     const token = localStorage.getItem("access_token").replace("Bearer ", "");
 
     const sock = new SockJS(
