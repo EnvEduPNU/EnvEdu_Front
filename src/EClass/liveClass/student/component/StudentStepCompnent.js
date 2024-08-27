@@ -121,6 +121,7 @@ export function StudentStepCompnent(props) {
           stepCount={stepCount}
           studentId={studentId}
           sessionIdState={props.sessionIdState}
+          eclassUuid={props.eclassUuid}
         />
       ) : (
         <DefaultPageComponent />

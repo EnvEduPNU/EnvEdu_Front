@@ -3,6 +3,7 @@ import { Paper, Typography, Button, TextField } from "@mui/material";
 import { customAxios } from "../../../../Common/CustomAxios";
 import Stomp from "stompjs";
 import SockJS from "sockjs-client";
+import { v4 as uuidv4 } from "uuid";
 
 function StudentRenderAssign({
   tableData,
@@ -11,6 +12,7 @@ function StudentRenderAssign({
   stepCount,
   studentId,
   sessionIdState,
+  eclassUuid,
 }) {
   const [textBoxValues, setTextBoxValues] = useState({}); // 객체로 초기화
   const [data, setData] = useState([]);
@@ -49,7 +51,7 @@ function StudentRenderAssign({
     }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     console.log(
       "textBoxValues 확인 : " + JSON.stringify(textBoxValues, null, 2)
     );
@@ -66,7 +68,7 @@ function StudentRenderAssign({
     const stepCheck = new Array(stepCount).fill(false); // 모든 스텝을 false로 초기화
 
     const updatedData = dataToUse.map((data) => ({
-      uuid: data.uuid,
+      uuid: uuidv4(),
       timestamp: new Date().toISOString(),
       username: studentName,
       stepName: data.stepName,
@@ -108,32 +110,48 @@ function StudentRenderAssign({
     console.log("Final Submit:", JSON.stringify(updatedData, null, 2));
     console.log("과제테이블 : " + assginmentCheck);
 
+    const assignmentUuidRegistData = {
+      eclassUuid: eclassUuid,
+      assginmentUuid: updatedData[0].uuid,
+      username: updatedData[0].username,
+    };
+
     if (window.confirm("제출하시겠습니까?")) {
-      customAxios
-        .post("/api/eclass/student/assignment/stepCheck", requestData)
-        .then((resp) => {
-          alert("제출 완료했습니다.");
-          console.log("Step Check Response:", resp);
+      try {
+        // 첫 번째 요청
+        await customAxios.post(
+          "/api/eclass/student/assginmentUuid/update",
+          assignmentUuidRegistData
+        );
 
-          assginmentStompClient();
+        // 두 번째 요청
+        const stepCheckResponse = await customAxios.post(
+          "/api/eclass/student/assignment/stepCheck",
+          requestData
+        );
 
-          const request = assginmentCheck
-            ? customAxios.put("/api/assignment/update", updatedData)
-            : customAxios.post("/api/assignment/save", updatedData);
+        alert("제출 완료했습니다.");
+        console.log("Step Check Response:", stepCheckResponse);
 
-          return request;
-        })
-        .then((response) => {
-          console.log(
-            assginmentCheck ? "수정 완료" : "새로 저장 완료",
-            response
-          );
-          window.location.reload();
-        })
-        .catch((error) => {
-          console.error("Error during submission:", error);
-          alert("제출 중 오류가 발생했습니다. 다시 시도해주세요.");
-        });
+        // assginmentStompClient 호출
+        assginmentStompClient();
+
+        // 세 번째 요청 (assginmentCheck에 따라 다른 요청을 보냄)
+        const assignmentResponse = assginmentCheck
+          ? await customAxios.put("/api/assignment/update", updatedData)
+          : await customAxios.post("/api/assignment/save", updatedData);
+
+        console.log(
+          assginmentCheck ? "수정 완료" : "새로 저장 완료",
+          assignmentResponse
+        );
+
+        // 페이지 리로드
+        window.location.reload();
+      } catch (error) {
+        console.error("Error during submission:", error);
+        alert("제출 중 오류가 발생했습니다. 다시 시도해주세요.");
+      }
     }
   };
 

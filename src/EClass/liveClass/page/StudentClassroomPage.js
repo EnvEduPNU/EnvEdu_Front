@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import TeacherReportTable from "../teacher/component/table/eclassPageTable/TeacherReportTable";
 import { Divider, Typography } from "@mui/material";
 import TeacherStudentList from "../teacher/component/table/eclassPageTable/TeacherStudentList";
-import SearchLectureModal from "../teacher/modal/SearchLectureModal";
+import SearchLectureModal from "../student/modal/SearchLectureModal";
 import StudentEclassTable from "../teacher/component/table/eclassPageTable/StudentEclassTable";
 import StudentStudentList from "../teacher/component/table/eclassPageTable/StudentStudentList";
 

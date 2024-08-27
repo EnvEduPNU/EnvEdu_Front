@@ -42,12 +42,19 @@ const deleteData = async (row, handleDelete) => {
       );
       console.log(respDeleteEclass.data);
 
-      const respDeleteEclassStudent = await customAxios.delete(
-        `/api/eclass/student/joined/delete?eClassUuid=${row.eClassUuid}`
-      );
-      console.log(respDeleteEclassStudent.data);
+      try {
+        const respDeleteEclassStudent = await customAxios.delete(
+          `/api/eclass/student/joined/delete?eClassUuid=${row.eClassUuid}`
+        );
+        console.log(respDeleteEclassStudent.data);
+      } catch (error) {
+        console.error("Eclass 학생 삭제 에러:", error);
+        // 여기서 오류가 발생하더라도 넘어가도록 함.
+      }
 
       handleDelete(row);
+
+      window.location.reload();
     } catch (error) {
       console.error("Eclass 리스트 삭제 에러:", error);
     }

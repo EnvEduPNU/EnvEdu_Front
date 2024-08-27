@@ -321,7 +321,16 @@ export default function TeacherStudentList({ eclassUuid, selectedEClassUuid }) {
 
       <Modal open={open} onClose={handleClose}>
         <Box sx={modalStyle} className="modal-table">
-          <Typography variant="h6" component="h2">
+          <Typography
+            variant="h4"
+            component="h2"
+            sx={{
+              margin: "30px 0 20px 0",
+              fontFamily: "'Montserrat', sans-serif", // 타이틀에 Montserrat 폰트 적용
+              fontWeight: "600", // 폰트 두께
+              fontSize: "1.5rem", // 폰트 크기
+            }}
+          >
             학생 리스트
           </Typography>
           <TableContainer component={Paper}>

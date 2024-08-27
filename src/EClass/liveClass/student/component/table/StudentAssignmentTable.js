@@ -96,8 +96,23 @@ export default function StudentAssignmentTable(props) {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const requestData = {
+          eclassUuid: props.eclassUuid,
+          username: localStorage.getItem("username"),
+        };
+
+        const assignmentUuidResp = await customAxios.post(
+          "/api/eclass/student/assginmentUuid/get",
+          requestData
+        );
+
+        console.log(
+          "Assignmnet Uuid 잘 나오나 확인 : " +
+            JSON.stringify(assignmentUuidResp, null, 2)
+        );
+
         const assignmentResponse = await customAxios.get(
-          `/api/assignment/getstep?uuid=${props.lectureDataUuid}`
+          `/api/assignment/getstep?uuid=${assignmentUuidResp.data}`
         );
 
         if (assignmentResponse.data.length > 0) {

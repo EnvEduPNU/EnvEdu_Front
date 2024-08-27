@@ -119,7 +119,7 @@ function StudentReportModal({
         console.log(assginmentCheck ? "수정 완료" : "새로 저장 완료")
       );
 
-      // window.location.reload();
+      window.location.reload();
     }
   };
 
@@ -249,6 +249,9 @@ function RenderContent({ content, textBoxValue, setTextBoxValue, index }) {
           minRows={3} // Adjusted to fit within smaller cards
           maxRows={5}
           sx={{ marginBottom: "20px" }} // 간격 조정
+          InputProps={{
+            readOnly: true, // 읽기 전용으로 설정
+          }}
         />
       );
     case "img":

@@ -133,6 +133,7 @@ const CreateLectureModal = ({ open, onClose, onCreate }) => {
           left: "50%",
           transform: "translate(-50%, -50%)",
           width: 600, // 크기 키우기
+          height: 800,
           bgcolor: "background.paper",
           boxShadow: 24,
           p: 4,
@@ -141,30 +142,51 @@ const CreateLectureModal = ({ open, onClose, onCreate }) => {
       >
         <Typography
           variant="h4"
-          component="h2"
           sx={{
             textAlign: "center",
-            marginBottom: 3,
+            marginBottom: 6,
             fontWeight: "bold",
             fontSize: "2rem",
           }}
         >
           E-Class 생성하기
         </Typography>
-        <div
-          style={{
+        <Box
+          sx={{
             display: "flex",
             justifyContent: "space-between",
-            marginBottom: "20px",
+            flexDirection: "row",
+            marginBottom: 3,
+            alignItems: "left", // 수직 정렬
           }}
         >
-          <Typography variant="h6" component="h3">
+          <Typography
+            variant="h5"
+            sx={{
+              marginBottom: 2,
+              fontWeight: "bold",
+            }}
+          >
             {startDate}
           </Typography>
-          <Typography variant="h6" component="h3">
+          <Typography
+            variant="h5"
+            sx={{
+              marginBottom: 2,
+              fontWeight: "bold",
+            }}
+          >
             {username}
           </Typography>
-        </div>
+        </Box>
+        <Typography
+          variant="h6"
+          sx={{
+            fontWeight: "bold",
+          }}
+        >
+          E-Class 이름
+        </Typography>
         <TextField
           label="E-Class 이름"
           value={lectureName}
@@ -183,6 +205,7 @@ const CreateLectureModal = ({ open, onClose, onCreate }) => {
           variant="h6"
           component="h3"
           sx={{
+            marginTop: 2,
             marginBottom: 2,
             fontWeight: "bold",
           }}
@@ -196,9 +219,15 @@ const CreateLectureModal = ({ open, onClose, onCreate }) => {
           <Table stickyHeader>
             <TableHead>
               <TableRow>
-                <TableCell>날짜</TableCell>
-                <TableCell>수업 자료 이름</TableCell>
-                <TableCell align="center">선택</TableCell>
+                <TableCell sx={{ backgroundColor: "lightgray" }}>
+                  날짜
+                </TableCell>
+                <TableCell sx={{ backgroundColor: "lightgray" }}>
+                  수업 자료 이름
+                </TableCell>
+                <TableCell sx={{ backgroundColor: "lightgray" }} align="center">
+                  선택
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -215,8 +244,24 @@ const CreateLectureModal = ({ open, onClose, onCreate }) => {
                             ? "contained"
                             : "outlined"
                         }
+                        color="secondary"
                         onClick={() => lectureSelection(item)}
-                        sx={{ width: "60px" }}
+                        sx={{
+                          width: "60px",
+                          fontFamily: "'Asap', sans-serif", // 버튼에 Asap 폰트 적용
+                          fontWeight: "600",
+                          fontSize: "0.9rem",
+                          color:
+                            selectedMaterial?.stepName === item.stepName
+                              ? "white"
+                              : "black", // contained일 때 텍스트 색상을 흰색으로 변경
+                          backgroundColor:
+                            selectedMaterial?.stepName === item.stepName
+                              ? "#D1C4E9"
+                              : "transparent", // contained일 때 배경색을 #D1C4E9로 변경
+                          borderRadius: "2.469rem",
+                          border: "none",
+                        }}
                       >
                         선택
                       </Button>
@@ -228,10 +273,36 @@ const CreateLectureModal = ({ open, onClose, onCreate }) => {
         </TableContainer>
 
         <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-          <Button onClick={onClose} sx={{ marginRight: 1 }}>
+          <Button
+            onClick={onClose}
+            sx={{
+              marginRight: 1,
+              fontFamily: "'Asap', sans-serif", // 버튼에 Asap 폰트 적용
+              fontWeight: "600",
+              fontSize: "0.9rem",
+              color: "grey",
+              backgroundColor: "#feecfe",
+              borderRadius: "2.469rem",
+              border: "none",
+            }}
+          >
             취소
           </Button>
-          <Button variant="contained" color="primary" onClick={handleCreate}>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={handleCreate}
+            sx={{
+              marginRight: 1,
+              fontFamily: "'Asap', sans-serif", // 버튼에 Asap 폰트 적용
+              fontWeight: "600",
+              fontSize: "0.9rem",
+              color: "grey",
+              backgroundColor: "#feecfe",
+              borderRadius: "2.469rem",
+              border: "none",
+            }}
+          >
             생성하기
           </Button>
         </Box>
