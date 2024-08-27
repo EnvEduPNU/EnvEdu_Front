@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 import StudentRenderAssign from "../../teacher/component/StudentRenderAssign";
@@ -27,6 +33,10 @@ export function StudentStepCompnent(props) {
       stompClient.subscribe("/topic/switchPage", function (message) {
         const parsedMessage = JSON.parse(message.body);
 
+        console.log(
+          "과제 공유 메시지 : " + JSON.stringify(parsedMessage.page, null, 2)
+        );
+
         setPage(parsedMessage.page);
         props.setPage(parsedMessage.page);
         setStepCount(parsedMessage.stepCount);
@@ -44,11 +54,13 @@ export function StudentStepCompnent(props) {
   useEffect(() => {
     const success = "success";
     const failed = "failed";
-    assginmentCheckStompClient(success);
+    if (page === "newPage") {
+      assginmentCheckStompClient(success);
+    }
     if (props.stepCount !== stepCount) {
       assginmentCheckStompClient(failed);
     }
-  }, [props]);
+  }, [props, page]);
 
   // 과제 공유 성공시 응답 소켓 메서드
   const assginmentCheckStompClient = useCallback(
