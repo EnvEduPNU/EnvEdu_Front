@@ -93,6 +93,7 @@ const SearchLectureModal = ({ open, onClose }) => {
           window.location.reload();
         })
         .catch((error) => {
+          alert("이미 등록한 수업입니다!");
           console.error("Error adding student:", error);
         });
     }

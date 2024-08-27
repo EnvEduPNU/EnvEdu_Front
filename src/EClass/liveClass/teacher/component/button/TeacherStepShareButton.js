@@ -13,6 +13,9 @@ export function TeacherStepShareButton({
 }) {
   const [sessionId, setSessionId] = useState();
   const [shared, setShared] = useState();
+  const [assignShared, setAssignShared] = useState();
+  const [assginmentSubmit, setAssginmentSubmit] = useState();
+  const [reportSubmit, setReportSubmit] = useState();
 
   useEffect(() => {
     // SockJS 연결 설정
@@ -44,15 +47,17 @@ export function TeacherStepShareButton({
 
             setSessionId(parsedMessage.sessionId);
             setShared(parsedMessage.shared);
+            setAssignShared(parsedMessage.assginmentStatus);
+            setAssginmentSubmit(parsedMessage.assginmentSubmit);
+            setReportSubmit(parsedMessage.reportSubmit);
 
-            if (parsedMessage.assginmentStatus == "success") {
-              //과제 공유 성공 메시지를 위한 zustand 값 변경
-              updateShareStatus(
-                parsedMessage.sessionId,
-                parsedMessage.shared,
-                true
-              );
-            }
+            updateShareStatus(
+              parsedMessage.sessionId,
+              parsedMessage.shared,
+              parsedMessage.assginmentStatus,
+              parsedMessage.assginmentSubmit,
+              parsedMessage.reportSubmit
+            );
           });
         },
         onError

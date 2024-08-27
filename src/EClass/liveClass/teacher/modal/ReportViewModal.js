@@ -104,14 +104,14 @@ function ReportViewModal({ open, onClose, tableData }) {
             ))}
           </Grid>
         </Paper>
-        <Button
+        {/* <Button
           variant="contained"
           color="primary"
           onClick={handleDownloadPdf}
           sx={{ marginTop: "20px" }}
         >
           PDF 다운로드
-        </Button>
+        </Button> */}
       </DialogContent>
     </Dialog>
   );

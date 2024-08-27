@@ -17,12 +17,21 @@ import { useLiveClassPartStore } from "../../../../store/LiveClassPartStore";
 import { customAxios } from "../../../../../../Common/CustomAxios";
 import ReportViewModal from "../../../modal/ReportViewModal";
 
-function createData(name, sessionId, shared, assginmentShared) {
+function createData(
+  name,
+  sessionId,
+  shared,
+  assginmentShared,
+  assginmentSubmit,
+  reportSubmit
+) {
   return {
     name,
     sessionId,
     shared,
     assginmentShared,
+    assginmentSubmit,
+    reportSubmit,
   };
 }
 
@@ -127,7 +136,7 @@ export default function TeacherCourseStatusTable({ stepCount, eclassUuid }) {
       }
     };
     sendStudentData(students, eclassUuid);
-  }, [stepCount]);
+  }, [stepCount, sessionData]); // sessionData 추가
 
   Row.propTypes = {
     row: PropTypes.shape({
@@ -135,6 +144,8 @@ export default function TeacherCourseStatusTable({ stepCount, eclassUuid }) {
       sessionId: PropTypes.string.isRequired,
       shared: PropTypes.bool.isRequired,
       assginmentShared: PropTypes.bool.isRequired,
+      assginmentSubmit: PropTypes.bool.isRequired,
+      reportSubmit: PropTypes.bool.isRequired,
     }).isRequired,
   };
 
@@ -159,18 +170,28 @@ export default function TeacherCourseStatusTable({ stepCount, eclassUuid }) {
           )}
         </TableCell>
         <TableCell align="center">
-          {isMatch ? (
+          {isMatch || row.assginmentSubmit ? (
             <CheckCircleIcon sx={{ color: "blue" }} />
           ) : (
             <CancelIcon sx={{ color: "red" }} />
           )}
         </TableCell>
-        {/* <TableCell align="center">
-          <CancelIcon sx={{ color: "red" }} />
-        </TableCell> */}
         <TableCell align="center">
           {reportData ? (
-            <Button onClick={handleOpenModal} sx={{ width: "3%" }}>
+            <Button
+              onClick={handleOpenModal}
+              sx={{
+                width: "3%",
+                marginRight: 1,
+                fontFamily: "'Asap', sans-serif", // 버튼에 Asap 폰트 적용
+                fontWeight: "600",
+                fontSize: "0.9rem",
+                color: "grey",
+                backgroundColor: "#feecfe",
+                borderRadius: "2.469rem",
+                border: "none",
+              }}
+            >
               확인
             </Button>
           ) : (
@@ -186,7 +207,9 @@ export default function TeacherCourseStatusTable({ stepCount, eclassUuid }) {
       students[index],
       session.id,
       session.shared,
-      session.assginmentShared
+      session.assginmentShared,
+      session.assginmentSubmit,
+      session.reportSubmit
     )
   );
 

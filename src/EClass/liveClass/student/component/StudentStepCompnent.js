@@ -120,6 +120,7 @@ export function StudentStepCompnent(props) {
           assginmentCheck={assginmentCheck}
           stepCount={stepCount}
           studentId={studentId}
+          sessionIdState={props.sessionIdState}
         />
       ) : (
         <DefaultPageComponent />

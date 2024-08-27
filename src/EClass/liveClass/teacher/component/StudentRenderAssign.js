@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Paper, Typography, Button, TextField } from "@mui/material";
 import { customAxios } from "../../../../Common/CustomAxios";
+import Stomp from "stompjs";
+import SockJS from "sockjs-client";
 
 function StudentRenderAssign({
   tableData,
@@ -8,6 +10,7 @@ function StudentRenderAssign({
   assginmentCheck,
   stepCount,
   studentId,
+  sessionIdState,
 }) {
   const [textBoxValues, setTextBoxValues] = useState({}); // 객체로 초기화
   const [data, setData] = useState([]);
@@ -112,6 +115,8 @@ function StudentRenderAssign({
           alert("제출 완료했습니다.");
           console.log("Step Check Response:", resp);
 
+          assginmentStompClient();
+
           const request = assginmentCheck
             ? customAxios.put("/api/assignment/update", updatedData)
             : customAxios.post("/api/assignment/save", updatedData);
@@ -133,31 +138,23 @@ function StudentRenderAssign({
   };
 
   // 스텝 제출 성공시 응답 소켓 메서드
-  // const assginmentStompClient = () => {
-  //   const token = localStorage.getItem("access_token").replace("Bearer ", "");
-  //   const socket = new SockJS(
-  //     `${process.env.REACT_APP_API_URL}/ws?token=${token}`
-  //   );
+  const assginmentStompClient = () => {
+    const token = localStorage.getItem("access_token").replace("Bearer ", "");
+    const socket = new SockJS(
+      `${process.env.REACT_APP_API_URL}/ws?token=${token}`
+    );
 
-  //   const message = {
-  //     assginmentStatus: "success",
-  //     sessionId: props.sessionIdState,
-  //   };
+    const message = {
+      assginmentSubmit: true,
+      sessionId: sessionIdState,
+    };
 
-  //   console.log(
-  //     "[학생]세션 아이디 : " + JSON.stringify(props.sessionIdState, null, 2)
-  //   );
+    const stompClient = Stomp.over(socket);
 
-  //   console.log(
-  //     "[학생]과제 공유 성공보내기 : " + JSON.stringify(message, null, 2)
-  //   );
-
-  //   const stompClient = Stomp.over(socket);
-
-  //   stompClient.connect({}, () => {
-  //     stompClient.send("/app/assginment-status", {}, JSON.stringify(message));
-  //   });
-  // };
+    stompClient.connect({}, () => {
+      stompClient.send("/app/assginment-status", {}, JSON.stringify(message));
+    });
+  };
 
   return (
     <div>
@@ -187,9 +184,19 @@ function StudentRenderAssign({
           </Paper>
           <Button
             variant="contained"
-            color="primary"
+            color="secondary"
             onClick={handleSubmit}
             style={{ marginTop: "10px" }}
+            sx={{
+              marginRight: 1,
+              fontFamily: "'Asap', sans-serif", // 버튼에 Asap 폰트 적용
+              fontWeight: "600",
+              fontSize: "0.9rem",
+              color: "grey",
+              backgroundColor: "#feecfe",
+              borderRadius: "2.469rem",
+              border: "none",
+            }}
           >
             제출
           </Button>

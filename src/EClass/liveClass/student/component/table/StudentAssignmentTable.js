@@ -11,6 +11,7 @@ import { TableVirtuoso } from "react-virtuoso";
 import { Button, Typography } from "@mui/material";
 import { customAxios } from "../../../../../Common/CustomAxios";
 import StudentReportModal from "../../modal/StudentReportModal";
+import ReportViewModal from "../../../teacher/modal/ReportViewModal";
 
 const columns = [
   {
@@ -272,7 +273,17 @@ export default function StudentAssignmentTable(props) {
         variant="contained"
         color="primary"
         onClick={handleAssignmentReport}
-        style={{ width: "100%", margin: "20px 0 0 0" }}
+        style={{
+          width: "100%",
+          margin: "20px 0 0 0",
+          fontFamily: "'Asap', sans-serif", // 버튼에 Asap 폰트 적용
+          fontWeight: "600",
+          fontSize: "0.9rem",
+          color: "grey",
+          backgroundColor: "#feecfe",
+          borderRadius: "2.469rem",
+          border: "none",
+        }}
       >
         보고서
       </Button>

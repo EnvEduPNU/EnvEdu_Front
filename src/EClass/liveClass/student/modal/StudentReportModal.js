@@ -126,37 +126,38 @@ function StudentReportModal({
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="lg">
       <DialogTitle>보고서</DialogTitle>
-      <DialogContent dividers>
+      <DialogContent
+        dividers
+        style={{
+          maxHeight: "80vh", // 최대 높이 설정
+          overflowY: "auto", // 내용이 넘치는 경우에만 스크롤 활성화
+        }}
+      >
         <Paper
           style={{
             width: "100%",
-            height: "100vh", // 전체 화면 높이
-            boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
+            padding: "20px", // Paper에 패딩 추가
+            backgroundColor: "white", // 더 밝은 배경색으로 변경
           }}
         >
-          <Typography variant="h3" sx={{ margin: "20px" }}>
+          <Typography variant="h3" sx={{ marginBottom: "20px" }}>
             {tableData[0]?.stepName}
           </Typography>
-          <Typography variant="h6" sx={{ margin: "20px", textAlign: "right" }}>
+          <Typography
+            variant="h6"
+            sx={{ marginBottom: "40px", textAlign: "right" }}
+          >
             {tableData[0]?.username}
           </Typography>
-          <Grid
-            container
-            spacing={2}
-            style={{
-              height: "calc(100vh - 200px)", // 상위 Paper보다 작은 높이 설정
-              overflow: "auto", // 스크롤 가능하도록 설정
-            }}
-          >
+          <Grid container spacing={3}>
             {data.map((stepData, idx) => (
               <Grid item xs={6} key={stepData.stepNum}>
                 <Paper
                   style={{
-                    padding: 10,
-                    boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
-                    minHeight: "100px", // 최소 높이 설정
-                    marginBottom: "10px",
-                    overflow: "hidden", // 내용이 넘치지 않도록 설정
+                    padding: "20px", // Paper 내부에 패딩 추가
+                    boxShadow: "none", // 박스 그림자 제거
+                    marginBottom: "30px",
+                    backgroundColor: "#ffffff",
                   }}
                 >
                   <div>
@@ -181,10 +182,36 @@ function StudentReportModal({
         </Paper>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="secondary">
+        <Button
+          onClick={onClose}
+          color="secondary"
+          sx={{
+            marginRight: 1,
+            fontFamily: "'Asap', sans-serif", // 버튼에 Asap 폰트 적용
+            fontWeight: "600",
+            fontSize: "0.9rem",
+            color: "grey",
+            backgroundColor: "#feecfe",
+            borderRadius: "2.469rem",
+            border: "none",
+          }}
+        >
           취소
         </Button>
-        <Button onClick={handleSubmit} color="primary">
+        <Button
+          onClick={handleSubmit}
+          color="primary"
+          sx={{
+            marginRight: 1,
+            fontFamily: "'Asap', sans-serif", // 버튼에 Asap 폰트 적용
+            fontWeight: "600",
+            fontSize: "0.9rem",
+            color: "grey",
+            backgroundColor: "#feecfe",
+            borderRadius: "2.469rem",
+            border: "none",
+          }}
+        >
           제출
         </Button>
       </DialogActions>
@@ -221,11 +248,12 @@ function RenderContent({ content, textBoxValue, setTextBoxValue, index }) {
           multiline
           minRows={3} // Adjusted to fit within smaller cards
           maxRows={5}
+          sx={{ marginBottom: "20px" }} // 간격 조정
         />
       );
     case "img":
       return (
-        <div style={{ textAlign: "center", marginBottom: "10px" }}>
+        <div style={{ textAlign: "center", marginBottom: "20px" }}>
           <img
             src={content.content}
             alt="Assignment Content"
