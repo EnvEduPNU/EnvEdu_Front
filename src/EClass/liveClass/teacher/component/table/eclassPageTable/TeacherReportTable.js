@@ -134,10 +134,13 @@ export default function TeacherReportTable({ selectedEClassUuid }) {
   };
 
   const handleOpenModal = async (lectureData) => {
+    console.log("확인한번 : " + JSON.stringify(lectureData, null, 2));
+
     try {
       const response = await customAxios.get(
         `/api/report/getstep?uuid=${lectureData}`
       );
+
       setReportData(response.data);
       setIsModalOpen(true);
     } catch (error) {
@@ -157,6 +160,10 @@ export default function TeacherReportTable({ selectedEClassUuid }) {
           `/api/eclass/student/assignment/report/get/${selectedEClassUuid}`
         );
         const reportInfoMap = response.data;
+
+        console.log(
+          "레포트 데이터 : " + JSON.stringify(reportInfoMap, null, 2)
+        );
 
         const newRows = Object.entries(reportInfoMap).map(
           ([reportData, username], index) => {

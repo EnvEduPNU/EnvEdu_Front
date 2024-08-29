@@ -11,6 +11,7 @@ import {
   Grid,
 } from "@mui/material";
 import { customAxios } from "../../../../Common/CustomAxios";
+import { v4 as uuidv4 } from "uuid";
 
 function StudentReportModal({
   open,
@@ -24,26 +25,24 @@ function StudentReportModal({
   const [data, setData] = useState([]);
   const [studentId, setStudentId] = useState();
 
-  // 보고서 저장 할때 필요한 해당 클래스 학생 Id 가져오기
   useEffect(() => {
-    const username = localStorage.getItem("username");
     const fetchStudentId = async () => {
+      const username = localStorage.getItem("username");
       try {
         const response = await customAxios.get(
           `/api/student/getStudentId?username=${username}&uuid=${eclassUuid}`
         );
-        const studentId = response.data; // studentId를 response에서 추출
-        console.log("과제 포함되어 있는 테이블의 학생Id : " + studentId);
-        setStudentId(studentId);
+        setStudentId(response.data);
+        console.log("과제 포함되어 있는 테이블의 학생Id : " + response.data);
       } catch (error) {
         console.error("Error fetching student ID:", error);
       }
     };
     fetchStudentId();
-  }, []);
+  }, [eclassUuid]);
 
   useEffect(() => {
-    let allContents = latestTableData
+    const allContents = latestTableData
       ? latestTableData.flatMap((data) => data.contents)
       : tableData.flatMap((data) => data.contents);
 
@@ -60,16 +59,17 @@ function StudentReportModal({
     }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     console.log(
       "textBoxValues 확인 : " + JSON.stringify(textBoxValues, null, 2)
     );
 
     const studentName = localStorage.getItem("username");
     const dataToUse = latestTableData || tableData;
+    const reportUuid = uuidv4();
 
     const updatedData = dataToUse.map((data) => ({
-      uuid: data.uuid,
+      uuid: reportUuid,
       timestamp: new Date().toISOString(),
       username: studentName,
       stepName: data.stepName,
@@ -95,31 +95,33 @@ function StudentReportModal({
     console.log("과제 uuid : " + dataToUse[0].uuid);
 
     if (window.confirm("제출하시겠습니까?")) {
-      // 보고서 제출 테이블에 저장
-      const requestData = {
-        reportUuid: dataToUse[0].uuid,
-        studentId: studentId,
-      };
-      customAxios
-        .post("/api/eclass/student/assignment/report/save", requestData)
-        .then(() => {
-          alert("제출 완료했습니다!");
-        })
-        .catch((error) => {
-          console.error("오류가 발생했습니다: ", error);
-          alert("제출에 실패했습니다. 다시 시도해 주세요.");
-        });
+      try {
+        const requestData = {
+          reportUuid: reportUuid,
+          studentId: studentId,
+        };
 
-      // 원본 테이블에도 저장해줌
-      const request = assginmentCheck
-        ? customAxios.put("/api/report/update", updatedData)
-        : customAxios.post("/api/report/save", updatedData);
+        // 보고서 제출 테이블에 저장
+        await customAxios.post(
+          "/api/eclass/student/assignment/report/save",
+          requestData
+        );
+        alert("제출 완료했습니다!");
 
-      request.then(
-        console.log(assginmentCheck ? "수정 완료" : "새로 저장 완료")
-      );
+        // 원본 테이블에도 저장
+        if (assginmentCheck) {
+          await customAxios.put("/api/report/update", updatedData);
+          console.log("수정 완료");
+        } else {
+          await customAxios.post("/api/report/save", updatedData);
+          console.log("새로 저장 완료");
+        }
 
-      window.location.reload();
+        window.location.reload();
+      } catch (error) {
+        console.error("오류가 발생했습니다: ", error);
+        alert("제출에 실패했습니다. 다시 시도해 주세요.");
+      }
     }
   };
 
@@ -129,15 +131,15 @@ function StudentReportModal({
       <DialogContent
         dividers
         style={{
-          maxHeight: "80vh", // 최대 높이 설정
-          overflowY: "auto", // 내용이 넘치는 경우에만 스크롤 활성화
+          maxHeight: "80vh",
+          overflowY: "auto",
         }}
       >
         <Paper
           style={{
             width: "100%",
-            padding: "20px", // Paper에 패딩 추가
-            backgroundColor: "white", // 더 밝은 배경색으로 변경
+            padding: "20px",
+            backgroundColor: "white",
           }}
         >
           <Typography variant="h3" sx={{ marginBottom: "20px" }}>
@@ -154,8 +156,8 @@ function StudentReportModal({
               <Grid item xs={6} key={stepData.stepNum}>
                 <Paper
                   style={{
-                    padding: "20px", // Paper 내부에 패딩 추가
-                    boxShadow: "none", // 박스 그림자 제거
+                    padding: "20px",
+                    boxShadow: "none",
                     marginBottom: "30px",
                     backgroundColor: "#ffffff",
                   }}
@@ -187,7 +189,7 @@ function StudentReportModal({
           color="secondary"
           sx={{
             marginRight: 1,
-            fontFamily: "'Asap', sans-serif", // 버튼에 Asap 폰트 적용
+            fontFamily: "'Asap', sans-serif",
             fontWeight: "600",
             fontSize: "0.9rem",
             color: "grey",
@@ -203,7 +205,7 @@ function StudentReportModal({
           color="primary"
           sx={{
             marginRight: 1,
-            fontFamily: "'Asap', sans-serif", // 버튼에 Asap 폰트 적용
+            fontFamily: "'Asap', sans-serif",
             fontWeight: "600",
             fontSize: "0.9rem",
             color: "grey",
@@ -241,16 +243,16 @@ function RenderContent({ content, textBoxValue, setTextBoxValue, index }) {
     case "textBox":
       return (
         <TextField
-          value={textBoxValue || content.content} // 기존 내용을 기본값으로 사용
+          value={textBoxValue || content.content}
           onChange={handleTextChange}
           variant="outlined"
           fullWidth
           multiline
-          minRows={3} // Adjusted to fit within smaller cards
+          minRows={3}
           maxRows={5}
-          sx={{ marginBottom: "20px" }} // 간격 조정
+          sx={{ marginBottom: "20px" }}
           InputProps={{
-            readOnly: true, // 읽기 전용으로 설정
+            readOnly: true,
           }}
         />
       );
@@ -260,7 +262,7 @@ function RenderContent({ content, textBoxValue, setTextBoxValue, index }) {
           <img
             src={content.content}
             alt="Assignment Content"
-            style={{ width: content.x / 2, height: content.y / 2 }} // Scale down for smaller cards
+            style={{ width: content.x / 2, height: content.y / 2 }}
           />
         </div>
       );
