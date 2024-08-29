@@ -76,47 +76,37 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.addEventListener("click", handleClickOutside);
+    console.log("sdfsdfsfsdfsdf ");
+    const fetchEclassData = async () => {
+      try {
+        const StudentName = localStorage.getItem("username");
 
-    const StudentName = localStorage.getItem("username");
-    let list = [];
+        const eclassListResponse = await customAxios.get("/api/eclass/list");
+        const eclassList = eclassListResponse.data;
 
-    // 두 번째 요청: 전체 eclass 리스트 가져오기
-    customAxios
-      .get("/api/eclass/list")
-      .then((response) => {
-        list = response.data;
-        console.log("Eclass list :", response.data);
-      })
-      .catch((error) => {
-        console.error("Eclass 리스트 조회 에러:", error);
-      });
+        const studentEclassResponse = await customAxios.get(
+          `/api/eclass/student/eclassUuids?studentName=${StudentName}`
+        );
+        const uuidList = studentEclassResponse.data;
 
-    // 첫 번째 요청: 학생의 eClassUuid 리스트 가져오기
-    customAxios
-      .get(`/api/eclass/student/eclassUuids?studentName=${StudentName}`)
-      .then((response) => {
-        const uuidList = response.data;
-
+        console.log("Eclass list :", eclassList);
         console.log("uuid 리스트 : " + JSON.stringify(uuidList, null, 2));
 
-        // uuidList에 있는 eClassUuid와 일치하는 항목만 필터링
-        const filteredList = list.filter((item) =>
+        const filteredList = eclassList.filter((item) =>
           uuidList.includes(item.eClassUuid)
         );
-        // 필터링된 항목들로 row 데이터 생성
-        const rows = filteredList.map((item_1, index) =>
-          createData(index, item_1)
-        );
-        setRowData(rows);
-      })
-      .catch((error) => {
-        console.error("Eclass 리스트 조회 에러:", error);
-      });
 
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
+        const rows = await filteredList.map((item, index) =>
+          createData(index, item)
+        );
+
+        setRowData(rows);
+      } catch (error) {
+        console.error("Eclass 리스트 조회 에러:", error);
+      }
     };
+
+    fetchEclassData();
   }, []);
 
   const handleRowClick = (id, row) => {
@@ -125,63 +115,31 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
     console.log("Selected eClassUuid:", row.eClassUuid);
   };
 
-  const handleDelete = (row) => {
-    setRowData((prevRowData) =>
-      prevRowData.filter((prevRow) => prevRow.Num !== row.Num)
-    );
-    console.log(`Row with id ${row.Num} deleted`);
-  };
+  const joinEclass = async (row) => {
+    try {
+      const { eClassUuid, LectureData } = row;
+      const response = await customAxios.get(
+        `/api/eclass/status-check?uuid=${eClassUuid}`
+      );
+      const eClassStatus = response.data;
 
-  const handleClickOutside = (event) => {
-    if (!event.target.closest(".virtuoso-table")) {
-      setSelectedRow(null);
+      if (eClassStatus) {
+        navigate(`/LiveStudentPage/${eClassUuid}`, {
+          state: {
+            lectureDataUuid: LectureData,
+            row,
+            eClassUuid,
+          },
+        });
+      } else {
+        alert("수업 시작을 기다려주세요!");
+      }
+    } catch (error) {
+      console.error("Eclass 수업 존재 체크 에러:", error);
     }
   };
 
-  const joinEclass = (row, navigate) => {
-    console.log(
-      "Navigating to eClassPage with row:",
-      JSON.stringify(row, null, 2)
-    );
-
-    const eclassUuid = row.eClassUuid;
-    const lectureDataUuid = row.LectureData;
-    let eClassStatus = false;
-
-    console.log("[StudentEclassTable] 유유아이디 : " + eclassUuid);
-
-    // E-Class 조회해서 flag가 true인지 확인하기
-    customAxios
-      .get(`/api/eclass/status-check?uuid=${eclassUuid}`)
-      .then((response) => {
-        console.log("Eclass Status :", response.data);
-        eClassStatus = response.data;
-
-        if (eClassStatus) {
-          navigate(`/LiveStudentPage/${eclassUuid}`, {
-            state: {
-              lectureDataUuid,
-              row,
-              eclassUuid,
-            },
-          });
-        } else {
-          alert("수업 시작을 기다려주세요!");
-        }
-      })
-      .catch((error) => {
-        console.error("Eclass 수업 존재 체크 에러:", error);
-      });
-  };
-
-  function rowContent(
-    index,
-    row,
-    handleClick,
-    handleDelete,
-    selectedRow,
-    navigate
-  ) {
+  const rowContent = (index, row) => {
     return (
       <React.Fragment>
         {columns.map((column) => (
@@ -191,10 +149,10 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
             style={{ width: column.width }}
             sx={{
               backgroundColor: selectedRow === row.Num ? "#f0f0f0" : "inherit",
-              cursor: "pointer",
+              cursor: column.dataKey !== "Action" ? "pointer" : "default",
             }}
             onClick={() =>
-              column.dataKey !== "Action" && handleClick(row.Num, row)
+              column.dataKey !== "Action" && handleRowClick(row.Num, row)
             }
           >
             {column.dataKey === "Action" ? (
@@ -202,10 +160,10 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
                 <Button
                   variant="contained"
                   color="secondary"
-                  onClick={() => joinEclass(row, navigate)}
+                  onClick={() => joinEclass(row)}
                   sx={{
                     marginRight: 1,
-                    fontFamily: "'Asap', sans-serif", // 버튼에 Asap 폰트 적용
+                    fontFamily: "'Asap', sans-serif",
                     fontWeight: "600",
                     fontSize: "0.9rem",
                     color: "grey",
@@ -224,7 +182,7 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
         ))}
       </React.Fragment>
     );
-  }
+  };
 
   return (
     <div>
@@ -238,16 +196,7 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
         <TableVirtuoso
           data={rowData}
           components={VirtuosoTableComponents}
-          itemContent={(index, row) =>
-            rowContent(
-              index,
-              row,
-              handleRowClick,
-              handleDelete,
-              selectedRow,
-              navigate
-            )
-          }
+          itemContent={(index, row) => rowContent(index, row)}
           style={{ height: "580px" }}
         />
       </Paper>
