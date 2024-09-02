@@ -116,19 +116,24 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
   };
 
   const joinEclass = async (row) => {
+    console.log(
+      "[studentEclassTable] row 값 : " + JSON.stringify(row, null, 2)
+    );
+
     try {
-      const { eClassUuid, LectureData } = row;
       const response = await customAxios.get(
-        `/api/eclass/status-check?uuid=${eClassUuid}`
+        `/api/eclass/status-check?uuid=${row.eClassUuid}`
       );
       const eClassStatus = response.data;
 
+      console.log("[studentEclassTable] eclassUuid : " + row.eClassUuid);
+
       if (eClassStatus) {
-        navigate(`/LiveStudentPage/${eClassUuid}`, {
+        navigate(`/LiveStudentPage/${row.eClassUuid}`, {
           state: {
-            lectureDataUuid: LectureData,
+            lectureDataUuid: row.LectureData,
             row,
-            eClassUuid,
+            eClassUuid: row.eClassUuid,
           },
         });
       } else {

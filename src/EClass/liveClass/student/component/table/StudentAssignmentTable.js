@@ -106,10 +106,10 @@ export default function StudentAssignmentTable(props) {
           requestData
         );
 
-        console.log(
-          "Assignmnet Uuid 잘 나오나 확인 : " +
-            JSON.stringify(assignmentUuidResp, null, 2)
-        );
+        // console.log(
+        //   "Assignmnet Uuid 잘 나오나 확인 : " +
+        //     JSON.stringify(assignmentUuidResp, null, 2)
+        // );
 
         const assignmentResponse = await customAxios.get(
           `/api/assignment/getstep?uuid=${assignmentUuidResp.data}`

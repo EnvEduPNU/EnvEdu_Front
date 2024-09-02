@@ -17,8 +17,12 @@ export function StudentStepCompnent(props) {
   const [tableData, setTableData] = useState(props.data);
   const [socketEclassUuid, setSocketEclassUuid] = useState(null);
   const [assginmentCheck, setAssignmentCheck] = useState(false);
-  const [eclassUuid] = useState(props.eclassUuid);
+  const [eclassUuid, setEclassUuid] = useState(props.eclassUuid);
   const [studentId, setStudentId] = useState(null);
+  const [assignmentCheckMessage, setAssignmentCheckMessage] = useState();
+
+  let stompClient = null;
+  let assginmentStompClient = null;
 
   // WebSocket 연결 및 페이지 변경에 따른 처리
   useEffect(() => {
@@ -26,16 +30,16 @@ export function StudentStepCompnent(props) {
     const sock = new SockJS(
       `${process.env.REACT_APP_API_URL}/ws?token=${token}`
     );
-    const stompClient = Stomp.over(sock);
+    stompClient = Stomp.over(sock);
 
     stompClient.connect({}, function (frame) {
       console.log("Connected: " + frame);
       stompClient.subscribe("/topic/switchPage", function (message) {
         const parsedMessage = JSON.parse(message.body);
 
-        console.log(
-          "과제 공유 메시지 : " + JSON.stringify(parsedMessage.page, null, 2)
-        );
+        // console.log(
+        //   "과제 공유 메시지 : " + JSON.stringify(parsedMessage.page, null, 2)
+        // );
 
         setPage(parsedMessage.page);
         props.setPage(parsedMessage.page);
@@ -43,6 +47,21 @@ export function StudentStepCompnent(props) {
         props.setStepCount(parsedMessage.stepCount);
         setSocketEclassUuid(parsedMessage.lectureDataUuid);
       });
+    });
+
+    const socket = new SockJS(
+      `${process.env.REACT_APP_API_URL}/ws?token=${token}`
+    );
+    assginmentStompClient = Stomp.over(socket);
+
+    assginmentStompClient.connect({}, () => {
+      if (assignmentCheckMessage) {
+        assginmentStompClient.send(
+          "/app/assginment-status",
+          {},
+          JSON.stringify(assignmentCheckMessage)
+        );
+      }
     });
 
     return () => {
@@ -65,33 +84,34 @@ export function StudentStepCompnent(props) {
   // 과제 공유 성공시 응답 소켓 메서드
   const assginmentCheckStompClient = useCallback(
     (state) => {
-      const token = localStorage.getItem("access_token").replace("Bearer ", "");
-      const socket = new SockJS(
-        `${process.env.REACT_APP_API_URL}/ws?token=${token}`
-      );
-
       const message = {
         assginmentStatus: state,
         sessionId: props.sessionIdState,
       };
 
-      const stompClient = Stomp.over(socket);
-
-      stompClient.connect({}, () => {
-        stompClient.send("/app/assginment-status", {}, JSON.stringify(message));
-      });
+      setAssignmentCheckMessage(message);
     },
     [props.sessionIdState]
   );
 
+  // props 넘어오면 데이터 갱신
+  useEffect(() => {
+    setEclassUuid(props.eclassUuid);
+    setTableData(props.data);
+    setStepCount(props.stepCount);
+  }, [props]);
+
   // 학생 ID 및 테이블 데이터 가져오기
   useEffect(() => {
     const username = localStorage.getItem("username");
+    console.log(
+      "이클래스 유유아이디 : " + JSON.stringify(props.eclassUuid, null, 2)
+    );
 
     const fetchStudentId = async () => {
       try {
         const response = await customAxios.get(
-          `/api/student/getStudentId?username=${username}&uuid=${eclassUuid}`
+          `/api/student/getStudentId?username=${username}&uuid=${props.eclassUuid}`
         );
         setStudentId(response.data);
       } catch (error) {
@@ -102,10 +122,7 @@ export function StudentStepCompnent(props) {
     if (!studentId) {
       fetchStudentId();
     }
-
-    setTableData(props.data);
-    setStepCount(props.stepCount);
-  }, [props.data, props.stepCount, eclassUuid, studentId]);
+  }, [eclassUuid, studentId]);
 
   // // Page와 eClassUuid가 맞는지 여부를 메모이제이션
   // const shouldRenderAssign = useMemo(() => {

@@ -19,14 +19,6 @@ function StudentRenderAssign({
 
   useEffect(() => {
     console.log("stepCount : " + JSON.stringify(stepCount, null, 2));
-    console.log(
-      "학생 아이디 앞쪽에서는?? : " + JSON.stringify(studentId, null, 2)
-    );
-
-    console.log(
-      "[StudentRenderAssign] 테이블데이터 : " +
-        JSON.stringify(tableData, null, 2)
-    );
 
     const parseStepCount = parseInt(stepCount);
 
@@ -189,7 +181,7 @@ function StudentRenderAssign({
             <div>
               {stepData.contents.map((content, idx) => (
                 <RenderContent
-                  key={content.stepNum}
+                  key={`${stepData.stepNum}-${idx}`} // 고유한 key 설정
                   content={content}
                   textBoxValue={textBoxValues[stepData.stepNum]?.[idx] || ""}
                   setTextBoxValue={(id, text) =>
@@ -297,7 +289,7 @@ function renderElement(node) {
 
   return React.createElement(
     type,
-    { ...props, key },
+    { ...props, key: key || uuidv4() }, // 여기에서 key가 없으면 고유한 key를 생성합니다.
     Array.isArray(children)
       ? children.map(renderElement)
       : renderElement(children)

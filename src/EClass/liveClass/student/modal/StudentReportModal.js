@@ -74,15 +74,16 @@ function StudentReportModal({
       username: studentName,
       stepName: data.stepName,
       stepCount: data.stepCount,
-      contents: data.contents.map((item) => ({
+      contents: data.contents.map((item, index) => ({
         contentName: item.contentName,
         stepNum: item.stepNum,
-        contents: item.contents.map((contentItem, index) => {
+        contents: item.contents.map((contentItem, contentIndex) => {
           if (contentItem.type === "textBox") {
             return {
               ...contentItem,
               content:
-                textBoxValues[item.stepNum]?.[index] || contentItem.content,
+                textBoxValues[item.stepNum]?.[contentIndex] ||
+                contentItem.content,
             };
           }
           return contentItem;
@@ -165,7 +166,7 @@ function StudentReportModal({
                   <div>
                     {stepData.contents.map((content, idx) => (
                       <RenderContent
-                        key={content.stepNum}
+                        key={`${stepData.stepNum}-${idx}`} // 고유한 키 추가
                         content={content}
                         textBoxValue={
                           textBoxValues[stepData.stepNum]?.[idx] || ""
