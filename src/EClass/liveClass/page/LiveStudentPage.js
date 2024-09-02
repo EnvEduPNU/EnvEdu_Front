@@ -7,6 +7,9 @@ import StudentAssignmentTable from "../student/component/table/StudentAssignment
 import { StudentStepCompnent } from "../student/component/StudentStepCompnent";
 import { customAxios } from "../../../Common/CustomAxios";
 
+import SockJS from "sockjs-client";
+import Stomp from "stompjs";
+
 export const LiveStudentPage = () => {
   const sessionId = useRef("");
   const [sessionIdState, setSessionIdState] = useState();
@@ -21,6 +24,8 @@ export const LiveStudentPage = () => {
 
   const [reportTable, setReportTable] = useState([]);
   const [classProcess, setClassProcess] = useState(true);
+
+  let stompClients = null;
 
   const navigate = useNavigate();
 
@@ -49,16 +54,18 @@ export const LiveStudentPage = () => {
 
     const handleBeforeUnload = (event) => {
       if (sessionId.current) {
+        sendMessage(false);
         deleteSessionId(sessionId.current);
+        setSessionIdState("");
       }
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
 
     return () => {
+      sendMessage(false);
       deleteSessionId(sessionId.current);
       setSessionIdState("");
-
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, []);
@@ -66,10 +73,43 @@ export const LiveStudentPage = () => {
   useEffect(() => {
     if (!classProcess) {
       alert("수업이 종료되었습니다!");
+      sendMessage(false);
       navigate("/");
       window.location.reload();
     }
   }, [classProcess]);
+
+  // E-Class 나갈때 나감을 알려주는 소켓
+  useEffect(() => {
+    if (!stompClients) {
+      const token = localStorage.getItem("access_token").replace("Bearer ", "");
+      const sock = new SockJS(
+        `${process.env.REACT_APP_API_URL}/ws?token=${token}`
+      );
+      stompClients = Stomp.over(sock);
+
+      stompClients.connect({}, () => {}, onError);
+    }
+
+    function onError(error) {
+      console.error("STOMP 연결 에러:", error);
+      alert(
+        "웹소켓 연결에 실패했습니다. 네트워크 설정을 확인하거나 관리자에게 문의하세요."
+      );
+    }
+  }, []);
+
+  // 수업 상태 알려주는 소켓
+  const sendMessage = async (state) => {
+    const message = {
+      entered: state,
+    };
+    await stompClients.send(
+      "/app/student-entered",
+      {},
+      JSON.stringify(message)
+    );
+  };
 
   // 세션 ID를 DB에 등록하는 함수
   const registerSessionId = async (sessionId) => {

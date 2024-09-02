@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { TableVirtuoso } from "react-virtuoso";
 import {
   Table,
@@ -12,6 +12,8 @@ import {
 } from "@mui/material";
 import { customAxios } from "../../../../../../Common/CustomAxios";
 import { useNavigate } from "react-router-dom";
+import SockJS from "sockjs-client";
+import Stomp from "stompjs";
 
 const columns = [
   { label: "번호", dataKey: "Num", width: "10%" },
@@ -73,10 +75,44 @@ function fixedHeaderContent() {
 export default function StudentEclassTable({ setSelectedEClassUuid }) {
   const [selectedRow, setSelectedRow] = useState(null);
   const [rowData, setRowData] = useState([]);
+  const stompClientRef = useRef(null);
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("sdfsdfsfsdfsdf ");
+    if (!stompClientRef.current) {
+      const token = localStorage.getItem("access_token").replace("Bearer ", "");
+      const sock = new SockJS(
+        `${process.env.REACT_APP_API_URL}/ws?token=${token}`
+      );
+      stompClientRef.current = Stomp.over(sock);
+
+      stompClientRef.current.connect(
+        {},
+        () => {
+          console.log("STOMP 연결 성공");
+        },
+        onError
+      );
+    }
+
+    return () => {
+      if (stompClientRef.current) {
+        stompClientRef.current.disconnect(() => {
+          console.log("STOMP 연결 해제");
+        });
+      }
+    };
+
+    function onError(error) {
+      console.error("STOMP 연결 에러:", error);
+      alert(
+        "웹소켓 연결에 실패했습니다. 네트워크 설정을 확인하거나 관리자에게 문의하세요."
+      );
+    }
+  }, []);
+
+  useEffect(() => {
     const fetchEclassData = async () => {
       try {
         const StudentName = localStorage.getItem("username");
@@ -109,6 +145,21 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
     fetchEclassData();
   }, []);
 
+  const sendMessage = async (state) => {
+    if (stompClientRef.current && stompClientRef.current.connected) {
+      const message = {
+        entered: state,
+      };
+      await stompClientRef.current.send(
+        "/app/student-entered",
+        {},
+        JSON.stringify(message)
+      );
+    } else {
+      console.error("STOMP 연결이 활성화되어 있지 않습니다.");
+    }
+  };
+
   const handleRowClick = (id, row) => {
     setSelectedRow(id);
     setSelectedEClassUuid(row.eClassUuid);
@@ -126,9 +177,11 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
       );
       const eClassStatus = response.data;
 
-      console.log("[studentEclassTable] eclassUuid : " + row.eClassUuid);
-
       if (eClassStatus) {
+        sendMessage(true);
+
+        console.log("[studentEclassTable] eclassUuid : " + row.eClassUuid);
+
         navigate(`/LiveStudentPage/${row.eClassUuid}`, {
           state: {
             lectureDataUuid: row.LectureData,

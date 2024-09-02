@@ -248,7 +248,7 @@ export default function StudentAssignmentTable(props) {
   const [openModal, setOpenModal] = useState(false);
 
   const handleAssignmentReport = () => {
-    console.log("Assignment data:", JSON.stringify(allTableData, null, 2));
+    // console.log("Assignment data:", JSON.stringify(allTableData, null, 2));
     setOpenModal(true);
   };
 
