@@ -60,7 +60,7 @@ export const LiveTeacherPage = () => {
             console.log(
               "학생 상태 : " + JSON.stringify(parsedMessage, null, 2)
             );
-            setStudentState(parsedMessage.entered);
+            setStudentState(!studentState);
           });
         },
         onError
