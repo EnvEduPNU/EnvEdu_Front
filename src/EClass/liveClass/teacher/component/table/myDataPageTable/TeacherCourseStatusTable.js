@@ -77,7 +77,7 @@ export default function TeacherCourseStatusTable({
   };
 
   useEffect(() => {
-    console.log("반복? : " + JSON.stringify(sessionIds, null, 2));
+    // console.log("반복? : " + JSON.stringify(sessionIds, null, 2));
 
     const fetchStudents = async () => {
       const studentData = await Promise.all(

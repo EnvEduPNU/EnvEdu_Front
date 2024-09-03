@@ -154,7 +154,7 @@ function DefaultPageComponent() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        minHeight: "61vh",
+        minHeight: "66vh",
         margin: "0 10px 10vh 0",
         border: "1px solid grey",
       }}

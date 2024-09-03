@@ -2,51 +2,42 @@ import React, { useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Typography } from "@mui/material";
-import ProgressCircular from "../student/component/ProgressCircular";
 import StudentAssignmentTable from "../student/component/table/StudentAssignmentTable";
 import { StudentStepCompnent } from "../student/component/StudentStepCompnent";
 import { customAxios } from "../../../Common/CustomAxios";
-
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
+import TeacherReportTable from "../teacher/component/table/eclassPageTable/TeacherReportTable";
 
 export const LiveStudentPage = () => {
   const sessionId = useRef("");
   const [sessionIdState, setSessionIdState] = useState();
   const [finished, setFinished] = useState(false);
-
   const [tableData, setTableData] = useState([]);
   const [courseStep, setCourseStep] = useState();
   const [stepCount, setStepCount] = useState();
+  const [reportTable, setReportTable] = useState([]);
+  const [classProcess, setClassProcess] = useState(true);
+  const [page, setPage] = useState("defaultPage");
+  const [isVideoReady, setIsVideoReady] = useState(false);
 
   const location = useLocation();
   const { lectureDataUuid, row, eClassUuid } = location.state || {};
 
-  const [reportTable, setReportTable] = useState([]);
-  const [classProcess, setClassProcess] = useState(true);
-
-  let stompClients = useRef(null);
-
+  const stompClients = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     console.log(
-      "[LiveStudentPage] 이클래스 유유아이디 : " +
-        JSON.stringify(eClassUuid, null, 2)
+      "[LiveStudentPage] 이클래스 UUID: " + JSON.stringify(eClassUuid, null, 2)
     );
 
     const initializeSession = async () => {
       const newSessionId = uuidv4();
       const registeredSessionId = await registerSessionId(newSessionId);
 
-      if (registeredSessionId) {
-        sessionId.current = registeredSessionId;
-        setSessionIdState(registeredSessionId);
-      } else {
-        sessionId.current = newSessionId;
-        setSessionIdState(newSessionId);
-      }
-
+      sessionId.current = registeredSessionId || newSessionId;
+      setSessionIdState(sessionId.current);
       setFinished(true);
     };
 
@@ -55,7 +46,6 @@ export const LiveStudentPage = () => {
     const handleBeforeUnload = (event) => {
       sendMessage(false);
       setSessionIdState("");
-
       if (sessionId.current) {
         deleteSessionId(sessionId.current);
       }
@@ -80,7 +70,6 @@ export const LiveStudentPage = () => {
     }
   }, [classProcess]);
 
-  // E-Class 나갈때 나감을 알려주는 소켓
   useEffect(() => {
     if (!stompClients.current) {
       const token = localStorage.getItem("access_token").replace("Bearer ", "");
@@ -100,7 +89,6 @@ export const LiveStudentPage = () => {
     }
   }, []);
 
-  // 수업 상태 알려주는 소켓
   const sendMessage = async (state) => {
     const message = {
       entered: state,
@@ -112,7 +100,6 @@ export const LiveStudentPage = () => {
     );
   };
 
-  // 세션 ID를 DB에 등록하는 함수
   const registerSessionId = async (sessionId) => {
     try {
       const userName = localStorage.getItem("username");
@@ -125,26 +112,25 @@ export const LiveStudentPage = () => {
       return resp.data;
     } catch (error) {
       console.error("세션 ID 등록 중 오류 발생:", error);
-      return null; // 오류 발생 시 null 반환
+      return null;
     }
   };
 
-  // 세션 ID를 DB에서 삭제하는 함수
   const deleteSessionId = async (sessionId) => {
     try {
-      await customAxios.delete(`/api/sessions/delete-session/${sessionId}`);
+      const url = `${process.env.REACT_APP_API_URL}/api/sessions/delete-session/${sessionId}`;
+      const body = JSON.stringify({ sessionId: sessionId });
+
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(url, body);
+      } else {
+        await customAxios.delete(url);
+      }
+
       console.log("세션 ID 삭제됨:", sessionId);
     } catch (error) {
       console.error("세션 ID 삭제 중 오류 발생:", error);
     }
-  };
-
-  const [page, setPage] = useState("defaultPage");
-
-  const [isVideoReady, setIsVideoReady] = useState(false);
-
-  const handleCanPlay = () => {
-    setIsVideoReady(true);
   };
 
   useEffect(() => {
@@ -187,6 +173,7 @@ export const LiveStudentPage = () => {
           reportTable={reportTable}
           eclassUuid={eClassUuid}
         />
+        <TeacherReportTable selectedEClassUuid={eClassUuid} />
       </div>
     </div>
   );

@@ -50,6 +50,7 @@ export const LiveTeacherPage = () => {
       setSessionIds(sessionIds);
       console.log("참여한 학생 : ", JSON.stringify(sessionIds, null, 2));
     };
+    fetchSessionIds();
 
     if (!stompClients) {
       const token = localStorage.getItem("access_token").replace("Bearer ", "");
@@ -66,6 +67,8 @@ export const LiveTeacherPage = () => {
             console.log(
               "학생 상태 : " + JSON.stringify(parsedMessage, null, 2)
             );
+            // if (parsedMessage.entered === false) {
+            // }
 
             // 1초 지연 후 fetchSessionIds 호출
             setTimeout(() => {
