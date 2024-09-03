@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { Typography } from "@mui/material";
 import { customAxios } from "../../../Common/CustomAxios";
@@ -22,26 +22,28 @@ export const LiveTeacherPage = () => {
   const location = useLocation();
   const { lectureDataUuid, eClassName } = location.state || {};
 
-  const [studentState, setStudentState] = useState(false);
-
   let stompClients = null;
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchSessionIds = async () => {
+  const fetchSessionIds = async () => {
+    try {
       const response = await customAxios.get("/api/sessions/get-session-ids");
       const sessionIds = response.data;
       setSessionIds(sessionIds);
       console.log("참여한 학생 : ", JSON.stringify(sessionIds, null, 2));
-    };
+    } catch (error) {
+      console.error("세션 ID 가져오기 에러:", error);
+    }
+  };
 
+  useEffect(() => {
     const delayFetch = setTimeout(() => {
       fetchSessionIds();
     }, 1000); // 1초 (1000ms) 후에 fetchSessionIds 호출
 
     return () => clearTimeout(delayFetch); // 컴포넌트가 언마운트되거나 studentState가 변경될 때 기존 타이머를 클리어
-  }, [studentState]);
+  }, []);
 
   // 학생이 E-Class에 들어왔을때 받는 소켓
   useEffect(() => {
@@ -60,7 +62,7 @@ export const LiveTeacherPage = () => {
             console.log(
               "학생 상태 : " + JSON.stringify(parsedMessage, null, 2)
             );
-            setStudentState(!studentState);
+            fetchSessionIds(); // 소켓 메시지를 받으면 sessionIds를 갱신
           });
         },
         onError
@@ -83,8 +85,6 @@ export const LiveTeacherPage = () => {
       }
     };
   }, []);
-
-  // 소켓 하나 연결해 두고 학생 교실에 들어오는 것 구독 해서 소켓 받으면 fetchSessionIds useEffect 다시 돌리기
 
   const closeEclass = async () => {
     await customAxios
