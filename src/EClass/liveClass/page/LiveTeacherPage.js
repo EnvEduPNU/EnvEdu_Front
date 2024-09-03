@@ -18,35 +18,39 @@ export const LiveTeacherPage = () => {
   const [sessionIds, setSessionIds] = useState([]);
   const [assginmentShareCheck, setAssginmentShareCheck] = useState(false);
 
-  const { eClassUuid } = useParams(); // 경로 파라미터 받아오기
+  const { eClassUuid } = useParams();
   const location = useLocation();
   const { lectureDataUuid, eClassName } = location.state || {};
+
+  const [studentState, setStudentState] = useState();
 
   let stompClients = null;
 
   const navigate = useNavigate();
 
-  const fetchSessionIds = async () => {
-    try {
+  // useEffect(() => {
+  //   const fetchSessionIds = async () => {
+  //     const response = await customAxios.get("/api/sessions/get-session-ids");
+  //     const sessionIds = response.data;
+  //     setSessionIds(sessionIds);
+  //     console.log("참여한 학생 : ", JSON.stringify(sessionIds, null, 2));
+  //   };
+
+  //   const delayFetch = setTimeout(() => {
+  //     fetchSessionIds();
+  //   }, 1000);
+
+  //   return () => clearTimeout(delayFetch);
+  // }, [studentState]);
+
+  useEffect(() => {
+    const fetchSessionIds = async () => {
       const response = await customAxios.get("/api/sessions/get-session-ids");
       const sessionIds = response.data;
       setSessionIds(sessionIds);
       console.log("참여한 학생 : ", JSON.stringify(sessionIds, null, 2));
-    } catch (error) {
-      console.error("세션 ID 가져오기 에러:", error);
-    }
-  };
+    };
 
-  useEffect(() => {
-    const delayFetch = setTimeout(() => {
-      fetchSessionIds();
-    }, 1000); // 1초 (1000ms) 후에 fetchSessionIds 호출
-
-    return () => clearTimeout(delayFetch); // 컴포넌트가 언마운트되거나 studentState가 변경될 때 기존 타이머를 클리어
-  }, []);
-
-  // 학생이 E-Class에 들어왔을때 받는 소켓
-  useEffect(() => {
     if (!stompClients) {
       const token = localStorage.getItem("access_token").replace("Bearer ", "");
       const sock = new SockJS(
@@ -62,7 +66,11 @@ export const LiveTeacherPage = () => {
             console.log(
               "학생 상태 : " + JSON.stringify(parsedMessage, null, 2)
             );
-            fetchSessionIds(); // 소켓 메시지를 받으면 sessionIds를 갱신
+
+            // 1초 지연 후 fetchSessionIds 호출
+            setTimeout(() => {
+              fetchSessionIds();
+            }, 1000);
           });
         },
         onError
@@ -76,7 +84,6 @@ export const LiveTeacherPage = () => {
       );
     }
 
-    // Cleanup function to disconnect the socket
     return () => {
       if (stompClients) {
         stompClients.disconnect(() => {

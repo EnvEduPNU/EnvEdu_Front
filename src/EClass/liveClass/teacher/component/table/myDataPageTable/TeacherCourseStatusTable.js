@@ -40,9 +40,9 @@ const getStudent = async (sessionId) => {
     const response = await customAxios.get(
       `${process.env.REACT_APP_API_URL}/student?sessionId=${sessionId}`
     );
-    console.log(
-      "Fetched student data: " + JSON.stringify(response.data, null, 2)
-    );
+    // console.log(
+    //   "Fetched student data: " + JSON.stringify(response.data, null, 2)
+    // );
     return response.data.username;
   } catch (error) {
     console.error("Error fetching student data: ", error);

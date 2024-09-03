@@ -25,7 +25,7 @@ export const LiveStudentPage = () => {
   const [reportTable, setReportTable] = useState([]);
   const [classProcess, setClassProcess] = useState(true);
 
-  let stompClients = null;
+  let stompClients = useRef(null);
 
   const navigate = useNavigate();
 
@@ -81,14 +81,14 @@ export const LiveStudentPage = () => {
 
   // E-Class 나갈때 나감을 알려주는 소켓
   useEffect(() => {
-    if (!stompClients) {
+    if (!stompClients.current) {
       const token = localStorage.getItem("access_token").replace("Bearer ", "");
       const sock = new SockJS(
         `${process.env.REACT_APP_API_URL}/ws?token=${token}`
       );
-      stompClients = Stomp.over(sock);
+      stompClients.current = Stomp.over(sock);
 
-      stompClients.connect({}, () => {}, onError);
+      stompClients.current.connect({}, () => {}, onError);
     }
 
     function onError(error) {
@@ -104,7 +104,7 @@ export const LiveStudentPage = () => {
     const message = {
       entered: state,
     };
-    await stompClients.send(
+    await stompClients.current.send(
       "/app/student-entered",
       {},
       JSON.stringify(message)
