@@ -143,7 +143,7 @@ export default function TeacherAssignmentTable(props) {
       <Typography variant="h5" sx={{ margin: "20px 0 10px 0" }}>
         {`${tableData[0]?.Step || "수업자료가 없어요"}`}
       </Typography>
-      <Paper style={{ height: 300, width: "100%" }} className="virtuoso-table">
+      <Paper style={{ height: 230, width: "100%" }} className="virtuoso-table">
         <TableContainer component={Paper}>
           <Table stickyHeader>{fixedHeaderContent()}</Table>
         </TableContainer>
@@ -153,7 +153,7 @@ export default function TeacherAssignmentTable(props) {
           itemContent={(index, row) =>
             rowContent(index, row, handleRowClick, selectedRow)
           }
-          style={{ height: 250 }}
+          style={{ height: 180 }}
         />
       </Paper>
     </div>
