@@ -53,10 +53,11 @@ export const LiveStudentPage = () => {
     initializeSession();
 
     const handleBeforeUnload = (event) => {
+      sendMessage(false);
+      setSessionIdState("");
+
       if (sessionId.current) {
-        sendMessage(false);
         deleteSessionId(sessionId.current);
-        setSessionIdState("");
       }
     };
 
