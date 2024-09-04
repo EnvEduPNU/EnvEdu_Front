@@ -19,87 +19,99 @@ export function StudentStepCompnent(props) {
   const [assginmentCheck, setAssignmentCheck] = useState(false);
   const [eclassUuid, setEclassUuid] = useState(props.eclassUuid);
   const [studentId, setStudentId] = useState(null);
-  const [assignmentCheckMessage, setAssignmentCheckMessage] = useState();
+  const [assignmentCheckTime, setAssignmentCheckTime] = useState(false);
 
-  let stompClient = null;
-  let assginmentStompClient = null;
+  const [sessionId, setSessionId] = useState();
 
-  // WebSocket 연결 및 페이지 변경에 따른 처리
-  useEffect(() => {
-    const token = localStorage.getItem("access_token").replace("Bearer ", "");
-    const sock = new SockJS(
-      `${process.env.REACT_APP_API_URL}/ws?token=${token}`
-    );
-    stompClient = Stomp.over(sock);
-
-    stompClient.connect({}, function (frame) {
-      console.log("Connected: " + frame);
-      stompClient.subscribe("/topic/switchPage", function (message) {
-        const parsedMessage = JSON.parse(message.body);
-
-        // console.log(
-        //   "과제 공유 메시지 : " + JSON.stringify(parsedMessage.page, null, 2)
-        // );
-
-        setPage(parsedMessage.page);
-        props.setPage(parsedMessage.page);
-        setStepCount(parsedMessage.stepCount);
-        props.setStepCount(parsedMessage.stepCount);
-        setSocketEclassUuid(parsedMessage.lectureDataUuid);
-      });
-    });
-
-    const socket = new SockJS(
-      `${process.env.REACT_APP_API_URL}/ws?token=${token}`
-    );
-    assginmentStompClient = Stomp.over(socket);
-
-    assginmentStompClient.connect({}, () => {
-      if (assignmentCheckMessage) {
-        assginmentStompClient.send(
-          "/app/assginment-status",
-          {},
-          JSON.stringify(assignmentCheckMessage)
-        );
-      }
-    });
-
-    return () => {
-      stompClient.disconnect();
-      console.log("Disconnected");
-    };
-  }, []);
-
-  useEffect(() => {
-    const success = "success";
-    const failed = "failed";
-    if (page === "newPage") {
-      assginmentCheckStompClient(success);
-    }
-    if (props.stepCount !== stepCount) {
-      assginmentCheckStompClient(failed);
-    }
-  }, [props, page]);
-
-  // 과제 공유 성공시 응답 소켓 메서드
-  const assginmentCheckStompClient = useCallback(
-    (state) => {
-      const message = {
-        assginmentStatus: state,
-        sessionId: props.sessionIdState,
-      };
-
-      setAssignmentCheckMessage(message);
-    },
-    [props.sessionIdState]
-  );
+  const stompClient = useRef();
+  const assginmentStompClient = useRef();
 
   // props 넘어오면 데이터 갱신
   useEffect(() => {
     setEclassUuid(props.eclassUuid);
     setTableData(props.data);
     setStepCount(props.stepCount);
+    setSessionId(props.sessionIdState);
   }, [props]);
+
+  // WebSocket 연결 및 페이지 변경에 따른 처리
+  useEffect(() => {
+    const token = localStorage.getItem("access_token").replace("Bearer ", "");
+
+    if (props.sessionIdState) {
+      console.log("학생 세션 아이디1 : " + props.sessionIdState);
+
+      if (!stompClient.current) {
+        const sock = new SockJS(
+          `${process.env.REACT_APP_API_URL}/ws?token=${token}`
+        );
+        stompClient.current = Stomp.over(sock);
+
+        stompClient.current.connect({}, function (frame) {
+          console.log("Connected: " + frame);
+          stompClient.current.subscribe(
+            "/topic/switchPage",
+            function (message) {
+              const parsedMessage = JSON.parse(message.body);
+
+              setPage(parsedMessage.page);
+              props.setPage(parsedMessage.page);
+              setStepCount(parsedMessage.stepCount);
+              props.setStepCount(parsedMessage.stepCount);
+              setSocketEclassUuid(parsedMessage.lectureDataUuid);
+              assginmentCheckStompClient("success");
+            }
+          );
+        });
+      }
+    }
+
+    if (!assginmentStompClient.current) {
+      const socket = new SockJS(
+        `${process.env.REACT_APP_API_URL}/ws?token=${token}`
+      );
+      assginmentStompClient.current = Stomp.over(socket);
+
+      assginmentStompClient.current.connect({}, () => {});
+    }
+
+    // return () => {
+    //   stompClient.current.disconnect();
+    //   assginmentStompClient.current.disconnect();
+
+    //   console.log("Disconnected");
+    // };
+  }, [props.sessionIdState]);
+
+  // useEffect(() => {
+  //   const success = "success";
+  //   const failed = "failed";
+  //   if (page === "newPage") {
+  //     assginmentCheckStompClient(success);
+  //   }
+  //   if (props.stepCount !== stepCount) {
+  //     assginmentCheckStompClient(failed);
+  //   }
+  // }, [props, page, assignmentCheckTime]);
+
+  // 과제 공유 성공시 응답 소켓 메서드
+  const assginmentCheckStompClient = (state) => {
+    const message = {
+      assginmentStatus: state,
+      sessionId: props.sessionIdState,
+      assginmentShared: true,
+      timestamp: new Date().toLocaleString("ko-KR", { timeZone: "Asia/Seoul" }),
+    };
+
+    if (assginmentStompClient.current) {
+      console.log("공유 성공 보내기");
+      assginmentStompClient.current.send(
+        "/app/assginment-status",
+        {},
+        JSON.stringify(message)
+      );
+    }
+  };
 
   // 학생 ID 및 테이블 데이터 가져오기
   useEffect(() => {

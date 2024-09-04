@@ -5,9 +5,9 @@ import { Typography } from "@mui/material";
 import StudentAssignmentTable from "../student/component/table/StudentAssignmentTable";
 import { StudentStepCompnent } from "../student/component/StudentStepCompnent";
 import { customAxios } from "../../../Common/CustomAxios";
+import TeacherReportTable from "../teacher/component/table/eclassPageTable/TeacherReportTable";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
-import TeacherReportTable from "../teacher/component/table/eclassPageTable/TeacherReportTable";
 
 export const LiveStudentPage = () => {
   const sessionId = useRef("");
@@ -27,49 +27,7 @@ export const LiveStudentPage = () => {
   const stompClients = useRef(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    console.log(
-      "[LiveStudentPage] 이클래스 UUID: " + JSON.stringify(eClassUuid, null, 2)
-    );
-
-    const initializeSession = async () => {
-      const newSessionId = uuidv4();
-      const registeredSessionId = await registerSessionId(newSessionId);
-
-      sessionId.current = registeredSessionId || newSessionId;
-      setSessionIdState(sessionId.current);
-      setFinished(true);
-    };
-
-    initializeSession();
-
-    const handleBeforeUnload = (event) => {
-      sendMessage(false);
-      setSessionIdState("");
-      if (sessionId.current) {
-        deleteSessionId(sessionId.current);
-      }
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      sendMessage(false);
-      deleteSessionId(sessionId.current);
-      setSessionIdState("");
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!classProcess) {
-      alert("수업이 종료되었습니다!");
-      sendMessage(false);
-      navigate("/");
-      window.location.reload();
-    }
-  }, [classProcess]);
-
+  // stompClients 커넥션 생성 훅
   useEffect(() => {
     if (!stompClients.current) {
       const token = localStorage.getItem("access_token").replace("Bearer ", "");
@@ -89,16 +47,53 @@ export const LiveStudentPage = () => {
     }
   }, []);
 
-  const sendMessage = async (state) => {
-    const message = {
-      entered: state,
-    };
-    await stompClients.current.send(
-      "/app/student-entered",
-      {},
-      JSON.stringify(message)
+  // 각 학생의 E-Class에 대한 Session Id 생성 훅
+  useEffect(() => {
+    console.log(
+      "[LiveStudentPage] 이클래스 UUID: " + JSON.stringify(eClassUuid, null, 2)
     );
-  };
+
+    const initializeSession = async () => {
+      const newSessionId = uuidv4();
+      const registeredSessionId = await registerSessionId(newSessionId);
+
+      sessionId.current = registeredSessionId || newSessionId;
+      setSessionIdState(sessionId.current);
+      setFinished(true);
+      sendMessage(true);
+    };
+
+    initializeSession();
+
+    const handleBeforeUnload = (event) => {
+      sendMessage(false);
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      sendMessage(false);
+      // deleteSessionId(sessionId.current);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
+
+  // 수업 종료 훅
+  useEffect(() => {
+    if (!classProcess) {
+      alert("수업이 종료되었습니다!");
+      sendMessage(false);
+      navigate("/");
+      window.location.reload();
+    }
+  }, [classProcess]);
+
+  // 화면 공유 아닐때 Default Page 설정 훅
+  useEffect(() => {
+    if (!isVideoReady) {
+      setPage("defaultPage");
+    }
+  }, [isVideoReady, setPage]);
 
   const registerSessionId = async (sessionId) => {
     try {
@@ -116,28 +111,32 @@ export const LiveStudentPage = () => {
     }
   };
 
-  const deleteSessionId = async (sessionId) => {
-    try {
-      const url = `${process.env.REACT_APP_API_URL}/api/sessions/delete-session/${sessionId}`;
-      const body = JSON.stringify({ sessionId: sessionId });
-
-      if (navigator.sendBeacon) {
-        navigator.sendBeacon(url, body);
-      } else {
-        await customAxios.delete(url);
-      }
-
-      console.log("세션 ID 삭제됨:", sessionId);
-    } catch (error) {
-      console.error("세션 ID 삭제 중 오류 발생:", error);
+  const sendMessage = async (state) => {
+    const message = {
+      entered: state,
+      sessionId: sessionId.current,
+    };
+    if (stompClients) {
+      await stompClients.current.send(
+        "/app/student-entered",
+        {},
+        JSON.stringify(message)
+      );
     }
   };
 
-  useEffect(() => {
-    if (!isVideoReady) {
-      setPage("defaultPage");
-    }
-  }, [isVideoReady, setPage]);
+  // const deleteSessionId = async (sessionId) => {
+  //   try {
+  //     const url = `${process.env.REACT_APP_API_URL}/api/sessions/delete-session/${sessionId}`;
+  //     const body = JSON.stringify({ sessionId: sessionId });
+
+  //     await customAxios.delete(url, body);
+
+  //     console.log("세션 ID 삭제됨:", sessionId);
+  //   } catch (error) {
+  //     console.error("세션 ID 삭제 중 오류 발생:", error);
+  //   }
+  // };
 
   return (
     <div style={{ display: "flex", margin: "0 20vh" }}>

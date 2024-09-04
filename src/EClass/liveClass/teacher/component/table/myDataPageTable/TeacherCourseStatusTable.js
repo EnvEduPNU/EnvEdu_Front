@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import {
   Table,
@@ -18,8 +18,8 @@ import { customAxios } from "../../../../../../Common/CustomAxios";
 import ReportViewModal from "../../../modal/ReportViewModal";
 
 function createData(
-  name,
-  sessionId,
+  name = "noName",
+  sessionId = "noId",
   shared = false,
   assginmentShared = false,
   assginmentSubmit = false,
@@ -64,11 +64,16 @@ export default function TeacherCourseStatusTable({
   const [reportData, setReportData] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const [isAssginShared, setIsAssginShared] = useState(false);
+
+  const selectedReport = useRef();
+
   const updateShareStatus = useLiveClassPartStore(
     (state) => state.updateShareStatus
   );
 
-  const handleOpenModal = () => {
+  const handleOpenModal = (name) => {
+    selectedReport.current = name;
     setIsModalOpen(true);
   };
 
@@ -77,8 +82,6 @@ export default function TeacherCourseStatusTable({
   };
 
   useEffect(() => {
-    // console.log("반복? : " + JSON.stringify(sessionIds, null, 2));
-
     const fetchStudents = async () => {
       const studentData = await Promise.all(
         sessionData.map((session) => getStudent(session.id))
@@ -101,10 +104,11 @@ export default function TeacherCourseStatusTable({
   }, [stepCount, sessionData]);
 
   useEffect(() => {
-    if (assginmentShareCheck) {
+    // 학생 정보가 모두 설정된 후에 sendStudentData 실행
+    if (students.length > 0) {
       sendStudentData();
     }
-  }, [assginmentShareCheck]);
+  }, [students, assginmentShareCheck]);
 
   const sendStudentData = async () => {
     try {
@@ -113,7 +117,7 @@ export default function TeacherCourseStatusTable({
           studentData: students,
           eclassUuid: eclassUuid,
         };
-        console.log("확인 : " + JSON.stringify(requestData, null, 2));
+        // console.log("확인 : " + JSON.stringify(requestData, null, 2));
 
         const respCheckList = await customAxios.post(
           "/api/eclass/student/assignment/getCheckList",
@@ -125,34 +129,52 @@ export default function TeacherCourseStatusTable({
           requestData
         );
 
-        if (respReportUuid.data !== "") {
-          const respReport = await customAxios.get(
-            `/api/report/getstep?uuid=${respReportUuid.data}`
+        // console.log(
+        //   "respReportUuid.data : " +
+        //     JSON.stringify(respReportUuid.data, null, 2)
+        // );
+        if (Array.isArray(respReportUuid.data)) {
+          // null 또는 빈 값을 필터링하여 제거
+          const filteredReportUuid = respReportUuid.data.filter(
+            (uuid) => uuid !== null && uuid !== ""
           );
 
-          setReportData(respReport.data);
+          if (filteredReportUuid.length > 0) {
+            const respReport = await customAxios.post(
+              "/api/report/getstep",
+              filteredReportUuid // 필터링된 배열을 전달
+            );
+            // console.log(
+            //   "보고서 데이터 : " + JSON.stringify(respReport.data, null, 2)
+            // );
+
+            if (respReport.data && respReport.data.length > 0) {
+              setReportData(respReport.data);
+            }
+          } else {
+            console.warn("필터링 후 유효한 UUID가 없습니다.");
+          }
         }
 
+        setIsAssginShared(false);
+
         setStudentStepFlag(respCheckList.data);
-        console.log("Assignment status:", respCheckList.data);
+        // console.log("Assignment status:", respCheckList.data);
       }
     } catch (error) {
       console.error("Error sending data to server:", error);
     }
   };
 
-  Row.propTypes = {
-    row: PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      sessionId: PropTypes.string.isRequired,
-      shared: PropTypes.bool.isRequired,
-      assginmentShared: PropTypes.bool.isRequired,
-      assginmentSubmit: PropTypes.bool.isRequired,
-      reportSubmit: PropTypes.bool.isRequired,
-    }).isRequired,
-  };
+  const Row = ({ row, isMatch, reportData }) => {
+    // console.log(" 학생 상태 리스트 : " + JSON.stringify(row, null, 2));
 
-  function Row({ row, isMatch, reportData }) {
+    const report = reportData.filter((data) => {
+      return data.username === row.name;
+    });
+
+    // console.log("정제된건? : " + JSON.stringify(report, null, 2));
+
     return (
       <TableRow sx={{ height: 50 }}>
         <TableCell component="th" scope="row">
@@ -166,7 +188,11 @@ export default function TeacherCourseStatusTable({
           )}
         </TableCell>
         <TableCell align="center">
-          {row.assginmentShared ? (
+          {assginmentShareCheck?.some(
+            (assign) =>
+              assign.sessionId === row.sessionId &&
+              assign.assginmentShared === true
+          ) ? (
             <CheckCircleIcon sx={{ color: "blue" }} />
           ) : (
             <CancelIcon sx={{ color: "red" }} />
@@ -180,9 +206,9 @@ export default function TeacherCourseStatusTable({
           )}
         </TableCell>
         <TableCell align="center">
-          {reportData ? (
+          {report[0]?.username === row.name ? (
             <Button
-              onClick={handleOpenModal}
+              onClick={() => handleOpenModal(row.name)}
               sx={{
                 width: "3%",
                 marginRight: 1,
@@ -203,7 +229,17 @@ export default function TeacherCourseStatusTable({
         </TableCell>
       </TableRow>
     );
-  }
+  };
+  Row.propTypes = {
+    row: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      sessionId: PropTypes.string.isRequired,
+      shared: PropTypes.bool.isRequired,
+      assginmentShared: PropTypes.bool.isRequired,
+      assginmentSubmit: PropTypes.bool.isRequired,
+      reportSubmit: PropTypes.bool.isRequired,
+    }).isRequired,
+  };
 
   const rows = sessionData.map((session, index) =>
     createData(
@@ -249,13 +285,15 @@ export default function TeacherCourseStatusTable({
               }
 
               return (
-                <Row
-                  key={row.sessionId}
-                  row={row}
-                  index={index}
-                  isMatch={stepValue}
-                  reportData={reportData}
-                />
+                reportData && (
+                  <Row
+                    key={row.sessionId || index} // 고유한 key로 설정
+                    row={row}
+                    index={index}
+                    isMatch={stepValue}
+                    reportData={reportData}
+                  />
+                )
               );
             })}
 
@@ -264,11 +302,15 @@ export default function TeacherCourseStatusTable({
         </Table>
       </TableContainer>
 
-      <ReportViewModal
-        open={isModalOpen}
-        onClose={handleCloseModal}
-        tableData={reportData}
-      />
+      {isModalOpen && (
+        <ReportViewModal
+          open={isModalOpen}
+          onClose={handleCloseModal}
+          tableData={reportData.filter(
+            (data) => data.username === selectedReport.current
+          )}
+        />
+      )}
     </div>
   );
 }

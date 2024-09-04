@@ -16,32 +16,15 @@ export const LiveTeacherPage = () => {
   const [courseStep, setCourseStep] = useState();
   const [stepCount, setStepCount] = useState();
   const [sessionIds, setSessionIds] = useState([]);
-  const [assginmentShareCheck, setAssginmentShareCheck] = useState(false);
+  const [assginmentShareCheck, setAssginmentShareCheck] = useState([]);
 
   const { eClassUuid } = useParams();
   const location = useLocation();
   const { lectureDataUuid, eClassName } = location.state || {};
 
-  const [studentState, setStudentState] = useState();
-
   let stompClients = null;
 
   const navigate = useNavigate();
-
-  // useEffect(() => {
-  //   const fetchSessionIds = async () => {
-  //     const response = await customAxios.get("/api/sessions/get-session-ids");
-  //     const sessionIds = response.data;
-  //     setSessionIds(sessionIds);
-  //     console.log("참여한 학생 : ", JSON.stringify(sessionIds, null, 2));
-  //   };
-
-  //   const delayFetch = setTimeout(() => {
-  //     fetchSessionIds();
-  //   }, 1000);
-
-  //   return () => clearTimeout(delayFetch);
-  // }, [studentState]);
 
   useEffect(() => {
     const fetchSessionIds = async () => {
@@ -151,10 +134,12 @@ export const LiveTeacherPage = () => {
             )}
           </div>
         )}
+        {/* 과제 공유/중지 버튼 */}
         <TeacherStepShareButton
           stepCount={stepCount}
           lectureDataUuid={lectureDataUuid}
           sharedScreenState={sharedScreenState}
+          assginmentShareCheck={assginmentShareCheck}
           setAssginmentShareCheck={setAssginmentShareCheck}
         />
         <button
@@ -177,12 +162,13 @@ export const LiveTeacherPage = () => {
       </div>
 
       {/* [오른쪽 블럭] 수업 Step 테이블, 수업 상태 테이블 */}
-      <div style={{ width: "40%", marginRight: "30px" }}>
+      <div style={{ width: "40%", marginRight: "30px", height: "65vh" }}>
         <TeacherAssignmentTable
           setCourseStep={setCourseStep}
           setTableData={setTableData}
           lectureDataUuid={lectureDataUuid}
           setStepCount={setStepCount}
+          setAssginmentShareCheck={setAssginmentShareCheck}
         />
         <TeacherCourseStatusTable
           stepCount={stepCount}

@@ -53,4 +53,9 @@ export const useLiveClassPartStore = create((set, get) => ({
     })),
   hasSessionId: (sessionId) =>
     get().sessionIds.some((session) => session.id === sessionId),
+
+  // 세션 아이디로 데이터를 가져오는 함수
+  getSessionById: (sessionId) => {
+    return get().sessionIds.find((session) => session.id === sessionId) || null;
+  },
 }));

@@ -112,6 +112,7 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
     }
   }, []);
 
+  // E-Class 조회 훅
   useEffect(() => {
     const fetchEclassData = async () => {
       try {
@@ -145,21 +146,6 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
     fetchEclassData();
   }, []);
 
-  const sendMessage = async (state) => {
-    if (stompClientRef.current && stompClientRef.current.connected) {
-      const message = {
-        entered: state,
-      };
-      await stompClientRef.current.send(
-        "/app/student-entered",
-        {},
-        JSON.stringify(message)
-      );
-    } else {
-      console.error("STOMP 연결이 활성화되어 있지 않습니다.");
-    }
-  };
-
   const handleRowClick = (id, row) => {
     setSelectedRow(id);
     setSelectedEClassUuid(row.eClassUuid);
@@ -171,6 +157,7 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
       "[studentEclassTable] row 값 : " + JSON.stringify(row, null, 2)
     );
 
+    // 수업이 교사에 의해서 열렸는지 닫혔는지 확인
     try {
       const response = await customAxios.get(
         `/api/eclass/status-check?uuid=${row.eClassUuid}`
@@ -178,8 +165,6 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
       const eClassStatus = response.data;
 
       if (eClassStatus) {
-        sendMessage(true);
-
         console.log("[studentEclassTable] eclassUuid : " + row.eClassUuid);
 
         navigate(`/LiveStudentPage/${row.eClassUuid}`, {

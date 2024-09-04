@@ -130,6 +130,7 @@ export default function TeacherAssignmentTable(props) {
       .filter((data) => data.contents.length > 0);
 
     props.setTableData(filteredTableData);
+    props.setAssginmentShareCheck(null);
   };
 
   const handleClickOutside = (event) => {

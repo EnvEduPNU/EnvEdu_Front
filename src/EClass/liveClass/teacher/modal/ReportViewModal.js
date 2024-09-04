@@ -15,46 +15,11 @@ import html2canvas from "html2canvas";
 function ReportViewModal({ open, onClose, tableData }) {
   const [data, setData] = useState([]);
 
+  console.log("테이블 데이터 : " + JSON.stringify(tableData, null, 2));
+
   useEffect(() => {
-    if (tableData && tableData.length > 0) {
-      setData(tableData.flatMap((data) => data.contents));
-    }
+    setData(tableData[0]?.contents);
   }, [tableData]);
-
-  if (!tableData || tableData.length === 0) {
-    return null;
-  }
-
-  const handleDownloadPdf = async () => {
-    const input = document.getElementById("report-content");
-
-    // html2canvas 옵션 설정
-    const canvas = await html2canvas(input, {
-      scale: 3, // 캔버스 스케일 조정으로 화질 개선
-    });
-
-    const imgData = canvas.toDataURL("image/png");
-    const pdf = new jsPDF("p", "mm", "a4");
-
-    const imgWidth = 210; // A4 폭(mm)
-    const pageHeight = 297; // A4 높이(mm)
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-    let heightLeft = imgHeight;
-    let position = 0;
-
-    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
-
-    while (heightLeft >= 0) {
-      position = heightLeft - imgHeight;
-      pdf.addPage();
-      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-    }
-
-    pdf.save("report.pdf");
-  };
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="lg">
@@ -81,22 +46,26 @@ function ReportViewModal({ open, onClose, tableData }) {
             variant="h6"
             sx={{ marginBottom: "40px", textAlign: "right" }}
           >
-            {tableData[0]?.username}
+            {tableData[0]?.username} {/* localStorage의 username을 보여줌 */}
           </Typography>
           <Grid container spacing={3}>
-            {data.map((stepData) => (
-              <Grid item xs={6} key={stepData.stepNum}>
+            {data.map((stepData, stepIndex) => (
+              <Grid item xs={6} key={stepData.stepNum || stepIndex}>
                 <Paper
                   style={{
-                    padding: "20px", // Paper 내부에 패딩 추가
-                    boxShadow: "none", // 박스 그림자 제거
+                    padding: "20px",
+                    boxShadow: "none",
                     marginBottom: "30px",
                     backgroundColor: "#ffffff",
                   }}
                 >
                   <div>
-                    {stepData.contents.map((content, idx) => (
-                      <RenderContent key={idx} content={content} index={idx} />
+                    {stepData.contents.map((content, contentIndex) => (
+                      <RenderContent
+                        key={contentIndex} // 고유한 key 할당
+                        content={content}
+                        index={contentIndex}
+                      />
                     ))}
                   </div>
                 </Paper>
@@ -197,5 +166,36 @@ function renderElement(node) {
       : renderElement(children)
   );
 }
+
+const handleDownloadPdf = async () => {
+  const input = document.getElementById("report-content");
+
+  // html2canvas 옵션 설정
+  const canvas = await html2canvas(input, {
+    scale: 3, // 캔버스 스케일 조정으로 화질 개선
+  });
+
+  const imgData = canvas.toDataURL("image/png");
+  const pdf = new jsPDF("p", "mm", "a4");
+
+  const imgWidth = 210; // A4 폭(mm)
+  const pageHeight = 297; // A4 높이(mm)
+  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+  let heightLeft = imgHeight;
+  let position = 0;
+
+  pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+  heightLeft -= pageHeight;
+
+  while (heightLeft >= 0) {
+    position = heightLeft - imgHeight;
+    pdf.addPage();
+    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+  }
+
+  pdf.save("report.pdf");
+};
 
 export default ReportViewModal;
