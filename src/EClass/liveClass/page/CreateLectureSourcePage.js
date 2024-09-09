@@ -12,6 +12,7 @@ import "./CreateLectureSourcePage.scss"; // 스타일을 위한 SCSS 파일 임�
 export const CreateLectureSourcePage = (props) => {
   const {
     stepCount: initialStepCount,
+    stepContents,
     summary,
     lectureName: initialLectureName,
     lectureSummary,
@@ -22,32 +23,24 @@ export const CreateLectureSourcePage = (props) => {
   const [activeStep, setActiveStep] = useState(1);
   const [stepCount, setStepCount] = useState(initialStepCount); // stepCount 상태 관리
   const [lectureName, setLectureName] = useState(initialLectureName || "");
-  const [stepperStepName, setStepperStepName] = useState([]);
+  const [stepperStepName, setStepperStepName] = useState(stepContents || []);
   const [isEditingLectureName, setIsEditingLectureName] = useState(false); // 수정 모드 상태
-
-  const { contents, clearContents, setContents, updateContent } =
+  const { contents, addContent, updateContent, clearContents } =
     useCreateLectureSourceStore();
 
-  // 기본 step 데이터 형식
-  const defaultStepData = {
-    stepNum: 1,
-    contentName: "Step 1",
-    contents: [{ type: "title", content: "default Name" }],
-  };
+  // const { contents, clearContents, setContents, updateContent } =
+  //   useCreateLectureSourceStore();
 
   // props.lectureName이 변경될 때마다 lectureName 상태를 업데이트
   useEffect(() => {
+    // console.log(
+    //   "넘어오는 데이터 확인 : " + JSON.stringify(stepContents, null, 2)
+    // );
+
     if (initialLectureName !== undefined) {
       setLectureName(initialLectureName);
     }
   }, [initialLectureName]);
-
-  useEffect(() => {
-    console.log(
-      "스테퍼스텝 네임 어떻게 되나 보자??? : " +
-        JSON.stringify(stepperStepName, null, 2)
-    );
-  }, [stepperStepName]);
 
   const handleLectureNameChange = (event) => {
     setLectureName(event.target.value);
@@ -103,7 +96,7 @@ export const CreateLectureSourcePage = (props) => {
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
     } else {
       try {
-        if (contents) {
+        if (stepperStepName) {
           const imageUrlArray = [];
 
           for (const content of contents) {
@@ -143,7 +136,7 @@ export const CreateLectureSourcePage = (props) => {
             }
           }
 
-          setContents(contents);
+          // setContents(stepperStepName);
 
           console.log(
             "Collected Image URLs:",
@@ -182,8 +175,8 @@ export const CreateLectureSourcePage = (props) => {
               timestamp: moment()
                 .tz("Asia/Seoul")
                 .format("YYYY-MM-DDTHH:mm:ssZ"),
-              stepName: contents[0].stepName,
-              stepCount: stepCount,
+              stepName: lectureName,
+              stepCount: stepCount - 1,
               contents: contents.map((content) => ({
                 stepNum: content.stepNum,
                 contentName: content.contentName,
@@ -231,8 +224,8 @@ export const CreateLectureSourcePage = (props) => {
               timestamp: moment()
                 .tz("Asia/Seoul")
                 .format("YYYY-MM-DDTHH:mm:ssZ"),
-              stepName: contents[0].stepName,
-              stepCount: stepCount,
+              stepName: lectureName,
+              stepCount: stepCount - 1,
               contents: contents.map((content) => ({
                 stepNum: content.stepNum,
                 contentName: content.contentName,
@@ -281,7 +274,20 @@ export const CreateLectureSourcePage = (props) => {
             }
           } else {
             console.log("처음 저장 : " + JSON.stringify(payload, null, 2));
-            await customAxios.post("/api/steps/saveLectureContent", payload);
+
+            if (window.confirm("저장하시겠습니까?")) {
+              try {
+                await customAxios.post(
+                  "/api/steps/saveLectureContent",
+                  payload
+                );
+              } catch (error) {
+                console.error("저장 요청 실패:", error);
+                alert("저장 요청에 실패했습니다.");
+              }
+            } else {
+              console.log("사용자가 저장을 취소했습니다.");
+            }
 
             alert("저장 요청이 완료되었습니다.");
           }
@@ -296,19 +302,19 @@ export const CreateLectureSourcePage = (props) => {
     }
   };
 
-  useEffect(() => {
-    if (props.stepContents) {
-      console.log(
-        "넘어와서 컨텐츠 확인 : " + JSON.stringify(props.stepContents, null, 2)
-      );
+  // useEffect(() => {
+  //   if (props.stepContents) {
+  //     console.log(
+  //       "넘어와서 컨텐츠 확인 : " + JSON.stringify(props.stepContents, null, 2)
+  //     );
 
-      setContents(props.stepContents);
-    }
+  //     setContents(props.stepContents);
+  //   }
 
-    return () => {
-      clearContents();
-    };
-  }, [clearContents, setContents, props.stepContents]);
+  //   return () => {
+  //     clearContents();
+  //   };
+  // }, [clearContents, setContents, props.stepContents]);
 
   const handleBackClick = () => {
     console.log("뒤로가기 버튼 클릭됨");
@@ -385,7 +391,7 @@ export const CreateLectureSourcePage = (props) => {
               setStepCount={setStepCount} // stepCount를 업데이트할 수 있도록 함수 전달
               setActiveStep={setActiveStep}
               activeStep={activeStep}
-              contents={contents}
+              contents={stepperStepName}
               stepperStepName={stepperStepName}
               setStepperStepName={setStepperStepName}
               lectureName={lectureName}

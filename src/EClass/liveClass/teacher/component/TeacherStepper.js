@@ -40,12 +40,12 @@ export default function TeacherStepper({
     ]);
   }, [lectureName, stepCount]);
 
-  // 처음 마운트될 때 addStep 한 번 실행
+  // 처음 마운트될 때 stepperStepName이 비어 있을 경우만 addStep 한 번 실행
   useEffect(() => {
-    if (steps.length === 0) {
+    if (stepperStepName.length === 0) {
       addStep();
     }
-  }, []);
+  }, [stepperStepName]);
 
   useEffect(() => {
     if (lectureName) {

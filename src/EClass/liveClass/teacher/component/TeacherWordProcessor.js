@@ -103,87 +103,81 @@ export default function TeacherWordProcessor({
   const [isEditing, setIsEditing] = useState(false);
   const [addTableFlag, setAddTableFlag] = useState(false);
 
+  const [isUpdated, setIsUpdated] = useState(false); // 첫 번째 useEffect 완료 상태
+
   const quillRef = useRef(null);
 
+  // 첫 번째 useEffect: stepperStepName 배열을 업데이트
   useEffect(() => {
-    imageFile = null;
+    if (stepperStepName && stepperStepName.length > 0) {
+      stepperStepName.forEach((step, index) => {
+        updateContent(index, step); // 각 step을 updateContent로 업데이트
+      });
+      setIsUpdated(true); // 업데이트 완료 후 isUpdated를 true로 설정
+    }
+  }, [stepperStepName, activeStep]);
 
-    console.log(
-      "[TeacherWordProcessor] stepperStepName : " +
-        JSON.stringify(stepperStepName, null, 2)
-    );
+  // 두 번째 useEffect: isUpdated가 true일 때 실행
+  useEffect(() => {
+    if (isUpdated) {
+      imageFile = null;
 
-    // activeStep이 변경될 때마다 localContents를 초기화(맨처음 스텝 만들때)
-    setLocalContents([]);
-    setContentName("");
-    setValue("");
-    setIsEditing(false);
-    setAddTableFlag(false);
+      console.log(
+        "[TeacherWordProcessor] stepperStepName : " +
+          JSON.stringify(stepperStepName, null, 2)
+      );
 
-    // setStepperStepName(contents);
+      const stepNumbers = contents.map((contentss) => contentss.stepNum);
 
-    const stepNumbers = stepperStepName.map((contentss) => contentss.stepNum);
-    console.log("step 넘버들: " + stepNumbers);
-    console.log("activeStep : " + activeStep);
+      console.log("step 넘버들: " + stepNumbers);
+      console.log("activeStep : " + activeStep);
 
-    // store에서 현재 activeStep에 해당하는 내용을 로드(이전의 데이터 로드, 혹은 스텝 이동시 이전 데이터 로드 할때)
-    if (stepNumbers.includes(activeStep)) {
-      let stepData = null;
+      // store에서 현재 activeStep에 해당하는 내용을 로드
+      if (stepNumbers.includes(activeStep)) {
+        let stepData = null;
 
-      if (stepperStepName !== undefined) {
-        stepperStepName.forEach((contentss) => {
-          if (contentss.stepNum === activeStep) {
-            stepData = contentss;
-          }
-        });
-      } else {
-        stepperStepName.forEach((contentss) => {
-          if (contentss.stepNum === activeStep) {
-            stepData = contentss;
-          }
-        });
+        if (stepperStepName !== undefined) {
+          stepperStepName.forEach((contentss) => {
+            if (contentss.stepNum === activeStep) {
+              stepData = contentss;
+            }
+          });
+        } else {
+          contents.forEach((contentss) => {
+            if (contentss.stepNum === activeStep) {
+              stepData = contentss;
+            }
+          });
+        }
+
+        console.log("처음 stepData : " + JSON.stringify(stepData, null, 2));
+
+        const contentsArray = Array.isArray(stepData.contents)
+          ? stepData.contents
+          : [stepData.contents];
+
+        const formattedContents = contentsArray
+          .filter((content) => {
+            if (content.type === "img" && !content.content) {
+              return false;
+            }
+            return true;
+          })
+          .map((item, index) => {
+            if (typeof item.content === "object" && item.type !== "file") {
+              item.content = JSON.stringify(item.content);
+            }
+            return item;
+          });
+
+        setLocalContents(formattedContents);
+        setContentName(stepData.contentName);
+        setIsEditing(true);
       }
 
-      stepData.contents.forEach((content) => {
-        if (content.type === "file") {
-          console.log("step 데이터 이름: " + content.content.name);
-        }
-      });
-
-      console.log("처음 stepData : " + JSON.stringify(stepData, null, 2));
-
-      const contentsArray = Array.isArray(stepData.contents)
-        ? stepData.contents
-        : [stepData.contents];
-
-      const formattedContents = contentsArray
-        .filter((content) => {
-          if (content.type === "img" && !content.content) {
-            return false; // content.type이 "img"이고 content가 없으면 제거
-          }
-          return true; // 나머지 항목은 유지
-        })
-        .map((item, index) => {
-          // 파일 객체가 아닌 경우에만 JSON.stringify를 사용하여 변환
-          if (typeof item.content === "object" && item.type !== "file") {
-            item.content = JSON.stringify(item.content);
-          }
-
-          return item;
-        });
-
-      // 변환 후 stepData.contents 다시 확인
-      formattedContents.forEach((content) => {
-        if (content.type === "file") {
-          console.log("step 저장전 이미지 확인 : " + content.content.name);
-        }
-      });
-      setLocalContents(formattedContents);
-
-      setContentName(stepData.contentName);
-      setIsEditing(true);
+      setIsUpdated(false);
     }
-  }, [activeStep, stepperStepName]);
+  }, [isUpdated, activeStep]); // isUpdated와 activeStep 변경 시 실행
 
   const handleChange = (content, delta, source, editor) => {
     setValue(content);
@@ -501,6 +495,10 @@ export default function TeacherWordProcessor({
     }
 
     handleNextStep();
+
+    setLocalContents([]);
+    setContentName("");
+    setIsEditing(false);
   };
 
   const createElementFromJson = (json) => {
@@ -774,12 +772,12 @@ export default function TeacherWordProcessor({
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <Container style={{ padding: 0 }}>
+      <Container>
         <div
           style={{
             display: "flex",
             flexDirection: "row",
-            width: "100%",
+            width: "70rem",
             height: "36.5rem",
           }}
         >
@@ -787,7 +785,7 @@ export default function TeacherWordProcessor({
           <Paper
             style={{
               padding: 20,
-              width: "150%",
+              width: "100%",
               height: "100%",
               boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
               overflowY: "auto",
@@ -809,7 +807,7 @@ export default function TeacherWordProcessor({
           <ReactQuill
             ref={quillRef}
             value={value}
-            style={{ width: "100%", height: "88%", margin: "0 0 0 10px" }}
+            style={{ width: "55%", height: "88%", margin: "0 0 0 10px" }}
             onChange={handleChange}
             modules={modules}
             formats={formats}

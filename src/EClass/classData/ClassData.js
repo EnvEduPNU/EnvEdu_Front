@@ -52,6 +52,9 @@ function ClassData() {
               : [],
           })),
         }));
+
+        console.log("수업 자료 들 : " + JSON.stringify(formattedData, null, 2));
+
         setLectureSummary(formattedData);
       })
       .catch((err) => console.log(err));
