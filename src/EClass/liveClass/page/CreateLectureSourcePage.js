@@ -175,7 +175,7 @@ export const CreateLectureSourcePage = (props) => {
               timestamp: moment()
                 .tz("Asia/Seoul")
                 .format("YYYY-MM-DDTHH:mm:ssZ"),
-              stepName: lectureName,
+              stepName: lectureName + "_copy",
               stepCount: stepCount - 1,
               contents: contents.map((content) => ({
                 stepNum: content.stepNum,
@@ -186,6 +186,8 @@ export const CreateLectureSourcePage = (props) => {
                       !(
                         (c.type === "img" &&
                           deletedImageUrls.includes(c.content)) ||
+                        (c.type === "img" &&
+                          (c.content === null || c.content === undefined)) ||
                         (c.type === "html" && c.content.includes("<p><img")) ||
                         c.type === "deleteImage"
                       )
@@ -254,7 +256,7 @@ export const CreateLectureSourcePage = (props) => {
 
           if (lectureSummary) {
             console.log(
-              "저장 요청 : " + JSON.stringify(changedPayload, null, 2)
+              "복사본 저장 요청 : " + JSON.stringify(changedPayload, null, 2)
             );
 
             // confirm을 사용하여 사용자에게 확인을 요청

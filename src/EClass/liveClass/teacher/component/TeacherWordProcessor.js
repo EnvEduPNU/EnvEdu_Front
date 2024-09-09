@@ -113,9 +113,16 @@ export default function TeacherWordProcessor({
       stepperStepName.forEach((step, index) => {
         updateContent(index, step); // 각 step을 updateContent로 업데이트
       });
+
       setIsUpdated(true); // 업데이트 완료 후 isUpdated를 true로 설정
     }
-  }, [stepperStepName, activeStep]);
+  }, [stepperStepName]);
+
+  useEffect(() => {
+    if (stepperStepName && stepperStepName.length > 0) {
+      setIsUpdated(true);
+    }
+  }, [activeStep]);
 
   // 두 번째 useEffect: isUpdated가 true일 때 실행
   useEffect(() => {
