@@ -35,21 +35,6 @@ function createData(
   };
 }
 
-const getStudent = async (sessionId) => {
-  try {
-    const response = await customAxios.get(
-      `${process.env.REACT_APP_API_URL}/student?sessionId=${sessionId}`
-    );
-    // console.log(
-    //   "Fetched student data: " + JSON.stringify(response.data, null, 2)
-    // );
-    return response.data.username;
-  } catch (error) {
-    console.error("Error fetching student data: ", error);
-    return null;
-  }
-};
-
 export default function TeacherCourseStatusTable({
   stepCount,
   eclassUuid,
@@ -61,7 +46,7 @@ export default function TeacherCourseStatusTable({
   }));
   const [students, setStudents] = useState([]);
   const [studentStepFlag, setStudentStepFlag] = useState();
-  const [reportData, setReportData] = useState();
+  const [reportData, setReportData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [isAssginShared, setIsAssginShared] = useState(false);
@@ -82,15 +67,18 @@ export default function TeacherCourseStatusTable({
   };
 
   useEffect(() => {
+    console.log("세션 데이터 : " + JSON.stringify(sessionData, null, 2));
+    console.log("학생 데이터 : " + JSON.stringify(eclassUuid, null, 2));
+
     const fetchStudents = async () => {
       const studentData = await Promise.all(
-        sessionData.map((session) => getStudent(session.id))
+        sessionData.map((session) => getStudent(session.id, eclassUuid))
       );
 
-      setStudents(studentData);
+      if (studentData) setStudents(studentData);
     };
 
-    if (sessionData.length) {
+    if (sessionData.length > 0) {
       fetchStudents();
     }
   }, [sessionIds]);
@@ -110,18 +98,58 @@ export default function TeacherCourseStatusTable({
     }
   }, [students, assginmentShareCheck]);
 
+  const getStudent = async (sessionId, eclassUuid) => {
+    try {
+      const eclassStudentData = {
+        sessionId: sessionId,
+        eclassUuid: eclassUuid,
+      };
+
+      console.log(
+        "[TeacherCourseStatusTable] eclassStudentData : " +
+          JSON.stringify(eclassStudentData, null, 2)
+      );
+
+      const response = await customAxios.post(
+        `${process.env.REACT_APP_API_URL}/api/sessions/student/get`,
+        eclassStudentData
+      );
+
+      // 학생 데이터가 비어있거나 username이 없는 경우 null을 반환
+      if (!response.data || !response.data.username) {
+        console.log("학생 데이터가 존재하지 않음.");
+        return null; // 학생이 없는 상태로 반환
+      }
+
+      console.log(
+        "Fetched student data: " + JSON.stringify(response.data, null, 2)
+      );
+      return response.data.username;
+    } catch (error) {
+      console.error("Error fetching student data: ", error);
+      return null; // 오류 발생 시에도 null 반환
+    }
+  };
+
   const sendStudentData = async () => {
     try {
-      if (students.length && eclassUuid) {
+      // students 배열에 null이 있는지 확인(null이 있으면 true, 없으면 false)
+      const hasNull = students.some((student) => student === null);
+
+      if (!hasNull && eclassUuid) {
         const requestData = {
           studentData: students,
           eclassUuid: eclassUuid,
         };
-        // console.log("확인 : " + JSON.stringify(requestData, null, 2));
 
         const respCheckList = await customAxios.post(
           "/api/eclass/student/assignment/getCheckList",
           requestData
+        );
+
+        console.log(
+          "[TeacherCourseStatusTable] assiginment Check List : " +
+            JSON.stringify(respCheckList.data, null, 2)
         );
 
         const respReportUuid = await customAxios.post(
@@ -129,10 +157,11 @@ export default function TeacherCourseStatusTable({
           requestData
         );
 
-        // console.log(
-        //   "respReportUuid.data : " +
-        //     JSON.stringify(respReportUuid.data, null, 2)
-        // );
+        console.log(
+          "respReportUuid.data : " +
+            JSON.stringify(respReportUuid.data, null, 2)
+        );
+
         if (Array.isArray(respReportUuid.data)) {
           // null 또는 빈 값을 필터링하여 제거
           const filteredReportUuid = respReportUuid.data.filter(
@@ -152,7 +181,7 @@ export default function TeacherCourseStatusTable({
               setReportData(respReport.data);
             }
           } else {
-            console.warn("필터링 후 유효한 UUID가 없습니다.");
+            console.warn("보고서가 존재하지 않습니다.");
           }
         }
 
@@ -167,11 +196,18 @@ export default function TeacherCourseStatusTable({
   };
 
   const Row = ({ row, isMatch, reportData }) => {
-    // console.log(" 학생 상태 리스트 : " + JSON.stringify(row, null, 2));
+    console.log(" 학생 상태 리스트 : " + JSON.stringify(row, null, 2));
 
-    const report = reportData.filter((data) => {
+    // reportData가 없으면 row를 사용
+    const report = (reportData || []).filter((data) => {
       return data.username === row.name;
     });
+
+    // report가 비어있는 경우 row에서 필요한 데이터를 대신 사용할 수 있도록 처리
+    const finalData = report.length > 0 ? report : [row];
+
+    // 예시로 finalData 출력
+    console.log("최종 데이터: ", finalData);
 
     // console.log("정제된건? : " + JSON.stringify(report, null, 2));
 
@@ -206,7 +242,7 @@ export default function TeacherCourseStatusTable({
           )}
         </TableCell>
         <TableCell align="center">
-          {report[0]?.username === row.name ? (
+          {finalData[0]?.username === row.name ? (
             <Button
               onClick={() => handleOpenModal(row.name)}
               sx={{
@@ -241,16 +277,22 @@ export default function TeacherCourseStatusTable({
     }).isRequired,
   };
 
-  const rows = sessionData.map((session, index) =>
-    createData(
-      students[index],
-      session.id,
-      session.shared,
-      session.assginmentShared,
-      session.assginmentSubmit,
-      session.reportSubmit
-    )
-  );
+  const rows = sessionData
+    .map((session, index) => {
+      // students[index]가 있는 경우에만 createData 호출
+      if (students[index]) {
+        return createData(
+          students[index],
+          session.id,
+          session.shared,
+          session.assginmentShared,
+          session.assginmentSubmit,
+          session.reportSubmit
+        );
+      }
+      return null; // 학생이 없으면 null 반환
+    })
+    .filter((row) => row !== null); // null 값을 제외하고 rows 배열을 생성
 
   const EmptyRows = ({ count }) => {
     return Array.from({ length: count }, (_, index) => (
@@ -285,15 +327,13 @@ export default function TeacherCourseStatusTable({
               }
 
               return (
-                reportData && (
-                  <Row
-                    key={row.sessionId || index} // 고유한 key로 설정
-                    row={row}
-                    index={index}
-                    isMatch={stepValue}
-                    reportData={reportData}
-                  />
-                )
+                <Row
+                  key={row.sessionId || index} // 고유한 key로 설정
+                  row={row}
+                  index={index}
+                  isMatch={stepValue}
+                  reportData={reportData}
+                />
               );
             })}
 

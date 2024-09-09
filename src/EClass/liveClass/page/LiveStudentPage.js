@@ -8,6 +8,7 @@ import { customAxios } from "../../../Common/CustomAxios";
 import TeacherReportTable from "../teacher/component/table/eclassPageTable/TeacherReportTable";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
+import StudentScreenShare from "../student/screenShare/StudentScreenShare";
 
 export const LiveStudentPage = () => {
   const sessionId = useRef("");
@@ -73,7 +74,6 @@ export const LiveStudentPage = () => {
 
     return () => {
       sendMessage(false);
-      // deleteSessionId(sessionId.current);
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, []);
@@ -100,6 +100,7 @@ export const LiveStudentPage = () => {
       const userName = localStorage.getItem("username");
 
       const resp = await customAxios.post("/api/sessions/register-session", {
+        eclassUuid: eClassUuid,
         sessionId: sessionId,
         userName: userName,
       });
@@ -125,19 +126,6 @@ export const LiveStudentPage = () => {
     }
   };
 
-  // const deleteSessionId = async (sessionId) => {
-  //   try {
-  //     const url = `${process.env.REACT_APP_API_URL}/api/sessions/delete-session/${sessionId}`;
-  //     const body = JSON.stringify({ sessionId: sessionId });
-
-  //     await customAxios.delete(url, body);
-
-  //     console.log("세션 ID 삭제됨:", sessionId);
-  //   } catch (error) {
-  //     console.error("세션 ID 삭제 중 오류 발생:", error);
-  //   }
-  // };
-
   return (
     <div style={{ display: "flex", margin: "0 20vh" }}>
       <div style={{ display: "inline-block", width: "100%", height: "100%" }}>
@@ -157,6 +145,12 @@ export const LiveStudentPage = () => {
               sessionIdState={sessionIdState}
               eclassUuid={eClassUuid}
               lectureDataUuid={lectureDataUuid}
+            />
+          )}
+          {sessionIdState && (
+            <StudentScreenShare
+              sessionId={sessionIdState}
+              setIsVideoReady={setIsVideoReady}
             />
           )}
         </div>

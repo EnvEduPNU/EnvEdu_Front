@@ -1,0 +1,83 @@
+.carousel-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: 100%; /* 전체 컨테이너의 너비를 넓게 설정 */
+  margin: 0 auto; /* 가운데 정렬 */
+}
+
+.carousel-cards {
+  display: flex;
+  justify-content: space-between; /* 카드 간격을 균등하게 분배 */
+  width: 100%; /* 컨테이너 안에서 카드들이 꽉 차도록 */
+  gap: 20px; /* 카드 사이의 간격을 더 넓게 설정 */
+}
+
+.lecture-card {
+  width: 100%;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  cursor: pointer;
+  text-align: center;
+  display: flex;
+  flex-direction: column; /* 수직으로 배치 */
+  justify-content: end; /* 위와 아래에 있는 요소들이 공간을 나누도록 */
+  align-items: center;
+  height: 350px; /* 고정된 카드 높이 */
+}
+
+.lecture-image {
+  width: 90%; /* 이미지의 너비를 90%로 설정 */
+  height: 180px;
+  object-fit: cover;
+  margin-bottom: 15px; /* 이미지와 텍스트 사이에 여백 추가 */
+  border: 1px solid #ddd;
+  border-radius: 8px; /* 이미지에 약간의 둥근 모서리 */
+}
+
+.delete-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 10%;
+  color: rgb(87, 87, 87);
+  background-color: transparent; /* 배경색 투명하게 설정 */
+  box-shadow: none; /* 그림자 없애기 */
+}
+
+.delete-icon:hover {
+  background-color: transparent; /* hover 시에도 배경색 유지 */
+}
+
+.carousel-arrow {
+  background-color: transparent;
+  color: #333;
+  border: none;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.lecture-content {
+  margin-top: 20px;
+  margin-bottom: 10px; /* 여백을 줘서 카드 아래에 위치하도록 조정 */
+}
+
+.left-arrow {
+  left: 10px;
+  width: 5%;
+}
+
+.right-arrow {
+  right: 10px;
+  width: 5%;
+}
+
+.carousel-arrow:disabled {
+  opacity: 0.3;
+  pointer-events: none;
+}

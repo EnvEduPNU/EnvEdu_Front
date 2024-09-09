@@ -2,15 +2,19 @@
   display: flex;
 
   .myData-left {
-    margin: 0 2rem 0 2rem;
+    margin: 5rem 0 0 0;
 
     .yellow-btn {
-      font-weight: 600;
+      font-weight: 800;
+      font-size: 1.5rem;
       background: #f3b634;
-      padding: 0.3rem;
+      padding: 0.5m;
       border-radius: 0.3125rem;
       margin-bottom: 0.5rem;
-      width: 10rem;
+      width: 100%;
+      margin-bottom: 20px;
+      text-align: center;
+      cursor: pointer;
       //border: none;
     }
 
@@ -68,7 +72,9 @@
   }
 
   .myData-right {
-    margin: 0 2rem 0 2rem;
+    display: flex;
+    justify-content: center;
+    width: 100%;
 
     .excel-download {
       border: none;

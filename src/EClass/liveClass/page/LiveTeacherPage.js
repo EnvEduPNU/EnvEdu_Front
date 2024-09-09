@@ -116,24 +116,22 @@ export const LiveTeacherPage = () => {
         <Typography variant="h4" sx={{ margin: "0 0 10px 0" }}>
           {eClassName}
         </Typography>
-        {sharedScreenState ? (
-          <TeacherScreenShare
-            eClassUuid={eClassUuid}
-            setSharedScreenState={setSharedScreenState}
-            sharedScreenState={sharedScreenState}
-            sessionIds={sessionIds}
-          />
-        ) : (
-          <div>
-            {stepCount ? (
-              <>
-                <TeacherRenderAssign data={tableData} />
-              </>
-            ) : (
-              <DefaultPageComponent />
-            )}
-          </div>
-        )}
+
+        <div>
+          {stepCount ? (
+            <>
+              <TeacherRenderAssign data={tableData} />
+            </>
+          ) : (
+            <>{!sharedScreenState && <DefaultPageComponent />}</>
+          )}
+        </div>
+        <TeacherScreenShare
+          eClassUuid={eClassUuid}
+          setSharedScreenState={setSharedScreenState}
+          sharedScreenState={sharedScreenState}
+          sessionIds={sessionIds}
+        />
         {/* 과제 공유/중지 버튼 */}
         <TeacherStepShareButton
           stepCount={stepCount}

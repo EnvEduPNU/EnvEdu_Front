@@ -17,6 +17,7 @@ import { customAxios } from "../../../../Common/CustomAxios";
 import { useCreateLectureSourceStore } from "../../store/CreateLectureSourceStore";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import "./TeacherWordProcessor.scss";
 
 Quill.register("modules/imageActions", ImageActions);
 Quill.register("modules/imageFormats", ImageFormats);
@@ -91,6 +92,8 @@ export default function TeacherWordProcessor({
   onLectureNameChange,
   activeStep,
   stepCount,
+  stepperStepName,
+  setStepperStepName,
 }) {
   const [value, setValue] = useState();
   const [localContents, setLocalContents] = useState([]);
@@ -105,6 +108,11 @@ export default function TeacherWordProcessor({
   useEffect(() => {
     imageFile = null;
 
+    console.log(
+      "[TeacherWordProcessor] stepperStepName : " +
+        JSON.stringify(stepperStepName, null, 2)
+    );
+
     // activeStep이 변경될 때마다 localContents를 초기화(맨처음 스텝 만들때)
     setLocalContents([]);
     setContentName("");
@@ -112,7 +120,9 @@ export default function TeacherWordProcessor({
     setIsEditing(false);
     setAddTableFlag(false);
 
-    const stepNumbers = contents.map((contentss) => contentss.stepNum);
+    // setStepperStepName(contents);
+
+    const stepNumbers = stepperStepName.map((contentss) => contentss.stepNum);
     console.log("step 넘버들: " + stepNumbers);
     console.log("activeStep : " + activeStep);
 
@@ -120,11 +130,19 @@ export default function TeacherWordProcessor({
     if (stepNumbers.includes(activeStep)) {
       let stepData = null;
 
-      contents.forEach((contentss) => {
-        if (contentss.stepNum === activeStep) {
-          stepData = contentss;
-        }
-      });
+      if (stepperStepName !== undefined) {
+        stepperStepName.forEach((contentss) => {
+          if (contentss.stepNum === activeStep) {
+            stepData = contentss;
+          }
+        });
+      } else {
+        stepperStepName.forEach((contentss) => {
+          if (contentss.stepNum === activeStep) {
+            stepData = contentss;
+          }
+        });
+      }
 
       stepData.contents.forEach((content) => {
         if (content.type === "file") {
@@ -160,12 +178,12 @@ export default function TeacherWordProcessor({
           console.log("step 저장전 이미지 확인 : " + content.content.name);
         }
       });
-
       setLocalContents(formattedContents);
+
       setContentName(stepData.contentName);
       setIsEditing(true);
     }
-  }, [activeStep, contents]);
+  }, [activeStep, stepperStepName]);
 
   const handleChange = (content, delta, source, editor) => {
     setValue(content);
@@ -756,47 +774,12 @@ export default function TeacherWordProcessor({
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <Container>
+      <Container style={{ padding: 0 }}>
         <div
           style={{
             display: "flex",
             flexDirection: "row",
-            justifyContent: "space-between",
-          }}
-        >
-          <TextField
-            label="Lecture Name"
-            value={lectureName} // lectureName을 value로 설정
-            onChange={onLectureNameChange} // 사용자가 변경할 수 있도록 onChange 핸들러 설정
-            fullWidth
-            margin="normal"
-          />
-        </div>
-        <div
-          style={{ display: "flex", alignItems: "center", marginBottom: 16 }}
-        >
-          <TextField
-            label="Step Name"
-            value={contentName}
-            onChange={(e) => setContentName(e.target.value)}
-            variant="outlined"
-            fullWidth
-            sx={{ marginRight: 2 }}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleAddTitle}
-            sx={{ height: "56px" }} // TextField와 버튼 높이를 맞춤
-          >
-            제목 추가
-          </Button>
-        </div>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            width: "70rem",
+            width: "100%",
             height: "36.5rem",
           }}
         >
@@ -804,7 +787,7 @@ export default function TeacherWordProcessor({
           <Paper
             style={{
               padding: 20,
-              width: "100%",
+              width: "150%",
               height: "100%",
               boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
               overflowY: "auto",
@@ -826,7 +809,7 @@ export default function TeacherWordProcessor({
           <ReactQuill
             ref={quillRef}
             value={value}
-            style={{ width: "55%", height: "88%", margin: "0 0 0 10px" }}
+            style={{ width: "100%", height: "88%", margin: "0 0 0 10px" }}
             onChange={handleChange}
             modules={modules}
             formats={formats}
@@ -836,6 +819,7 @@ export default function TeacherWordProcessor({
         <div
           style={{
             display: "flex",
+            width: "100%",
             flexDirection: "row",
             justifyContent: "space-between",
           }}
@@ -844,7 +828,7 @@ export default function TeacherWordProcessor({
             style={{
               display: "flex",
               justifyContent: "flex-start",
-              width: "30%",
+              width: "100%",
             }}
           >
             {/* 데이터 추가하기 버튼 */}
@@ -856,8 +840,9 @@ export default function TeacherWordProcessor({
             <Button
               variant="contained"
               color="primary"
+              className="yellow-btn" // yellow-btn 클래스 적용
               onClick={handleAddTextBox}
-              sx={{ margin: "20px 10px 0 10px", width: "50%" }}
+              sx={{ margin: "20px 10px 0 0", width: "10rem" }}
             >
               답변 박스 추가
             </Button>
@@ -867,13 +852,14 @@ export default function TeacherWordProcessor({
               display: "flex",
               justifyContent: "flex-end",
               margin: "20px 0 0 0",
+              width: "100%",
             }}
           >
             <Button
               variant="contained"
               color="primary"
               onClick={handleSave}
-              sx={{ width: "100%" }}
+              sx={{ width: "10rem", marginRight: "1rem" }}
             >
               포함하기
             </Button>
@@ -884,7 +870,7 @@ export default function TeacherWordProcessor({
                   variant="contained"
                   color="secondary"
                   onClick={handleNext}
-                  sx={{ width: "100%", marginLeft: "10px" }}
+                  sx={{ width: "10rem" }}
                 >
                   Finish
                 </Button>
@@ -893,7 +879,7 @@ export default function TeacherWordProcessor({
                   variant="contained"
                   color="secondary"
                   onClick={handleNext}
-                  sx={{ width: "100%", marginLeft: "10px" }}
+                  sx={{ width: "10rem" }}
                 >
                   다음 단계
                 </Button>

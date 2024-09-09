@@ -222,11 +222,11 @@ export const TeacherScreenShare = ({
 
         for (const [sessionId, pc] of Object.entries(peerConnections.current)) {
           updateShareStatus(sessionId, false);
-          stompClients.current[sessionId].send(
-            `/app/stopShare/${sessionId}`,
-            {},
-            JSON.stringify({ message: "stop" })
-          );
+          // stompClients.current[sessionId].send(
+          //   `/app/stopShare/${sessionId}`,
+          //   {},
+          //   JSON.stringify({ message: "stop" })
+          // );
           pc.close();
           delete peerConnections.current[sessionId];
         }
@@ -244,19 +244,22 @@ export const TeacherScreenShare = ({
   };
 
   return (
-    <div>
-      <video
-        ref={localVideoRef}
-        autoPlay
-        playsInline
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          maxWidth: "63rem",
-          minHeight: "40rem",
-        }}
-      />
+    <>
+      {sharedScreenState && (
+        <video
+          ref={localVideoRef}
+          autoPlay
+          playsInline
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            maxWidth: "63rem",
+            minHeight: "40rem",
+          }}
+        />
+      )}
+
       <button
         onClick={startScreenShare}
         style={{
@@ -291,6 +294,6 @@ export const TeacherScreenShare = ({
       >
         공유 중지
       </button>
-    </div>
+    </>
   );
 };

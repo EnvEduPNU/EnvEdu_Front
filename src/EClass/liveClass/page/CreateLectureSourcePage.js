@@ -6,6 +6,8 @@ import { customAxios } from "../../../Common/CustomAxios";
 import { v4 as uuidv4 } from "uuid"; // UUID 생성 함수
 import moment from "moment"; // 날짜 처리 라이브러리
 import axios from "axios";
+import { Typography, TextField, Button } from "@mui/material";
+import "./CreateLectureSourcePage.scss"; // 스타일을 위한 SCSS 파일 임포트
 
 export const CreateLectureSourcePage = (props) => {
   const {
@@ -20,8 +22,18 @@ export const CreateLectureSourcePage = (props) => {
   const [activeStep, setActiveStep] = useState(1);
   const [stepCount, setStepCount] = useState(initialStepCount); // stepCount 상태 관리
   const [lectureName, setLectureName] = useState(initialLectureName || "");
+  const [stepperStepName, setStepperStepName] = useState([]);
+  const [isEditingLectureName, setIsEditingLectureName] = useState(false); // 수정 모드 상태
+
   const { contents, clearContents, setContents, updateContent } =
     useCreateLectureSourceStore();
+
+  // 기본 step 데이터 형식
+  const defaultStepData = {
+    stepNum: 1,
+    contentName: "Step 1",
+    contents: [{ type: "title", content: "default Name" }],
+  };
 
   // props.lectureName이 변경될 때마다 lectureName 상태를 업데이트
   useEffect(() => {
@@ -30,9 +42,31 @@ export const CreateLectureSourcePage = (props) => {
     }
   }, [initialLectureName]);
 
+  useEffect(() => {
+    console.log(
+      "스테퍼스텝 네임 어떻게 되나 보자??? : " +
+        JSON.stringify(stepperStepName, null, 2)
+    );
+  }, [stepperStepName]);
+
   const handleLectureNameChange = (event) => {
     setLectureName(event.target.value);
   };
+
+  const handleDoubleClick = () => {
+    setIsEditingLectureName(true); // 더블 클릭 시 수정 모드 활성화
+  };
+
+  const handleBlur = () => {
+    setIsEditingLectureName(false); // 포커스가 나가면 수정 모드 비활성화
+  };
+
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      setIsEditingLectureName(false); // Enter 키를 누르면 수정 완료
+    }
+  };
+
   // 이미지 파일 업로드 메서드
   const handleUpload = async (image, contentUuid) => {
     try {
@@ -271,29 +305,108 @@ export const CreateLectureSourcePage = (props) => {
       setContents(props.stepContents);
     }
 
-    // return () => {
-    //   clearContents();
-    // };
+    return () => {
+      clearContents();
+    };
   }, [clearContents, setContents, props.stepContents]);
+
+  const handleBackClick = () => {
+    console.log("뒤로가기 버튼 클릭됨");
+    window.location.reload();
+  };
 
   return (
     <>
-      <div style={{ margin: "0 25px 0 25px" }}>
-        <TeacherStepper
-          stepCount={stepCount} // stepCount를 TeacherStepper에 전달
-          setStepCount={setStepCount} // stepCount를 업데이트할 수 있도록 함수 전달
-          setActiveStep={setActiveStep}
-          activeStep={activeStep}
-        />
+      {/* 전체 컨테이너에 flex 스타일 적용 */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center", // 세로 가운데 정렬
+          width: "72rem",
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          {isEditingLectureName ? (
+            <TextField
+              label="수업자료 이름"
+              value={lectureName}
+              onChange={handleLectureNameChange}
+              onBlur={handleBlur}
+              onKeyPress={handleKeyPress}
+              style={{ margin: " 0 20px 0 0", width: "55rem" }} // 넓이를 조정하여 가운데 정렬 및 사이즈 맞춤
+              margin="normal"
+              autoFocus
+            />
+          ) : (
+            <Typography
+              variant="h4"
+              onDoubleClick={handleDoubleClick}
+              style={{
+                cursor: "pointer",
+                margin: " 0 20px 0 0",
+              }}
+            >
+              {lectureName || "더블클릭하여 수업 자료 이름을 입력하세요."}
+            </Typography>
+          )}
+          {/* 수업자료 버튼 */}
+          <Button
+            variant="outlined"
+            onClick={handleBackClick}
+            style={{
+              fontWeight: "800",
+              fontSize: "1rem",
+              background: "#f3b634",
+              padding: "0.5rem", // 단위 추가
+              borderRadius: "0.3125rem",
+              marginBottom: "0.5rem",
+              width: "20%",
+              height: "3.5rem",
+              textAlign: "center",
+              cursor: "pointer",
+              border: "none",
+              color: "white", // 글자색 설정
+            }}
+          >
+            돌아가기
+          </Button>
+        </div>
+        <div>
+          {/* Stepper */}
+          <div
+            style={{
+              margin: "20px 0", // 위아래 여백
+              width: "100%", // TeacherWordProcessor와 맞추기 위한 넓이 조정
+            }}
+          >
+            <TeacherStepper
+              stepCount={stepCount} // stepCount를 TeacherStepper에 전달
+              setStepCount={setStepCount} // stepCount를 업데이트할 수 있도록 함수 전달
+              setActiveStep={setActiveStep}
+              activeStep={activeStep}
+              contents={contents}
+              stepperStepName={stepperStepName}
+              setStepperStepName={setStepperStepName}
+              lectureName={lectureName}
+            />
+          </div>
+
+          {/* Word Processor */}
+          <div style={{ width: "100%" }}>
+            {/* Word Processor와 일치하는 넓이 */}
+            <TeacherWordProcessor
+              summary={summary}
+              lectureName={lectureName}
+              activeStep={activeStep}
+              stepCount={stepCount} // 업데이트된 stepCount를 전달
+              handleNextStep={handleNextStep}
+              stepperStepName={stepperStepName}
+              setStepperStepName={setStepperStepName}
+            />
+          </div>
+        </div>
       </div>
-      <TeacherWordProcessor
-        summary={summary}
-        lectureName={lectureName}
-        onLectureNameChange={handleLectureNameChange}
-        activeStep={activeStep}
-        stepCount={stepCount} // 업데이트된 stepCount를 전달
-        handleNextStep={handleNextStep}
-      />
     </>
   );
 };
