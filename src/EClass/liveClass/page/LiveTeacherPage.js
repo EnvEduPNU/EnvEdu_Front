@@ -118,7 +118,7 @@ export const LiveTeacherPage = () => {
         </Typography>
 
         <div>
-          {stepCount ? (
+          {stepCount && !sharedScreenState ? (
             <>
               <TeacherRenderAssign data={tableData} />
             </>
