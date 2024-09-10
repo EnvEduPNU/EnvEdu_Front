@@ -67,6 +67,8 @@ const StudentScreenShare = ({ sessionId, setIsVideoReady }) => {
                     setScreenShareStatus(false);
                     setIsVideoReady(false);
                     setIsVideoReadyLocal(false);
+
+                    stompClientConnectionInit();
                   }
 
                   // handleStopShare();
