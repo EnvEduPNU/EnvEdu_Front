@@ -37,7 +37,16 @@ export const LiveStudentPage = () => {
       );
       stompClients.current = Stomp.over(sock);
 
-      stompClients.current.connect({}, () => {}, onError);
+      stompClients.current.connect(
+        {}, // 연결 옵션
+        onConnect, // 연결 성공 시 실행할 함수
+        onError // 연결 실패 시 실행할 함수
+      );
+    }
+
+    function onConnect() {
+      console.log("STOMP 연결 성공");
+      sendMessage(true); // 연결 성공 후에만 sendMessage(true)를 실행
     }
 
     function onError(error) {
@@ -61,7 +70,6 @@ export const LiveStudentPage = () => {
       sessionId.current = registeredSessionId || newSessionId;
       setSessionIdState(sessionId.current);
       setFinished(true);
-      sendMessage(true);
     };
 
     initializeSession();
@@ -95,6 +103,26 @@ export const LiveStudentPage = () => {
     }
   }, [isVideoReady, setPage]);
 
+  const sendMessage = async (state) => {
+    const message = {
+      entered: state,
+      sessionId: sessionId.current,
+    };
+    if (
+      stompClients &&
+      stompClients.current &&
+      stompClients.current.connected
+    ) {
+      await stompClients.current.send(
+        "/app/student-entered",
+        {},
+        JSON.stringify(message)
+      );
+    } else {
+      console.error("STOMP 클라이언트가 연결되지 않았습니다.");
+    }
+  };
+
   const registerSessionId = async (sessionId) => {
     try {
       const userName = localStorage.getItem("username");
@@ -109,20 +137,6 @@ export const LiveStudentPage = () => {
     } catch (error) {
       console.error("세션 ID 등록 중 오류 발생:", error);
       return null;
-    }
-  };
-
-  const sendMessage = async (state) => {
-    const message = {
-      entered: state,
-      sessionId: sessionId.current,
-    };
-    if (stompClients) {
-      await stompClients.current.send(
-        "/app/student-entered",
-        {},
-        JSON.stringify(message)
-      );
     }
   };
 

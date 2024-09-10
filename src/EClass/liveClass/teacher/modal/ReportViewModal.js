@@ -153,7 +153,7 @@ function RenderContent({ content, setTextBoxValue, index }) {
       if (content.content) {
         return <div>{renderElement(content.content)}</div>;
       } else {
-        return <div></div>;
+        return <div>No Table</div>;
       }
 
     case "emptyBox":
