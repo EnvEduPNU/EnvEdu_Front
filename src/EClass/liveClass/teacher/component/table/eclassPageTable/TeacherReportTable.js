@@ -199,20 +199,22 @@ export default function TeacherReportTable({ selectedEClassUuid }) {
 
     console.log("UUID List 체크 : " + JSON.stringify(uuidList, null, 2));
 
-    const fetchData = async () => {
-      try {
-        const response = await customAxios.post(
-          "/api/report/getstep",
-          uuidList
-        );
+    if (uuidList.length > 0 || uuidList) {
+      const fetchData = async () => {
+        try {
+          const response = await customAxios.post(
+            "/api/report/getstep",
+            uuidList
+          );
 
-        setReportData(response.data);
-      } catch (error) {
-        console.error("Error fetching report data:", error);
-      }
-    };
+          setReportData(response.data);
+        } catch (error) {
+          console.error("Error fetching report data:", error);
+        }
+      };
 
-    fetchData();
+      fetchData();
+    }
   }, [rows]);
 
   return (
