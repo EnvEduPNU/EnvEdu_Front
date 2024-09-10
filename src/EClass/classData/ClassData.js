@@ -149,7 +149,7 @@ function ClassData() {
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              width: "100%",
+              width: "80%",
               margin: "20px 0",
             }}
           >
