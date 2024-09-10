@@ -114,7 +114,7 @@ function rowContent(index, row, handleClick, selectedRow, handleOpenModal) {
   );
 }
 
-export default function TeacherReportTable({ selectedEClassUuid }) {
+export default function StudentReportTable({ selectedEClassUuid }) {
   const [selectedRow, setSelectedRow] = useState(null);
   const [rows, setRows] = useState([]);
   const [reportData, setReportData] = useState(null);

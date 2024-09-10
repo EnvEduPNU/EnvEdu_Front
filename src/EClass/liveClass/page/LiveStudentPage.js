@@ -5,10 +5,10 @@ import { Typography } from "@mui/material";
 import StudentAssignmentTable from "../student/component/table/StudentAssignmentTable";
 import { StudentStepCompnent } from "../student/component/StudentStepCompnent";
 import { customAxios } from "../../../Common/CustomAxios";
-import TeacherReportTable from "../teacher/component/table/eclassPageTable/TeacherReportTable";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 import StudentScreenShare from "../student/screenShare/StudentScreenShare";
+import StudentReportTable from "../teacher/component/table/eclassPageTable/StudentReportTable";
 
 export const LiveStudentPage = () => {
   const sessionId = useRef("");
@@ -166,7 +166,7 @@ export const LiveStudentPage = () => {
           reportTable={reportTable}
           eclassUuid={eClassUuid}
         />
-        <TeacherReportTable selectedEClassUuid={eClassUuid} />
+        <StudentReportTable selectedEClassUuid={eClassUuid} />
       </div>
     </div>
   );

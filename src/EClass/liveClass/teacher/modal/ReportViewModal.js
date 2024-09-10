@@ -18,8 +18,10 @@ function ReportViewModal({ open, onClose, tableData }) {
   console.log("테이블 데이터 : " + JSON.stringify(tableData, null, 2));
 
   useEffect(() => {
-    setData(tableData[0]?.contents);
-  }, [tableData]);
+    if (tableData) {
+      setData(tableData[0]?.contents);
+    }
+  }, [open]);
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="lg">
@@ -49,28 +51,41 @@ function ReportViewModal({ open, onClose, tableData }) {
             {tableData[0]?.username} {/* localStorage의 username을 보여줌 */}
           </Typography>
           <Grid container spacing={3}>
-            {data.map((stepData, stepIndex) => (
-              <Grid item xs={6} key={stepData.stepNum || stepIndex}>
-                <Paper
-                  style={{
-                    padding: "20px",
-                    boxShadow: "none",
-                    marginBottom: "30px",
-                    backgroundColor: "#ffffff",
-                  }}
-                >
-                  <div>
-                    {stepData.contents.map((content, contentIndex) => (
-                      <RenderContent
-                        key={contentIndex} // 고유한 key 할당
-                        content={content}
-                        index={contentIndex}
-                      />
-                    ))}
-                  </div>
-                </Paper>
-              </Grid>
-            ))}
+            {data
+              .filter((stepData) => stepData !== null && stepData !== undefined) // null 또는 undefined가 아닌 경우만 필터링
+              .map((stepData, stepIndex) => {
+                const stepKey = stepData.stepNum
+                  ? `step-${stepData.stepNum}`
+                  : `step-${stepIndex}`;
+
+                return (
+                  <Grid item xs={6} key={stepKey}>
+                    <Paper>
+                      <div>
+                        {stepData.contents
+                          .filter(
+                            (content) =>
+                              content !== null && content !== undefined
+                          ) // null 또는 undefined가 아닌 경우만 필터링
+                          .map((content, contentIndex) => {
+                            const contentKey =
+                              content.id ||
+                              `content-${stepIndex}-${contentIndex}`;
+
+                            return (
+                              <React.Fragment key={contentKey}>
+                                <RenderContent
+                                  content={content}
+                                  index={contentIndex}
+                                />
+                              </React.Fragment>
+                            );
+                          })}
+                      </div>
+                    </Paper>
+                  </Grid>
+                );
+              })}
           </Grid>
         </Paper>
         {/* <Button
@@ -90,25 +105,27 @@ function RenderContent({ content, setTextBoxValue, index }) {
   const handleTextChange = (event) => {
     setTextBoxValue(index, event.target.value);
   };
-
   switch (content.type) {
     case "title":
       return (
         <Typography variant="h6" gutterBottom>
-          {content.content}
+          {content.content || "No Title"}{" "}
+          {/* content.content가 null일 경우 기본값 제공 */}
         </Typography>
       );
     case "html":
       return (
         <div
           style={{ whiteSpace: "pre-wrap" }}
-          dangerouslySetInnerHTML={{ __html: content.content }}
+          dangerouslySetInnerHTML={{
+            __html: content.content || "<p>No Content</p>",
+          }} // 기본 HTML 콘텐츠 제공
         />
       );
     case "textBox":
       return (
         <TextField
-          value={content.content} // 기존 내용을 기본값으로 사용
+          value={content.content || ""} // content.content가 null이면 빈 문자열로 처리
           onChange={handleTextChange}
           variant="outlined"
           fullWidth
@@ -119,7 +136,7 @@ function RenderContent({ content, setTextBoxValue, index }) {
         />
       );
     case "img":
-      return (
+      return content.content ? ( // content.content가 있을 경우에만 이미지 렌더링
         <div style={{ textAlign: "center", marginBottom: "20px" }}>
           <img
             src={content.content}
@@ -127,9 +144,18 @@ function RenderContent({ content, setTextBoxValue, index }) {
             style={{ width: content.x / 2, height: content.y / 2 }}
           />
         </div>
+      ) : (
+        <Typography variant="body2" color="textSecondary" align="center">
+          No Image Available
+        </Typography>
       );
     case "data":
-      return <div>{renderElement(content.content)}</div>;
+      if (content.contnet) {
+        return <div>{renderElement(content.content)}</div>;
+      } else {
+        return <div></div>;
+      }
+
     case "emptyBox":
       return (
         <div

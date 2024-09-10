@@ -139,7 +139,7 @@ function StudentRenderAssign({
         );
 
         // 페이지 리로드
-        window.location.reload();
+        // window.location.reload();
       } catch (error) {
         console.error("Error during submission:", error);
         alert("제출 중 오류가 발생했습니다. 다시 시도해주세요.");
@@ -155,8 +155,9 @@ function StudentRenderAssign({
     );
 
     const message = {
-      assginmentSubmit: true,
       sessionId: sessionIdState,
+      assginmentShared: true,
+      timestamp: new Date().toLocaleString("ko-KR", { timeZone: "Asia/Seoul" }),
     };
 
     const stompClient = Stomp.over(socket);
