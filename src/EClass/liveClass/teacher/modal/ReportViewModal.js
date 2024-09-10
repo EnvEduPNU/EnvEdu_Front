@@ -150,7 +150,7 @@ function RenderContent({ content, setTextBoxValue, index }) {
         </Typography>
       );
     case "data":
-      if (content.contnet) {
+      if (content.content) {
         return <div>{renderElement(content.content)}</div>;
       } else {
         return <div></div>;
