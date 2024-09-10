@@ -13,14 +13,13 @@ function LectureCardCarousel({
 }) {
   const [currentIndex, setCurrentIndex] = React.useState(0);
 
-  // useEffect(() => {
-  //   console.log(
-  //     "렉쳐 서머리 확인 : " + JSON.stringify(lectureSummary, null, 2)
-  //   );
-  // }, [lectureSummary]);
+  // timestamp를 기준으로 최신순으로 lectureSummary를 정렬
+  const sortedLectureSummary = [...lectureSummary].sort(
+    (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+  );
 
   const nextCard = () => {
-    if (currentIndex < lectureSummary.length - 4) {
+    if (currentIndex < sortedLectureSummary.length - 4) {
       setCurrentIndex((prevIndex) => prevIndex + 1);
     }
   };
@@ -44,7 +43,7 @@ function LectureCardCarousel({
 
       {/* 카드 목록 */}
       <div className="carousel-cards">
-        {lectureSummary
+        {sortedLectureSummary
           .slice(currentIndex, currentIndex + 4)
           .map((lecture, index) => {
             // 이미지가 있는지 확인
@@ -115,7 +114,7 @@ function LectureCardCarousel({
       <IconButton
         onClick={nextCard}
         className="carousel-arrow right-arrow"
-        disabled={currentIndex >= lectureSummary.length - 4}
+        disabled={currentIndex >= sortedLectureSummary.length - 4}
       >
         <ArrowForwardIosIcon />
       </IconButton>
