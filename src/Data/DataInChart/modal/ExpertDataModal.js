@@ -2,7 +2,7 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
-import Dataset from "../../../DataLiteracy/DataLoad/Dataset/Dataset";
+import Dataset from "../component/common/Data/Dataset";
 
 const style = {
   position: "absolute",
@@ -16,31 +16,27 @@ const style = {
   p: 4,
 };
 
-export default function ExpertDataModal(props) {
-  const [open, setOpen] = useState(false);
-  const [isFinished, setIsFinished] = useState(false);
-
-  useEffect(() => {
-    if (isFinished === true) {
-      setOpen(false);
-      props.setModalOpen(!open);
-      props.setIsFinished(isFinished);
-      console.log("모달 상태 : " + !open);
-    } else {
-      setOpen(props.modalOpen);
-      console.log("모달 상태 : " + props.modalOpen);
-    }
-  }, [open, isFinished]);
-
+export default function ExpertDataModal({
+  modalOpen,
+  setModalOpen,
+  setDataCategory,
+}) {
+  const handleClose = () => {
+    setModalOpen(false);
+  };
   return (
     <div>
       <Modal
-        open={open}
+        open={modalOpen}
+        onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <Dataset setIsFinished={setIsFinished} />
+          <Dataset
+            setModalOpen={setModalOpen}
+            setDataCategory={setDataCategory}
+          />
         </Box>
       </Modal>
     </div>

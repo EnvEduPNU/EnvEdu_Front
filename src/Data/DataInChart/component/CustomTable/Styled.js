@@ -65,6 +65,7 @@ export const Header = styled.div`
 
 export const TableHeader = styled.div`
   border-bottom: 1px solid rgba(34, 36, 38, 0.15);
+  text-align: center;
 `;
 
 export const HeaderStartar = styled(Header)`
@@ -75,11 +76,11 @@ export const HeaderStartar = styled(Header)`
 
 export const Th = styled.div`
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: top;
   align-items: center;
   line-height: 2;
-  height: 35px;
-  max-height: 35px;
+  height: 80px;
   overflow: auto;
   white-space: nowrap;
   border-bottom: 0px solid rgba(34, 36, 38, 0.15);

@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
 import { customAxios } from "../../../Common/CustomAxios";
 import "./leftSlidePage.scss";
-import FolderList from "../../MyData/folderList";
 import ForderListModal from "../modal/ForderListModal";
 
 // DATA 드롭다운 리스트
-export default function MyDataList(props) {
+export default function MyDataList() {
   const [summary, setSummary] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -29,7 +28,7 @@ export default function MyDataList(props) {
         setSummary(formattedData);
       })
       .catch((err) => console.log(err));
-  }, [props]);
+  }, []);
 
   // 전체 데이터 리스트 가져온 것중에서 데이터 라벨에 따라 필터링해서 뽑아서 보내준다.
   const [filteredData, setFilteredData] = useState([]);
@@ -69,7 +68,7 @@ export default function MyDataList(props) {
   return (
     <div style={{ display: "flex" }}>
       <div style={{ height: "25vh", width: "20vh" }}>
-        <div style={{ marginTop: "1rem" }}>
+        <div style={{ marginTop: "1rem" }} className="flex">
           <img
             src="/assets/img/folder-icon.png"
             style={{ width: "1.5rem", margin: "0 0.5rem" }}
@@ -82,7 +81,7 @@ export default function MyDataList(props) {
           </label>
         </div>
 
-        <div style={{ marginTop: "0.5rem" }}>
+        <div style={{ marginTop: "0.5rem" }} className="flex">
           <img
             src="/assets/img/folder-icon.png"
             style={{ width: "1.5rem", margin: "0 0.5rem" }}
@@ -95,7 +94,7 @@ export default function MyDataList(props) {
           </label>
         </div>
 
-        <div style={{ marginTop: "0.5rem" }}>
+        <div style={{ marginTop: "0.5rem" }} className="flex">
           <img
             src="/assets/img/folder-icon.png"
             style={{
@@ -112,7 +111,7 @@ export default function MyDataList(props) {
           </label>
         </div>
 
-        <div style={{ marginTop: "0.5rem" }}>
+        <div style={{ marginTop: "0.5rem" }} className="flex">
           <img
             src="/assets/img/folder-icon.png"
             style={{ width: "1.5rem", margin: "0 0.5rem" }}
@@ -125,7 +124,7 @@ export default function MyDataList(props) {
           </label>
         </div>
 
-        <div style={{ marginTop: "0.5rem" }}>
+        <div style={{ marginTop: "0.5rem" }} className="flex">
           <img
             src="/assets/img/folder-icon.png"
             style={{

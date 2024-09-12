@@ -1,37 +1,19 @@
 import "./leftSlidePage.scss";
 import Header from "../component/Header/Header";
-import MyDataButton from "./MyDataButton";
-import { useEffect, useState } from "react";
+import MyDataDropdown from "./MyDataDropdown";
 import ExpertDataButton from "./ExpertDataButton";
 
-export default function LeftSlidePage(props) {
-  // 최상위 버튼 설정 초기 My Data로 설정함
-  const [buttonCheck, setButtonCheck] = useState("MyData");
-
-  useEffect(() => {
-    console.log("왼쪽 메뉴바 버튼 체크 : " + buttonCheck);
-    props.setButton(buttonCheck);
-  }, [buttonCheck]);
-
+export default function LeftSlidePage({ setDataCategory }) {
   return (
     <div className="e-class-mydata">
       <Header />
       <div className="myData-left">
         <div className="myData-summary">
-          {/* DATA 드롭다운 */}
-          <MyDataButton
-            buttonName={"Data"}
-            buttonCheck={buttonCheck}
-            setButtonCheck={setButtonCheck}
-          />
-          {/* Example 드롭다운(미완성) */}
-          <ExpertDataButton
-            buttonName={"Example"}
-            buttonCheck={buttonCheck}
-            setButtonCheck={setButtonCheck}
-          />
+          <ExpertDataButton setDataCategory={setDataCategory} />
           {/* <MyDataButton buttonName={"Assignmnet"} />
           <MyDataButton buttonName={"Submitted"} /> */}
+          {/* DATA 드롭다운 */}
+          <MyDataDropdown />
         </div>
       </div>
     </div>

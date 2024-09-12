@@ -1,4 +1,4 @@
-import LeftSlidePage from "../../../Data/DataInChart/Page/leftSlidePage";
+import LeftSlidePage from "../../../Data/DataInChart/Page/LeftSlidePage";
 import TableOrGraph from "../../../Data/DataInChart/component/DrawGraph/TableOrGraph";
 import SampleData from "../../DataInput/SampleData";
 import Dataset from "../Dataset/Dataset";

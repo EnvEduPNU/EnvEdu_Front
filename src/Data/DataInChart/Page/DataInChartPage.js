@@ -1,9 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import TableOrGraph from "../component/DrawGraph/TableOrGraph";
-import LeftSlidePage from "./leftSlidePage";
+import LeftSlidePage from "./LeftSlidePage";
 import styled from "@emotion/styled";
-
-import { useGraphDataStore } from "../store/graphStore";
 
 const StyledDiv = styled.div`
   display: flex;
@@ -13,22 +11,15 @@ const StyledDiv = styled.div`
 
 // Data & Chart 메인 페이지
 function DataInChartPage() {
-  const [button, setButton] = useState("MyData");
-  const graphStore = useGraphDataStore();
-
-  useEffect(() => {
-    return () => {
-      graphStore.setDataInit(); // 상태 초기화 함수 호출
-    };
-  }, []);
+  const [dataCategory, setDataCategory] = useState("");
 
   return (
     <StyledDiv>
       {/* 왼쪽 사이드 메뉴 */}
-      <LeftSlidePage setButton={setButton} />
+      <LeftSlidePage setDataCategory={setDataCategory} />
 
       {/* 오른쪽 테이블 및 그래프 */}
-      <TableOrGraph button={button} />
+      <TableOrGraph dataCategory={dataCategory} />
     </StyledDiv>
   );
 }

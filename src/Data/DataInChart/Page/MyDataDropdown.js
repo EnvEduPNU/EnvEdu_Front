@@ -1,16 +1,15 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
+import MyDataList from "./MyDataList";
 import { Typography } from "@mui/material";
-import ExpertDataList from "./ExpertDataList";
 
-export default function ExpertDataButton({ setDataCategory }) {
+// DATA 드롭다운
+export default function MyDataDropdown() {
   const [isOpenDropdown, setIsOpenDropdown] = useState(false);
-
   const handleClick = () => {
     setIsOpenDropdown(true);
   };
-
   const handleClose = () => {
     setIsOpenDropdown(false);
   };
@@ -27,11 +26,12 @@ export default function ExpertDataButton({ setDataCategory }) {
             color: "black",
           }}
         >
-          Example
+          My Data
         </Typography>
       </Button>
 
-      {isOpenDropdown && <ExpertDataList setDataCategory={setDataCategory} />}
+      {/* DATA 드롭다운 리스트 */}
+      {isOpenDropdown && <MyDataList />}
     </div>
   );
 }

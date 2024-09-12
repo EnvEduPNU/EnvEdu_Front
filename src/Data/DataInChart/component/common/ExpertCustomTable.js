@@ -1,21 +1,17 @@
-import * as Styled from "./Styled";
-import { ReactComponent as PencilIcon } from "../../image/Pencil.svg";
-import Select from "../Select/Select";
 import { useGraphDataStore } from "../../store/graphStore";
 import { useState } from "react";
-import useComponentPosition from "../../hooks/useComponentPosition";
-import { usetutorialStroe } from "../../store/tutorialStore";
-import Portal from "../../../Portal";
-import TutorialDescription from "../TutorialDescription/TutorialDescription";
-import { ustTabStore } from "../../store/tabStore";
-import Overlay from "../Overlay/Overlay";
+import Overlay from "../../../../DataLiteracy/common/Overlay/Overlay";
+import { useTabStore } from "../../store/tabStore";
+import useComponentPosition from "../../../../DataLiteracy/hooks/useComponentPosition";
+import { usetutorialStroe } from "../../../../DataLiteracy/store/tutorialStore";
+import Portal from "../../../../Portal";
+import TutorialDescription from "../../../../DataLiteracy/common/TutorialDescription/TutorialDescription";
 
 function ExpertCustomTable() {
-  const { data, variables, changeValue, changeVariableType, title } =
-    useGraphDataStore();
+  const { data, changeValue, changeVariableType, title } = useGraphDataStore();
   const [editableCell, setEditableCell] = useState(null);
   const { ref, position } = useComponentPosition();
-  const { changeTab } = ustTabStore();
+  const { changeTab } = useTabStore();
   const { isTutorial, step, type } = usetutorialStroe();
   const tableNumberData = data.map((d, idx) => {
     if (idx == 0) return "Rows#";
@@ -54,20 +50,22 @@ function ExpertCustomTable() {
 
   return (
     <div>
-      <h2>{title}</h2>
       <table
-        className="w-full border-solid border-[1px] border-[rgba(34, 36, 38, 0.15)] rounded-xl"
+        className="w-full border-solid border-[1px] border-[rgba(34, 36, 38, 0.15)] rounded-xl caption-top border-collapse"
         ref={ref}
       >
+        <caption className="text-2xl font-semibold py-2 text-center text-black">
+          {title}
+        </caption>
         <thead>
           <tr>
-            {headers.map((header, headerIndex) => {
+            {["", ...headers].map((header, headerIndex) => {
               return (
                 <th
-                  className="shadow-[0_8px_5px_-5px_rgba(0,0,0,0.3)] z-30 leading-[20px] py-3 px-2 text-center"
+                  className="border-[1px] border-[rgba(34, 36, 38, 0.15)]  shadow-[0_8px_5px_-5px_rgba(0,0,0,0.3)] z-30 leading-[20px] py-3 px-2 text-center"
                   key={headerIndex}
                 >
-                  {header}
+                  <span className="text-xl">{header}</span>
                 </th>
               );
             })}
@@ -76,8 +74,12 @@ function ExpertCustomTable() {
         <tbody>
           {data.slice(1).map((row, rowIndex) => (
             <tr>
-              {row.map((value, valueIndex) => {
-                return <td>{value}</td>;
+              {[rowIndex, ...row].map((value, valueIndex) => {
+                return (
+                  <td className="border-[1px] border-[rgba(34, 36, 38, 0.15)] text-center py-2">
+                    <span className="text-md">{value}</span>
+                  </td>
+                );
               })}
             </tr>
           ))}

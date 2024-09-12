@@ -9,13 +9,13 @@ function Select({ defaultValue, items, onChange }) {
   const [isShow, setIsShow] = useState(false);
   const { ref, position } = useComponentPosition();
   const onClickArrowIcon = () => {
-    setIsShow(state => !state);
+    setIsShow((state) => !state);
   };
 
-  const onClickItem = item => {
+  const onClickItem = (item) => {
     if (onChange != null) onChange(item);
     setValue(item);
-    setIsShow(state => !state);
+    setIsShow((state) => !state);
   };
 
   return (
@@ -26,7 +26,7 @@ function Select({ defaultValue, items, onChange }) {
       {isShow && (
         <Portal>
           <Styled.Menu style={{ top: position.top + 30, left: position.left }}>
-            {items.map(item => (
+            {items.map((item) => (
               <Styled.Item
                 onClick={() => onClickItem(item)}
                 key={item}

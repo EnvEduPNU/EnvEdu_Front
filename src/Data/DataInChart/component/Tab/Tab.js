@@ -3,12 +3,14 @@ import { ReactComponent as GraphIcon } from "../../../../Study/image/GraphIcon.s
 import { ReactComponent as TableIcon } from "../../../../Study/image/TableIcon.svg";
 import { useTabStore } from "../../store/tabStore";
 import { useGraphDataStore } from "../../store/graphStore";
+import { useEffect } from "react";
 
 function Tab() {
-  const { data } = useGraphDataStore();
   const { tab, changeTab } = useTabStore();
+  const { data, title, variables } = useGraphDataStore();
 
-  const onClickTab = newTab => {
+  const onClickTab = (newTab) => {
+    console.log(data, title, variables);
     if (newTab === "graph" && data.length <= 0) {
       alert("데이터를 선택 후 graph 탭을 이용해주세요.");
       return;
