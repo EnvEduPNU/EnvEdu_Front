@@ -1,11 +1,9 @@
 import { Typography } from "@mui/material";
 import { useTabStore } from "../../store/tabStore";
 import CustomTable from "../CustomTable/CustomTable";
-import ExpertCustomTable from "../../../../DataLiteracy/common/CustomTable/ExpertCustomTable";
-import CustomTableHeader from "../CustomTable/CustomTableHeader";
-import ExpertCustomTableHeader from "../../../../DataLiteracy/common/CustomTable/ExpertCustomTableHeader";
+import ExpertCustomTable from "../CustomTable/ExpertCustomTable";
+import CustomTableHeader from "../CustomTable/CustomTableHeader/CustomTableHeader";
 import GraphAndEditor from "../GraphAndEditor/GraphAndEditor";
-import ExpertGraphAndEditor from "../../../../DataLiteracy/DrawGraph/GraphAndEditor/ExpertGraphAndEditor";
 import PublicDataButton from "./PublicDataButton";
 import SEEdAppButton from "./SEEdAppButton";
 import * as Styled from "./Styled";
@@ -67,7 +65,7 @@ function TableOrGraph(props) {
             <CustomTable tableSaveClick={tableSaveClick} />
           )}
 
-          {dataName === "ExpertData" && <ExpertCustomTable />}
+          {/* {dataName === "ExpertData" && <ExpertCustomTable />} */}
 
           <div style={{ display: "flex", flexDirection: "row" }}>
             <PublicDataButton buttonName={"공공데이터 가져오기"} />
@@ -95,8 +93,8 @@ function TableOrGraph(props) {
 
           {dataName === "ExpertData" && (
             <>
-              <ExpertCustomTableHeader />
-              <ExpertGraphAndEditor />
+              <CustomTableHeader />
+              <GraphAndEditor />
             </>
           )}
         </>

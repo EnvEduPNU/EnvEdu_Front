@@ -2,7 +2,7 @@ import { Button } from "react-bootstrap";
 import FormCheckInput from "react-bootstrap/esm/FormCheckInput";
 import { useState } from "react";
 import { useTabStore } from "../../store/tabStore";
-import ExampleGraph from "../../../../DataLiteracy/DrawGraph/ExampleGraph";
+import ExampleGraph from "../../DataSet/ExampleGraph";
 
 function GraphSelectionModal({
   setSelectedGraph,

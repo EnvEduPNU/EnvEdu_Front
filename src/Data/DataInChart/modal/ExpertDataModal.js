@@ -2,7 +2,7 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
-import Dataset from "../../../DataLiteracy/DataLoad/Dataset/Dataset";
+import Dataset from "../DataSet/Dataset";
 
 const style = {
   position: "absolute",

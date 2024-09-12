@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import "./leftSlidePage.scss";
-import Dataset from "../../../DataLiteracy/DataLoad/Dataset/Dataset";
 import ExpertDataModal from "../modal/ExpertDataModal";
 
 export default function ExpertDataList(props) {
