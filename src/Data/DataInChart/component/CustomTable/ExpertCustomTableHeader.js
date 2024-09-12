@@ -29,22 +29,39 @@ function ExpertCustomTableHeader() {
             <Styled.TableHeader>
               <Styled.Th>
                 <span>{header}</span>
-              </Styled.Th>
-              <Styled.Box $isNotEnd>
-                <Select
-                  defaultValue={variables[col].getType}
-                  items={["Categorical", "Numeric"]}
-                  onChange={(type) => onChangeType(col, type)}
-                />
-              </Styled.Box>
-              <Styled.Box>
-                <Styled.Button
-                  onClick={() => onClickShwoBotton(col)}
-                  $isSelected={variables[col].getIsSelected}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    marginTop: "5px",
+                  }}
                 >
-                  선택
-                </Styled.Button>
-              </Styled.Box>
+                  <button
+                    style={{
+                      display: "block",
+                      marginRight: "0.5rem",
+                      paddingLeft: "0.8rem",
+                      paddingRight: "0.8rem",
+                      borderRadius: "0.5rem", // rounded-lg
+                      backgroundColor: "#e0e1e2",
+                    }}
+                  >
+                    X
+                  </button>
+                  <button
+                    style={{
+                      display: "block",
+                      marginLeft: "0.5rem",
+                      paddingLeft: "0.8rem",
+                      paddingRight: "0.8rem",
+                      borderRadius: "0.5rem", // rounded-lg
+                      backgroundColor: "#e0e1e2",
+                    }}
+                  >
+                    Y
+                  </button>
+                </div>
+              </Styled.Th>
             </Styled.TableHeader>
           </Styled.HeaderWrapper>
         </Styled.Column>

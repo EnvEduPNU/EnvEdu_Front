@@ -14,8 +14,9 @@ import PdfButton from "./PdfButton";
 import GraphSaveButton from "./GraphSaveButton";
 import TableChangeButton from "./TableChangeButton";
 import ExpertCustomTable from "../common/ExpertCustomTable";
-import ExpertCustomTableHeader from "../CustomTable/ExpertCustomTableHeader";
+
 import ExpertCustomGraph from "./ExpertCustomGraph";
+import ExpertCustomTableHeader from "../CustomTable/ExpertCustomTableHeader";
 
 // 테이블 아니면 그래프 선택하는 탭 컴포넌트
 function TableOrGraph({ dataCategory }) {
