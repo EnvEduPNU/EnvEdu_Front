@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./Home.scss";
 import Carousel from "react-bootstrap/Carousel";
 import styled from "styled-components";
@@ -193,10 +193,26 @@ export default function Home() {
           <h3 className="section-title">교육 자료</h3>
           <hr />
           <ul className="section-description">
-            <li>환경교육 교수학습 자료1<br/>[수권(Hydrosphere)에 대한 이해]</li>
-            <li>환경교육 교수학습 자료2<br/>[기권(Atmosphere)에 대한 이해]</li>
-            <li>환경교육 교수학습 자료3<br/>[지권(Geosphere)에 대한 이해]</li>
-            <li>환경교육 교수학습 자료4<br/>[생태계(Biosphere)에 대한 이해]</li>
+            <li>
+              환경교육 교수학습 자료1
+              <br />
+              [수권(Hydrosphere)에 대한 이해]
+            </li>
+            <li>
+              환경교육 교수학습 자료2
+              <br />
+              [기권(Atmosphere)에 대한 이해]
+            </li>
+            <li>
+              환경교육 교수학습 자료3
+              <br />
+              [지권(Geosphere)에 대한 이해]
+            </li>
+            <li>
+              환경교육 교수학습 자료4
+              <br />
+              [생태계(Biosphere)에 대한 이해]
+            </li>
           </ul>
         </div>
 

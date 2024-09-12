@@ -1,24 +1,17 @@
 import Tab from "../Tab/Tab";
 import * as Styled from "./Styled";
 
-import { useGraphDataStore } from "../../store/graphStore";
-import GraphSelector from "../GraphSelector/GraphSelector";
-
-function Header({ isEclassTab = false }) {
-  const { title } = useGraphDataStore();
-
+// 왼쪽 메뉴의 Table 과 Graph 탭 상위 컴포넌트
+function Header() {
   return (
-    <Styled.Wrapper>
-      <Styled.Box>
-        <span>{title}</span>
-      </Styled.Box>
+    <>
       <Styled.Middle>
-        <Tab isEclassTab={isEclassTab} />
+        <Tab />
       </Styled.Middle>
-      <Styled.LastBox>
+      {/* <Styled.LastBox>
         <GraphSelector />
-      </Styled.LastBox>
-    </Styled.Wrapper>
+      </Styled.LastBox> */}
+    </>
   );
 }
 

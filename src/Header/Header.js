@@ -1,219 +1,275 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "./Header.scss";
 import { Navbar, Nav, Container, NavDropdown } from "react-bootstrap";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { customAxios } from "../Common/CustomAxios";
 import { PiPlant } from "react-icons/pi";
 
 function Header() {
-  /**
-   * 로그인 성공 시, UI에 변화룰 주기 위한 state
-   */
-  const [username] = useState(localStorage.getItem("username"));
+  const [username, setUsername] = useState(null);
+  const [userRole, setUserRole] = useState(null);
 
-  /**
-   * 로그아웃 성공 시, 단순히 한 번 새로고침해 UI에 변경 반영
-   */
-  const navigate = useNavigate("");
+  const [open, setOpen] = useState({
+    about: false,
+    app: false,
+    dataChart: false,
+    eClass: false,
+    learnMore: false,
+    contact: false,
+  });
+
+  const refs = {
+    about: useRef(null),
+    app: useRef(null),
+    dataChart: useRef(null),
+    eClass: useRef(null),
+    learnMore: useRef(null),
+    contact: useRef(null),
+  };
+
+  const toggleDropdown = (id) => {
+    setOpen((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleNavLinkClick = (path) => {
+    if (location.pathname === path) {
+      window.location.reload(); // 현재 페이지와 동일한 경로일 경우 페이지를 리로드
+    } else {
+      navigate(path); // 다른 경로일 경우 해당 경로로 이동
+    }
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      Object.entries(refs).forEach(([key, ref]) => {
+        if (ref.current && !ref.current.contains(event.target)) {
+          setOpen((prev) => ({ ...prev, [key]: false }));
+        }
+      });
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    setUsername(localStorage.getItem("username"));
+    setUserRole(localStorage.getItem("role"));
+  }, []);
+
   function logout() {
-    customAxios.post("/logout").then(() => {
-      localStorage.clear();
-      navigate("/");
-      window.location.reload();
-    });
+    localStorage.clear();
+    navigate("/");
+    window.location.reload();
   }
 
   return (
     <div className="fixed-top">
-      <div>
-        <Navbar style={{ height: "2em", fontSize: "0.8em" }} bg="light">
-          <Container className="justify-content-end">
-            <Nav>
-              {username === null || username === undefined ? (
-                <>
-                  <NavLink className={"nav-link"} to="/login">
-                    LOGIN
-                  </NavLink>
-                  {/**
-                   * 오직 header를 통해 회원가입을 할 수 있도록 설정
-                   * 이 부분에서 state를 회원가입을 위한 컴포넌트로 넘겨줬을 때만 정상 동작
-                   */}
-                  <NavLink
-                    className={"nav-link"}
-                    to="/auth"
-                    state={{ role: "ROLE_STUDENT" }}
-                  >
-                    JOIN US(student)
-                  </NavLink>
-                  <NavLink
-                    className={"nav-link"}
-                    to="/auth"
-                    state={{ role: "ROLE_EDUCATOR" }}
-                  >
-                    JOIN US(educator)
-                  </NavLink>
-                </>
-              ) : (
-                <>
-                  <NavLink
-                    className={"nav-link"}
-                    to="/"
-                    style={{ color: "black" }}
-                  >
-                    {username}
-                  </NavLink>
-                  <span
-                    className={"nav-link"}
-                    style={{ color: "black", cursor: "pointer" }}
-                    onClick={logout}
-                  >
-                    LOGOUT
-                  </span>
-                </>
-              )}
-            </Nav>
-          </Container>
-        </Navbar>
-      </div>
-      <div>
-        <Navbar bg="light">
-          <Container
-            className="justify-content-between"
-            style={{ height: "5em" }}
-          >
-            <Nav>
-              <NavLink className="nav-link" to="/" style={{ display: "flex" }}>
-                <PiPlant size="30" color="#2F5F3A" />
-                <h4
-                  style={{
-                    color: "#000",
-                    fontWeight: "bold",
-                    marginLeft: "0.3rem",
-                  }}
+      <Navbar style={{ height: "2em", fontSize: "0.8em" }} bg="light">
+        <Container className="justify-content-end">
+          <Nav>
+            {username ? (
+              <>
+                <Nav.Link onClick={() => handleNavLinkClick("/")}>
+                  {username}
+                </Nav.Link>
+                <span
+                  className="nav-link"
+                  style={{ cursor: "pointer" }}
+                  onClick={logout}
                 >
-                  SEEd
-                </h4>
-              </NavLink>
-            </Nav>
-            <Nav>
-              <NavDropdown
-                title="ABOUT"
-                id="basic-nav-dropdown"
-                className={"mx-2"}
-                style={{ fontSize: "1.2em" }}
+                  LOGOUT
+                </span>
+              </>
+            ) : (
+              <>
+                <Nav.Link onClick={() => handleNavLinkClick("/login")}>
+                  LOGIN
+                </Nav.Link>
+                <Nav.Link
+                  onClick={() => handleNavLinkClick("/auth")}
+                  state={{ role: "ROLE_STUDENT" }}
+                >
+                  JOIN US(student)
+                </Nav.Link>
+                <Nav.Link
+                  onClick={() => handleNavLinkClick("/auth")}
+                  state={{ role: "ROLE_EDUCATOR" }}
+                >
+                  JOIN US(educator)
+                </Nav.Link>
+              </>
+            )}
+          </Nav>
+        </Container>
+      </Navbar>
+      <Navbar bg="light">
+        <Container
+          className="justify-content-between"
+          style={{ height: "5em" }}
+        >
+          <Nav>
+            <Nav.Link onClick={() => handleNavLinkClick("/")}>
+              <PiPlant size="30" color="#2F5F3A" />
+              <h4
+                style={{
+                  color: "#000",
+                  fontWeight: "bold",
+                  marginLeft: "0.3rem",
+                }}
               >
-                <NavLink className={"nav-link"} to="/what">
-                  What We Do
-                </NavLink>
-                <NavLink className={"nav-link"} to="/team">
-                  Team
-                </NavLink>
-                <NavLink className={"nav-link"} to="/">
-                  Projects
-                </NavLink>
-              </NavDropdown>
+                SEEd
+              </h4>
+            </Nav.Link>
+          </Nav>
+          <Nav>
+            {Object.keys(open).map((key) => (
               <NavDropdown
-                title="GET STARTED"
-                id="basic-nav-dropdown"
-                className={"mx-2"}
+                key={key}
+                title={key.replace(/^\w/, (c) => c.toUpperCase())}
+                id={`nav-dropdown-${key}`}
+                className="mx-2"
                 style={{ fontSize: "1.2em" }}
+                onClick={() => toggleDropdown(key)}
+                show={open[key]}
+                ref={refs[key]}
               >
-                <NavLink className={"nav-link"} to="/">
-                  SEEd Platform
-                </NavLink>
-                <NavLink className={"nav-link"} to="/">
-                  SEEd Device
-                </NavLink>
-                <NavLink className={"nav-link"} to="/">
-                  E-class manual
-                </NavLink>
-                <NavLink className={"nav-link"} to="/">
-                  Data Literacy
-                </NavLink>
+                {(() => {
+                  switch (key) {
+                    case "about":
+                      return (
+                        <>
+                          <Nav.Link onClick={() => handleNavLinkClick("/what")}>
+                            What We Do
+                          </Nav.Link>
+                          <Nav.Link onClick={() => handleNavLinkClick("/team")}>
+                            Team
+                          </Nav.Link>
+                        </>
+                      );
+                    case "app":
+                      return (
+                        <>
+                          <Nav.Link
+                            onClick={() => handleNavLinkClick("/socket")}
+                          >
+                            측정하기
+                          </Nav.Link>
+                        </>
+                      );
+                    case "dataChart":
+                      return (
+                        <>
+                          <Nav.Link
+                            onClick={() => handleNavLinkClick("/data-in-chart")}
+                          >
+                            Tutorial
+                          </Nav.Link>
+                          <Nav.Link
+                            onClick={() => handleNavLinkClick("/data-in-chart")}
+                          >
+                            Data & Chart
+                          </Nav.Link>
+                          <Nav.Link
+                            onClick={() => handleNavLinkClick("/openapi")}
+                          >
+                            Open API Data
+                          </Nav.Link>
+                          <Nav.Link
+                            onClick={() => handleNavLinkClick("/textbook")}
+                          >
+                            Data In Textbooks
+                          </Nav.Link>
+                          <Nav.Link
+                            onClick={() => handleNavLinkClick("/resource")}
+                          >
+                            Education Resources
+                          </Nav.Link>
+                        </>
+                      );
+                    case "eClass":
+                      return (
+                        <>
+                          <Nav.Link
+                            onClick={() =>
+                              handleNavLinkClick("/EClassLivePage")
+                            }
+                          >
+                            E-Class
+                          </Nav.Link>
+                          <Nav.Link
+                            onClick={() => handleNavLinkClick("/myData")}
+                          >
+                            My Data
+                          </Nav.Link>
+                          {userRole === "ROLE_EDUCATOR" && (
+                            <Nav.Link
+                              onClick={() => handleNavLinkClick("/classData")}
+                            >
+                              수업 자료
+                            </Nav.Link>
+                          )}
+                        </>
+                      );
+                    case "learnMore":
+                      return (
+                        <>
+                          <Nav.Link onClick={() => handleNavLinkClick("/news")}>
+                            News
+                          </Nav.Link>
+                          <Nav.Link
+                            onClick={() => handleNavLinkClick("/research")}
+                          >
+                            Research
+                          </Nav.Link>
+                          <Nav.Link
+                            onClick={() => handleNavLinkClick("/training")}
+                          >
+                            Training
+                          </Nav.Link>
+                          <Nav.Link
+                            onClick={() =>
+                              handleNavLinkClick("/implementation")
+                            }
+                          >
+                            Implementation
+                          </Nav.Link>
+                        </>
+                      );
+                    case "contact":
+                      return (
+                        <>
+                          <Nav.Link
+                            onClick={() => handleNavLinkClick("/contact")}
+                          >
+                            Contact us
+                          </Nav.Link>
+                          <Nav.Link
+                            onClick={() => handleNavLinkClick("/notice")}
+                          >
+                            Announcement
+                          </Nav.Link>
+                          <Nav.Link
+                            onClick={() => handleNavLinkClick("/board")}
+                          >
+                            Board
+                          </Nav.Link>
+                        </>
+                      );
+                    default:
+                      return null;
+                  }
+                })()}
               </NavDropdown>
-              <NavDropdown
-                title="DATA"
-                id="basic-nav-dropdown"
-                className={"mx-2"}
-                style={{ fontSize: "1.2em" }}
-              >
-                <NavLink className={"nav-link"} to="/socket">
-                  SEEd App
-                </NavLink>
-                <NavLink className={"nav-link"} to="/myData">
-                  My Data
-                </NavLink>
-                <NavLink className={"nav-link"} to="/data-in-chart">
-                  Data & Chart
-                </NavLink>
-                <NavLink className={"nav-link"} to="/openapi">
-                  Open API Data
-                </NavLink>
-                <NavLink className={"nav-link"} to="/textbook">
-                  Data In Textbooks
-                </NavLink>
-              </NavDropdown>
-              <NavDropdown
-                title="EDUCATION"
-                id="basic-nav-dropdown"
-                className={"mx-2"}
-                style={{ fontSize: "1.2em" }}
-              >
-                <NavLink className={"nav-link"} to="/E-Classes">
-                  E-Class
-                </NavLink>
-                <NavLink className={"nav-link"} to="/">
-                  E-Class Library
-                </NavLink>
-                <NavLink className={"nav-link"} to="/dataLiteracy/dataLoad">
-                  Data Literacy
-                </NavLink>
-                <NavLink className={"nav-link"} to="/resource">
-                  Education Resources
-                </NavLink> 
-                <NavLink className={'nav-link'} to="/survey">
-                  Survey
-                </NavLink>
-              </NavDropdown>
-              <NavDropdown
-                title="LEARN MORE"
-                id="basic-nav-dropdown"
-                style={{ fontSize: "1.2em" }}
-                className={"mx-2"}
-              >
-                <NavLink className={"nav-link"} to="/news">
-                  News
-                </NavLink>
-                <NavLink className={"nav-link"} to="/research">
-                  Research
-                </NavLink>
-                <NavLink className={"nav-link"} to="/training">
-                  Training
-                </NavLink>
-                <NavLink className={"nav-link"} to="/implementation">
-                  Implementation
-                </NavLink>
-              </NavDropdown>
-              <NavDropdown
-                title="CONTACT"
-                id="basic-nav-dropdown"
-                style={{ fontSize: "1.2em" }}
-                className={"mx-2"}
-              >
-                <NavLink className={"nav-link"} to="/contact">
-                  Contact us
-                </NavLink>
-                <NavLink className={"nav-link"} to="/notice">
-                  Announcement
-                </NavLink>
-                <NavLink className={"nav-link"} to="/board">
-                  Board
-                </NavLink>
-              </NavDropdown>
-            </Nav>
-          </Container>
-        </Navbar>
-      </div>
+            ))}
+          </Nav>
+        </Container>
+      </Navbar>
     </div>
   );
 }

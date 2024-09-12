@@ -2,15 +2,15 @@ import styled from "styled-components";
 
 export const Wrapper = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
+  width: 160vh;
+  height: 65vh;
   border-radius: 5px;
   border: 1px solid rgba(34, 36, 38, 0.15);
   box-shadow: 0 1px 2px 0 rgba(34, 36, 38, 0.15);
   padding: 14px;
 `;
 
+export const Graph = styled.div``;
 export const AcitwGraphWrapper = styled.div`
   position: "absolute";
   background-color: rgb(255, 255, 255);
@@ -31,7 +31,11 @@ export const AcitwGraphWrapper = styled.div`
 `;
 
 export const ErrorMessage = styled.div`
-  width: fit-content;
+  width: 18%;
+  height: 8%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border-radius: 5px;
   background-color: #fff6f6;
   color: #9f3a38;
@@ -39,9 +43,4 @@ export const ErrorMessage = styled.div`
   font-size: 15px;
   font-weight: 600;
   padding: 14px 21px;
-`;
-
-export const Graph = styled.div`
-  width: 100%;
-  /* height: 100%; */
 `;

@@ -1,33 +1,26 @@
-import * as Styled from "./Styled";
-import DrawGraph from "../component/DrawGraph/DrawGraph";
-import LeftSilde from "../component/LeftSilde/LeftSilde";
+import { useState } from "react";
+import TableOrGraph from "../component/DrawGraph/TableOrGraph";
 import LeftSlidePage from "./leftSlidePage";
-import TopSlide from "../component/TopSilde/TopSilde";
-import Blackboard from "../component/Blackboard/Blackboard";
-import { useSlideStore } from "../store/slideStore";
-import Header from "../../../Header/Header";
+import styled from "@emotion/styled";
 
+const StyledDiv = styled.div`
+  display: flex;
+  padding: 0;
+  width: 100%;
+`;
+
+// Data & Chart 메인 페이지
 function DataInChartPage() {
-  const { isShowTop, showTop, closeTop } = useSlideStore();
+  const [dataCategory, setDataCategory] = useState("");
 
   return (
-    <Styled.Wrapper>
-      <LeftSilde>
-        <div style={{ width: "1000px" }}>
-          <LeftSlidePage />
-        </div>
-      </LeftSilde>
+    <StyledDiv>
+      {/* 왼쪽 사이드 메뉴 */}
+      <LeftSlidePage setDataCategory={setDataCategory} />
 
-      <TopSlide>
-        <div style={{ height: "100px" }}>
-          {isShowTop && <Header />}
-        </div>
-      </TopSlide>
-
-      <Blackboard>
-        <DrawGraph />
-      </Blackboard>
-    </Styled.Wrapper>
+      {/* 오른쪽 테이블 및 그래프 */}
+      <TableOrGraph dataCategory={dataCategory} />
+    </StyledDiv>
   );
 }
 

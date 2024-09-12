@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as Styled from "./Styled";
 import { useGraphDataStore } from "../../store/graphStore";
 import GraphSelectionModal from "./GraphSelectionModal";
@@ -8,8 +8,13 @@ function GraphSelector() {
   const [isVisibleModal, setIsVisibleModal] = useState(false);
 
   const onClickGraphSelectionBtn = () => {
-    setIsVisibleModal(state => !state);
+    setIsVisibleModal((state) => !state);
   };
+
+  // 컴포넌트 해제될때는 무조건 Bar차트로 돌아가기
+  useEffect(() => {
+    return changeGraphIndex(0);
+  }, []);
 
   return (
     <>

@@ -2,141 +2,152 @@ import { create } from "zustand";
 
 class Variable {
   constructor(name) {
-    this._name = name;
-    this._type = "Numeric";
-    this._isSelected = true;
-    this._axis = null;
-    this._graph = null;
-    this._unit = "";
+    this.name = name;
+    this.type = "Categorical";
+    this.isSelected = true;
+    this.axis = null;
+    this.graph = null;
+    this.unit = "";
   }
 
-  get isSelected() {
-    return this._isSelected;
+  get getIsSelected() {
+    return this.isSelected;
   }
-
-  get name() {
-    return this._name;
+  get getName() {
+    return this.name;
   }
-
-  get type() {
-    return this._type;
+  get getType() {
+    return this.type;
   }
-
-  get axis() {
-    return this._axis;
+  get getAxis() {
+    return this.axis;
   }
-
-  get graph() {
-    return this._graph;
+  get getGraph() {
+    return this.graph;
   }
-
-  get unit() {
-    return this._unit;
+  get getUnit() {
+    return this.unit;
   }
 
   setName(name) {
-    this._name = name;
+    this.name = name;
   }
 
   setType(type) {
-    this._type = type;
+    this.type = type;
   }
 
   toggleSelected() {
-    this._isSelected = !this._isSelected;
+    this.isSelected = !this.isSelected;
   }
 
   setIsSelected(isSelected) {
-    this._isSelected = isSelected;
+    this.isSelected = isSelected;
   }
-
   setAxis(axis) {
-    if (this._axis === axis) {
+    if (this.axis === axis) {
       axis = null;
     }
-    this._axis = axis;
+    this.axis = axis;
   }
-
   setGraph(graph) {
-    if (this._graph === graph) {
+    if (this.graph === graph) {
       graph = null;
     }
-    this._graph = graph;
+    this.graph = graph;
   }
-
   setUnit(unit) {
-    this._unit = unit;
+    this.unit = unit;
   }
 
   copy() {
-    const newVariable = new Variable(this._name);
-    newVariable.setIsSelected(this._isSelected);
-    newVariable.setType(this._type);
-    newVariable.setAxis(this._axis);
-    newVariable.setGraph(this._graph);
-    newVariable.setUnit(this._unit);
+    const newVariable = new Variable(this.name);
+    newVariable.setIsSelected(this.getIsSelected);
+    newVariable.setType(this.type);
+    newVariable.setAxis(this.axis);
+    newVariable.setGraph(this.graph);
+    newVariable.setUnit(this.unit);
     return newVariable;
   }
 }
 
-const data = JSON.parse(localStorage.getItem("data")) || [];
+const data = JSON.parse(localStorage.getItem("data"));
 const title = JSON.parse(localStorage.getItem("title"));
+
 export const useGraphDataStore = create((set, get) => ({
   title: title || "",
-  data: data,
+  data: data || [
+    ["농업지대", "평균기온", "강수량", "일조시간"],
+    ["태백고냉", 21.9, 181.9, 149.7],
+    ["소백간산", 25.3, 675.6, 140],
+    ["영남내륙산간", 24.6, 578.3, 137.8],
+    ["중부내륙", 25.9, 505.3, 144.5],
+    ["소백서부내륙", 26, 699.7, 138.6],
+    ["노령동서내륙", 25.6, 570.2, 136.2],
+    ["호남내륙", 25.6, 570.2, 136.2],
+    ["영남내륙", 26, 477.5, 123.8],
+    ["중서부평야", 25.7, 508.1, 157],
+    ["남서해안", 25.6, 500.8, 104.9],
+    ["남부해안", 25.2, 623.4, 113.6],
+    ["동해안남부", 26.2, 235.6, 167.3],
+  ],
 
   variables:
-    (data && data[0]?.map(name => new Variable(name))) ||
-    ["농업지대", "평균기온", "강수량", "일조시간"].map(
-      name => new Variable(name)
-    ),
+    data === null || data === undefined
+      ? ["농업지대", "평균기온", "강수량", "일조시간"].map(
+          (name) => new Variable(name)
+        )
+      : data[0].map((name) => new Variable(name)),
 
   graphIdx: 0,
-  pageIndex: -1,
-  activityIndex: -1,
 
-  changeActivity: (pageIndex, activityIndex) =>
-    set(state => ({
-      ...state,
-      pageIndex,
-      activityIndex,
-    })),
-
-  setData: newData =>
-    set(state => ({
+  setData: (newData) =>
+    set((state) => ({
       ...state,
       data: newData,
-      variables: newData[0].map(name => new Variable(name)),
+      variables: newData[0].map((name) => new Variable(name)),
+      title: "",
     })),
 
-  setTitle: title =>
-    set(state => ({
-      ...state,
-      title,
-    })),
+  setTitle: (title) =>
+    set((state) => {
+      return {
+        ...state,
+        data: state.data.map((row) => [...row]),
+        variables: state.data[0].map((name) => new Variable(name)),
+        title,
+      };
+    }),
 
-  changeGraphIndex: index =>
-    set(state => {
+  changeGraphIndex: (
+    index //이건 뭐냐 도대체?
+  ) =>
+    set((state) => {
       if (index === get().graphIdx) {
-        return { ...state };
+        return {
+          ...state,
+          data: state.data.map((row) => [...row]),
+          variables: state.variables.map((value) => [...value]),
+        };
       }
 
-      const newVariable = get().data[0].map(name => new Variable(name));
-      newVariable.forEach((variable, idx) => {
-        variable.setIsSelected(get().variables[idx].isSelected);
-        variable.setType(get().variables[idx].type);
-        variable.setUnit(get().variables[idx].unit);
-      });
+      const newVariables = state.data[0].map((name) => new Variable(name));
+      // newVariables.forEach((newVariable, idx) => {
+      //   newVariable.setIsSelected(state.variables[idx].getIsSelected);
+      //   newVariable.setType(state.variables[idx].getType);
+      //   newVariable.setUnit(state.variables[idx].getUnit);
+      // });
+      newVariables[index].toggleSelected();
       return {
         ...state,
         graphIdx: index,
-        variables: newVariable,
+        variables: newVariables,
       };
     }),
 
   changeValue: (row, col, newValue) =>
-    set(state => {
-      const newData = state.data.map(d => [...d]);
+    set((state) => {
+      const newData = state.data.map((d) => [...d]);
       newData[row][col] = newValue;
       return {
         ...state,
@@ -144,9 +155,9 @@ export const useGraphDataStore = create((set, get) => ({
       };
     }),
 
-  changeSelectedVariable: variableIdx =>
-    set(state => {
-      const newVariables = state.variables.map(variable => variable.copy());
+  changeSelectedVariable: (variableIdx) =>
+    set((state) => {
+      const newVariables = state.variables.map((variable) => variable.copy());
       newVariables[variableIdx].toggleSelected();
       return {
         ...state,
@@ -155,10 +166,9 @@ export const useGraphDataStore = create((set, get) => ({
     }),
 
   changeVariableType: (variableIdx, type) =>
-    set(state => {
-      const newVariables = state.variables.map(variable => variable.copy());
+    set((state) => {
+      const newVariables = state.variables.map((variable) => variable.copy());
       newVariables[variableIdx].setType(type);
-
       return {
         ...state,
         variables: newVariables,
@@ -166,8 +176,8 @@ export const useGraphDataStore = create((set, get) => ({
     }),
 
   changeAxis: (variableIdx, axis) =>
-    set(state => {
-      const newVariables = state.variables.map(variable => variable.copy());
+    set((state) => {
+      const newVariables = state.variables.map((variable) => variable.copy());
       newVariables[variableIdx].setAxis(axis);
       return {
         ...state,
@@ -176,10 +186,10 @@ export const useGraphDataStore = create((set, get) => ({
     }),
 
   changeGraph: (variableIdx, graph) =>
-    set(state => {
-      const newVariables = state.variables.map(variable => variable.copy());
+    set((state) => {
+      const newVariables = state.variables.map((variable) => variable.copy());
       newVariables[variableIdx].setGraph(graph);
-
+      // console.log(variableIdx, axis, newVariables);
       return {
         ...state,
         variables: newVariables,

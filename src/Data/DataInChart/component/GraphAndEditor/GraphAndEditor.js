@@ -1,28 +1,27 @@
+import { useEffect, useState } from "react";
 import { useGraphDataStore } from "../../store/graphStore";
 import CustomBarChart from "../CustomChart/CustomBarChart";
-import CustomBubbleChart from "../CustomChart/CustomBubbleChart";
-import CustomLineChart from "../CustomChart/CustomLineChart";
-import CustomMixChart from "../CustomChart/CustomMixChart";
-import CustomScatterChart from "../CustomChart/CustomScatterChart";
-import BarEditor from "../Editor/BarEditor/BarEditor";
-import BubbleEditor from "../Editor/BubbleEditor/BubbleEditor";
-import LineEditor from "../Editor/LineEditor/LineEditor";
-import MixEditor from "../Editor/MixEditor/MixEditor";
-import ScatterEditor from "../Editor/ScatterEditor/ScatterEditor";
+
 import * as Styled from "./Styled";
 
-function GraphAndEditor() {
-  const graphIdx = useGraphDataStore(state => state.graphIdx);
+function GraphAndEditor(props) {
+  const graphIdx = useGraphDataStore((state) => state.graphIdx);
+  const [pdfClick, setPdfClick] = useState(false);
+
+  useEffect(() => {
+    setPdfClick(props.pdfClick);
+    console.log("GraphAndEditor pdf 클릭");
+  }, [props]);
 
   return (
     <Styled.Wrapper>
       {graphIdx === 0 && (
         <>
-          <CustomBarChart />
-          <BarEditor />
+          <CustomBarChart pdfClick={pdfClick} />
+          {/* <BarEditor /> */}
         </>
       )}
-      {graphIdx === 1 && (
+      {/* {graphIdx === 1 && (
         <>
           <CustomLineChart />
           <LineEditor />
@@ -46,7 +45,7 @@ function GraphAndEditor() {
           <CustomMixChart />
           <MixEditor />
         </>
-      )}
+      )} */}
     </Styled.Wrapper>
   );
 }

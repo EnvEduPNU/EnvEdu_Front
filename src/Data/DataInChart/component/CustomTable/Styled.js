@@ -1,21 +1,10 @@
 import styled, { css } from "styled-components";
 
-export const Notice = styled.div`
-  height: 300px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  font-size: 16px;
-  font-weight: bold;
-`;
-
 export const TableHeaderWrapper = styled.div`
   position: relative;
   width: 100%;
   display: flex;
   border: 1px solid rgba(34, 36, 38, 0.15);
-  overflow-x: auto;
 `;
 
 export const Wrapper = styled.div`
@@ -24,7 +13,7 @@ export const Wrapper = styled.div`
   display: flex;
   border: 1px solid rgba(34, 36, 38, 0.15);
   max-height: 600px;
-  overflow: auto;
+  overflow-y: auto;
   border-radius: 5px;
 `;
 
@@ -32,7 +21,7 @@ export const Column = styled.div`
   width: 100%;
   background-color: #f8f8f8;
 
-  min-width: 130px;
+  /* padding: 0px 10px; */
   display: flex;
   flex-direction: column;
   font-size: 16px;
@@ -47,14 +36,13 @@ export const Column = styled.div`
 
 export const FirstColumn = styled(Column)`
   max-width: 150px;
-  min-width: 70px;
 `;
 
 export const HeaderWrapper = styled.div`
   padding: 0 10px;
   box-shadow: 0 8px 5px -5px rgba(0, 0, 0, 0.3);
   z-index: 3;
-  /* height: 100%; */
+  height: 100%;
 `;
 
 export const Header = styled.div`
@@ -64,6 +52,7 @@ export const Header = styled.div`
 
 export const TableHeader = styled.div`
   border-bottom: 1px solid rgba(34, 36, 38, 0.15);
+  text-align: center;
 `;
 
 export const HeaderStartar = styled(Header)`
@@ -74,14 +63,18 @@ export const HeaderStartar = styled(Header)`
 
 export const Th = styled.div`
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: top;
   align-items: center;
   line-height: 2;
-  height: 35px;
-  max-height: 35px;
+<<<<<<< HEAD
+  height: 80px;
   overflow: auto;
   white-space: nowrap;
+  border-bottom: 0px solid rgba(34, 36, 38, 0.15);
+=======
   border-bottom: 1px solid rgba(34, 36, 38, 0.15);
+>>>>>>> 222313c824d751874d00fcc7a20ce08c0eb29436
 `;
 
 export const Circle = styled.div`
@@ -165,7 +158,6 @@ export const InputDiv = styled.div`
   background-color: inherit;
   width: 100%;
   height: 100%;
-  min-height: 28px;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;

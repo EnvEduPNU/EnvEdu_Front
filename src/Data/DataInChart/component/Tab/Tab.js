@@ -1,14 +1,15 @@
 import * as Styled from "./Styled";
-import { ReactComponent as GraphIcon } from "../../../../Study/image/GraphIcon.svg";
-import { ReactComponent as TableIcon } from "../../../../Study/image/TableIcon.svg";
+import { ReactComponent as GraphIcon } from "../../images/GraphIcon.svg";
+import { ReactComponent as TableIcon } from "../../images/TableIcon.svg";
 import { useTabStore } from "../../store/tabStore";
 import { useGraphDataStore } from "../../store/graphStore";
+import { useEffect } from "react";
 
 function Tab() {
-  const { data } = useGraphDataStore();
   const { tab, changeTab } = useTabStore();
+  const { data } = useGraphDataStore();
 
-  const onClickTab = newTab => {
+  const onClickTab = (newTab) => {
     if (newTab === "graph" && data.length <= 0) {
       alert("데이터를 선택 후 graph 탭을 이용해주세요.");
       return;
