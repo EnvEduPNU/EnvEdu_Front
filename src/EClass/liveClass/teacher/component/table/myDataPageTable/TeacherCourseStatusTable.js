@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import {
   Table,
@@ -18,12 +18,12 @@ import { customAxios } from "../../../../../../Common/CustomAxios";
 import ReportViewModal from "../../../modal/ReportViewModal";
 
 function createData(
-  name,
-  sessionId,
-  shared,
-  assginmentShared,
-  assginmentSubmit,
-  reportSubmit
+  name = "noName",
+  sessionId = "noId",
+  shared = false,
+  assginmentShared = false,
+  assginmentSubmit = false,
+  reportSubmit = false
 ) {
   return {
     name,
@@ -35,34 +35,30 @@ function createData(
   };
 }
 
-const getStudent = async (sessionId) => {
-  try {
-    const response = await customAxios.get(
-      `${process.env.REACT_APP_API_URL}/student?sessionId=${sessionId}`
-    );
-    console.log(
-      "어떻게 받아오는지 확인 : " + JSON.stringify(response.data, null, 2)
-    );
-    return response.data.username;
-  } catch (error) {
-    console.error("Error fetching student data: ", error);
-    return null;
-  }
-};
-
-export default function TeacherCourseStatusTable({ stepCount, eclassUuid }) {
-  const sessionData = useLiveClassPartStore((state) => state.sessionIds);
+export default function TeacherCourseStatusTable({
+  stepCount,
+  eclassUuid,
+  sessionIds,
+  assginmentShareCheck,
+}) {
+  const sessionData = sessionIds.map((sessionId) => ({
+    id: sessionId,
+  }));
   const [students, setStudents] = useState([]);
-  const [eclassId, setEclassId] = useState(eclassUuid);
   const [studentStepFlag, setStudentStepFlag] = useState();
-  const [reportData, setReportData] = useState();
+  const [reportData, setReportData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [isAssginShared, setIsAssginShared] = useState(false);
+
+  const selectedReport = useRef();
 
   const updateShareStatus = useLiveClassPartStore(
     (state) => state.updateShareStatus
   );
 
-  const handleOpenModal = () => {
+  const handleOpenModal = (name) => {
+    selectedReport.current = name;
     setIsModalOpen(true);
   };
 
@@ -71,35 +67,76 @@ export default function TeacherCourseStatusTable({ stepCount, eclassUuid }) {
   };
 
   useEffect(() => {
+    console.log("세션 데이터 : " + JSON.stringify(sessionData, null, 2));
+    console.log("학생 데이터 : " + JSON.stringify(eclassUuid, null, 2));
+
     const fetchStudents = async () => {
       const studentData = await Promise.all(
-        sessionData.map((session) => getStudent(session.id))
+        sessionData.map((session) => getStudent(session.id, eclassUuid))
       );
 
-      console.log(
-        "[수업상태] 학생 확인 : " + JSON.stringify(studentData, null, 2)
-      );
-      console.log(
-        "[수업상태] 세션데이터 확인 : " + JSON.stringify(sessionData, null, 2)
-      );
-      setStudents(studentData);
+      if (studentData) setStudents(studentData);
     };
-    fetchStudents();
-  }, [sessionData]);
+
+    if (sessionData.length > 0) {
+      fetchStudents();
+    }
+  }, [sessionIds]);
 
   useEffect(() => {
-    sessionData.forEach((session) => {
-      updateShareStatus(session.id, null, false);
-    });
-  }, [stepCount]);
+    if (sessionData.length && stepCount !== undefined) {
+      sessionData.forEach((session) => {
+        updateShareStatus(session.id, null, false);
+      });
+    }
+  }, [stepCount, sessionData]);
 
-  // Eclass uuid와 학생 이름 리스트 보내서 과제 현황 리스트 가져오는 요청
   useEffect(() => {
-    console.log("학생 있나 ? : " + JSON.stringify(students, null, 2));
-    console.log("EClassID 있나 ? : " + JSON.stringify(eclassId, null, 2));
+    // 학생 정보가 모두 설정된 후에 sendStudentData 실행
+    if (students.length > 0) {
+      sendStudentData();
+    }
+  }, [students, assginmentShareCheck]);
 
-    const sendStudentData = async (students, eclassUuid) => {
-      try {
+  const getStudent = async (sessionId, eclassUuid) => {
+    try {
+      const eclassStudentData = {
+        sessionId: sessionId,
+        eclassUuid: eclassUuid,
+      };
+
+      console.log(
+        "[TeacherCourseStatusTable] eclassStudentData : " +
+          JSON.stringify(eclassStudentData, null, 2)
+      );
+
+      const response = await customAxios.post(
+        `${process.env.REACT_APP_API_URL}/api/sessions/student/get`,
+        eclassStudentData
+      );
+
+      // 학생 데이터가 비어있거나 username이 없는 경우 null을 반환
+      if (!response.data || !response.data.username) {
+        console.log("학생 데이터가 존재하지 않음.");
+        return null; // 학생이 없는 상태로 반환
+      }
+
+      console.log(
+        "Fetched student data: " + JSON.stringify(response.data, null, 2)
+      );
+      return response.data.username;
+    } catch (error) {
+      console.error("Error fetching student data: ", error);
+      return null; // 오류 발생 시에도 null 반환
+    }
+  };
+
+  const sendStudentData = async () => {
+    try {
+      // students 배열에 null이 있는지 확인(null이 있으면 true, 없으면 false)
+      const hasNull = students.some((student) => student === null);
+
+      if (!hasNull && eclassUuid) {
         const requestData = {
           studentData: students,
           eclassUuid: eclassUuid,
@@ -110,46 +147,70 @@ export default function TeacherCourseStatusTable({ stepCount, eclassUuid }) {
           requestData
         );
 
+        console.log(
+          "[TeacherCourseStatusTable] assiginment Check List : " +
+            JSON.stringify(respCheckList.data, null, 2)
+        );
+
         const respReportUuid = await customAxios.post(
           "/api/eclass/student/assignment/reportUuid/get",
           requestData
         );
 
-        if (respReportUuid.data !== "") {
-          console.log(
-            "보고서 uuid 확인 : " + JSON.stringify(respReportUuid.data, null, 2)
+        console.log(
+          "respReportUuid.data : " +
+            JSON.stringify(respReportUuid.data, null, 2)
+        );
+
+        if (Array.isArray(respReportUuid.data)) {
+          // null 또는 빈 값을 필터링하여 제거
+          const filteredReportUuid = respReportUuid.data.filter(
+            (uuid) => uuid !== null && uuid !== ""
           );
 
-          const respReport = await customAxios.get(
-            `/api/report/getstep?uuid=${respReportUuid.data}`
-          );
+          if (filteredReportUuid.length > 0) {
+            const respReport = await customAxios.post(
+              "/api/report/getstep",
+              filteredReportUuid // 필터링된 배열을 전달
+            );
+            // console.log(
+            //   "보고서 데이터 : " + JSON.stringify(respReport.data, null, 2)
+            // );
 
-          console.log("보고서 확인 : " + JSON.stringify(respReport, null, 2));
-
-          setReportData(respReport.data);
+            if (respReport.data && respReport.data.length > 0) {
+              setReportData(respReport.data);
+            }
+          } else {
+            console.warn("보고서가 존재하지 않습니다.");
+          }
         }
 
-        setStudentStepFlag(respCheckList.data);
-        console.log("Response from server:", respCheckList.data);
-      } catch (error) {
-        console.error("Error sending data to server:", error);
-      }
-    };
-    sendStudentData(students, eclassUuid);
-  }, [stepCount, sessionData]); // sessionData 추가
+        setIsAssginShared(false);
 
-  Row.propTypes = {
-    row: PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      sessionId: PropTypes.string.isRequired,
-      shared: PropTypes.bool.isRequired,
-      assginmentShared: PropTypes.bool.isRequired,
-      assginmentSubmit: PropTypes.bool.isRequired,
-      reportSubmit: PropTypes.bool.isRequired,
-    }).isRequired,
+        setStudentStepFlag(respCheckList.data);
+        // console.log("Assignment status:", respCheckList.data);
+      }
+    } catch (error) {
+      console.error("Error sending data to server:", error);
+    }
   };
 
-  function Row({ row, isMatch, reportData }) {
+  const Row = ({ row, isMatch, reportData }) => {
+    console.log(" 학생 상태 리스트 : " + JSON.stringify(row, null, 2));
+
+    // reportData가 없으면 row를 사용
+    const report = (reportData || []).filter((data) => {
+      return data.username === row.name;
+    });
+
+    // report가 비어있는 경우 row에서 필요한 데이터를 대신 사용할 수 있도록 처리
+    const finalData = report.length > 0 ? report : [row];
+
+    // 예시로 finalData 출력
+    console.log("최종 데이터: ", finalData);
+
+    // console.log("정제된건? : " + JSON.stringify(report, null, 2));
+
     return (
       <TableRow sx={{ height: 50 }}>
         <TableCell component="th" scope="row">
@@ -163,7 +224,11 @@ export default function TeacherCourseStatusTable({ stepCount, eclassUuid }) {
           )}
         </TableCell>
         <TableCell align="center">
-          {row.assginmentShared ? (
+          {assginmentShareCheck?.some(
+            (assign) =>
+              assign.sessionId === row.sessionId &&
+              assign.assginmentShared === true
+          ) ? (
             <CheckCircleIcon sx={{ color: "blue" }} />
           ) : (
             <CancelIcon sx={{ color: "red" }} />
@@ -177,13 +242,13 @@ export default function TeacherCourseStatusTable({ stepCount, eclassUuid }) {
           )}
         </TableCell>
         <TableCell align="center">
-          {reportData ? (
+          {finalData[0]?.username === row.name ? (
             <Button
-              onClick={handleOpenModal}
+              onClick={() => handleOpenModal(row.name)}
               sx={{
                 width: "3%",
                 marginRight: 1,
-                fontFamily: "'Asap', sans-serif", // 버튼에 Asap 폰트 적용
+                fontFamily: "'Asap', sans-serif",
                 fontWeight: "600",
                 fontSize: "0.9rem",
                 color: "grey",
@@ -200,18 +265,34 @@ export default function TeacherCourseStatusTable({ stepCount, eclassUuid }) {
         </TableCell>
       </TableRow>
     );
-  }
+  };
+  Row.propTypes = {
+    row: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      sessionId: PropTypes.string.isRequired,
+      shared: PropTypes.bool.isRequired,
+      assginmentShared: PropTypes.bool.isRequired,
+      assginmentSubmit: PropTypes.bool.isRequired,
+      reportSubmit: PropTypes.bool.isRequired,
+    }).isRequired,
+  };
 
-  const rows = sessionData.map((session, index) =>
-    createData(
-      students[index],
-      session.id,
-      session.shared,
-      session.assginmentShared,
-      session.assginmentSubmit,
-      session.reportSubmit
-    )
-  );
+  const rows = sessionData
+    .map((session, index) => {
+      // students[index]가 있는 경우에만 createData 호출
+      if (students[index]) {
+        return createData(
+          students[index],
+          session.id,
+          session.shared,
+          session.assginmentShared,
+          session.assginmentSubmit,
+          session.reportSubmit
+        );
+      }
+      return null; // 학생이 없으면 null 반환
+    })
+    .filter((row) => row !== null); // null 값을 제외하고 rows 배열을 생성
 
   const EmptyRows = ({ count }) => {
     return Array.from({ length: count }, (_, index) => (
@@ -242,15 +323,12 @@ export default function TeacherCourseStatusTable({ stepCount, eclassUuid }) {
               const studentFlagArray = studentStepFlag?.[row.name] || [];
               let stepValue = false;
               if (studentFlagArray) {
-                // stepCount 위치의 값을 가져옴 (0-based index)
                 stepValue = studentFlagArray[stepCount - 1];
               }
 
-              console.log("제출 확인  : " + stepValue);
-
               return (
                 <Row
-                  key={row.sessionId}
+                  key={row.sessionId || index} // 고유한 key로 설정
                   row={row}
                   index={index}
                   isMatch={stepValue}
@@ -264,11 +342,15 @@ export default function TeacherCourseStatusTable({ stepCount, eclassUuid }) {
         </Table>
       </TableContainer>
 
-      <ReportViewModal
-        open={isModalOpen}
-        onClose={handleCloseModal}
-        tableData={reportData}
-      />
+      {isModalOpen && (
+        <ReportViewModal
+          open={isModalOpen}
+          onClose={handleCloseModal}
+          tableData={reportData.filter(
+            (data) => data.username === selectedReport.current
+          )}
+        />
+      )}
     </div>
   );
 }

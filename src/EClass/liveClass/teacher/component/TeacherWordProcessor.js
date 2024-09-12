@@ -17,6 +17,7 @@ import { customAxios } from "../../../../Common/CustomAxios";
 import { useCreateLectureSourceStore } from "../../store/CreateLectureSourceStore";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import "./TeacherWordProcessor.scss";
 
 Quill.register("modules/imageActions", ImageActions);
 Quill.register("modules/imageFormats", ImageFormats);
@@ -91,6 +92,8 @@ export default function TeacherWordProcessor({
   onLectureNameChange,
   activeStep,
   stepCount,
+  stepperStepName,
+  setStepperStepName,
 }) {
   const [value, setValue] = useState();
   const [localContents, setLocalContents] = useState([]);
@@ -100,72 +103,88 @@ export default function TeacherWordProcessor({
   const [isEditing, setIsEditing] = useState(false);
   const [addTableFlag, setAddTableFlag] = useState(false);
 
+  const [isUpdated, setIsUpdated] = useState(false); // 첫 번째 useEffect 완료 상태
+
   const quillRef = useRef(null);
 
+  // 첫 번째 useEffect: stepperStepName 배열을 업데이트
   useEffect(() => {
-    imageFile = null;
-
-    // activeStep이 변경될 때마다 localContents를 초기화(맨처음 스텝 만들때)
-    setLocalContents([]);
-    setContentName("");
-    setValue("");
-    setIsEditing(false);
-    setAddTableFlag(false);
-
-    const stepNumbers = contents.map((contentss) => contentss.stepNum);
-    console.log("step 넘버들: " + stepNumbers);
-    console.log("activeStep : " + activeStep);
-
-    // store에서 현재 activeStep에 해당하는 내용을 로드(이전의 데이터 로드, 혹은 스텝 이동시 이전 데이터 로드 할때)
-    if (stepNumbers.includes(activeStep)) {
-      let stepData = null;
-
-      contents.forEach((contentss) => {
-        if (contentss.stepNum === activeStep) {
-          stepData = contentss;
-        }
+    if (stepperStepName && stepperStepName.length > 0) {
+      stepperStepName.forEach((step, index) => {
+        updateContent(index, step); // 각 step을 updateContent로 업데이트
       });
 
-      stepData.contents.forEach((content) => {
-        if (content.type === "file") {
-          console.log("step 데이터 이름: " + content.content.name);
-        }
-      });
-
-      console.log("처음 stepData : " + JSON.stringify(stepData, null, 2));
-
-      const contentsArray = Array.isArray(stepData.contents)
-        ? stepData.contents
-        : [stepData.contents];
-
-      const formattedContents = contentsArray
-        .filter((content) => {
-          if (content.type === "img" && !content.content) {
-            return false; // content.type이 "img"이고 content가 없으면 제거
-          }
-          return true; // 나머지 항목은 유지
-        })
-        .map((item, index) => {
-          // 파일 객체가 아닌 경우에만 JSON.stringify를 사용하여 변환
-          if (typeof item.content === "object" && item.type !== "file") {
-            item.content = JSON.stringify(item.content);
-          }
-
-          return item;
-        });
-
-      // 변환 후 stepData.contents 다시 확인
-      formattedContents.forEach((content) => {
-        if (content.type === "file") {
-          console.log("step 저장전 이미지 확인 : " + content.content.name);
-        }
-      });
-
-      setLocalContents(formattedContents);
-      setContentName(stepData.contentName);
-      setIsEditing(true);
+      setIsUpdated(true); // 업데이트 완료 후 isUpdated를 true로 설정
     }
-  }, [activeStep, contents]);
+  }, [stepperStepName]);
+
+  useEffect(() => {
+    if (stepperStepName && stepperStepName.length > 0) {
+      setIsUpdated(true);
+    }
+  }, [activeStep]);
+
+  // 두 번째 useEffect: isUpdated가 true일 때 실행
+  useEffect(() => {
+    if (isUpdated) {
+      imageFile = null;
+
+      console.log(
+        "[TeacherWordProcessor] stepperStepName : " +
+          JSON.stringify(stepperStepName, null, 2)
+      );
+
+      const stepNumbers = contents.map((contentss) => contentss.stepNum);
+
+      console.log("step 넘버들: " + stepNumbers);
+      console.log("activeStep : " + activeStep);
+
+      // store에서 현재 activeStep에 해당하는 내용을 로드
+      if (stepNumbers.includes(activeStep)) {
+        let stepData = null;
+
+        if (stepperStepName !== undefined) {
+          stepperStepName.forEach((contentss) => {
+            if (contentss.stepNum === activeStep) {
+              stepData = contentss;
+            }
+          });
+        } else {
+          contents.forEach((contentss) => {
+            if (contentss.stepNum === activeStep) {
+              stepData = contentss;
+            }
+          });
+        }
+
+        console.log("처음 stepData : " + JSON.stringify(stepData, null, 2));
+
+        const contentsArray = Array.isArray(stepData.contents)
+          ? stepData.contents
+          : [stepData.contents];
+
+        const formattedContents = contentsArray
+          .filter((content) => {
+            if (content.type === "img" && !content.content) {
+              return false;
+            }
+            return true;
+          })
+          .map((item, index) => {
+            if (typeof item.content === "object" && item.type !== "file") {
+              item.content = JSON.stringify(item.content);
+            }
+            return item;
+          });
+
+        setLocalContents(formattedContents);
+        setContentName(stepData.contentName);
+        setIsEditing(true);
+      }
+
+      setIsUpdated(false);
+    }
+  }, [isUpdated, activeStep]); // isUpdated와 activeStep 변경 시 실행
 
   const handleChange = (content, delta, source, editor) => {
     setValue(content);
@@ -483,6 +502,10 @@ export default function TeacherWordProcessor({
     }
 
     handleNextStep();
+
+    setLocalContents([]);
+    setContentName("");
+    setIsEditing(false);
   };
 
   const createElementFromJson = (json) => {
@@ -761,41 +784,6 @@ export default function TeacherWordProcessor({
           style={{
             display: "flex",
             flexDirection: "row",
-            justifyContent: "space-between",
-          }}
-        >
-          <TextField
-            label="Lecture Name"
-            value={lectureName} // lectureName을 value로 설정
-            onChange={onLectureNameChange} // 사용자가 변경할 수 있도록 onChange 핸들러 설정
-            fullWidth
-            margin="normal"
-          />
-        </div>
-        <div
-          style={{ display: "flex", alignItems: "center", marginBottom: 16 }}
-        >
-          <TextField
-            label="Step Name"
-            value={contentName}
-            onChange={(e) => setContentName(e.target.value)}
-            variant="outlined"
-            fullWidth
-            sx={{ marginRight: 2 }}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleAddTitle}
-            sx={{ height: "56px" }} // TextField와 버튼 높이를 맞춤
-          >
-            제목 추가
-          </Button>
-        </div>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
             width: "70rem",
             height: "36.5rem",
           }}
@@ -836,6 +824,7 @@ export default function TeacherWordProcessor({
         <div
           style={{
             display: "flex",
+            width: "100%",
             flexDirection: "row",
             justifyContent: "space-between",
           }}
@@ -844,7 +833,7 @@ export default function TeacherWordProcessor({
             style={{
               display: "flex",
               justifyContent: "flex-start",
-              width: "30%",
+              width: "100%",
             }}
           >
             {/* 데이터 추가하기 버튼 */}
@@ -856,8 +845,9 @@ export default function TeacherWordProcessor({
             <Button
               variant="contained"
               color="primary"
+              className="yellow-btn" // yellow-btn 클래스 적용
               onClick={handleAddTextBox}
-              sx={{ margin: "20px 10px 0 10px", width: "50%" }}
+              sx={{ margin: "20px 10px 0 0", width: "10rem" }}
             >
               답변 박스 추가
             </Button>
@@ -867,13 +857,14 @@ export default function TeacherWordProcessor({
               display: "flex",
               justifyContent: "flex-end",
               margin: "20px 0 0 0",
+              width: "100%",
             }}
           >
             <Button
               variant="contained"
               color="primary"
               onClick={handleSave}
-              sx={{ width: "100%" }}
+              sx={{ width: "10rem", marginRight: "1rem" }}
             >
               포함하기
             </Button>
@@ -884,7 +875,7 @@ export default function TeacherWordProcessor({
                   variant="contained"
                   color="secondary"
                   onClick={handleNext}
-                  sx={{ width: "100%", marginLeft: "10px" }}
+                  sx={{ width: "10rem" }}
                 >
                   Finish
                 </Button>
@@ -893,7 +884,7 @@ export default function TeacherWordProcessor({
                   variant="contained"
                   color="secondary"
                   onClick={handleNext}
-                  sx={{ width: "100%", marginLeft: "10px" }}
+                  sx={{ width: "10rem" }}
                 >
                   다음 단계
                 </Button>

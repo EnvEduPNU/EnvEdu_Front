@@ -111,9 +111,13 @@ function renderElement(node) {
   const { type, props, key } = node;
   const children = props?.children || null;
 
+  // 고유한 key를 생성하는 방식
+  const elementKey =
+    key != null ? key : `${type}-${Math.random().toString(36).substr(2, 9)}`;
+
   return React.createElement(
     type,
-    { ...props, key },
+    { ...props, key: elementKey },
     Array.isArray(children)
       ? children.map(renderElement)
       : renderElement(children)

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { colorsArray } from "../../../DataLiteracy/utils/randomColor";
+import { colorsArray } from "../utils/randomColor";
 import { useBarStore } from "../store/barStore";
 import { categoricalStore } from "../store/categoricalStore";
 import useChartMetaDataStore from "../store/chartMetaDataStore";

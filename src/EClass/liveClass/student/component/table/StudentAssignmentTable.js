@@ -106,10 +106,10 @@ export default function StudentAssignmentTable(props) {
           requestData
         );
 
-        console.log(
-          "Assignmnet Uuid 잘 나오나 확인 : " +
-            JSON.stringify(assignmentUuidResp, null, 2)
-        );
+        // console.log(
+        //   "Assignmnet Uuid 잘 나오나 확인 : " +
+        //     JSON.stringify(assignmentUuidResp, null, 2)
+        // );
 
         const assignmentResponse = await customAxios.get(
           `/api/assignment/getstep?uuid=${assignmentUuidResp.data}`
@@ -248,7 +248,7 @@ export default function StudentAssignmentTable(props) {
   const [openModal, setOpenModal] = useState(false);
 
   const handleAssignmentReport = () => {
-    console.log("Assignment data:", JSON.stringify(allTableData, null, 2));
+    // console.log("Assignment data:", JSON.stringify(allTableData, null, 2));
     setOpenModal(true);
   };
 
@@ -261,10 +261,7 @@ export default function StudentAssignmentTable(props) {
       <Typography variant="h5" sx={{ margin: "0 0 10px 0" }}>
         {`${tableData[0]?.Step || "No Data"}`}
       </Typography>
-      <Paper
-        style={{ height: "60vh", width: "100%" }}
-        className="virtuoso-table"
-      >
+      <Paper style={{ width: "100%" }} className="virtuoso-table">
         <TableContainer component={Paper}>
           <Table stickyHeader>{fixedHeaderContent()}</Table>
         </TableContainer>
@@ -281,7 +278,7 @@ export default function StudentAssignmentTable(props) {
               isDataAvailable
             )
           }
-          style={{ height: "55vh" }}
+          style={{ height: "20vh" }}
         />
       </Paper>
       <Button

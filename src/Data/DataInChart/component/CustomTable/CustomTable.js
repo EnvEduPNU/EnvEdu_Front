@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useGraphDataStore } from "../../store/graphStore";
-import * as Styled from "./Styled";
+import * as Styled from "./CustomTableStyled";
 import TutorialButton from "./TutorialButton";
 
 // data-in-chart 페이지 테이블이 나오는 컴포넌트

@@ -59,25 +59,21 @@ function fixedHeaderContent() {
   );
 }
 
-function rowContent(_index, row, handleClick, selectedRow) {
-  return (
-    <React.Fragment>
-      {columns.map((column) => (
-        <TableCell
-          key={column.dataKey}
-          align="left"
-          onClick={() => handleClick(row.id, row.Step, row.stepNum)}
-          sx={{
-            backgroundColor: selectedRow === row.id ? "#f0f0f0" : "inherit",
-            cursor: "pointer",
-            textAlign: "left",
-          }}
-        >
-          {row[column.dataKey]}
-        </TableCell>
-      ))}
-    </React.Fragment>
-  );
+function rowContent(index, row, handleClick, selectedRow) {
+  return columns.map((column) => (
+    <TableCell
+      key={`${row.id}-${column.dataKey}`} // 고유한 key 설정
+      align="left"
+      onClick={() => handleClick(row.id, row.Step, row.stepNum)}
+      sx={{
+        backgroundColor: selectedRow === row.id ? "#f0f0f0" : "inherit",
+        cursor: "pointer",
+        textAlign: "left",
+      }}
+    >
+      {row[column.dataKey]}
+    </TableCell>
+  ));
 }
 
 export default function TeacherAssignmentTable(props) {
@@ -86,8 +82,6 @@ export default function TeacherAssignmentTable(props) {
   const [allTableData, setAllTableData] = useState([]);
 
   useEffect(() => {
-    console.log("비교 : " + props.eClassUuid);
-
     customAxios
       .get("/api/steps/getLectureContent")
       .then((res) => {
@@ -100,12 +94,8 @@ export default function TeacherAssignmentTable(props) {
             contentName: content.contentName,
             id: `${data.uuid}-${content.stepNum}`,
             Step: data.stepName,
-            stepNum: content.stepNum, // stepNum은 handleRowClick에서 사용되므로 여전히 유지
+            stepNum: content.stepNum,
           }))
-        );
-
-        console.log(
-          "Formatted Data for Table: " + JSON.stringify(formattedData, null, 2)
         );
 
         setTableData(formattedData);
@@ -125,8 +115,6 @@ export default function TeacherAssignmentTable(props) {
   const handleRowClick = (id, Step, stepNum) => {
     setSelectedRow((prevSelectedRow) => (prevSelectedRow === id ? null : id));
     props.setCourseStep(Step);
-
-    console.log("몇번째 스텝? : " + JSON.stringify(stepNum, null, 2));
     props.setStepCount(stepNum);
 
     const filteredTableData = allTableData
@@ -141,9 +129,8 @@ export default function TeacherAssignmentTable(props) {
       })
       .filter((data) => data.contents.length > 0);
 
-    console.log("스텝 데이터 : " + JSON.stringify(filteredTableData, null, 2));
-
     props.setTableData(filteredTableData);
+    props.setAssginmentShareCheck(null);
   };
 
   const handleClickOutside = (event) => {
@@ -157,7 +144,7 @@ export default function TeacherAssignmentTable(props) {
       <Typography variant="h5" sx={{ margin: "20px 0 10px 0" }}>
         {`${tableData[0]?.Step || "수업자료가 없어요"}`}
       </Typography>
-      <Paper style={{ height: 300, width: "100%" }} className="virtuoso-table">
+      <Paper style={{ height: 230, width: "100%" }} className="virtuoso-table">
         <TableContainer component={Paper}>
           <Table stickyHeader>{fixedHeaderContent()}</Table>
         </TableContainer>
@@ -167,7 +154,7 @@ export default function TeacherAssignmentTable(props) {
           itemContent={(index, row) =>
             rowContent(index, row, handleRowClick, selectedRow)
           }
-          style={{ height: 250 }}
+          style={{ height: 180 }}
         />
       </Paper>
     </div>

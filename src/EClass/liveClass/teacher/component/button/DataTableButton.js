@@ -8,6 +8,8 @@ import {
   Paper,
 } from "@mui/material";
 
+import "../TeacherWordProcessor.scss";
+
 const modalStyle = {
   position: "absolute",
   top: "50%",
@@ -51,17 +53,18 @@ export default function DataTableButton({ summary, onSelectData }) {
     handleClose();
   };
 
-  useEffect(() => {
-    console.log("summary 체크 : " + JSON.stringify(summary, null, 2));
-  }, []);
+  // useEffect(() => {
+  //   console.log("summary 체크 : " + JSON.stringify(summary, null, 2));
+  // }, []);
 
   return (
     <>
       <Button
         variant="contained"
         color="primary"
+        className="yellow-btn" // yellow-btn 클래스 적용
         onClick={handleOpen}
-        sx={{ margin: "20px 10px 0 10px", width: "50%" }}
+        sx={{ margin: "20px 10px 0 0", width: "10rem" }}
       >
         데이터 추가하기
       </Button>

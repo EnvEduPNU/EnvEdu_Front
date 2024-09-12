@@ -1,0 +1,17 @@
+.yellow-btn {
+  font-weight: 800;
+  font-size: 10px;
+  background: #f3b634;
+  padding: 0.5rem;
+  border-radius: 0.3125rem;
+  margin-bottom: 0.5rem;
+  width: 100%;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+  color: white; /* 글자색 설정 */
+}
+
+.yellow-btn:hover {
+  background-color: #e0a828; /* 호버 시 색상 변경 */
+}

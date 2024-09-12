@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { TableVirtuoso } from "react-virtuoso";
 import {
   Table,
@@ -12,6 +12,8 @@ import {
 } from "@mui/material";
 import { customAxios } from "../../../../../../Common/CustomAxios";
 import { useNavigate } from "react-router-dom";
+import SockJS from "sockjs-client";
+import Stomp from "stompjs";
 
 const columns = [
   { label: "번호", dataKey: "Num", width: "10%" },
@@ -73,10 +75,45 @@ function fixedHeaderContent() {
 export default function StudentEclassTable({ setSelectedEClassUuid }) {
   const [selectedRow, setSelectedRow] = useState(null);
   const [rowData, setRowData] = useState([]);
+  const stompClientRef = useRef(null);
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("sdfsdfsfsdfsdf ");
+    if (!stompClientRef.current) {
+      const token = localStorage.getItem("access_token").replace("Bearer ", "");
+      const sock = new SockJS(
+        `${process.env.REACT_APP_API_URL}/ws?token=${token}`
+      );
+      stompClientRef.current = Stomp.over(sock);
+
+      stompClientRef.current.connect(
+        {},
+        () => {
+          console.log("STOMP 연결 성공");
+        },
+        onError
+      );
+    }
+
+    return () => {
+      if (stompClientRef.current) {
+        stompClientRef.current.disconnect(() => {
+          console.log("STOMP 연결 해제");
+        });
+      }
+    };
+
+    function onError(error) {
+      console.error("STOMP 연결 에러:", error);
+      alert(
+        "웹소켓 연결에 실패했습니다. 네트워크 설정을 확인하거나 관리자에게 문의하세요."
+      );
+    }
+  }, []);
+
+  // E-Class 조회 훅
+  useEffect(() => {
     const fetchEclassData = async () => {
       try {
         const StudentName = localStorage.getItem("username");
@@ -116,19 +153,25 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
   };
 
   const joinEclass = async (row) => {
+    console.log(
+      "[studentEclassTable] row 값 : " + JSON.stringify(row, null, 2)
+    );
+
+    // 수업이 교사에 의해서 열렸는지 닫혔는지 확인
     try {
-      const { eClassUuid, LectureData } = row;
       const response = await customAxios.get(
-        `/api/eclass/status-check?uuid=${eClassUuid}`
+        `/api/eclass/status-check?uuid=${row.eClassUuid}`
       );
       const eClassStatus = response.data;
 
       if (eClassStatus) {
-        navigate(`/LiveStudentPage/${eClassUuid}`, {
+        console.log("[studentEclassTable] eclassUuid : " + row.eClassUuid);
+
+        navigate(`/LiveStudentPage/${row.eClassUuid}`, {
           state: {
-            lectureDataUuid: LectureData,
+            lectureDataUuid: row.LectureData,
             row,
-            eClassUuid,
+            eClassUuid: row.eClassUuid,
           },
         });
       } else {

@@ -3,43 +3,39 @@ import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 import { useLiveClassPartStore } from "../../../store/LiveClassPartStore";
 
-let globalStompClient;
-
-// 선생님 페이지 과제 공유 버튼
 export function TeacherStepShareButton({
   stepCount,
   lectureDataUuid,
   sharedScreenState,
+  assginmentShareCheck,
+  setAssginmentShareCheck,
 }) {
+  const stompClientRef = useRef(null); // 소켓 연결을 참조하는 상태
   const [sessionId, setSessionId] = useState();
   const [shared, setShared] = useState();
-  const [assignShared, setAssignShared] = useState();
+  const [assignShared, setAssignShared] = useState(false);
   const [assginmentSubmit, setAssginmentSubmit] = useState();
   const [reportSubmit, setReportSubmit] = useState();
 
+  const updateShareStatus = useLiveClassPartStore(
+    (state) => state.updateShareStatus
+  );
+
   useEffect(() => {
-    // SockJS 연결 설정
-
-    const token = localStorage.getItem("access_token").replace("Bearer ", "");
-
-    const sock = new SockJS(
-      `${process.env.REACT_APP_API_URL}/ws?token=${token}`
-    );
-
-    const stompClient = Stomp.over(sock);
-
-    if (stompClient && !stompClient.connected) {
-      console.log(
-        "스톰프 존재하는지 : " + JSON.stringify(stompClient, null, 2)
+    if (!stompClientRef.current) {
+      const token = localStorage.getItem("access_token").replace("Bearer ", "");
+      const sock = new SockJS(
+        `${process.env.REACT_APP_API_URL}/ws?token=${token}`
       );
+      const stompClient = Stomp.over(sock);
 
       stompClient.connect(
         {},
         () => {
-          globalStompClient = stompClient;
+          stompClientRef.current = stompClient;
 
-          // 학생에게 과제 공유 성공시 받는 소켓 메시지
-          stompClient.subscribe("/topic/assginment-status", function (message) {
+          // 과제 공유 성공 메시지 구독
+          stompClient.subscribe("/topic/assginment-status", (message) => {
             const parsedMessage = JSON.parse(message.body);
             console.log(
               "과제 공유 : " + JSON.stringify(parsedMessage, null, 2)
@@ -51,19 +47,44 @@ export function TeacherStepShareButton({
             setAssginmentSubmit(parsedMessage.assginmentSubmit);
             setReportSubmit(parsedMessage.reportSubmit);
 
-            updateShareStatus(
-              parsedMessage.sessionId,
-              parsedMessage.shared,
-              parsedMessage.assginmentStatus,
-              parsedMessage.assginmentSubmit,
-              parsedMessage.reportSubmit
-            );
+            // 새로운 상태 객체
+            const shareState = {
+              sessionId: parsedMessage.sessionId,
+              shared: parsedMessage.shared,
+              assginmentStatus: parsedMessage.assginmentStatus,
+              assginmentShared: parsedMessage.assginmentShared,
+              assginmentSubmit: parsedMessage.assginmentSubmit,
+              reportSubmit: parsedMessage.reportSubmit,
+            };
+
+            // 상태 업데이트
+            const addAssginmentShareCheck = (shareState) => {
+              setAssginmentShareCheck((prevState) => {
+                // prevState가 null 또는 undefined이면 빈 배열로 초기화
+                const validPrevState = prevState || [];
+
+                // 기존 상태에서 shareState.sessionId와 동일한 객체가 있는지 확인
+                const existingIndex = validPrevState.findIndex(
+                  (item) => item.sessionId === shareState.sessionId
+                );
+
+                if (existingIndex !== -1) {
+                  // 이미 같은 sessionId를 가진 객체가 있으면, 해당 객체를 업데이트
+                  const updatedState = [...validPrevState];
+                  updatedState[existingIndex] = shareState; // 기존 객체를 새로운 객체로 교체
+                  return updatedState;
+                } else {
+                  // 같은 sessionId를 가진 객체가 없으면, 새로운 객체를 추가
+                  return [...validPrevState, shareState];
+                }
+              });
+            };
+
+            addAssginmentShareCheck(shareState);
           });
         },
         onError
       );
-    } else {
-      console.log("커넥션이 이미 있습니다.");
     }
 
     function onError(error) {
@@ -73,19 +94,15 @@ export function TeacherStepShareButton({
       );
     }
 
-    // 컴포넌트가 언마운트될 때 연결 종료
     return () => {
-      if (stompClient) {
-        stompClient.disconnect(() => {
+      if (stompClientRef.current) {
+        stompClientRef.current.disconnect(() => {
           console.log("Disconnected");
         });
+        stompClientRef.current = null; // 참조 제거
       }
     };
-  }, [stepCount]);
-
-  const updateShareStatus = useLiveClassPartStore(
-    (state) => state.updateShareStatus
-  );
+  }, []);
 
   // 과제 공유 소켓 전달
   const sendMessage = () => {
@@ -94,7 +111,7 @@ export function TeacherStepShareButton({
       return;
     }
 
-    if (globalStompClient && !sharedScreenState) {
+    if (stompClientRef.current && !sharedScreenState) {
       console.log("스텝카운트 " + stepCount);
 
       const message = {
@@ -102,7 +119,7 @@ export function TeacherStepShareButton({
         stepCount: stepCount,
         lectureDataUuid: lectureDataUuid,
       };
-      globalStompClient.send("/app/switch", {}, JSON.stringify(message));
+      stompClientRef.current.send("/app/switch", {}, JSON.stringify(message));
     }
 
     if (sharedScreenState) {
@@ -112,14 +129,14 @@ export function TeacherStepShareButton({
 
   // 과제 중지 소켓 전달
   const sendStopMessage = () => {
-    if (globalStompClient && !sharedScreenState) {
+    if (stompClientRef.current && !sharedScreenState) {
       // 과제 공유 상태 업데이트
       updateShareStatus(sessionId, shared, false);
 
       const message = {
-        page: "stop", // JSON 객체에서 "newPage"를 값으로 하는 'page' 키 생성
+        page: "stop", // JSON 객체에서 "stop"를 값으로 하는 'page' 키 생성
       };
-      globalStompClient.send("/app/switch", {}, JSON.stringify(message));
+      stompClientRef.current.send("/app/switch", {}, JSON.stringify(message));
     }
 
     if (sharedScreenState) {

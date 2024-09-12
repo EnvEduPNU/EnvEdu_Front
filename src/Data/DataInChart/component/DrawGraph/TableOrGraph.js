@@ -1,10 +1,9 @@
 import { Typography } from "@mui/material";
 import { useTabStore } from "../../store/tabStore";
 import CustomTable from "../CustomTable/CustomTable";
-import CustomTableHeader from "../CustomTable/CustomTableHeader";
+import CustomTableHeader from "../CustomTable/CustomTableHeader/CustomTableHeader";
 
 import GraphAndEditor from "../GraphAndEditor/GraphAndEditor";
-import ExpertGraphAndEditor from "../../../../DataLiteracy/DrawGraph/GraphAndEditor/ExpertGraphAndEditor";
 import PublicDataButton from "./PublicDataButton";
 import SEEdAppButton from "./SEEdAppButton";
 import * as Styled from "./Styled";

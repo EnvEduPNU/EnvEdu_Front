@@ -19,14 +19,6 @@ function StudentRenderAssign({
 
   useEffect(() => {
     console.log("stepCount : " + JSON.stringify(stepCount, null, 2));
-    console.log(
-      "학생 아이디 앞쪽에서는?? : " + JSON.stringify(studentId, null, 2)
-    );
-
-    console.log(
-      "[StudentRenderAssign] 테이블데이터 : " +
-        JSON.stringify(tableData, null, 2)
-    );
 
     const parseStepCount = parseInt(stepCount);
 
@@ -147,7 +139,7 @@ function StudentRenderAssign({
         );
 
         // 페이지 리로드
-        window.location.reload();
+        // window.location.reload();
       } catch (error) {
         console.error("Error during submission:", error);
         alert("제출 중 오류가 발생했습니다. 다시 시도해주세요.");
@@ -163,8 +155,9 @@ function StudentRenderAssign({
     );
 
     const message = {
-      assginmentSubmit: true,
       sessionId: sessionIdState,
+      assginmentShared: true,
+      timestamp: new Date().toLocaleString("ko-KR", { timeZone: "Asia/Seoul" }),
     };
 
     const stompClient = Stomp.over(socket);
@@ -189,7 +182,7 @@ function StudentRenderAssign({
             <div>
               {stepData.contents.map((content, idx) => (
                 <RenderContent
-                  key={content.stepNum}
+                  key={`${stepData.stepNum}-${idx}`} // 고유한 key 설정
                   content={content}
                   textBoxValue={textBoxValues[stepData.stepNum]?.[idx] || ""}
                   setTextBoxValue={(id, text) =>
@@ -297,7 +290,7 @@ function renderElement(node) {
 
   return React.createElement(
     type,
-    { ...props, key },
+    { ...props, key: key || uuidv4() }, // 여기에서 key가 없으면 고유한 key를 생성합니다.
     Array.isArray(children)
       ? children.map(renderElement)
       : renderElement(children)

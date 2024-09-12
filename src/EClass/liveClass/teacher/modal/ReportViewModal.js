@@ -15,46 +15,13 @@ import html2canvas from "html2canvas";
 function ReportViewModal({ open, onClose, tableData }) {
   const [data, setData] = useState([]);
 
+  console.log("테이블 데이터 : " + JSON.stringify(tableData, null, 2));
+
   useEffect(() => {
-    if (tableData && tableData.length > 0) {
-      setData(tableData.flatMap((data) => data.contents));
+    if (tableData) {
+      setData(tableData[0]?.contents);
     }
-  }, [tableData]);
-
-  if (!tableData || tableData.length === 0) {
-    return null;
-  }
-
-  const handleDownloadPdf = async () => {
-    const input = document.getElementById("report-content");
-
-    // html2canvas 옵션 설정
-    const canvas = await html2canvas(input, {
-      scale: 3, // 캔버스 스케일 조정으로 화질 개선
-    });
-
-    const imgData = canvas.toDataURL("image/png");
-    const pdf = new jsPDF("p", "mm", "a4");
-
-    const imgWidth = 210; // A4 폭(mm)
-    const pageHeight = 297; // A4 높이(mm)
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-    let heightLeft = imgHeight;
-    let position = 0;
-
-    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
-
-    while (heightLeft >= 0) {
-      position = heightLeft - imgHeight;
-      pdf.addPage();
-      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-    }
-
-    pdf.save("report.pdf");
-  };
+  }, [open]);
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="lg">
@@ -81,27 +48,44 @@ function ReportViewModal({ open, onClose, tableData }) {
             variant="h6"
             sx={{ marginBottom: "40px", textAlign: "right" }}
           >
-            {tableData[0]?.username}
+            {tableData[0]?.username} {/* localStorage의 username을 보여줌 */}
           </Typography>
           <Grid container spacing={3}>
-            {data.map((stepData) => (
-              <Grid item xs={6} key={stepData.stepNum}>
-                <Paper
-                  style={{
-                    padding: "20px", // Paper 내부에 패딩 추가
-                    boxShadow: "none", // 박스 그림자 제거
-                    marginBottom: "30px",
-                    backgroundColor: "#ffffff",
-                  }}
-                >
-                  <div>
-                    {stepData.contents.map((content, idx) => (
-                      <RenderContent key={idx} content={content} index={idx} />
-                    ))}
-                  </div>
-                </Paper>
-              </Grid>
-            ))}
+            {data
+              .filter((stepData) => stepData !== null && stepData !== undefined) // null 또는 undefined가 아닌 경우만 필터링
+              .map((stepData, stepIndex) => {
+                const stepKey = stepData.stepNum
+                  ? `step-${stepData.stepNum}`
+                  : `step-${stepIndex}`;
+
+                return (
+                  <Grid item xs={6} key={stepKey}>
+                    <Paper>
+                      <div>
+                        {stepData.contents
+                          .filter(
+                            (content) =>
+                              content !== null && content !== undefined
+                          ) // null 또는 undefined가 아닌 경우만 필터링
+                          .map((content, contentIndex) => {
+                            const contentKey =
+                              content.id ||
+                              `content-${stepIndex}-${contentIndex}`;
+
+                            return (
+                              <React.Fragment key={contentKey}>
+                                <RenderContent
+                                  content={content}
+                                  index={contentIndex}
+                                />
+                              </React.Fragment>
+                            );
+                          })}
+                      </div>
+                    </Paper>
+                  </Grid>
+                );
+              })}
           </Grid>
         </Paper>
         {/* <Button
@@ -121,25 +105,27 @@ function RenderContent({ content, setTextBoxValue, index }) {
   const handleTextChange = (event) => {
     setTextBoxValue(index, event.target.value);
   };
-
   switch (content.type) {
     case "title":
       return (
         <Typography variant="h6" gutterBottom>
-          {content.content}
+          {content.content || "No Title"}{" "}
+          {/* content.content가 null일 경우 기본값 제공 */}
         </Typography>
       );
     case "html":
       return (
         <div
           style={{ whiteSpace: "pre-wrap" }}
-          dangerouslySetInnerHTML={{ __html: content.content }}
+          dangerouslySetInnerHTML={{
+            __html: content.content || "<p>No Content</p>",
+          }} // 기본 HTML 콘텐츠 제공
         />
       );
     case "textBox":
       return (
         <TextField
-          value={content.content} // 기존 내용을 기본값으로 사용
+          value={content.content || ""} // content.content가 null이면 빈 문자열로 처리
           onChange={handleTextChange}
           variant="outlined"
           fullWidth
@@ -150,7 +136,7 @@ function RenderContent({ content, setTextBoxValue, index }) {
         />
       );
     case "img":
-      return (
+      return content.content ? ( // content.content가 있을 경우에만 이미지 렌더링
         <div style={{ textAlign: "center", marginBottom: "20px" }}>
           <img
             src={content.content}
@@ -158,9 +144,18 @@ function RenderContent({ content, setTextBoxValue, index }) {
             style={{ width: content.x / 2, height: content.y / 2 }}
           />
         </div>
+      ) : (
+        <Typography variant="body2" color="textSecondary" align="center">
+          No Image Available
+        </Typography>
       );
     case "data":
-      return <div>{renderElement(content.content)}</div>;
+      if (content.content) {
+        return <div>{renderElement(content.content)}</div>;
+      } else {
+        return <div>No Table</div>;
+      }
+
     case "emptyBox":
       return (
         <div
@@ -197,5 +192,36 @@ function renderElement(node) {
       : renderElement(children)
   );
 }
+
+const handleDownloadPdf = async () => {
+  const input = document.getElementById("report-content");
+
+  // html2canvas 옵션 설정
+  const canvas = await html2canvas(input, {
+    scale: 3, // 캔버스 스케일 조정으로 화질 개선
+  });
+
+  const imgData = canvas.toDataURL("image/png");
+  const pdf = new jsPDF("p", "mm", "a4");
+
+  const imgWidth = 210; // A4 폭(mm)
+  const pageHeight = 297; // A4 높이(mm)
+  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+  let heightLeft = imgHeight;
+  let position = 0;
+
+  pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+  heightLeft -= pageHeight;
+
+  while (heightLeft >= 0) {
+    position = heightLeft - imgHeight;
+    pdf.addPage();
+    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+  }
+
+  pdf.save("report.pdf");
+};
 
 export default ReportViewModal;

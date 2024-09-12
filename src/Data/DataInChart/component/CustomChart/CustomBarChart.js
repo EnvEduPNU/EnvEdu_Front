@@ -3,7 +3,7 @@ import * as Styled from "./Styled";
 import useBarData from "../../hooks/useBarData";
 import VerticalSlider from "../CustomTable/VerticalSlider";
 import DiscreteSliderLabel from "../CustomTable/DiscreteSliderLabel";
-import makePdf from "../../../../DataLiteracy/utils/makePdf";
+import makePdf from "../PDF/makePdf";
 
 import html2canvas from "html2canvas";
 

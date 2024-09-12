@@ -1,26 +1,13 @@
 import { useGraphDataStore } from "../../store/graphStore";
 import { useState } from "react";
-import Overlay from "../../../../DataLiteracy/common/Overlay/Overlay";
 import { useTabStore } from "../../store/tabStore";
-import useComponentPosition from "../../../../DataLiteracy/hooks/useComponentPosition";
-import { usetutorialStroe } from "../../../../DataLiteracy/store/tutorialStore";
-import Portal from "../../../../Portal";
-import TutorialDescription from "../../../../DataLiteracy/common/TutorialDescription/TutorialDescription";
+import useComponentPosition from "../../hooks/useComponentPosition";
 
 function ExpertCustomTable() {
   const { data, changeValue, changeVariableType, title } = useGraphDataStore();
   const [editableCell, setEditableCell] = useState(null);
-  const { ref, position } = useComponentPosition();
-  const { changeTab } = useTabStore();
-  const { isTutorial, step, type } = usetutorialStroe();
-  const tableNumberData = data.map((d, idx) => {
-    if (idx == 0) return "Rows#";
-    return `${idx}`;
-  });
 
   const headers = data[0];
-
-  const onClickPencil = () => {};
 
   const onChangeType = (index, type) => {
     changeVariableType(index, type);
@@ -50,10 +37,7 @@ function ExpertCustomTable() {
 
   return (
     <div>
-      <table
-        className="w-full border-solid border-[1px] border-[rgba(34, 36, 38, 0.15)] rounded-xl caption-top border-collapse"
-        ref={ref}
-      >
+      <table className="w-full border-solid border-[1px] border-[rgba(34, 36, 38, 0.15)] rounded-xl caption-top border-collapse">
         <caption className="text-2xl font-semibold py-2 text-center text-black">
           {title}
         </caption>
@@ -84,41 +68,6 @@ function ExpertCustomTable() {
             </tr>
           ))}
         </tbody>
-
-        {isTutorial && step === 5 && type !== "mix" && (
-          <Portal>
-            <TutorialDescription
-              position="bottom"
-              top={position.top - 260}
-              left={position.left + 730}
-              width={"500px"}
-              prevButtonClick={() => {
-                changeTab();
-              }}
-              nextButtonClick={() => {
-                changeTab();
-              }}
-            />
-            <Overlay position={position} />
-          </Portal>
-        )}
-        {isTutorial && step === 6 && type === "mix" && (
-          <Portal>
-            <TutorialDescription
-              position="bottom"
-              top={position.top - 270}
-              left={position.left + 730}
-              width={"500px"}
-              prevButtonClick={() => {
-                changeTab();
-              }}
-              nextButtonClick={() => {
-                changeTab();
-              }}
-            />
-            <Overlay position={position} />
-          </Portal>
-        )}
       </table>
     </div>
   );
