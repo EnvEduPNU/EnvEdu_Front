@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { customAxios } from "../../Common/CustomAxios";
 import { useNavigate } from "react-router-dom";
+import { PiPlant } from "react-icons/pi";
+
+import '../../User/Login/LoginForm.scss';
 
 function AdminLogin() 
 {
@@ -18,11 +21,23 @@ function AdminLogin()
     }
 
     return (
-    <div>
-        <input type="text" required={true} placeholder="아이디" onChange={(e)=>setUsername(e.target.value)}/>
-        <input type="password" required={true} placeholder="비밀번호" onChange={(e)=>setPassword(e.target.value)}/>
-        <button type="button" onClick={submit}>로그인</button>
-    </div>
+        <div className="login">  
+            <form>
+                <fieldset style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <div style={{ display: 'flex' }}>
+                        <PiPlant size="35" color="#2F5F3A" />
+                        <h2 style={{ color: '#000', fontWeight: 'bold', marginLeft: '0.3rem' }}>SEEd</h2>
+                    </div>
+                    <div className="id">
+                        <input className="loginInput" placeholder="ID" onChange={(e)=>setUsername(e.target.value)}/>
+                    </div>
+                    <div className="password">
+                        <input className="loginInput" placeholder="Password" type="password" onChange={(e)=>setPassword(e.target.value)}/>
+                    </div>
+                    <button type="submit" className="btn login-btn" onClick={submit}>로그인</button>
+                </fieldset>
+            </form>
+        </div>
     );
 }
 

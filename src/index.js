@@ -11,8 +11,6 @@ import ChartDataLabels from "chartjs-plugin-datalabels";
 
 Chart.register(ChartDataLabels);
 
-Chart.register(ChartDataLabels);
-
 // 전역 설정
 Chart.defaults.plugins.datalabels.display = false;
 
@@ -25,7 +23,4 @@ root.render(
   </BrowserRouter>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();

@@ -1,0 +1,47 @@
+.newDataInput-table {
+  display: grid;
+  // grid-template-columns: repeat(5, 1fr);
+  gap: 1px; // 셀 간의 간격
+  max-width: 100%;
+  max-height: 400px;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  .cell {
+    // width: 100px;
+    height: 50px;
+    cursor: pointer;
+    padding: 0.3125rem;
+    min-width: 80px;
+    border: 0.5px solid #000;
+  }
+  .head {
+    background-color: #4472c4;
+
+    input {
+      color: #fff;
+      font-weight: 700;
+    }
+  }
+  .body:hover {
+    cursor: pointer;
+    background-color: #bae9ff;
+  }
+  .body.even {
+    background-color: rgb(228, 228, 228);
+  }
+  .body.even:hover {
+    background-color: #bae9ff;
+  }
+  input {
+    display: block;
+    border: none;
+    width: 100%;
+    height: 30px;
+    box-sizing: border-box;
+    background-color: inherit;
+
+    &:focus {
+      outline: none;
+    }
+  }
+}

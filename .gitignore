@@ -20,6 +20,8 @@ sketch
 .env
 .idea/
 
+cert/
+
 ### VisualStudioCode ###
 .vscode/*
 !.vscode/settings.json

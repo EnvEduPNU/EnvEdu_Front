@@ -1,0 +1,134 @@
+#wrap-openapi-div {
+  margin: 4vh;
+  .wrap-select-type {
+    display: flex;
+    .select-type {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 10rem;
+      height: 2.5rem;
+      background: #027c2b;
+      color: white;
+      border-radius: 1.25rem;
+      cursor: pointer;
+      font-weight: 600;
+      margin-right: 0.625rem;
+    }
+  }
+  /* checkbox */
+  input[type="checkbox"] {
+    accent-color: #000;
+  }
+  /* select box */
+  .air-buttons {
+    border-radius: 0.625rem;
+    padding: 0 10px;
+    height: 2rem;
+  }
+  /* 조사 지점 필터링, 추가/삭제 label */
+  .filter-label {
+    font-weight: 600;
+  }
+  /* 데이터 저장하기, 그래프 그리기 버튼 */
+  #table-btn {
+    background: white;
+    border: 1px solid #027c2b;
+    font-weight: bold;
+    color: #027c2b;
+    border-radius: 1.25rem;
+    width: 9rem;
+  }
+
+  /* table - open API */
+  .openAPI-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.625rem;
+
+    thead {
+      background-color: #027c2b;
+      color: white;
+    }
+
+    th,
+    td {
+      padding: 0.188rem 0;
+      text-align: center;
+      border: 1px solid gray;
+    }
+
+    tbody tr:nth-child(even) {
+      background-color: rgb(228, 228, 228);
+    }
+  }
+
+  /*
+    table - my data 
+    .myData-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 0.625rem;
+
+        thead {
+            background-color: #23273D;
+            color: white;
+        }
+
+        th {
+            color: #fff;
+            background-color: #23273d;
+        }
+
+        th, td {
+            border: 1px solid #898989;
+            padding: 0.3125rem;
+            text-align: center;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: rgb(228, 228, 228);
+        }
+    }
+    */
+
+  /* table - my data */
+  .myData-list {
+    width: 100%;
+    border-collapse: collapse;
+    th {
+      background-color: #f3b634;
+    }
+    th,
+    td {
+      border: 1px solid #000;
+      padding: 0.3125rem;
+      text-align: center;
+    }
+    tbody tr:hover {
+      cursor: pointer;
+      background-color: #ffe9ba;
+    }
+    tbody tr:nth-child(even) {
+      background-color: rgb(228, 228, 228);
+    }
+    tbody tr:nth-child(even):hover {
+      background-color: #ffe9ba;
+    }
+  }
+
+  /* table - my data 상세 */
+  .myData-list-detail {
+    width: 100%;
+    border-collapse: collapse;
+    th {
+      background-color: #f39034;
+    }
+    th,
+    td {
+      border: 1px solid #000;
+      padding: 0.3125rem;
+      text-align: center;
+    }
+  }
+}

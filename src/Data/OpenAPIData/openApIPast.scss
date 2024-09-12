@@ -1,0 +1,47 @@
+.openApIPast-container {
+    select {
+        width: 6rem;
+        height: 2rem;
+        border-radius: 0.625rem;
+        outline: none;
+    }
+    /* checkbox */
+    input[type='checkbox'] {
+        accent-color: #f06313;
+    }
+    /* 조사 지점 필터링, 추가/삭제 label */
+    .filter-label {
+        font-weight: 600;
+    }
+    /* 데이터 저장하기, 그래프 그리기 버튼 */
+    #table-btn {
+        background: white;
+        border: 1px solid #f06313;
+        font-weight: bold;
+        color: #f06313;
+        border-radius: 1.25rem;
+        width: 9rem;
+    }
+
+    /* table */
+    .openAPIPast-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 0.625rem;
+        thead {
+            background-color: #000;
+            color: white;
+        }
+
+        th, td {
+            padding: 0.188rem 0;
+            text-align: center;
+            border: 1px solid #000;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: rgb(228, 228, 228);
+        }
+    }
+}
+

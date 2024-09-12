@@ -42,6 +42,7 @@ function RegisterForm() {
             <div className="formBody">
                 <h1>회원가입</h1>
                 <div className="input-box">
+                    <label style={{ display: 'block' }}>아이디</label>
                     <input
                         className="registerInput"
                         placeholder="아이디: 5~20자"
@@ -56,6 +57,7 @@ function RegisterForm() {
                     )}
                 </div>
                 <div className="input-box">
+                    <label style={{ display: 'block' }}>비밀번호</label>
                     <input
                         className="registerInput"
                         placeholder="비밀번호: 8~20자"
@@ -71,6 +73,7 @@ function RegisterForm() {
                     )}
                 </div>
                 <div className="input-box">
+                    <label style={{ display: 'block' }}>비밀번호 확인</label>
                     <input
                         className="registerInput"
                         placeholder="비밀번호 확인"
@@ -81,6 +84,7 @@ function RegisterForm() {
                     />
                 </div>
                 <div className="input-box">
+                    <label style={{ display: 'block' }}>이메일 (read only)</label>
                     <input
                         className="registerInput"
                         placeholder="이메일"
@@ -89,29 +93,12 @@ function RegisterForm() {
                         value={state.email}
                     />
                 </div>
-                <div className="input-box">
-                    {/**
-                     * MALE, FEMALE 중 하나
-                     * todo: <select> 방식으로 수정
-                     */}
-                    <input
-                        className="registerInput"
-                        placeholder="성별"
-                        type="text"
-                        {...register('gender', {
-                            required: { value: true, message: '성별을 입력하세요' },
-                        })}
-                    />
-                    {errors.gender && (
-                        <span style={{ color: 'red', fontSize: '13px' }}>
-                            {errors.gender.message}
-                        </span>
-                    )}
-                </div>
+                
                 <div className="input-box">
                     {/**
                      * yyyy-mm-dd 형식 준수
                      */}
+                    <label style={{ display: 'block' }}>생년월일</label>
                     <input
                         className="registerInput"
                         placeholder="생년월일"
@@ -123,6 +110,22 @@ function RegisterForm() {
                     {errors.birthday && (
                         <span style={{ color: 'red', fontSize: '13px' }}>
                             {errors.birthday.message}
+                        </span>
+                    )}
+                </div>
+                <div className="input-box">
+                    <label style={{ display: 'block' }}>닉네임</label>
+                    <input
+                        className="registerInput"
+                        placeholder="닉네임: 0~20자"
+                        type="nickname"
+                        {...register('nickname', {
+                            required: { value: true, message: '닉네임을 입력하세요' },
+                        })}
+                    />
+                    {errors.nickname && (
+                        <span style={{ color: 'red', fontSize: '13px' }}>
+                            {errors.nickname.message}
                         </span>
                     )}
                 </div>

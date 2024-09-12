@@ -1,0 +1,38 @@
+.login {
+    .loginInput {
+        width: 20rem;
+        background-color: #f2f2f2;
+        outline: none;
+        font-size: 1.25em;
+        border: none;
+        border-radius: 0.3125rem;
+        padding: 0.2rem 1rem;
+        margin-top: 0.5rem;
+    }
+    .loginInput::placeholder {
+        color: #A0A0A0;
+    }
+    .login-btn {
+        width: 20rem;
+        background-color: #2F5F3A;
+        color: #fff;
+        margin-top: 1rem;
+    }
+    .login-btn:hover {
+        background-color: #2F5F3A;
+        color: #fff;
+        opacity: 0.8;
+    }
+    .find {
+        text-align: center;
+        margin-top: 0.5rem;
+        a, span {
+            text-decoration: none;
+            color: #A0A0A0;
+            font-size: 0.75em;
+        }
+        a:hover {
+            color: #2F5F3A;
+        }
+    }
+}
