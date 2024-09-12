@@ -8,6 +8,7 @@
     "@ckeditor/ckeditor5-react": "^6.1.0",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
+    "@jitsi/react-sdk": "^1.4.0",
     "@mui/icons-material": "^5.15.20",
     "@mui/lab": "^5.0.0-alpha.173",
     "@mui/material": "^5.15.19",

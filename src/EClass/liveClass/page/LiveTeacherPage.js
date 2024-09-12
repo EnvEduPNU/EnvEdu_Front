@@ -9,6 +9,7 @@ import TeacherRenderAssign from "../teacher/component/TeacherRenderAssign";
 import { TeacherScreenShare } from "../teacher/component/screenShare/TeacherScreenShare";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
+import { TeacherScreenShareJitsi } from "../teacher/component/screenShare/TeacherScreenShareJitsi";
 
 export const LiveTeacherPage = () => {
   const [sharedScreenState, setSharedScreenState] = useState(false);
@@ -126,12 +127,13 @@ export const LiveTeacherPage = () => {
             <>{!sharedScreenState && <DefaultPageComponent />}</>
           )}
         </div>
-        <TeacherScreenShare
+        {/* <TeacherScreenShare
           eClassUuid={eClassUuid}
           setSharedScreenState={setSharedScreenState}
           sharedScreenState={sharedScreenState}
           sessionIds={sessionIds}
-        />
+        /> */}
+        <TeacherScreenShareJitsi />
         {/* 과제 공유/중지 버튼 */}
         <TeacherStepShareButton
           stepCount={stepCount}
