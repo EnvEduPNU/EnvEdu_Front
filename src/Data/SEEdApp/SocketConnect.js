@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { FaPlay } from "react-icons/fa";
 import { FaPause } from "react-icons/fa6";
 import { MdError } from "react-icons/md";
-import { MdSignalWifiStatusbarConnectedNoInternet } from "react-icons/md";
 import { ImConnection } from "react-icons/im";
 
 import DataRecordModal from "./modal/DataRecordModal";
@@ -103,7 +102,7 @@ export default function SocketConnect(props) {
     };
 
     if (stompClient && !stompClient.connected) {
-      stompClient.connected(
+      stompClient.onConnect = (frame) =>(
         headers,
         () => {
           setConnectTest(true); // 연결 성공 시 상태 업데이트
@@ -114,6 +113,8 @@ export default function SocketConnect(props) {
         },
         onError
       );
+
+      stompClient.activate()
     } else {
       console.log("커넥션이 이미 있습니다.");
     }
@@ -146,7 +147,7 @@ export default function SocketConnect(props) {
   }
 
   function disconnect() {
-    globalStompClient.disconnect();
+    globalStompClient.deactivate();
     setConnected(false);
   }
 

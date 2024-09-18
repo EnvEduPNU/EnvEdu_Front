@@ -40,17 +40,16 @@ export const LiveStudentPage = () => {
       );
       stompClients.current = new Client({ webSocketFactory: () => sock });
 
-      stompClients.current.connect(
-        {}, // 연결 옵션
-        onConnect, // 연결 성공 시 실행할 함수
-        onError // 연결 실패 시 실행할 함수
-      );
+      stompClients.current.onConnect = (frame) =>
+        {
+          console.log("STOMP 연결 성공", frame);
+          sendMessage(true); // 연결 성공 후에만 sendMessage(true)를 실행
+          
+        };
+
+      stompClients.current.activate()
     }
 
-    function onConnect() {
-      console.log("STOMP 연결 성공");
-      sendMessage(true); // 연결 성공 후에만 sendMessage(true)를 실행
-    }
 
     function onError(error) {
       console.error("STOMP 연결 에러:", error);
@@ -116,11 +115,11 @@ export const LiveStudentPage = () => {
       stompClients.current &&
       stompClients.current.connected
     ) {
-      await stompClients.current.send(
-        "/app/student-entered",
-        {},
-        JSON.stringify(message)
-      );
+      await stompClients.current.publish({
+        destination: "/app/student-entered",  // 메시지를 보낼 경로
+        body: JSON.stringify(message),        // 메시지 본문
+        headers: {}                           // 선택적 헤더
+      });
     } else {
       console.error("STOMP 클라이언트가 연결되지 않았습니다.");
     }
@@ -164,12 +163,12 @@ export const LiveStudentPage = () => {
               lectureDataUuid={lectureDataUuid}
             />
           )}
-          {sessionIdState && (
+          {/* {sessionIdState && (
             <StudentScreenShare
               sessionId={sessionIdState}
               setIsVideoReady={setIsVideoReady}
             />
-          )}
+          )} */}
         </div>
       </div>
 

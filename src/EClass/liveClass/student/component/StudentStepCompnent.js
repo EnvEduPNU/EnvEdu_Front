@@ -47,8 +47,8 @@ export function StudentStepCompnent(props) {
         );
         stompClient.current = new Client({ webSocketFactory: () => sock });
 
-        stompClient.current.connect({}, function (frame) {
-          console.log("Connected: " + frame);
+        stompClient.current.onConnect = (frame) =>{
+          console.log("과제 공유 소켓 연결 성공 : " , frame);
           stompClient.current.subscribe(
             "/topic/switchPage",
             function (message) {
@@ -62,7 +62,10 @@ export function StudentStepCompnent(props) {
               assginmentCheckStompClient("success");
             }
           );
-        });
+        }
+
+        stompClient.current.activate()
+
       }
     }
 
@@ -72,7 +75,7 @@ export function StudentStepCompnent(props) {
       );
       assginmentStompClient.current = new Client({ webSocketFactory: () => socket });
 
-      assginmentStompClient.current.connect({}, () => {});
+      assginmentStompClient.current.onConnect = (frame) =>({}, () => {});
     }
 
     // return () => {

@@ -53,7 +53,7 @@ const StudentScreenShare = ({ sessionId, setIsVideoReady }) => {
         ShareStompClient.current = client;
 
         // 연결 완료 후 구독 설정
-        ShareStompClient.current.connect(
+        ShareStompClient.current.onConnect = (frame) =>(
           {},
           () => {
             console.log("STOMP 연결 완료, 화면 공유 상태 구독 중...");
@@ -81,6 +81,8 @@ const StudentScreenShare = ({ sessionId, setIsVideoReady }) => {
           },
           onError
         );
+
+        ShareStompClient.activate()
       }
     } catch (error) {
       console.error("STOMP client initialization failed:", error);
@@ -104,7 +106,9 @@ const StudentScreenShare = ({ sessionId, setIsVideoReady }) => {
 
         stompClient.current = client;
 
-        stompClient.current.connect({}, onConnected, onError);
+        stompClient.current.onConnect = (frame) =>({}, onConnected, onError);
+
+        stompClient.activate()
       }
     } catch (error) {
       console.error("STOMP client initialization failed:", error);

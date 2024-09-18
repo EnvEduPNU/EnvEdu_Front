@@ -86,7 +86,7 @@ export const TeacherScreenShare = ({
 
     screenStatusStompClients.current = new Client({ webSocketFactory: () => socket });
 
-    screenStatusStompClients.current.connect({}, () => {
+    screenStatusStompClients.current.onConnect = (frame) =>({}, () => {
       screenStatusStompClients.current.subscribe(
         `/topic/screen-share-status`,
         (messages) => {
@@ -94,6 +94,8 @@ export const TeacherScreenShare = ({
         }
       );
     });
+
+    screenStatusStompClients.activate();
   };
 
   const setupStompClient = (client, pc, sessionId) => {

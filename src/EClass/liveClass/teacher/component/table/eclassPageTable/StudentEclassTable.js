@@ -87,18 +87,20 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
       );
       stompClientRef.current = new Client({ webSocketFactory: () => sock });
 
-      stompClientRef.current.connect(
+      stompClientRef.current.onConnect = (frame) =>(
         {},
         () => {
           console.log("STOMP 연결 성공");
         },
         onError
       );
+
+      stompClientRef.current.activate();
     }
 
     return () => {
       if (stompClientRef.current) {
-        stompClientRef.current.disconnect(() => {
+        stompClientRef.current.deactivate(() => {
           console.log("STOMP 연결 해제");
         });
       }

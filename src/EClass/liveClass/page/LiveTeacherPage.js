@@ -6,7 +6,6 @@ import TeacherAssignmentTable from "../teacher/component/table/myDataPageTable/T
 import TeacherCourseStatusTable from "../teacher/component/table/myDataPageTable/TeacherCourseStatusTable";
 import { TeacherStepShareButton } from "../teacher/component/button/TeacherStepShareButton";
 import TeacherRenderAssign from "../teacher/component/TeacherRenderAssign";
-import { TeacherScreenShare } from "../teacher/component/screenShare/TeacherScreenShare";
 import SockJS from "sockjs-client";
 import { Client } from '@stomp/stompjs';
 import { TeacherScreenShareJitsi } from "../teacher/component/screenShare/TeacherScreenShareJitsi";
@@ -44,25 +43,28 @@ export const LiveTeacherPage = () => {
       stompClients = new Client({ webSocketFactory: () => sock });
 
 
-      stompClients.connect(
-        {},
-        () => {
-          stompClients.subscribe("/topic/student-entered", function (message) {
-            const parsedMessage = JSON.parse(message.body);
-            console.log(
-              "학생 상태 : " + JSON.stringify(parsedMessage, null, 2)
-            );
-            // if (parsedMessage.entered === false) {
-            // }
+      stompClients.onConnect = (frame) => {
 
-            // 1초 지연 후 fetchSessionIds 호출
-            setTimeout(() => {
-              fetchSessionIds();
-            }, 1000);
-          });
-        },
-        onError
-      );
+          console.log("학생 입장 소켓 연결 성공 : ", frame)
+               
+          stompClients.subscribe("/topic/student-entered", function (message) {
+          const parsedMessage = JSON.parse(message.body);
+          console.log(
+            "학생 상태 : " + JSON.stringify(parsedMessage, null, 2)
+          );
+          // if (parsedMessage.entered === false) {
+          // }
+
+          // 1초 지연 후 fetchSessionIds 호출
+          setTimeout(() => {
+            fetchSessionIds();
+          }, 1000);
+        });
+
+      } 
+      
+
+      stompClients.activate()
     }
 
     function onError(error) {
@@ -74,7 +76,7 @@ export const LiveTeacherPage = () => {
 
     return () => {
       if (stompClients) {
-        stompClients.disconnect(() => {
+        stompClients.deactivate(() => {
           console.log("STOMP 연결 해제");
         });
       }
