@@ -6,7 +6,7 @@ import React, {
   useRef,
 } from "react";
 import SockJS from "sockjs-client";
-import Stomp from "stompjs";
+import { Client } from '@stomp/stompjs';
 import StudentRenderAssign from "../../teacher/component/StudentRenderAssign";
 import { Typography } from "@mui/material";
 import { customAxios } from "../../../../Common/CustomAxios";
@@ -45,7 +45,7 @@ export function StudentStepCompnent(props) {
         const sock = new SockJS(
           `${process.env.REACT_APP_API_URL}/ws?token=${token}`
         );
-        stompClient.current = Stomp.over(sock);
+        stompClient.current = new Client({ webSocketFactory: () => sock });
 
         stompClient.current.connect({}, function (frame) {
           console.log("Connected: " + frame);
@@ -70,7 +70,7 @@ export function StudentStepCompnent(props) {
       const socket = new SockJS(
         `${process.env.REACT_APP_API_URL}/ws?token=${token}`
       );
-      assginmentStompClient.current = Stomp.over(socket);
+      assginmentStompClient.current = new Client({ webSocketFactory: () => socket });
 
       assginmentStompClient.current.connect({}, () => {});
     }

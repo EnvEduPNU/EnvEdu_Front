@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Paper, Typography, Button, TextField } from "@mui/material";
 import { customAxios } from "../../../../Common/CustomAxios";
-import Stomp from "stompjs";
+import { Client } from '@stomp/stompjs';
 import SockJS from "sockjs-client";
 import { v4 as uuidv4 } from "uuid";
 
@@ -160,7 +160,7 @@ function StudentRenderAssign({
       timestamp: new Date().toLocaleString("ko-KR", { timeZone: "Asia/Seoul" }),
     };
 
-    const stompClient = Stomp.over(socket);
+    const stompClient = new Client({ webSocketFactory: () => socket });
 
     stompClient.connect({}, () => {
       stompClient.send("/app/assginment-status", {}, JSON.stringify(message));

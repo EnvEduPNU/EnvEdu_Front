@@ -13,7 +13,7 @@ import {
 import { customAxios } from "../../../../../../Common/CustomAxios";
 import { useNavigate } from "react-router-dom";
 import SockJS from "sockjs-client";
-import Stomp from "stompjs";
+import { Client } from '@stomp/stompjs';
 
 const columns = [
   { label: "번호", dataKey: "Num", width: "10%" },
@@ -85,7 +85,7 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
       const sock = new SockJS(
         `${process.env.REACT_APP_API_URL}/ws?token=${token}`
       );
-      stompClientRef.current = Stomp.over(sock);
+      stompClientRef.current = new Client({ webSocketFactory: () => sock });
 
       stompClientRef.current.connect(
         {},

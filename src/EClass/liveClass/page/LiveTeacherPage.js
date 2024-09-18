@@ -8,7 +8,7 @@ import { TeacherStepShareButton } from "../teacher/component/button/TeacherStepS
 import TeacherRenderAssign from "../teacher/component/TeacherRenderAssign";
 import { TeacherScreenShare } from "../teacher/component/screenShare/TeacherScreenShare";
 import SockJS from "sockjs-client";
-import Stomp from "stompjs";
+import { Client } from '@stomp/stompjs';
 import { TeacherScreenShareJitsi } from "../teacher/component/screenShare/TeacherScreenShareJitsi";
 
 export const LiveTeacherPage = () => {
@@ -41,7 +41,8 @@ export const LiveTeacherPage = () => {
       const sock = new SockJS(
         `${process.env.REACT_APP_API_URL}/ws?token=${token}`
       );
-      stompClients = Stomp.over(sock);
+      stompClients = new Client({ webSocketFactory: () => sock });
+
 
       stompClients.connect(
         {},

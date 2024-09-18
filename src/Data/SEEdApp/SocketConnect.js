@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import SockJS from "sockjs-client";
 import { FaPlay } from "react-icons/fa";
 import { FaPause } from "react-icons/fa6";
 import { MdError } from "react-icons/md";
@@ -8,13 +7,14 @@ import { ImConnection } from "react-icons/im";
 
 import DataRecordModal from "./modal/DataRecordModal";
 import DataSubscriber from "./message/DataSubscriber";
+import SockJS from "sockjs-client";
+import { Client } from '@stomp/stompjs';
+
 
 /**
  * 전역 변수 관리
  * 작성자: 김선규
  */
-const stomp = require("stompjs"); //웹 소켓 연결을 위한 stompClient
-//let stompClient = null;
 const disConnectFlag = 99999;
 const noDeviceConnectFlag = 88888;
 
@@ -95,7 +95,7 @@ export default function SocketConnect(props) {
       return;
     }
 
-    const stompClient = stomp.over(sock);
+    const stompClient = new Client({ webSocketFactory: () => sock });
 
     // 헤더 객체 생성
     const headers = {
@@ -103,7 +103,7 @@ export default function SocketConnect(props) {
     };
 
     if (stompClient && !stompClient.connected) {
-      stompClient.connect(
+      stompClient.connected(
         headers,
         () => {
           setConnectTest(true); // 연결 성공 시 상태 업데이트

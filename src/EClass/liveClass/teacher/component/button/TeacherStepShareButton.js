@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import SockJS from "sockjs-client";
-import Stomp from "stompjs";
+import { Client } from '@stomp/stompjs';
 import { useLiveClassPartStore } from "../../../store/LiveClassPartStore";
 
 export function TeacherStepShareButton({
@@ -27,7 +27,7 @@ export function TeacherStepShareButton({
       const sock = new SockJS(
         `${process.env.REACT_APP_API_URL}/ws?token=${token}`
       );
-      const stompClient = Stomp.over(sock);
+      const stompClient = new Client({ webSocketFactory: () => sock });
 
       stompClient.connect(
         {},

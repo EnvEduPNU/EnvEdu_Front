@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import SockJS from "sockjs-client";
-import Stomp from "stompjs";
+import { Client } from '@stomp/stompjs';
 
 const StudentScreenShare = ({ sessionId, setIsVideoReady }) => {
   const remoteVideoRef = useRef();
@@ -47,7 +47,8 @@ const StudentScreenShare = ({ sessionId, setIsVideoReady }) => {
         const socket = new SockJS(
           `${process.env.REACT_APP_API_URL}/ws?token=${token}`
         );
-        const client = Stomp.over(socket);
+        const client = new Client({ webSocketFactory: () => socket });
+
 
         ShareStompClient.current = client;
 
@@ -99,7 +100,7 @@ const StudentScreenShare = ({ sessionId, setIsVideoReady }) => {
         const socket = new SockJS(
           `${process.env.REACT_APP_API_URL}/screen-share?token=${token}`
         );
-        const client = Stomp.over(socket);
+        const client = new Client({ webSocketFactory: () => socket });
 
         stompClient.current = client;
 

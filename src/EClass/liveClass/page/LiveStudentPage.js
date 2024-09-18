@@ -6,9 +6,12 @@ import StudentAssignmentTable from "../student/component/table/StudentAssignment
 import { StudentStepCompnent } from "../student/component/StudentStepCompnent";
 import { customAxios } from "../../../Common/CustomAxios";
 import SockJS from "sockjs-client";
-import Stomp from "stompjs";
 import StudentScreenShare from "../student/screenShare/StudentScreenShare";
 import StudentReportTable from "../teacher/component/table/eclassPageTable/StudentReportTable";
+
+
+import { Client } from '@stomp/stompjs';
+
 
 export const LiveStudentPage = () => {
   const sessionId = useRef("");
@@ -35,7 +38,7 @@ export const LiveStudentPage = () => {
       const sock = new SockJS(
         `${process.env.REACT_APP_API_URL}/ws?token=${token}`
       );
-      stompClients.current = Stomp.over(sock);
+      stompClients.current = new Client({ webSocketFactory: () => sock });
 
       stompClients.current.connect(
         {}, // 연결 옵션
