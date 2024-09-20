@@ -75,6 +75,24 @@ export const LiveTeacherPage = () => {
   }, []);
 
   useEffect(() => {
+    const sendMessage = (state) => {
+      // setSharedScreenState(true);
+
+      const message = {
+        screenShared: state,
+      };
+      if (ScreanSharestompClients.current) {
+        console.log('소켓 보내기');
+        ScreanSharestompClients.current.publish({
+          destination: '/app/ScreenShareFlag', // 메시지를 보낼 경로
+          body: JSON.stringify(message), // 메시지 본문
+          headers: {}, // 선택적 헤더
+        });
+      } else {
+        console.error('STOMP 클라이언트가 연결되지 않았습니다.');
+      }
+    };
+
     if (!ScreanSharestompClients.current) {
       const token = localStorage.getItem('access_token').replace('Bearer ', '');
       const sock = new SockJS(
@@ -86,6 +104,7 @@ export const LiveTeacherPage = () => {
 
       ScreanSharestompClients.current.onConnect = (frame) => {
         console.log('화면 공유 소켓 연결 성공 : ', frame);
+        sendMessage(sharedScreenState);
       };
 
       ScreanSharestompClients.current.activate();
@@ -98,43 +117,7 @@ export const LiveTeacherPage = () => {
         });
       }
     };
-  }, []);
-
-  const sendTrueMessage = () => {
-    // setSharedScreenState(true);
-
-    const message = {
-      screenShared: true,
-    };
-    if (ScreanSharestompClients.current) {
-      console.log('소켓 보내기');
-      ScreanSharestompClients.current.publish({
-        destination: '/app/ScreenShareFlag', // 메시지를 보낼 경로
-        body: JSON.stringify(message), // 메시지 본문
-        headers: {}, // 선택적 헤더
-      });
-    } else {
-      console.error('STOMP 클라이언트가 연결되지 않았습니다.');
-    }
-  };
-
-  const sendFalseMessage = () => {
-    // setSharedScreenState(false);
-
-    const message = {
-      screenShared: false,
-    };
-    if (ScreanSharestompClients.current) {
-      console.log('소켓 보내기');
-      ScreanSharestompClients.current.publish({
-        destination: '/app/ScreenShareFlag', // 메시지를 보낼 경로
-        body: JSON.stringify(message), // 메시지 본문
-        headers: {}, // 선택적 헤더
-      });
-    } else {
-      console.error('STOMP 클라이언트가 연결되지 않았습니다.');
-    }
-  };
+  }, [sharedScreenState]);
 
   const closeEclass = async () => {
     await customAxios
@@ -210,7 +193,7 @@ export const LiveTeacherPage = () => {
         )}
 
         <button
-          onClick={sendTrueMessage}
+          onClick={() => setSharedScreenState(true)}
           style={{
             margin: '10px 0 ',
             width: '18%',
@@ -227,7 +210,7 @@ export const LiveTeacherPage = () => {
           화면 공유
         </button>
         <button
-          onClick={sendFalseMessage}
+          onClick={() => setSharedScreenState(false)}
           style={{
             margin: '10px 0 0 10px ',
             width: '18%',
