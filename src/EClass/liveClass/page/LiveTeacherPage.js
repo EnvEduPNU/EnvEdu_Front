@@ -86,8 +86,6 @@ export const LiveTeacherPage = () => {
 
       ScreanSharestompClients.current.onConnect = (frame) => {
         console.log('화면 공유 소켓 연결 성공 : ', frame);
-
-        sendMessage(sharedScreenState);
       };
 
       ScreanSharestompClients.current.activate();
@@ -100,9 +98,11 @@ export const LiveTeacherPage = () => {
         });
       }
     };
-  }, [sharedScreenState]);
+  }, []);
 
   const sendMessage = (state) => {
+    setSharedScreenState(state);
+
     const message = {
       screenShared: state,
     };
@@ -148,10 +148,6 @@ export const LiveTeacherPage = () => {
     );
   }
 
-  const shareScreen = (state) => {
-    setSharedScreenState(state);
-  };
-
   return (
     <div style={{ display: 'flex', margin: '0 10vh', height: '800px' }}>
       {/* [왼쪽 블럭] 화면 공유 블럭 */}
@@ -196,7 +192,7 @@ export const LiveTeacherPage = () => {
         )}
 
         <button
-          onClick={() => shareScreen(true)}
+          onClick={sendMessage(true)}
           style={{
             margin: '10px 0 ',
             width: '18%',
@@ -213,7 +209,7 @@ export const LiveTeacherPage = () => {
           화면 공유
         </button>
         <button
-          onClick={() => shareScreen(false)}
+          onClick={() => sendMessage(false)}
           style={{
             margin: '10px 0 0 10px ',
             width: '18%',
