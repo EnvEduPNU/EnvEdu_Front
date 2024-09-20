@@ -116,7 +116,7 @@ export const LiveTeacherPage = () => {
       ScreanSharestompClients.current.onConnect = (frame) => {
         console.log('화면 공유 연결 성공 : ', frame);
         ScreanSharestompClients.current.publish({
-          destination: '/app/ScreenShareFlag', // 메시지를 보낼 경로
+          destination: '/app/screen-share-flag', // 메시지를 보낼 경로
           body: JSON.stringify(message), // 메시지 본문
           headers: {}, // 선택적 헤더
         });

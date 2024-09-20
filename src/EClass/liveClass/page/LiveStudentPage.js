@@ -71,7 +71,7 @@ export const LiveStudentPage = () => {
         console.log('화면 공유 소켓 연결 성공', frame);
 
         ScreanSharestompClients.current.subscribe(
-          '/topic/ScreenShareFlag',
+          '/topic/screen-share-flag',
           function (message) {
             const parsedMessage = JSON.parse(message.body);
             console.log(
