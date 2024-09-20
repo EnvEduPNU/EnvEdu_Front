@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
-import PropTypes from "prop-types";
+import React, { useState, useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 import {
   Table,
   TableBody,
@@ -10,20 +10,27 @@ import {
   Paper,
   Typography,
   Button,
-} from "@mui/material";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import CancelIcon from "@mui/icons-material/Cancel";
-import { useLiveClassPartStore } from "../../../../store/LiveClassPartStore";
-import { customAxios } from "../../../../../../Common/CustomAxios";
-import ReportViewModal from "../../../modal/ReportViewModal";
+} from '@mui/material';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
+import { useLiveClassPartStore } from '../../../../store/LiveClassPartStore';
+import { customAxios } from '../../../../../../Common/CustomAxios';
+import ReportViewModal from '../../../modal/ReportViewModal';
+
+import ScreenShareIcon from '@mui/icons-material/ScreenShare';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
+import DescriptionIcon from '@mui/icons-material/Description';
+
+import Tooltip from '@mui/material/Tooltip';
 
 function createData(
-  name = "noName",
-  sessionId = "noId",
+  name = 'noName',
+  sessionId = 'noId',
   shared = false,
   assginmentShared = false,
   assginmentSubmit = false,
-  reportSubmit = false
+  reportSubmit = false,
 ) {
   return {
     name,
@@ -54,7 +61,7 @@ export default function TeacherCourseStatusTable({
   const selectedReport = useRef();
 
   const updateShareStatus = useLiveClassPartStore(
-    (state) => state.updateShareStatus
+    (state) => state.updateShareStatus,
   );
 
   const handleOpenModal = (name) => {
@@ -67,12 +74,12 @@ export default function TeacherCourseStatusTable({
   };
 
   useEffect(() => {
-    console.log("세션 데이터 : " + JSON.stringify(sessionData, null, 2));
-    console.log("학생 데이터 : " + JSON.stringify(eclassUuid, null, 2));
+    console.log('세션 데이터 : ' + JSON.stringify(sessionData, null, 2));
+    console.log('학생 데이터 : ' + JSON.stringify(eclassUuid, null, 2));
 
     const fetchStudents = async () => {
       const studentData = await Promise.all(
-        sessionData.map((session) => getStudent(session.id, eclassUuid))
+        sessionData.map((session) => getStudent(session.id, eclassUuid)),
       );
 
       if (studentData) setStudents(studentData);
@@ -106,27 +113,27 @@ export default function TeacherCourseStatusTable({
       };
 
       console.log(
-        "[TeacherCourseStatusTable] eclassStudentData : " +
-          JSON.stringify(eclassStudentData, null, 2)
+        '[TeacherCourseStatusTable] eclassStudentData : ' +
+          JSON.stringify(eclassStudentData, null, 2),
       );
 
       const response = await customAxios.post(
         `${process.env.REACT_APP_API_URL}/api/sessions/student/get`,
-        eclassStudentData
+        eclassStudentData,
       );
 
       // 학생 데이터가 비어있거나 username이 없는 경우 null을 반환
       if (!response.data || !response.data.username) {
-        console.log("학생 데이터가 존재하지 않음.");
+        console.log('학생 데이터가 존재하지 않음.');
         return null; // 학생이 없는 상태로 반환
       }
 
       console.log(
-        "Fetched student data: " + JSON.stringify(response.data, null, 2)
+        'Fetched student data: ' + JSON.stringify(response.data, null, 2),
       );
       return response.data.username;
     } catch (error) {
-      console.error("Error fetching student data: ", error);
+      console.error('Error fetching student data: ', error);
       return null; // 오류 발생 시에도 null 반환
     }
   };
@@ -143,35 +150,35 @@ export default function TeacherCourseStatusTable({
         };
 
         const respCheckList = await customAxios.post(
-          "/api/eclass/student/assignment/getCheckList",
-          requestData
+          '/api/eclass/student/assignment/getCheckList',
+          requestData,
         );
 
         console.log(
-          "[TeacherCourseStatusTable] assiginment Check List : " +
-            JSON.stringify(respCheckList.data, null, 2)
+          '[TeacherCourseStatusTable] assiginment Check List : ' +
+            JSON.stringify(respCheckList.data, null, 2),
         );
 
         const respReportUuid = await customAxios.post(
-          "/api/eclass/student/assignment/reportUuid/get",
-          requestData
+          '/api/eclass/student/assignment/reportUuid/get',
+          requestData,
         );
 
         console.log(
-          "respReportUuid.data : " +
-            JSON.stringify(respReportUuid.data, null, 2)
+          'respReportUuid.data : ' +
+            JSON.stringify(respReportUuid.data, null, 2),
         );
 
         if (Array.isArray(respReportUuid.data)) {
           // null 또는 빈 값을 필터링하여 제거
           const filteredReportUuid = respReportUuid.data.filter(
-            (uuid) => uuid !== null && uuid !== ""
+            (uuid) => uuid !== null && uuid !== '',
           );
 
           if (filteredReportUuid.length > 0) {
             const respReport = await customAxios.post(
-              "/api/report/getstep",
-              filteredReportUuid // 필터링된 배열을 전달
+              '/api/report/getstep',
+              filteredReportUuid, // 필터링된 배열을 전달
             );
             // console.log(
             //   "보고서 데이터 : " + JSON.stringify(respReport.data, null, 2)
@@ -181,7 +188,7 @@ export default function TeacherCourseStatusTable({
               setReportData(respReport.data);
             }
           } else {
-            console.warn("보고서가 존재하지 않습니다.");
+            console.warn('보고서가 존재하지 않습니다.');
           }
         }
 
@@ -191,12 +198,12 @@ export default function TeacherCourseStatusTable({
         // console.log("Assignment status:", respCheckList.data);
       }
     } catch (error) {
-      console.error("Error sending data to server:", error);
+      console.error('Error sending data to server:', error);
     }
   };
 
   const Row = ({ row, isMatch, reportData }) => {
-    console.log(" 학생 상태 리스트 : " + JSON.stringify(row, null, 2));
+    console.log(' 학생 상태 리스트 : ' + JSON.stringify(row, null, 2));
 
     // reportData가 없으면 row를 사용
     const report = (reportData || []).filter((data) => {
@@ -207,38 +214,38 @@ export default function TeacherCourseStatusTable({
     const finalData = report.length > 0 ? report : [row];
 
     // 예시로 finalData 출력
-    console.log("최종 데이터: ", finalData);
+    console.log('최종 데이터: ', finalData);
 
     // console.log("정제된건? : " + JSON.stringify(report, null, 2));
 
     return (
-      <TableRow sx={{ height: 50 }}>
+      <TableRow>
         <TableCell component="th" scope="row">
           {row.name}
         </TableCell>
         <TableCell align="center">
           {row.shared ? (
-            <CheckCircleIcon sx={{ color: "blue" }} />
+            <CheckCircleIcon sx={{ color: 'blue' }} />
           ) : (
-            <CancelIcon sx={{ color: "red" }} />
+            <CancelIcon sx={{ color: 'red' }} />
           )}
         </TableCell>
         <TableCell align="center">
           {assginmentShareCheck?.some(
             (assign) =>
               assign.sessionId === row.sessionId &&
-              assign.assginmentShared === true
+              assign.assginmentShared === true,
           ) ? (
-            <CheckCircleIcon sx={{ color: "blue" }} />
+            <CheckCircleIcon sx={{ color: 'blue' }} />
           ) : (
-            <CancelIcon sx={{ color: "red" }} />
+            <CancelIcon sx={{ color: 'red' }} />
           )}
         </TableCell>
         <TableCell align="center">
           {isMatch || row.assginmentSubmit ? (
-            <CheckCircleIcon sx={{ color: "blue" }} />
+            <CheckCircleIcon sx={{ color: 'blue' }} />
           ) : (
-            <CancelIcon sx={{ color: "red" }} />
+            <CancelIcon sx={{ color: 'red' }} />
           )}
         </TableCell>
         <TableCell align="center">
@@ -246,21 +253,20 @@ export default function TeacherCourseStatusTable({
             <Button
               onClick={() => handleOpenModal(row.name)}
               sx={{
-                width: "3%",
-                marginRight: 1,
+                width: '3%',
                 fontFamily: "'Asap', sans-serif",
-                fontWeight: "600",
-                fontSize: "0.9rem",
-                color: "grey",
-                backgroundColor: "#feecfe",
-                borderRadius: "2.469rem",
-                border: "none",
+                fontWeight: '600',
+                fontSize: '0.9rem',
+                color: 'grey',
+                backgroundColor: '#feecfe',
+                borderRadius: '2.469rem',
+                border: 'none',
               }}
             >
               확인
             </Button>
           ) : (
-            <CancelIcon sx={{ color: "red" }} />
+            <CancelIcon sx={{ color: 'red' }} />
           )}
         </TableCell>
       </TableRow>
@@ -287,7 +293,7 @@ export default function TeacherCourseStatusTable({
           session.shared,
           session.assginmentShared,
           session.assginmentSubmit,
-          session.reportSubmit
+          session.reportSubmit,
         );
       }
       return null; // 학생이 없으면 null 반환
@@ -303,19 +309,35 @@ export default function TeacherCourseStatusTable({
   };
 
   return (
-    <div style={{ margin: "2rem 0 0 0" }}>
-      <Typography variant="h5" sx={{ marginBottom: "10px" }}>
-        {" 수업 상태 "}
+    <div style={{ margin: '2rem 0 0 0' }}>
+      <Typography variant="h5" sx={{ marginBottom: '10px' }}>
+        {' 수업 상태 '}
       </Typography>
-      <TableContainer component={Paper} sx={{ maxHeight: "300px" }}>
+      <TableContainer component={Paper} sx={{ height: '17.5rem' }}>
         <Table aria-label="collapsible table" size="small">
-          <TableHead sx={{ backgroundColor: "#dcdcdc" }}>
+          <TableHead sx={{ backgroundColor: '#dcdcdc' }}>
             <TableRow sx={{ height: 50 }}>
               <TableCell align="center">이름</TableCell>
-              <TableCell align="center">화면공유</TableCell>
-              <TableCell align="center">과제공유</TableCell>
-              <TableCell align="center">과제제출</TableCell>
-              <TableCell align="center">보고서제출</TableCell>
+              <TableCell align="center">
+                <Tooltip title="화면 공유 여부">
+                  <ScreenShareIcon />
+                </Tooltip>
+              </TableCell>
+              <TableCell align="center">
+                <Tooltip title="스텝 공유 여부">
+                  <AssignmentIcon />
+                </Tooltip>
+              </TableCell>
+              <TableCell align="center">
+                <Tooltip title="스텝 제출 여부">
+                  <AssignmentTurnedInIcon />
+                </Tooltip>
+              </TableCell>
+              <TableCell align="center">
+                <Tooltip title="보고서 확인 여부">
+                  <DescriptionIcon />
+                </Tooltip>
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -347,7 +369,7 @@ export default function TeacherCourseStatusTable({
           open={isModalOpen}
           onClose={handleCloseModal}
           tableData={reportData.filter(
-            (data) => data.username === selectedReport.current
+            (data) => data.username === selectedReport.current,
           )}
         />
       )}

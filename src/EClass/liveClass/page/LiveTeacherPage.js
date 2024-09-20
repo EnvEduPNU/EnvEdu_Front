@@ -97,8 +97,8 @@ export const LiveTeacherPage = () => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          minHeight: '65vh',
-          margin: '0 10px 0 0',
+          minHeight: '70vh',
+          margin: '20px 10px 0 0',
           border: '1px solid grey',
         }}
       >
@@ -108,9 +108,9 @@ export const LiveTeacherPage = () => {
   }
 
   return (
-    <div style={{ display: 'flex', margin: '0 20vh' }}>
+    <div style={{ display: 'flex', margin: '0 10vh', height: '800px' }}>
       {/* [왼쪽 블럭] 화면 공유 블럭 */}
-      <div style={{ display: 'inline-block', width: '100%', height: '100%' }}>
+      <div style={{ display: 'inline-block', width: '60%', height: '100%' }}>
         <Typography variant="h4" sx={{ margin: '0 0 10px 0' }}>
           {eClassName}
         </Typography>
@@ -125,7 +125,9 @@ export const LiveTeacherPage = () => {
           )}
         </div>
         {/* 화면 공유 메서드 */}
-        <TeacherScreenShareJitsi sharedScreenState={sharedScreenState} />
+        {sharedScreenState && (
+          <TeacherScreenShareJitsi sharedScreenState={sharedScreenState} />
+        )}
         <button
           onClick={() => setSharedScreenState(true)}
           style={{
@@ -188,7 +190,7 @@ export const LiveTeacherPage = () => {
       </div>
 
       {/* [오른쪽 블럭] 수업 Step 테이블, 수업 상태 테이블 */}
-      <div style={{ width: '40%', marginRight: '30px', height: '65vh' }}>
+      <div style={{ width: '30%', marginRight: '30px', height: '100%' }}>
         <TeacherAssignmentTable
           setCourseStep={setCourseStep}
           setTableData={setTableData}
