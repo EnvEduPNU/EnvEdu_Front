@@ -100,11 +100,29 @@ export const LiveTeacherPage = () => {
     };
   }, []);
 
-  const sendMessage = (state) => {
-    setSharedScreenState(state);
+  const sendTrueMessage = () => {
+    setSharedScreenState(true);
 
     const message = {
-      screenShared: state,
+      screenShared: true,
+    };
+    if (ScreanSharestompClients.current) {
+      console.log('소켓 보내기');
+      ScreanSharestompClients.current.publish({
+        destination: '/app/ScreenShareFlag', // 메시지를 보낼 경로
+        body: JSON.stringify(message), // 메시지 본문
+        headers: {}, // 선택적 헤더
+      });
+    } else {
+      console.error('STOMP 클라이언트가 연결되지 않았습니다.');
+    }
+  };
+
+  const sendFalseMessage = () => {
+    setSharedScreenState(false);
+
+    const message = {
+      screenShared: false,
     };
     if (ScreanSharestompClients.current) {
       console.log('소켓 보내기');
@@ -192,7 +210,7 @@ export const LiveTeacherPage = () => {
         )}
 
         <button
-          onClick={sendMessage(true)}
+          onClick={sendTrueMessage}
           style={{
             margin: '10px 0 ',
             width: '18%',
@@ -209,7 +227,7 @@ export const LiveTeacherPage = () => {
           화면 공유
         </button>
         <button
-          onClick={() => sendMessage(false)}
+          onClick={sendFalseMessage}
           style={{
             margin: '10px 0 0 10px ',
             width: '18%',
