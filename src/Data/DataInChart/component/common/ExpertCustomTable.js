@@ -1,39 +1,9 @@
 import { useGraphDataStore } from "../../store/graphStore";
-import { useState } from "react";
-import { useTabStore } from "../../store/tabStore";
-import useComponentPosition from "../../hooks/useComponentPosition";
 
 function ExpertCustomTable() {
-  const { data, changeValue, changeVariableType, title } = useGraphDataStore();
-  const [editableCell, setEditableCell] = useState(null);
+  const { data, title } = useGraphDataStore();
 
   const headers = data[0];
-
-  const onChangeType = (index, type) => {
-    changeVariableType(index, type);
-  };
-
-  const onDoubleClickData = (row, col) => {
-    console.log(row, col);
-    setEditableCell({ row, col });
-  };
-
-  const handleInputChange = (e, row, col) => {
-    const newValue = e.target.value;
-    changeValue(row, col, newValue);
-  };
-
-  const onClickEnter = ({ key, isComposing }) => {
-    if (isComposing) {
-      return;
-    }
-
-    if (key !== "Enter") {
-      return;
-    }
-
-    setEditableCell(null);
-  };
 
   return (
     <div>

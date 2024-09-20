@@ -1,72 +1,71 @@
 import * as Styled from "./Styled";
-import Select from "../Select/Select";
 import { useGraphDataStore } from "../../store/graphStore";
-
 import useComponentPosition from "../../hooks/useComponentPosition";
-
-import { useTabStore } from "../../store/tabStore";
+import bar from "./../../images/bar.png";
+import line from "./../../images/line.png";
+import combo from "./../../images/combo.png";
+import doughnut from "./../../images/doughnut.png";
+import scatter from "./../../images/scatter.png";
 
 function ExpertCustomTableHeader() {
-  const { ref, position } = useComponentPosition();
+  const { ref } = useComponentPosition();
 
-  const { data, variables, changeSelectedVariable, changeVariableType } =
-    useGraphDataStore();
-  const headers = data[0];
-
-  const onClickPencil = () => {};
-
-  const onChangeType = (index, type) => {
-    changeVariableType(index, type);
-  };
-  const onClickShwoBotton = (variableIdx) => {
-    changeSelectedVariable(variableIdx);
-  };
   return (
-    <Styled.TableHeaderWrapper ref={ref}>
-      {headers.map((header, col) => (
-        <Styled.Column key={col} $isNotEnd={col != headers.length - 1}>
-          <Styled.HeaderWrapper>
-            <Styled.TableHeader>
-              <Styled.Th>
-                <span>{header}</span>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    marginTop: "5px",
-                  }}
-                >
-                  <button
-                    style={{
-                      display: "block",
-                      marginRight: "0.5rem",
-                      paddingLeft: "0.8rem",
-                      paddingRight: "0.8rem",
-                      borderRadius: "0.5rem", // rounded-lg
-                      backgroundColor: "#e0e1e2",
-                    }}
-                  >
-                    X
-                  </button>
-                  <button
-                    style={{
-                      display: "block",
-                      marginLeft: "0.5rem",
-                      paddingLeft: "0.8rem",
-                      paddingRight: "0.8rem",
-                      borderRadius: "0.5rem", // rounded-lg
-                      backgroundColor: "#e0e1e2",
-                    }}
-                  >
-                    Y
-                  </button>
-                </div>
-              </Styled.Th>
-            </Styled.TableHeader>
-          </Styled.HeaderWrapper>
-        </Styled.Column>
-      ))}
-    </Styled.TableHeaderWrapper>
+    <div>
+      <Styled.TableHeaderWrapper ref={ref}></Styled.TableHeaderWrapper>
+      <div className="flex justify-start mt-2">
+        <button
+          type="button"
+          className="bg-[#f8f8f8] border-[2.5px] border-black border-solid px-[40px]"
+        >
+          <img
+            src={bar}
+            alt="bar graph"
+            className="w-[50px] h-[40px] bg-white"
+          />
+        </button>
+        <button
+          type="button"
+          className="bg-[#f8f8f8] border-[2.5px] border-l-0 border-black border-solid px-[40px]"
+        >
+          <img
+            src={line}
+            alt="bar graph"
+            className="w-[50px] h-[40px] bg-white"
+          />
+        </button>
+        <button
+          type="button"
+          className="bg-[#f8f8f8] border-[2.5px] border-l-0 border-black border-solid px-[40px]"
+        >
+          <img
+            src={combo}
+            alt="combo graph"
+            className="w-[50px] h-[40px] bg-white"
+          />
+        </button>
+        <button
+          type="button"
+          className="bg-[#f8f8f8] border-[2.5px] border-l-0 border-black border-solid px-[40px]"
+        >
+          <img
+            src={doughnut}
+            alt="doughnut graph"
+            className="w-[50px] h-[40px] bg-white"
+          />
+        </button>
+        <button
+          type="button"
+          className="bg-[#f8f8f8] border-[2.5px] border-l-0 border-black border-solid px-[40px]"
+        >
+          <img
+            src={scatter}
+            alt="scatter graph"
+            className="w-[50px] h-[40px] bg-white"
+          />
+        </button>
+      </div>
+    </div>
   );
 }
 
