@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { Typography, CircularProgress, Box } from '@mui/material';
 import { customAxios } from '../../../Common/CustomAxios';
@@ -23,7 +23,7 @@ export const LiveTeacherPage = () => {
   const location = useLocation();
   const { lectureDataUuid, eClassName } = location.state || {};
 
-  let stompClients = null;
+  const stompClients = useRef();
 
   const navigate = useNavigate();
 
@@ -36,27 +36,32 @@ export const LiveTeacherPage = () => {
     };
     fetchSessionIds();
 
-    if (!stompClients) {
+    if (!stompClients.current) {
       const token = localStorage.getItem('access_token').replace('Bearer ', '');
       const sock = new SockJS(
         `${process.env.REACT_APP_API_URL}/ws?token=${token}`,
       );
-      stompClients = new Client({ webSocketFactory: () => sock });
+      stompClients.current = new Client({ webSocketFactory: () => sock });
 
-      stompClients.onConnect = (frame) => {
+      stompClients.current.onConnect = (frame) => {
         console.log('학생 입장 소켓 연결 성공 : ', frame);
 
-        stompClients.subscribe('/topic/student-entered', function (message) {
-          const parsedMessage = JSON.parse(message.body);
-          console.log('학생 상태 : ' + JSON.stringify(parsedMessage, null, 2));
+        stompClients.current.subscribe(
+          '/topic/student-entered',
+          function (message) {
+            const parsedMessage = JSON.parse(message.body);
+            console.log(
+              '학생 상태 : ' + JSON.stringify(parsedMessage, null, 2),
+            );
 
-          setTimeout(() => {
-            fetchSessionIds();
-          }, 1000);
-        });
+            setTimeout(() => {
+              fetchSessionIds();
+            }, 1000);
+          },
+        );
       };
 
-      stompClients.activate();
+      stompClients.current.activate();
     }
 
     function onError(error) {
@@ -67,8 +72,8 @@ export const LiveTeacherPage = () => {
     }
 
     return () => {
-      if (stompClients) {
-        stompClients.deactivate(() => {
+      if (stompClients.current) {
+        stompClients.current.deactivate(() => {
           console.log('STOMP 연결 해제');
         });
       }
@@ -104,6 +109,27 @@ export const LiveTeacherPage = () => {
       </div>
     );
   }
+
+  const sendMessage = async (state) => {
+    const message = {
+      screenShared: state,
+    };
+    if (stompClients.current) {
+      console.log('소켓 보내기');
+      await stompClients.current.publish({
+        destination: '/app/ScreenShareFlag', // 메시지를 보낼 경로
+        body: JSON.stringify(message), // 메시지 본문
+        headers: {}, // 선택적 헤더
+      });
+    } else {
+      console.error('STOMP 클라이언트가 연결되지 않았습니다.');
+    }
+  };
+
+  const shareScreen = (state) => {
+    setSharedScreenState(state);
+    sendMessage(state);
+  };
 
   return (
     <div style={{ display: 'flex', margin: '0 10vh', height: '800px' }}>
@@ -149,7 +175,7 @@ export const LiveTeacherPage = () => {
         )}
 
         <button
-          onClick={() => setSharedScreenState(true)}
+          onClick={() => shareScreen(true)}
           style={{
             margin: '10px 0 ',
             width: '18%',
@@ -166,7 +192,7 @@ export const LiveTeacherPage = () => {
           화면 공유
         </button>
         <button
-          onClick={() => setSharedScreenState(false)}
+          onClick={() => shareScreen(false)}
           style={{
             margin: '10px 0 0 10px ',
             width: '18%',
