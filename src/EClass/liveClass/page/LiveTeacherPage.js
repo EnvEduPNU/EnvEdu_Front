@@ -101,7 +101,7 @@ export const LiveTeacherPage = () => {
   }, []);
 
   const sendTrueMessage = () => {
-    setSharedScreenState(true);
+    // setSharedScreenState(true);
 
     const message = {
       screenShared: true,
@@ -119,7 +119,7 @@ export const LiveTeacherPage = () => {
   };
 
   const sendFalseMessage = () => {
-    setSharedScreenState(false);
+    // setSharedScreenState(false);
 
     const message = {
       screenShared: false,
