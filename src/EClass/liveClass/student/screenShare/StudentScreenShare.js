@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import SockJS from "sockjs-client";
-import Stomp from "stompjs";
+import { Client } from '@stomp/stompjs';
 
 const StudentScreenShare = ({ sessionId, setIsVideoReady }) => {
   const remoteVideoRef = useRef();
@@ -47,12 +47,13 @@ const StudentScreenShare = ({ sessionId, setIsVideoReady }) => {
         const socket = new SockJS(
           `${process.env.REACT_APP_API_URL}/ws?token=${token}`
         );
-        const client = Stomp.over(socket);
+        const client = new Client({ webSocketFactory: () => socket });
+
 
         ShareStompClient.current = client;
 
         // 연결 완료 후 구독 설정
-        ShareStompClient.current.connect(
+        ShareStompClient.current.onConnect = (frame) =>(
           {},
           () => {
             console.log("STOMP 연결 완료, 화면 공유 상태 구독 중...");
@@ -80,6 +81,8 @@ const StudentScreenShare = ({ sessionId, setIsVideoReady }) => {
           },
           onError
         );
+
+        ShareStompClient.activate()
       }
     } catch (error) {
       console.error("STOMP client initialization failed:", error);
@@ -99,11 +102,13 @@ const StudentScreenShare = ({ sessionId, setIsVideoReady }) => {
         const socket = new SockJS(
           `${process.env.REACT_APP_API_URL}/screen-share?token=${token}`
         );
-        const client = Stomp.over(socket);
+        const client = new Client({ webSocketFactory: () => socket });
 
         stompClient.current = client;
 
-        stompClient.current.connect({}, onConnected, onError);
+        stompClient.current.onConnect = (frame) =>({}, onConnected, onError);
+
+        stompClient.activate()
       }
     } catch (error) {
       console.error("STOMP client initialization failed:", error);

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { JitsiMeeting } from '@jitsi/react-sdk';
 
-export const TeacherScreenShareJitsi = ({
+export const StudentScreenShareJitsi = ({
   sharedScreenState,
   setIsLoading,
 }) => {

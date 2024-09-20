@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import SockJS from "sockjs-client";
-import Stomp from "stompjs";
+import { Client } from '@stomp/stompjs';
 import { useLiveClassPartStore } from "../../../store/LiveClassPartStore";
 import { customAxios } from "../../../../../Common/CustomAxios";
 
@@ -54,7 +54,8 @@ export const TeacherScreenShare = ({
         const socket = new SockJS(
           `${process.env.REACT_APP_API_URL}/screen-share?token=${token}`
         );
-        const stompClient = Stomp.over(socket);
+        const stompClient = new Client({ webSocketFactory: () => socket });
+
         clients[sessionId] = stompClient;
 
         const pc = new RTCPeerConnection();
@@ -83,9 +84,9 @@ export const TeacherScreenShare = ({
       `${process.env.REACT_APP_API_URL}/ws?token=${token}`
     );
 
-    screenStatusStompClients.current = Stomp.over(socket);
+    screenStatusStompClients.current = new Client({ webSocketFactory: () => socket });
 
-    screenStatusStompClients.current.connect({}, () => {
+    screenStatusStompClients.current.onConnect = (frame) =>({}, () => {
       screenStatusStompClients.current.subscribe(
         `/topic/screen-share-status`,
         (messages) => {
@@ -93,6 +94,8 @@ export const TeacherScreenShare = ({
         }
       );
     });
+
+    screenStatusStompClients.activate();
   };
 
   const setupStompClient = (client, pc, sessionId) => {
