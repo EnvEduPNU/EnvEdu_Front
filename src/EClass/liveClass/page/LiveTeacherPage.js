@@ -44,10 +44,6 @@ export const LiveTeacherPage = () => {
       );
       stompClients.current = new Client({ webSocketFactory: () => sock });
 
-      ScreanSharestompClients.current = new Client({
-        webSocketFactory: () => sock,
-      });
-
       stompClients.current.onConnect = (frame) => {
         console.log('학생 입장 소켓 연결 성공 : ', frame);
 
@@ -66,6 +62,28 @@ export const LiveTeacherPage = () => {
         );
       };
 
+      stompClients.current.activate();
+    }
+
+    return () => {
+      if (stompClients.current) {
+        stompClients.current.deactivate(() => {
+          console.log('학생 상태 소켓 연결 해제');
+        });
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!ScreanSharestompClients.current) {
+      const token = localStorage.getItem('access_token').replace('Bearer ', '');
+      const sock = new SockJS(
+        `${process.env.REACT_APP_API_URL}/ws?token=${token}`,
+      );
+      ScreanSharestompClients.current = new Client({
+        webSocketFactory: () => sock,
+      });
+
       ScreanSharestompClients.current.onConnect = (frame) => {
         console.log('화면 공유 소켓 연결 성공 : ', frame);
 
@@ -81,23 +99,9 @@ export const LiveTeacherPage = () => {
       };
 
       ScreanSharestompClients.current.activate();
-      stompClients.current.activate();
-    }
-
-    function onError(error) {
-      console.error('STOMP 연결 에러:', error);
-      alert(
-        '웹소켓 연결에 실패했습니다. 네트워크 설정을 확인하거나 관리자에게 문의하세요.',
-      );
     }
 
     return () => {
-      if (stompClients.current) {
-        stompClients.current.deactivate(() => {
-          console.log('학생 상태 소켓 연결 해제');
-        });
-      }
-
       if (ScreanSharestompClients.current) {
         ScreanSharestompClients.current.deactivate(() => {
           console.log('화면 공유 소켓 연결 해제');
