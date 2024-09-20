@@ -112,7 +112,7 @@ export const LiveTeacherPage = () => {
 
       ScreanSharestompClients.current.onConnect = (frame) => {
         console.log('화면 공유 소켓 연결 성공 : ', frame);
-        sendMessage(sharedScreenState); // 연결된 후 현재 상태로 메시지 보내기
+        sendMessage(true); // 연결된 후 현재 상태로 메시지 보내기
       };
 
       ScreanSharestompClients.current.activate(); // 소켓 활성화
