@@ -83,15 +83,15 @@ export const LiveTeacherPage = () => {
       ScreanSharestompClients.current = new Client({
         webSocketFactory: () => sock,
       });
+
+      ScreanSharestompClients.current.onConnect = (frame) => {
+        console.log('화면 공유 소켓 연결 성공 : ', frame);
+
+        sendMessage(sharedScreenState);
+      };
+
+      ScreanSharestompClients.current.activate();
     }
-
-    ScreanSharestompClients.current.onConnect = (frame) => {
-      console.log('화면 공유 소켓 연결 성공 : ', frame);
-
-      sendMessage(sharedScreenState);
-    };
-
-    ScreanSharestompClients.current.activate();
 
     return () => {
       if (ScreanSharestompClients.current) {
@@ -150,6 +150,7 @@ export const LiveTeacherPage = () => {
 
   const shareScreen = (state) => {
     setSharedScreenState(state);
+    sendMessage(state);
   };
 
   return (
