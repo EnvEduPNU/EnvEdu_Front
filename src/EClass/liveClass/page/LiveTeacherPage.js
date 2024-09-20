@@ -123,6 +123,7 @@ export const LiveTeacherPage = () => {
       ScreanSharestompClients.current &&
       ScreanSharestompClients.current.connected
     ) {
+      alert('보내는 메시지!');
       sendMessage(sharedScreenState);
     }
 
@@ -201,12 +202,12 @@ export const LiveTeacherPage = () => {
         )}
 
         {/* 화면 공유 메서드 */}
-        {sharedScreenState && (
+        {/* {sharedScreenState && (
           <TeacherScreenShareJitsi
             sharedScreenState={sharedScreenState}
             setIsLoading={setIsLoading} // setIsLoading을 props로 전달
           />
-        )}
+        )} */}
 
         <button
           onClick={() => setSharedScreenState(true)}

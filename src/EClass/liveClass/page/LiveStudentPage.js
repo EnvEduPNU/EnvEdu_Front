@@ -48,6 +48,13 @@ export const LiveStudentPage = () => {
 
       stompClients.current.activate();
     }
+    return () => {
+      if (stompClients.current) {
+        stompClients.current.deactivate(() => {
+          console.log('학생 입장 소켓 연결 해제');
+        });
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -78,6 +85,13 @@ export const LiveStudentPage = () => {
 
       ScreanSharestompClients.current.activate();
     }
+    return () => {
+      if (ScreanSharestompClients.current) {
+        ScreanSharestompClients.current.deactivate(() => {
+          console.log('화면 공유 상태 소켓 연결 해제');
+        });
+      }
+    };
   }, []);
 
   // 각 학생의 E-Class에 대한 Session Id 생성 훅
@@ -202,12 +216,12 @@ export const LiveStudentPage = () => {
           )}
 
           {/* 화면 공유 메서드 */}
-          {sharedScreenState && (
+          {/* {sharedScreenState && (
             <StudentScreenShareJitsi
               sharedScreenState={sharedScreenState}
               setIsLoading={setIsLoading} // setIsLoading을 props로 전달
             />
-          )}
+          )} */}
         </div>
       </div>
 
