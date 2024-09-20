@@ -28,7 +28,7 @@ export const LiveStudentPage = () => {
   const { lectureDataUuid, row, eClassUuid } = location.state || {};
 
   const stompClients = useRef(null);
-  const ScreanSharestompClients = useRef();
+  const ScreanSharestompClients = useRef(null);
 
   const navigate = useNavigate();
 
