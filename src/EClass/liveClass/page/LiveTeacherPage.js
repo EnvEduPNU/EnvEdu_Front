@@ -75,21 +75,6 @@ export const LiveTeacherPage = () => {
   }, []);
 
   useEffect(() => {
-    const sendMessage = async (state) => {
-      const message = {
-        screenShared: state,
-      };
-      if (ScreanSharestompClients.current) {
-        console.log('소켓 보내기');
-        await ScreanSharestompClients.current.publish({
-          destination: '/app/ScreenShareFlag', // 메시지를 보낼 경로
-          body: JSON.stringify(message), // 메시지 본문
-          headers: {}, // 선택적 헤더
-        });
-      } else {
-        console.error('STOMP 클라이언트가 연결되지 않았습니다.');
-      }
-    };
     if (!ScreanSharestompClients.current) {
       const token = localStorage.getItem('access_token').replace('Bearer ', '');
       const sock = new SockJS(
@@ -116,6 +101,22 @@ export const LiveTeacherPage = () => {
       }
     };
   }, [sharedScreenState]);
+
+  const sendMessage = (state) => {
+    const message = {
+      screenShared: state,
+    };
+    if (ScreanSharestompClients.current) {
+      console.log('소켓 보내기');
+      ScreanSharestompClients.current.publish({
+        destination: '/app/ScreenShareFlag', // 메시지를 보낼 경로
+        body: JSON.stringify(message), // 메시지 본문
+        headers: {}, // 선택적 헤더
+      });
+    } else {
+      console.error('STOMP 클라이언트가 연결되지 않았습니다.');
+    }
+  };
 
   const closeEclass = async () => {
     await customAxios
