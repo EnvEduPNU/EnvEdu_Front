@@ -28,6 +28,8 @@ export const LiveStudentPage = () => {
   const { lectureDataUuid, row, eClassUuid } = location.state || {};
 
   const stompClients = useRef(null);
+  const ScreanSharestompClients = useRef();
+
   const navigate = useNavigate();
 
   // stompClients 커넥션 생성 훅
@@ -42,8 +44,26 @@ export const LiveStudentPage = () => {
       stompClients.current.onConnect = (frame) => {
         console.log('STOMP 연결 성공', frame);
         sendMessage(true); // 연결 성공 후에만 sendMessage(true)를 실행
+      };
 
-        stompClients.current.subscribe(
+      stompClients.current.activate();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!ScreanSharestompClients.current) {
+      const token = localStorage.getItem('access_token').replace('Bearer ', '');
+      const sock = new SockJS(
+        `${process.env.REACT_APP_API_URL}/ws?token=${token}`,
+      );
+      ScreanSharestompClients.current = new Client({
+        webSocketFactory: () => sock,
+      });
+
+      ScreanSharestompClients.current.onConnect = (frame) => {
+        console.log('STOMP 연결 성공', frame);
+
+        ScreanSharestompClients.current.subscribe(
           '/topic/ScreenShareFlag',
           function (message) {
             const parsedMessage = JSON.parse(message.body);
@@ -56,14 +76,7 @@ export const LiveStudentPage = () => {
         );
       };
 
-      stompClients.current.activate();
-    }
-
-    function onError(error) {
-      console.error('STOMP 연결 에러:', error);
-      alert(
-        '웹소켓 연결에 실패했습니다. 네트워크 설정을 확인하거나 관리자에게 문의하세요.',
-      );
+      ScreanSharestompClients.current.activate();
     }
   }, []);
 
