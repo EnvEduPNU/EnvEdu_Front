@@ -75,64 +75,56 @@ export const LiveTeacherPage = () => {
   }, []);
   useEffect(() => {
     // 소켓 연결 및 메시지 보내는 함수
-    // const sendMessage = async (state) => {
-    //   const message = {
-    //     screenShared: state,
-    //   };
+    const sendMessage = async (state) => {
+      const message = {
+        screenShared: state,
+      };
 
-    //   if (
-    //     ScreanSharestompClients.current &&
-    //     ScreanSharestompClients.current.connected
-    //   ) {
-    //     try {
-    //       console.log('소켓 보내기');
-    //       await ScreanSharestompClients.current.publish({
-    //         destination: '/app/ScreenShareFlag', // 메시지를 보낼 경로
-    //         body: JSON.stringify(message), // 메시지 본문
-    //         headers: {}, // 선택적 헤더
-    //       });
-    //     } catch (error) {
-    //       console.error('메시지 전송 오류:', error);
-    //     }
-    //   } else {
-    //     console.error('STOMP 클라이언트가 연결되지 않았습니다.');
-    //     // 재연결 로직을 추가할 수 있음
-    //   }
-    // };
+      if (
+        ScreanSharestompClients.current &&
+        ScreanSharestompClients.current.connected
+      ) {
+        try {
+          console.log('소켓 보내기');
+          await ScreanSharestompClients.current.publish({
+            destination: '/app/screen-share-flag', // 메시지를 보낼 경로
+            body: JSON.stringify(message), // 메시지 본문
+            headers: {}, // 선택적 헤더
+          });
+        } catch (error) {
+          console.error('메시지 전송 오류:', error);
+        }
+      } else {
+        console.error('STOMP 클라이언트가 연결되지 않았습니다.');
+        // 재연결 로직을 추가할 수 있음
+      }
+    };
 
     // 소켓이 한 번만 연결되도록
     if (!ScreanSharestompClients.current) {
-      const message = {
-        screenShared: true,
-      };
       const token = localStorage.getItem('access_token').replace('Bearer ', '');
       const sock = new SockJS(
-        `${process.env.REACT_APP_API_URL}/screen-share?token=${token}`,
+        `${process.env.REACT_APP_API_URL}/ws?token=${token}`,
       );
       ScreanSharestompClients.current = new Client({
         webSocketFactory: () => sock,
       });
 
       ScreanSharestompClients.current.onConnect = (frame) => {
-        console.log('화면 공유 연결 성공 : ', frame);
-        ScreanSharestompClients.current.publish({
-          destination: '/app/screen-share-flag', // 메시지를 보낼 경로
-          body: JSON.stringify(message), // 메시지 본문
-          headers: {}, // 선택적 헤더
-        });
+        console.log('화면 공유 소켓 연결 성공 : ', frame);
+        sendMessage(sharedScreenState); // 연결된 후 현재 상태로 메시지 보내기
       };
 
       ScreanSharestompClients.current.activate(); // 소켓 활성화
     }
 
     // sharedScreenState가 변경될 때마다 메시지를 전송
-    // if (
-    //   ScreanSharestompClients.current &&
-    //   ScreanSharestompClients.current.connected
-    // ) {
-    //   alert('보내는 메시지!');
-    //   sendMessage(sharedScreenState);
-    // }
+    if (
+      ScreanSharestompClients.current &&
+      ScreanSharestompClients.current.connected
+    ) {
+      sendMessage(sharedScreenState);
+    }
 
     return () => {
       if (ScreanSharestompClients.current) {
