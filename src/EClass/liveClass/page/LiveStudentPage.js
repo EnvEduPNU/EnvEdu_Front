@@ -78,7 +78,9 @@ export const LiveStudentPage = () => {
               '화면 공유 상태 : ' + JSON.stringify(parsedMessage, null, 2),
             );
 
-            setSharedScreenState(parsedMessage.screenShared);
+            setTimeout(() => {
+              setSharedScreenState(parsedMessage.screenShared);
+            }, 1000);
           },
         );
       };
