@@ -24,6 +24,7 @@ export const LiveTeacherPage = () => {
   const { lectureDataUuid, eClassName } = location.state || {};
 
   const stompClients = useRef();
+  const ScreanSharestompClients = useRef();
 
   const navigate = useNavigate();
 
@@ -43,6 +44,10 @@ export const LiveTeacherPage = () => {
       );
       stompClients.current = new Client({ webSocketFactory: () => sock });
 
+      ScreanSharestompClients.current = new Client({
+        webSocketFactory: () => sock,
+      });
+
       stompClients.current.onConnect = (frame) => {
         console.log('학생 입장 소켓 연결 성공 : ', frame);
 
@@ -61,6 +66,21 @@ export const LiveTeacherPage = () => {
         );
       };
 
+      ScreanSharestompClients.current.onConnect = (frame) => {
+        console.log('화면 공유 소켓 연결 성공 : ', frame);
+
+        ScreanSharestompClients.current.subscribe(
+          '/topic/student-entered',
+          function (message) {
+            const parsedMessage = JSON.parse(message.body);
+            console.log(
+              '화면 공유 상태 : ' + JSON.stringify(parsedMessage, null, 2),
+            );
+          },
+        );
+      };
+
+      ScreanSharestompClients.current.activate();
       stompClients.current.activate();
     }
 
@@ -74,7 +94,13 @@ export const LiveTeacherPage = () => {
     return () => {
       if (stompClients.current) {
         stompClients.current.deactivate(() => {
-          console.log('STOMP 연결 해제');
+          console.log('학생 상태 소켓 연결 해제');
+        });
+      }
+
+      if (ScreanSharestompClients.current) {
+        ScreanSharestompClients.current.deactivate(() => {
+          console.log('화면 공유 소켓 연결 해제');
         });
       }
     };
@@ -114,9 +140,9 @@ export const LiveTeacherPage = () => {
     const message = {
       screenShared: state,
     };
-    if (stompClients.current) {
+    if (ScreanSharestompClients.current) {
       console.log('소켓 보내기');
-      await stompClients.current.publish({
+      await ScreanSharestompClients.current.publish({
         destination: '/app/ScreenShareFlag', // 메시지를 보낼 경로
         body: JSON.stringify(message), // 메시지 본문
         headers: {}, // 선택적 헤더
