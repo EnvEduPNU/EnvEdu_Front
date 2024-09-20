@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import { Typography } from '@mui/material';
+import { Typography, CircularProgress, Box } from '@mui/material';
 import { customAxios } from '../../../Common/CustomAxios';
 import TeacherAssignmentTable from '../teacher/component/table/myDataPageTable/TeacherAssignmentTable';
 import TeacherCourseStatusTable from '../teacher/component/table/myDataPageTable/TeacherCourseStatusTable';
@@ -12,6 +12,7 @@ import { TeacherScreenShareJitsi } from '../teacher/component/screenShare/Teache
 
 export const LiveTeacherPage = () => {
   const [sharedScreenState, setSharedScreenState] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // 스피너 상태 관리
   const [tableData, setTableData] = useState([]);
   const [courseStep, setCourseStep] = useState();
   const [stepCount, setStepCount] = useState();
@@ -48,10 +49,7 @@ export const LiveTeacherPage = () => {
         stompClients.subscribe('/topic/student-entered', function (message) {
           const parsedMessage = JSON.parse(message.body);
           console.log('학생 상태 : ' + JSON.stringify(parsedMessage, null, 2));
-          // if (parsedMessage.entered === false) {
-          // }
 
-          // 1초 지연 후 fetchSessionIds 호출
           setTimeout(() => {
             fetchSessionIds();
           }, 1000);
@@ -124,10 +122,32 @@ export const LiveTeacherPage = () => {
             <>{!sharedScreenState && <DefaultPageComponent />}</>
           )}
         </div>
+
+        {/* 스피너 표시 */}
+        {isLoading && (
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              minHeight: '70vh',
+              margin: '20px 10px 0 0',
+              border: '1px solid grey',
+              zIndex: 1000,
+            }}
+          >
+            <CircularProgress />
+          </Box>
+        )}
+
         {/* 화면 공유 메서드 */}
         {sharedScreenState && (
-          <TeacherScreenShareJitsi sharedScreenState={sharedScreenState} />
+          <TeacherScreenShareJitsi
+            sharedScreenState={sharedScreenState}
+            setIsLoading={setIsLoading} // setIsLoading을 props로 전달
+          />
         )}
+
         <button
           onClick={() => setSharedScreenState(true)}
           style={{
@@ -162,7 +182,7 @@ export const LiveTeacherPage = () => {
         >
           공유 중지
         </button>
-        {/* 과제 공유/중지 버튼 */}
+
         <TeacherStepShareButton
           stepCount={stepCount}
           lectureDataUuid={lectureDataUuid}
