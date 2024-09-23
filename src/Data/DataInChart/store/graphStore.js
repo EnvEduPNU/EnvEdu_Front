@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { selectVariableType } from "./utils/selectVariableType";
 
 class Variable {
   constructor(name) {
@@ -105,7 +106,15 @@ export const useGraphDataStore = create((set, get) => ({
     set((state) => ({
       ...state,
       data: newData,
-      variables: newData[0].map((name) => new Variable(name)),
+      variables: newData[0]
+        .map((name) => new Variable(name))
+        .map((variable) => {
+          const type = selectVariableType(variable.name);
+          if (type) {
+            variable.setType(type);
+          } else variable.setType("Categorical");
+          return variable;
+        }),
       title: "",
     })),
 
@@ -114,7 +123,15 @@ export const useGraphDataStore = create((set, get) => ({
       return {
         ...state,
         data: state.data.map((row) => [...row]),
-        variables: state.data[0].map((name) => new Variable(name)),
+        variables: state.data[0]
+          .map((name) => new Variable(name))
+          .map((variable) => {
+            const type = selectVariableType(variable.name);
+            if (type) {
+              variable.setType(type);
+            } else variable.setType("Categorical");
+            return variable;
+          }),
         title,
       };
     }),
@@ -127,11 +144,27 @@ export const useGraphDataStore = create((set, get) => ({
         return {
           ...state,
           data: state.data.map((row) => [...row]),
-          variables: state.variables.map((value) => [...value]),
+          variables: state.variables
+            .map((name) => new Variable(name))
+            .map((variable) => {
+              const type = selectVariableType(variable.name);
+              if (type) {
+                variable.setType(type);
+              } else variable.setType("Categorical");
+              return variable;
+            }),
         };
       }
 
-      const newVariables = state.data[0].map((name) => new Variable(name));
+      const newVariables = state.data[0]
+        .map((name) => new Variable(name))
+        .map((variable) => {
+          const type = selectVariableType(variable.name);
+          if (type) {
+            variable.setType(type);
+          } else variable.setType("Categorical");
+          return variable;
+        });
       // newVariables.forEach((newVariable, idx) => {
       //   newVariable.setIsSelected(state.variables[idx].getIsSelected);
       //   newVariable.setType(state.variables[idx].getType);

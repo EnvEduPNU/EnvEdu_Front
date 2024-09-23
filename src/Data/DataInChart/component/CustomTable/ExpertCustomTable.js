@@ -1,17 +1,9 @@
-import * as Styled from "./Styled";
-import { ReactComponent as PencilIcon } from "../../images/Pencil.svg";
-import Select from "../../component/Select/Select";
 import { useGraphDataStore } from "../../store/graphStore";
 import { useState } from "react";
 
 function ExpertCustomTable() {
-  const { data, variables, changeValue, changeVariableType, title } =
-    useGraphDataStore();
+  const { data, changeValue, changeVariableType, title } = useGraphDataStore();
   const [editableCell, setEditableCell] = useState(null);
-  const tableNumberData = data.map((d, idx) => {
-    if (idx == 0) return "Rows#";
-    return `${idx}`;
-  });
 
   const headers = data[0];
 

@@ -1,13 +1,10 @@
 import * as Styled from "./Styled";
 
-import { useEffect } from "react";
 import { useGraphDataStore } from "../../../store/graphStore";
-import { useTabStore } from "../../../store/tabStore";
 import { sampleDatas } from "../../../data/sampleDatas";
 
 function Dataset({ setModalOpen, setDataCategory }) {
   const { setData, setTitle } = useGraphDataStore();
-  const { tab, changeTab } = useTabStore();
 
   const onClickBtn = (key) => {
     setData(sampleDatas[key]);
@@ -15,6 +12,7 @@ function Dataset({ setModalOpen, setDataCategory }) {
     localStorage.setItem("data", JSON.stringify(sampleDatas[key]));
     localStorage.setItem("title", JSON.stringify(key));
     console.log("ExpertDataSet localStorage에 저장 완료!");
+
     setModalOpen(false);
     setDataCategory("ExpertData");
   };
