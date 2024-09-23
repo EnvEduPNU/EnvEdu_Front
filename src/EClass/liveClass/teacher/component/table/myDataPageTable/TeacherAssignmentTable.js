@@ -1,21 +1,21 @@
-import * as React from "react";
-import { useState, useEffect } from "react";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import { TableVirtuoso } from "react-virtuoso";
-import { Typography } from "@mui/material";
-import { customAxios } from "../../../../../../Common/CustomAxios";
+import * as React from 'react';
+import { useState, useEffect } from 'react';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import { TableVirtuoso } from 'react-virtuoso';
+import { Typography } from '@mui/material';
+import { customAxios } from '../../../../../../Common/CustomAxios';
 
 const columns = [
   {
-    width: "100%",
-    label: "단계이름",
-    dataKey: "contentName",
+    width: '100%',
+    label: '단계이름',
+    dataKey: 'contentName',
   },
 ];
 
@@ -26,7 +26,7 @@ const VirtuosoTableComponents = {
   Table: (props) => (
     <Table
       {...props}
-      sx={{ borderCollapse: "separate", tableLayout: "fixed" }}
+      sx={{ borderCollapse: 'separate', tableLayout: 'fixed' }}
     />
   ),
   TableHead,
@@ -47,8 +47,8 @@ function fixedHeaderContent() {
             align="left"
             style={{ width: column.width }}
             sx={{
-              backgroundColor: "#dcdcdc",
-              textAlign: "left",
+              backgroundColor: '#dcdcdc',
+              textAlign: 'left',
             }}
           >
             {column.label}
@@ -66,9 +66,9 @@ function rowContent(index, row, handleClick, selectedRow) {
       align="left"
       onClick={() => handleClick(row.id, row.Step, row.stepNum)}
       sx={{
-        backgroundColor: selectedRow === row.id ? "#f0f0f0" : "inherit",
-        cursor: "pointer",
-        textAlign: "left",
+        backgroundColor: selectedRow === row.id ? '#f0f0f0' : 'inherit',
+        cursor: 'pointer',
+        textAlign: 'left',
       }}
     >
       {row[column.dataKey]}
@@ -83,10 +83,10 @@ export default function TeacherAssignmentTable(props) {
 
   useEffect(() => {
     customAxios
-      .get("/api/steps/getLectureContent")
+      .get('/api/steps/getLectureContent')
       .then((res) => {
         const filteredData = res.data.filter(
-          (data) => data.uuid === props.lectureDataUuid
+          (data) => data.uuid === props.lectureDataUuid,
         );
 
         const formattedData = filteredData.flatMap((data) =>
@@ -95,7 +95,7 @@ export default function TeacherAssignmentTable(props) {
             id: `${data.uuid}-${content.stepNum}`,
             Step: data.stepName,
             stepNum: content.stepNum,
-          }))
+          })),
         );
 
         setTableData(formattedData);
@@ -106,9 +106,9 @@ export default function TeacherAssignmentTable(props) {
   }, []);
 
   useEffect(() => {
-    document.addEventListener("click", handleClickOutside);
+    document.addEventListener('click', handleClickOutside);
     return () => {
-      document.removeEventListener("click", handleClickOutside);
+      document.removeEventListener('click', handleClickOutside);
     };
   }, []);
 
@@ -120,7 +120,7 @@ export default function TeacherAssignmentTable(props) {
     const filteredTableData = allTableData
       .map((data) => {
         const filteredContents = data.contents.filter(
-          (content) => content.stepNum === stepNum
+          (content) => content.stepNum === stepNum,
         );
         return {
           ...data,
@@ -134,17 +134,17 @@ export default function TeacherAssignmentTable(props) {
   };
 
   const handleClickOutside = (event) => {
-    if (!event.target.closest(".virtuoso-table")) {
+    if (!event.target.closest('.virtuoso-table')) {
       setSelectedRow(null);
     }
   };
 
   return (
     <div>
-      <Typography variant="h5" sx={{ margin: "20px 0 10px 0" }}>
-        {`${tableData[0]?.Step || "수업자료가 없어요"}`}
+      <Typography variant="h5" sx={{ margin: '20px 0 10px 0' }}>
+        {`${tableData[0]?.Step || '수업자료가 없어요'}`}
       </Typography>
-      <Paper style={{ height: 230, width: "100%" }} className="virtuoso-table">
+      <Paper style={{ height: 260, width: '100%' }} className="virtuoso-table">
         <TableContainer component={Paper}>
           <Table stickyHeader>{fixedHeaderContent()}</Table>
         </TableContainer>
@@ -154,7 +154,7 @@ export default function TeacherAssignmentTable(props) {
           itemContent={(index, row) =>
             rowContent(index, row, handleRowClick, selectedRow)
           }
-          style={{ height: 180 }}
+          style={{ height: 210 }}
         />
       </Paper>
     </div>
