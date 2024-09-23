@@ -61,7 +61,7 @@ export const LiveStudentPage = () => {
     if (!ScreanSharestompClients.current) {
       const token = localStorage.getItem('access_token').replace('Bearer ', '');
       const sock = new SockJS(
-        `${process.env.REACT_APP_API_URL}/screen-share?token=${token}`,
+        `${process.env.REACT_APP_API_URL}/ws?token=${token}`,
       );
       ScreanSharestompClients.current = new Client({
         webSocketFactory: () => sock,
@@ -218,12 +218,12 @@ export const LiveStudentPage = () => {
           )}
 
           {/* 화면 공유 메서드 */}
-          {/* {sharedScreenState && (
+          {sharedScreenState && (
             <StudentScreenShareJitsi
               sharedScreenState={sharedScreenState}
               setIsLoading={setIsLoading} // setIsLoading을 props로 전달
             />
-          )} */}
+          )}
         </div>
       </div>
 

@@ -73,6 +73,7 @@ export const LiveTeacherPage = () => {
       }
     };
   }, []);
+
   useEffect(() => {
     // 소켓이 한 번만 연결되도록
     if (!ScreanSharestompClients.current) {
@@ -86,18 +87,9 @@ export const LiveTeacherPage = () => {
 
       ScreanSharestompClients.current.onConnect = (frame) => {
         console.log('화면 공유 소켓 연결 성공 : ', frame);
-        sendMessage(true);
       };
 
       ScreanSharestompClients.current.activate(); // 소켓 활성화
-    }
-
-    // sharedScreenState가 변경될 때마다 메시지를 전송
-    if (
-      ScreanSharestompClients.current &&
-      ScreanSharestompClients.current.connected
-    ) {
-      sendMessage(sharedScreenState);
     }
 
     return () => {
@@ -107,12 +99,13 @@ export const LiveTeacherPage = () => {
         });
       }
     };
-  }, []); // sharedScreenState가 변경될 때 실행
+  }, []);
 
   // 소켓 연결 및 메시지 보내는 함수
   const sendMessage = async (state) => {
     const message = {
       screenShared: state,
+      sessionId: sessionIds[0],
     };
 
     if (
@@ -120,12 +113,14 @@ export const LiveTeacherPage = () => {
       ScreanSharestompClients.current.connected
     ) {
       try {
-        console.log('소켓 보내기');
+        console.log('소켓 보내기', state);
         await ScreanSharestompClients.current.publish({
           destination: '/app/screen-share-flag', // 메시지를 보낼 경로
           body: JSON.stringify(message), // 메시지 본문
           headers: {}, // 선택적 헤더
         });
+
+        setSharedScreenState(state);
       } catch (error) {
         console.error('메시지 전송 오류:', error);
       }
@@ -201,15 +196,15 @@ export const LiveTeacherPage = () => {
         )}
 
         {/* 화면 공유 메서드 */}
-        {/* {sharedScreenState && (
+        {sharedScreenState && (
           <TeacherScreenShareJitsi
             sharedScreenState={sharedScreenState}
             setIsLoading={setIsLoading} // setIsLoading을 props로 전달
           />
-        )} */}
+        )}
 
         <button
-          onClick={() => setSharedScreenState(true)}
+          onClick={() => sendMessage(true)}
           style={{
             margin: '10px 0 ',
             width: '18%',
@@ -226,7 +221,7 @@ export const LiveTeacherPage = () => {
           화면 공유
         </button>
         <button
-          onClick={() => setSharedScreenState(false)}
+          onClick={() => sendMessage(false)}
           style={{
             margin: '10px 0 0 10px ',
             width: '18%',
