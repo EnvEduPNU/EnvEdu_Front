@@ -87,7 +87,6 @@ export const LiveTeacherPage = () => {
 
       ScreanSharestompClients.current.onConnect = (frame) => {
         console.log('화면 공유 소켓 연결 성공 : ', frame);
-        sendMessage(true);
       };
 
       ScreanSharestompClients.current.activate(); // 소켓 활성화
@@ -128,7 +127,9 @@ export const LiveTeacherPage = () => {
             headers: {}, // 선택적 헤더
           });
 
-          setSharedScreenState(state); // 상태를 업데이트
+          setTimeout(() => {
+            setSharedScreenState(state);
+          }, 1000);
         } catch (error) {
           console.error('메시지 전송 오류:', error);
         }
