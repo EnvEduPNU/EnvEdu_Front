@@ -87,7 +87,6 @@ export const LiveTeacherPage = () => {
 
       ScreanSharestompClients.current.onConnect = (frame) => {
         console.log('화면 공유 소켓 연결 성공 : ', frame);
-        setTimeout(() => sendMessage(true), 500); // 0.5초 대기 후 실행
       };
 
       ScreanSharestompClients.current.activate(); // 소켓 활성화
