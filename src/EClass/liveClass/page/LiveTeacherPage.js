@@ -103,7 +103,7 @@ export const LiveTeacherPage = () => {
 
   // 소켓 연결 및 메시지 보내는 함수
   // 차후 프론트엔드에서 여러번 요청 보내는 것이 아닌 배열로 요청해서 백엔드에서 처리하는 방식으로 리팩토링 필요
-  const sendMessage = async () => {
+  const sendMessage = async (state) => {
     if (sessionIds.length === 0) {
       console.error('세션 ID가 설정되지 않았습니다.');
       return;
@@ -111,7 +111,7 @@ export const LiveTeacherPage = () => {
     // sessionIds 배열을 순회하며 각 sessionId에 대해 개별 요청을 보냄
     for (const sessionId of sessionIds) {
       const message = {
-        screenShared: true,
+        screenShared: state,
         sessionId: sessionId, // 각 sessionId를 개별적으로 처리
       };
 
@@ -120,14 +120,14 @@ export const LiveTeacherPage = () => {
         ScreanSharestompClients.current.connected
       ) {
         try {
-          console.log('소켓 보내기', sessionId);
+          console.log('소켓 보내기', state, sessionId);
           await ScreanSharestompClients.current.publish({
             destination: '/app/screen-share-flag', // 메시지를 보낼 경로
             body: JSON.stringify(message), // 메시지 본문
             headers: {}, // 선택적 헤더
           });
 
-          setSharedScreenState(true); // 상태를 업데이트
+          setSharedScreenState(state); // 상태를 업데이트
         } catch (error) {
           console.error('메시지 전송 오류:', error);
         }
@@ -213,7 +213,7 @@ export const LiveTeacherPage = () => {
         )}
 
         <button
-          onClick={sendMessage}
+          onClick={() => sendMessage(true)}
           style={{
             margin: '10px 0 ',
             width: '18%',
