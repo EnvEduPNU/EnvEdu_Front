@@ -103,7 +103,7 @@ export const LiveTeacherPage = () => {
 
   // 소켓 연결 및 메시지 보내는 함수
   // 차후 프론트엔드에서 여러번 요청 보내는 것이 아닌 배열로 요청해서 백엔드에서 처리하는 방식으로 리팩토링 필요
-  const sendMessage = async (state) => {
+  const sendMessage = (state) => {
     // sessionIds 배열을 순회하며 각 sessionId에 대해 개별 요청을 보냄
     for (const sessionId of sessionIds) {
       const message = {
@@ -117,7 +117,7 @@ export const LiveTeacherPage = () => {
       ) {
         try {
           console.log('소켓 보내기', state, sessionId);
-          await ScreanSharestompClients.current.publish({
+          ScreanSharestompClients.current.publish({
             destination: '/app/screen-share-flag', // 메시지를 보낼 경로
             body: JSON.stringify(message), // 메시지 본문
             headers: {}, // 선택적 헤더
