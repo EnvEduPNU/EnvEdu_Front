@@ -104,6 +104,10 @@ export const LiveTeacherPage = () => {
   // 소켓 연결 및 메시지 보내는 함수
   // 차후 프론트엔드에서 여러번 요청 보내는 것이 아닌 배열로 요청해서 백엔드에서 처리하는 방식으로 리팩토링 필요
   const sendMessage = async () => {
+    if (sessionIds.length === 0) {
+      console.error('세션 ID가 설정되지 않았습니다.');
+      return;
+    }
     // sessionIds 배열을 순회하며 각 sessionId에 대해 개별 요청을 보냄
     for (const sessionId of sessionIds) {
       const message = {
