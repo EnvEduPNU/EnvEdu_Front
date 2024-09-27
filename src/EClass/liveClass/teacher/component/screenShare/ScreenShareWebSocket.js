@@ -51,7 +51,7 @@ export const ScreenShareWebSocket = ({
         try {
           console.log('소켓 보내기', state, 'test');
           await ScreanSharestompClients.current.publish({
-            destination: '/app/screen',
+            destination: '/app/student-entered',
             body: JSON.stringify(message),
             headers: {}, // 선택적 헤더
           });
