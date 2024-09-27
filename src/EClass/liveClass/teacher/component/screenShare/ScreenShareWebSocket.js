@@ -39,10 +39,10 @@ export const ScreenShareWebSocket = ({
     console.log('공유 메시지 변경 : ' + sharedScreenState);
 
     const sendMessageToServer = async (state) => {
-      if (sessionIds.length === 0) {
-        console.error('세션 ID가 설정되지 않았습니다.');
-        return;
-      }
+      //   if (sessionIds.length === 0) {
+      //     console.error('세션 ID가 설정되지 않았습니다.');
+      //     return;
+      //   }
 
       //   for (const sessionId of sessionIds) {
       const message = { screenShared: state, sessionId: '' };
