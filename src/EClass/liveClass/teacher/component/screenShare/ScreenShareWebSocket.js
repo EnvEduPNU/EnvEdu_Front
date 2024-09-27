@@ -45,13 +45,13 @@ export const ScreenShareWebSocket = ({
       //   }
 
       //   for (const sessionId of sessionIds) {
-      const message = { screen: 'true', sessionId: '' };
+      const message = { screen: true, sessionId: '' };
 
       if (ScreanSharestompClients.current.connected) {
         try {
           console.log('소켓 보내기', state, 'test');
           await ScreanSharestompClients.current.publish({
-            destination: '/app/student-entereds',
+            destination: '/app/screen',
             body: JSON.stringify(message),
             headers: {}, // 선택적 헤더
           });
