@@ -61,7 +61,7 @@ export const LiveStudentPage = () => {
     if (!ScreanSharestompClients.current) {
       const token = localStorage.getItem('access_token').replace('Bearer ', '');
       const sock = new SockJS(
-        `${process.env.REACT_APP_API_URL}/screen-share?token=${token}`,
+        `${process.env.REACT_APP_API_URL}/ws?token=${token}`,
       );
       ScreanSharestompClients.current = new Client({
         webSocketFactory: () => sock,

@@ -28,7 +28,7 @@ export const StudentWebSocket = ({ setSessionIds }) => {
     fetchSessionIds();
 
     // 학생 소켓 연결
-    stompClients.current = initializeSocketClient('/screen-share', (frame) => {
+    stompClients.current = initializeSocketClient('/ws', (frame) => {
       console.log('학생 입장 소켓 연결 성공 : ', frame);
       stompClients.current.subscribe('/topic/student-entered', (message) => {
         const parsedMessage = JSON.parse(message.body);
