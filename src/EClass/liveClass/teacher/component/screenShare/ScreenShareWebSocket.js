@@ -44,24 +44,24 @@ export const ScreenShareWebSocket = ({
         return;
       }
 
-      for (const sessionId of sessionIds) {
-        const message = { screenShared: state, sessionId };
+      //   for (const sessionId of sessionIds) {
+      const message = { screenShared: state, sessionId: sessionIds[0] };
 
-        if (ScreanSharestompClients.current?.connected) {
-          try {
-            console.log('소켓 보내기', state, sessionId);
-            await ScreanSharestompClients.current.publish({
-              destination: '/app/screen',
-              body: JSON.stringify(message),
-            });
-            sendMessage(state); // 화면 공유 상태 변경
-          } catch (error) {
-            console.error('메시지 전송 오류:', error);
-          }
-        } else {
-          console.error('STOMP 클라이언트가 연결되지 않았습니다.');
+      if (ScreanSharestompClients.current?.connected) {
+        try {
+          console.log('소켓 보내기', state, sessionIds[0]);
+          await ScreanSharestompClients.current.publish({
+            destination: '/app/screen',
+            body: JSON.stringify(message),
+          });
+          sendMessage(state); // 화면 공유 상태 변경
+        } catch (error) {
+          console.error('메시지 전송 오류:', error);
         }
+      } else {
+        console.error('STOMP 클라이언트가 연결되지 않았습니다.');
       }
+      //   }
     };
     sendMessageToServer(sharedScreenState);
   }, [sessionIds, sharedScreenState]);
