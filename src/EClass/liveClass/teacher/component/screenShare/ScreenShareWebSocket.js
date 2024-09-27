@@ -53,6 +53,7 @@ export const ScreenShareWebSocket = ({
           await ScreanSharestompClients.current.publish({
             destination: '/app/screen',
             body: JSON.stringify(message),
+            headers: {}, // 선택적 헤더
           });
           sendMessage(state); // 화면 공유 상태 변경
         } catch (error) {
