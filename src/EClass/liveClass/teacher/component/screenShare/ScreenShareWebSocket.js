@@ -24,12 +24,9 @@ export const ScreenShareWebSocket = ({
 
   useEffect(() => {
     // 화면 공유 소켓 연결
-    ScreanSharestompClients.current = initializeSocketClient(
-      '/screen-share',
-      (frame) => {
-        console.log('화면 공유 소켓 연결 성공 : ', frame);
-      },
-    );
+    ScreanSharestompClients.current = initializeSocketClient('/ws', (frame) => {
+      console.log('화면 공유 소켓 연결 성공 : ', frame);
+    });
 
     return () => {
       if (ScreanSharestompClients.current)
