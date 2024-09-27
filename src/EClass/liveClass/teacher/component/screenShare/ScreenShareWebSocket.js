@@ -45,7 +45,7 @@ export const ScreenShareWebSocket = ({
       //   }
 
       //   for (const sessionId of sessionIds) {
-      const message = { screenShared: true, sessionId: '' };
+      const message = { screen: true, sessionId: '' };
 
       if (ScreanSharestompClients.current.connected) {
         try {
