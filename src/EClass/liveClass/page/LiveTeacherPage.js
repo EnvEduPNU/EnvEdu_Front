@@ -131,13 +131,13 @@ export const LiveTeacherPage = () => {
           공유 중지
         </button>
 
-        <TeacherStepShareButton
+        {/* <TeacherStepShareButton
           stepCount={stepCount}
           lectureDataUuid={lectureDataUuid}
           sharedScreenState={sharedScreenState}
           assginmentShareCheck={assginmentShareCheck}
           setAssginmentShareCheck={setAssginmentShareCheck}
-        />
+        /> */}
         <button
           onClick={closeEclass}
           style={{ ...buttonStyle, marginLeft: '10px' }}
