@@ -2,7 +2,11 @@ import React, { useEffect, useRef } from 'react';
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
 
-export const ScreenShareWebSocket = ({ sessionIds, sendMessage }) => {
+export const ScreenShareWebSocket = ({
+  sessionIds,
+  sendMessage,
+  sharedScreenState,
+}) => {
   const ScreanSharestompClients = useRef();
 
   const initializeSocketClient = (url, onConnectCallback) => {
@@ -35,6 +39,8 @@ export const ScreenShareWebSocket = ({ sessionIds, sendMessage }) => {
 
   // 화면 공유 상태 전송 함수
   useEffect(() => {
+    console.log('공유 메시지 변경 : ' + sharedScreenState);
+
     const sendMessageToServer = async (state) => {
       if (sessionIds.length === 0) {
         console.error('세션 ID가 설정되지 않았습니다.');
@@ -60,8 +66,8 @@ export const ScreenShareWebSocket = ({ sessionIds, sendMessage }) => {
         }
       }
     };
-    sendMessageToServer();
-  }, [sessionIds, sendMessage]);
+    sendMessageToServer(sharedScreenState);
+  }, [sessionIds, sharedScreenState]);
 
   return null;
 };

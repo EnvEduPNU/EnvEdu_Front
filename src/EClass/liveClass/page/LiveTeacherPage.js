@@ -90,6 +90,7 @@ export const LiveTeacherPage = () => {
       <ScreenShareWebSocket
         sessionIds={sessionIds}
         sendMessage={handleScreenShare}
+        sharedScreenState={sharedScreenState}
       />
 
       {/* [왼쪽 블럭] 화면 공유 블럭 */}
