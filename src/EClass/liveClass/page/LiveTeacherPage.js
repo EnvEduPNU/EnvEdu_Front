@@ -6,7 +6,7 @@ import TeacherAssignmentTable from '../teacher/component/table/myDataPageTable/T
 import TeacherCourseStatusTable from '../teacher/component/table/myDataPageTable/TeacherCourseStatusTable';
 import { TeacherStepShareButton } from '../teacher/component/button/TeacherStepShareButton';
 import TeacherRenderAssign from '../teacher/component/TeacherRenderAssign';
-import { TeacherScreenShareJitsi } from '../teacher/component/screenShare/TeacherScreenShareJitsi';
+import TeacherScreenShareJitsi from '../teacher/component/screenShare/TeacherScreenShareJitsi';
 import { StudentWebSocket } from '../teacher/component/screenShare/StudentWebSocket';
 import { ScreenShareWebSocket } from '../teacher/component/screenShare/ScreenShareWebSocket';
 
@@ -118,6 +118,7 @@ export const LiveTeacherPage = () => {
             sharedScreenState={sharedScreenState}
             setSharedScreenState={setSharedScreenState}
             setIsLoading={setIsLoading}
+            eClassName={eClassName}
           />
         )}
 

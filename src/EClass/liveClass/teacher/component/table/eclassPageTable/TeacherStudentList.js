@@ -273,7 +273,6 @@ export default function TeacherStudentList({ eclassUuid, selectedEClassUuid }) {
       <Typography
         variant="h5"
         sx={{
-          margin: '38px 0 10px 0',
           fontFamily: "'Montserrat', sans-serif", // 타이틀에 Montserrat 폰트 적용
           fontWeight: '600', // 폰트 두께
           fontSize: '1.5rem', // 폰트 크기

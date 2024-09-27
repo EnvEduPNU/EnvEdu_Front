@@ -21,7 +21,7 @@ export function TeacherClassroomPage() {
   }, [selectedEClassUuid]);
 
   return (
-    <div style={{ display: 'flex', width: '100%', margin: '0 20vh' }}>
+    <>
       <div style={{ width: '80%', height: '100%' }}>
         <Typography
           variant="h4"
@@ -67,8 +67,17 @@ export function TeacherClassroomPage() {
         />
       </div>
 
-      {/* [오른쪽 블럭] 수업 Step 테이블, 수업 상태 테이블 */}
-      <div style={{ margin: '0 30px ', height: '40rem', width: '40%' }}>
+      {/* [오른쪽 블럭] 참여학생리스트, 보고서제출 */}
+      <div
+        style={{
+          marginLeft: '20px',
+          height: '100%',
+          padding: '0 0 10px 0',
+          width: '40%',
+          overflow: 'auto', // 내용이 넘칠 때 스크롤을 추가
+        }}
+      >
+        <div style={{ height: '50px' }}></div>
         <TeacherStudentList
           eclassUuid={studentListUuid}
           selectedEClassUuid={selectedEClassUuid}
@@ -78,6 +87,6 @@ export function TeacherClassroomPage() {
 
         <TeacherReportTable selectedEClassUuid={selectedEClassUuid} />
       </div>
-    </div>
+    </>
   );
 }

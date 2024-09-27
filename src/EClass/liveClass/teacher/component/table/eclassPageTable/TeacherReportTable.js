@@ -218,11 +218,10 @@ export default function TeacherReportTable({ selectedEClassUuid }) {
   }, [rows]);
 
   return (
-    <div style={{ height: 250 }}>
+    <div>
       <Typography
         variant="h5"
         sx={{
-          margin: '20px 0 10px 0',
           fontFamily: "'Montserrat', sans-serif",
           fontWeight: '600',
           fontSize: '1.5rem',
@@ -230,10 +229,7 @@ export default function TeacherReportTable({ selectedEClassUuid }) {
       >
         {' 보고서 제출 '}
       </Typography>
-      <Paper
-        style={{ height: '100%', width: '100%' }}
-        className="virtuoso-table"
-      >
+      <Paper className="virtuoso-table">
         <TableContainer component={Paper}>
           <Table stickyHeader>{fixedHeaderContent()}</Table>
         </TableContainer>
@@ -250,7 +246,7 @@ export default function TeacherReportTable({ selectedEClassUuid }) {
                 handleOpenModal,
               )
             }
-            style={{ height: 200 }}
+            style={{ height: '100%' }}
           />
         ) : (
           <Typography style={{ padding: '5.5rem' }}>
