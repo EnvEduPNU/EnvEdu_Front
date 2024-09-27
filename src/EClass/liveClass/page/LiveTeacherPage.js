@@ -85,7 +85,7 @@ export const LiveTeacherPage = () => {
 
   return (
     <div style={{ display: 'flex', margin: '0 10vh', height: '800px' }}>
-      <StudentWebSocket setSessionIds={setSessionIds} />
+      {/* <StudentWebSocket setSessionIds={setSessionIds} /> */}
 
       <ScreenShareWebSocket
         sessionIds={sessionIds}

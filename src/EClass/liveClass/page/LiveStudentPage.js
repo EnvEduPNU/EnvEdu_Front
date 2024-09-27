@@ -33,29 +33,29 @@ export const LiveStudentPage = () => {
   const navigate = useNavigate();
 
   // stompClients 커넥션 생성 훅
-  useEffect(() => {
-    if (!stompClients.current) {
-      const token = localStorage.getItem('access_token').replace('Bearer ', '');
-      const sock = new SockJS(
-        `${process.env.REACT_APP_API_URL}/ws?token=${token}`,
-      );
-      stompClients.current = new Client({ webSocketFactory: () => sock });
+  // useEffect(() => {
+  //   if (!stompClients.current) {
+  //     const token = localStorage.getItem('access_token').replace('Bearer ', '');
+  //     const sock = new SockJS(
+  //       `${process.env.REACT_APP_API_URL}/ws?token=${token}`,
+  //     );
+  //     stompClients.current = new Client({ webSocketFactory: () => sock });
 
-      stompClients.current.onConnect = (frame) => {
-        console.log('학생 입장 소켓 연결 성공00', frame);
-        sendMessage(true); // 연결 성공 후에만 sendMessage(true)를 실행
-      };
+  //     stompClients.current.onConnect = (frame) => {
+  //       console.log('학생 입장 소켓 연결 성공00', frame);
+  //       sendMessage(true); // 연결 성공 후에만 sendMessage(true)를 실행
+  //     };
 
-      stompClients.current.activate();
-    }
-    return () => {
-      if (stompClients.current) {
-        stompClients.current.deactivate(() => {
-          console.log('학생 입장 소켓 연결 해제');
-        });
-      }
-    };
-  }, []);
+  //     stompClients.current.activate();
+  //   }
+  //   return () => {
+  //     if (stompClients.current) {
+  //       stompClients.current.deactivate(() => {
+  //         console.log('학생 입장 소켓 연결 해제');
+  //       });
+  //     }
+  //   };
+  // }, []);
 
   useEffect(() => {
     if (!ScreanSharestompClients.current) {
