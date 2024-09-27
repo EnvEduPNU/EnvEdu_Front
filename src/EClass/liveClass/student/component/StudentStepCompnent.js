@@ -48,7 +48,7 @@ export function StudentStepCompnent(props) {
         stompClient.current = new Client({ webSocketFactory: () => sock });
 
         stompClient.current.onConnect = (frame) => {
-          console.log('과제 공유 소켓 연결 성공 : ', frame);
+          console.log('과제 공유 소켓 연결 성공00 : ', frame);
           stompClient.current.subscribe(
             '/topic/switchPage',
             function (message) {

@@ -42,7 +42,7 @@ export const LiveStudentPage = () => {
       stompClients.current = new Client({ webSocketFactory: () => sock });
 
       stompClients.current.onConnect = (frame) => {
-        console.log('학생 입장 소켓 연결 성공', frame);
+        console.log('학생 입장 소켓 연결 성공00', frame);
         sendMessage(true); // 연결 성공 후에만 sendMessage(true)를 실행
       };
 
@@ -68,10 +68,10 @@ export const LiveStudentPage = () => {
       });
 
       ScreanSharestompClients.current.onConnect = (frame) => {
-        console.log('화면 공유 소켓 연결 성공', frame);
+        console.log('화면 공유 소켓 연결 성공00', frame);
 
         ScreanSharestompClients.current.subscribe(
-          '/topic/screen-share-flag',
+          '/topic/screenflag',
           (message) => {
             const parsedMessage = JSON.parse(message.body);
             console.log(

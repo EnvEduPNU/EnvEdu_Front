@@ -51,7 +51,7 @@ export const ScreenShareWebSocket = ({
           try {
             console.log('소켓 보내기', state, sessionId);
             await ScreanSharestompClients.current.publish({
-              destination: '/app/screen-share-flag',
+              destination: '/app/screen',
               body: JSON.stringify(message),
             });
             sendMessage(state); // 화면 공유 상태 변경

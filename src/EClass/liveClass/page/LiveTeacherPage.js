@@ -113,13 +113,13 @@ export const LiveTeacherPage = () => {
           </Box>
         )}
 
-        {sharedScreenState && (
+        {/* {sharedScreenState && (
           <TeacherScreenShareJitsi
             sharedScreenState={sharedScreenState}
             setSharedScreenState={setSharedScreenState}
             setIsLoading={setIsLoading}
           />
-        )}
+        )} */}
 
         <button onClick={() => handleScreenShare(true)} style={buttonStyle}>
           화면 공유
