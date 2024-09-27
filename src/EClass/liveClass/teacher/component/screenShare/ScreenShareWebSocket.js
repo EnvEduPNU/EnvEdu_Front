@@ -10,7 +10,7 @@ export const ScreenShareWebSocket = ({
   const ScreanSharestompClients = useRef();
 
   const initializeSocketClient = (url, onConnectCallback) => {
-    const token = localStorage.getItem('access_token')?.replace('Bearer ', '');
+    const token = localStorage.getItem('access_token').replace('Bearer ', '');
     const sock = new SockJS(
       `${process.env.REACT_APP_API_URL}${url}?token=${token}`,
     );
@@ -47,11 +47,11 @@ export const ScreenShareWebSocket = ({
       //   for (const sessionId of sessionIds) {
       const message = { screenShared: state, sessionId: '' };
 
-      if (ScreanSharestompClients.current?.connected) {
+      if (ScreanSharestompClients.current.connected) {
         try {
           console.log('소켓 보내기', state, 'test');
           await ScreanSharestompClients.current.publish({
-            destination: '/app/screen',
+            destination: '/app/student-entered',
             body: JSON.stringify(message),
             headers: {}, // 선택적 헤더
           });

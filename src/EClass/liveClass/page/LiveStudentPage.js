@@ -72,7 +72,7 @@ export const LiveStudentPage = () => {
 
         ScreanSharestompClients.current.subscribe(
           '/topic/screenflag',
-          (message) => {
+          function (message) {
             const parsedMessage = JSON.parse(message.body);
             console.log(
               '화면 공유 상태 : ' + JSON.stringify(parsedMessage, null, 2),
