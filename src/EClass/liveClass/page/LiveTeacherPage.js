@@ -85,7 +85,7 @@ export const LiveTeacherPage = () => {
 
   return (
     <div style={{ display: 'flex', margin: '0 10vh', height: '800px' }}>
-      {/* <StudentWebSocket setSessionIds={setSessionIds} /> */}
+      <StudentWebSocket setSessionIds={setSessionIds} />
 
       <ScreenShareWebSocket
         sessionIds={sessionIds}
@@ -113,13 +113,13 @@ export const LiveTeacherPage = () => {
           </Box>
         )}
 
-        {/* {sharedScreenState && (
+        {sharedScreenState && (
           <TeacherScreenShareJitsi
             sharedScreenState={sharedScreenState}
             setSharedScreenState={setSharedScreenState}
             setIsLoading={setIsLoading}
           />
-        )} */}
+        )}
 
         <button onClick={() => handleScreenShare(true)} style={buttonStyle}>
           화면 공유
@@ -131,13 +131,13 @@ export const LiveTeacherPage = () => {
           공유 중지
         </button>
 
-        {/* <TeacherStepShareButton
+        <TeacherStepShareButton
           stepCount={stepCount}
           lectureDataUuid={lectureDataUuid}
           sharedScreenState={sharedScreenState}
           assginmentShareCheck={assginmentShareCheck}
           setAssginmentShareCheck={setAssginmentShareCheck}
-        /> */}
+        />
         <button
           onClick={closeEclass}
           style={{ ...buttonStyle, marginLeft: '10px' }}

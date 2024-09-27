@@ -35,57 +35,57 @@ export function StudentStepCompnent(props) {
   }, [props]);
 
   // WebSocket 연결 및 페이지 변경에 따른 처리
-  // useEffect(() => {
-  //   const token = localStorage.getItem('access_token').replace('Bearer ', '');
+  useEffect(() => {
+    const token = localStorage.getItem('access_token').replace('Bearer ', '');
 
-  //   if (props.sessionIdState) {
-  //     console.log('학생 세션 아이디1 : ' + props.sessionIdState);
+    if (props.sessionIdState) {
+      console.log('학생 세션 아이디1 : ' + props.sessionIdState);
 
-  //     if (!stompClient.current) {
-  //       const sock = new SockJS(
-  //         `${process.env.REACT_APP_API_URL}/ws?token=${token}`,
-  //       );
-  //       stompClient.current = new Client({ webSocketFactory: () => sock });
+      if (!stompClient.current) {
+        const sock = new SockJS(
+          `${process.env.REACT_APP_API_URL}/ws?token=${token}`,
+        );
+        stompClient.current = new Client({ webSocketFactory: () => sock });
 
-  //       stompClient.current.onConnect = (frame) => {
-  //         console.log('과제 공유 소켓 연결 성공00 : ', frame);
-  //         stompClient.current.subscribe(
-  //           '/topic/switchPage',
-  //           function (message) {
-  //             const parsedMessage = JSON.parse(message.body);
+        stompClient.current.onConnect = (frame) => {
+          console.log('과제 공유 소켓 연결 성공 : ', frame);
+          stompClient.current.subscribe(
+            '/topic/switchPage',
+            function (message) {
+              const parsedMessage = JSON.parse(message.body);
 
-  //             setPage(parsedMessage.page);
-  //             props.setPage(parsedMessage.page);
-  //             setStepCount(parsedMessage.stepCount);
-  //             props.setStepCount(parsedMessage.stepCount);
-  //             setSocketEclassUuid(parsedMessage.lectureDataUuid);
-  //             assginmentCheckStompClient('success');
-  //           },
-  //         );
-  //       };
+              setPage(parsedMessage.page);
+              props.setPage(parsedMessage.page);
+              setStepCount(parsedMessage.stepCount);
+              props.setStepCount(parsedMessage.stepCount);
+              setSocketEclassUuid(parsedMessage.lectureDataUuid);
+              assginmentCheckStompClient('success');
+            },
+          );
+        };
 
-  //       stompClient.current.activate();
-  //     }
-  //   }
+        stompClient.current.activate();
+      }
+    }
 
-  //   if (!assginmentStompClient.current) {
-  //     const socket = new SockJS(
-  //       `${process.env.REACT_APP_API_URL}/ws?token=${token}`,
-  //     );
-  //     assginmentStompClient.current = new Client({
-  //       webSocketFactory: () => socket,
-  //     });
+    if (!assginmentStompClient.current) {
+      const socket = new SockJS(
+        `${process.env.REACT_APP_API_URL}/ws?token=${token}`,
+      );
+      assginmentStompClient.current = new Client({
+        webSocketFactory: () => socket,
+      });
 
-  //     assginmentStompClient.current.onConnect = (frame) => ({}, () => {});
-  //   }
+      assginmentStompClient.current.onConnect = (frame) => ({}, () => {});
+    }
 
-  // return () => {
-  //   stompClient.current.disconnect();
-  //   assginmentStompClient.current.disconnect();
+    // return () => {
+    //   stompClient.current.disconnect();
+    //   assginmentStompClient.current.disconnect();
 
-  //   console.log("Disconnected");
-  // };
-  // }, [props.sessionIdState]);
+    //   console.log("Disconnected");
+    // };
+  }, [props.sessionIdState]);
 
   // useEffect(() => {
   //   const success = "success";
