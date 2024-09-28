@@ -34,13 +34,14 @@ export function TeacherStepShareButton({
       stompClientRef.current.onConnect = (frame) => {
         console.log('커넥션 생성 완료 : ' + frame);
 
-        // 과제 공유 성공 메시지 구독
+        // 학생 상태 성공 메시지 구독
         stompClientRef.current.subscribe(
           '/topic/assginment-status',
           (message) => {
             const parsedMessage = JSON.parse(message.body);
             console.log(
-              '과제 공유 : ' + JSON.stringify(parsedMessage, null, 2),
+              '학생 상태 공유 응답받기: ' +
+                JSON.stringify(parsedMessage, null, 2),
             );
 
             setSessionId(parsedMessage.sessionId);

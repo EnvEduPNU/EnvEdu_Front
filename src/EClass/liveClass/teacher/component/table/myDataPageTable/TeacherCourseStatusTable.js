@@ -180,9 +180,6 @@ export default function TeacherCourseStatusTable({
               '/api/report/getstep',
               filteredReportUuid, // 필터링된 배열을 전달
             );
-            // console.log(
-            //   "보고서 데이터 : " + JSON.stringify(respReport.data, null, 2)
-            // );
 
             if (respReport.data && respReport.data.length > 0) {
               setReportData(respReport.data);
@@ -195,7 +192,6 @@ export default function TeacherCourseStatusTable({
         setIsAssginShared(false);
 
         setStudentStepFlag(respCheckList.data);
-        // console.log("Assignment status:", respCheckList.data);
       }
     } catch (error) {
       console.error('Error sending data to server:', error);
@@ -215,8 +211,6 @@ export default function TeacherCourseStatusTable({
 
     // 예시로 finalData 출력
     console.log('최종 데이터: ', finalData);
-
-    // console.log("정제된건? : " + JSON.stringify(report, null, 2));
 
     return (
       <TableRow>
@@ -285,12 +279,17 @@ export default function TeacherCourseStatusTable({
 
   const rows = sessionData
     .map((session, index) => {
-      // students[index]가 있는 경우에만 createData 호출
       if (students[index]) {
+        // assginmentShareCheck에서 해당 sessionId의 shared 상태를 가져옴
+        const sharedStatus =
+          assginmentShareCheck?.find(
+            (assign) => assign.sessionId === session.id,
+          )?.shared || false;
+
         return createData(
           students[index],
           session.id,
-          session.shared,
+          sharedStatus,
           session.assginmentShared,
           session.assginmentSubmit,
           session.reportSubmit,
@@ -350,7 +349,7 @@ export default function TeacherCourseStatusTable({
 
               return (
                 <Row
-                  key={row.sessionId || index} // 고유한 key로 설정
+                  key={row.sessionId || index}
                   row={row}
                   index={index}
                   isMatch={stepValue}

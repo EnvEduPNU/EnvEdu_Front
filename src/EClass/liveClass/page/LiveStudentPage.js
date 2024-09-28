@@ -29,6 +29,7 @@ export const LiveStudentPage = () => {
 
   const stompClients = useRef(null);
   const ScreanSharestompClients = useRef(null);
+  const sendScreenShareStClient = useRef(null);
 
   const navigate = useNavigate();
 
@@ -58,6 +59,32 @@ export const LiveStudentPage = () => {
   }, []);
 
   useEffect(() => {
+    if (!sendScreenShareStClient.current) {
+      const token = localStorage.getItem('access_token').replace('Bearer ', '');
+      const sock = new SockJS(
+        `${process.env.REACT_APP_API_URL}/ws?token=${token}`,
+      );
+      sendScreenShareStClient.current = new Client({
+        webSocketFactory: () => sock,
+      });
+
+      sendScreenShareStClient.current.onConnect = (frame) => {
+        console.log('화면 상태 소켓 연결 성공', frame);
+        sendMessage(true); // 연결 성공 후에만 sendMessage(true)를 실행
+      };
+
+      sendScreenShareStClient.current.activate();
+    }
+    return () => {
+      if (sendScreenShareStClient.current) {
+        sendScreenShareStClient.current.deactivate(() => {
+          console.log('화면 상태 소켓 연결 해제');
+        });
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     if (!ScreanSharestompClients.current) {
       const token = localStorage.getItem('access_token').replace('Bearer ', '');
       const sock = new SockJS(
@@ -81,6 +108,8 @@ export const LiveStudentPage = () => {
             setTimeout(() => {
               setSharedScreenState(parsedMessage.screenShared);
             }, 1000);
+
+            sendStateMessage(parsedMessage.screenShared);
           },
         );
       };
@@ -146,6 +175,7 @@ export const LiveStudentPage = () => {
     const message = {
       entered: state,
       sessionId: sessionId.current,
+      sharedScreenState: sharedScreenState,
     };
     if (
       stompClients &&
@@ -155,6 +185,29 @@ export const LiveStudentPage = () => {
       await stompClients.current.publish({
         destination: '/app/student-entered', // 메시지를 보낼 경로
         body: JSON.stringify(message), // 메시지 본문
+        headers: {}, // 선택적 헤더
+      });
+    } else {
+      console.error('STOMP 클라이언트가 연결되지 않았습니다.');
+    }
+  };
+
+  const sendStateMessage = async (state) => {
+    const shareState = {
+      sessionId: sessionId.current,
+      shared: state,
+    };
+    console.log(
+      '화면 공유 상태 응답하기 : ' + JSON.stringify(shareState, null, 2),
+    );
+    if (
+      sendScreenShareStClient &&
+      sendScreenShareStClient.current &&
+      sendScreenShareStClient.current.connected
+    ) {
+      await sendScreenShareStClient.current.publish({
+        destination: '/app/assginment-status', // 메시지를 보낼 경로
+        body: JSON.stringify(shareState), // 메시지 본문
         headers: {}, // 선택적 헤더
       });
     } else {
