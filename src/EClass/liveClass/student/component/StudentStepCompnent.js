@@ -20,11 +20,10 @@ export function StudentStepCompnent(props) {
   const [eclassUuid, setEclassUuid] = useState(props.eclassUuid);
   const [studentId, setStudentId] = useState(null);
   const [assignmentCheckTime, setAssignmentCheckTime] = useState(false);
-
   const [sessionId, setSessionId] = useState();
 
-  const stompClient = useRef();
-  const assginmentStompClient = useRef();
+  const stompClient = useRef(null);
+  const assginmentStompClient = useRef(null);
 
   // props 넘어오면 데이터 갱신
   useEffect(() => {
@@ -38,34 +37,34 @@ export function StudentStepCompnent(props) {
   useEffect(() => {
     const token = localStorage.getItem('access_token').replace('Bearer ', '');
 
-    if (props.sessionIdState) {
+    if (props.sessionIdState && !stompClient.current) {
       console.log('학생 세션 아이디1 : ' + props.sessionIdState);
 
-      if (!stompClient.current) {
-        const sock = new SockJS(
-          `${process.env.REACT_APP_API_URL}/ws?token=${token}`,
-        );
-        stompClient.current = new Client({ webSocketFactory: () => sock });
+      const sock = new SockJS(
+        `${process.env.REACT_APP_API_URL}/ws?token=${token}`,
+      );
+      stompClient.current = new Client({ webSocketFactory: () => sock });
 
-        stompClient.current.onConnect = (frame) => {
-          console.log('과제 공유 소켓 연결 성공 : ', frame);
-          stompClient.current.subscribe(
-            '/topic/switchPage',
-            function (message) {
-              const parsedMessage = JSON.parse(message.body);
+      stompClient.current.onConnect = (frame) => {
+        console.log('과제 공유 소켓 연결 성공 : ', frame);
+        stompClient.current.subscribe('/topic/switchPage', function (message) {
+          const parsedMessage = JSON.parse(message.body);
 
-              setPage(parsedMessage.page);
-              props.setPage(parsedMessage.page);
-              setStepCount(parsedMessage.stepCount);
-              props.setStepCount(parsedMessage.stepCount);
-              setSocketEclassUuid(parsedMessage.lectureDataUuid);
-              assginmentCheckStompClient('success');
-            },
-          );
-        };
+          setPage(parsedMessage.page);
+          props.setPage(parsedMessage.page);
+          setStepCount(parsedMessage.stepCount);
+          props.setStepCount(parsedMessage.stepCount);
+          setSocketEclassUuid(parsedMessage.lectureDataUuid);
+          assginmentCheckStompClient('success');
+        });
+      };
 
-        stompClient.current.activate();
-      }
+      stompClient.current.onStompError = (frame) => {
+        console.error('Broker reported error: ' + frame.headers['message']);
+        console.error('Additional details: ' + frame.body);
+      };
+
+      stompClient.current.activate();
     }
 
     if (!assginmentStompClient.current) {
@@ -76,27 +75,42 @@ export function StudentStepCompnent(props) {
         webSocketFactory: () => socket,
       });
 
-      assginmentStompClient.current.onConnect = (frame) => ({}, () => {});
+      assginmentStompClient.current.onConnect = (frame) => {
+        console.log('과제 상태 소켓 연결 성공 : ', frame);
+      };
+
+      assginmentStompClient.current.onStompError = (frame) => {
+        console.error('Broker reported error: ' + frame.headers['message']);
+        console.error('Additional details: ' + frame.body);
+      };
+
+      assginmentStompClient.current.activate();
     }
 
-    // return () => {
-    //   stompClient.current.disconnect();
-    //   assginmentStompClient.current.disconnect();
-
-    //   console.log("Disconnected");
-    // };
+    // Clean up
+    return () => {
+      if (stompClient.current) {
+        stompClient.current.deactivate();
+        stompClient.current = null;
+      }
+      if (assginmentStompClient.current) {
+        assginmentStompClient.current.deactivate();
+        assginmentStompClient.current = null;
+      }
+      console.log('Disconnected');
+    };
   }, [props.sessionIdState]);
 
-  // useEffect(() => {
-  //   const success = "success";
-  //   const failed = "failed";
-  //   if (page === "newPage") {
-  //     assginmentCheckStompClient(success);
-  //   }
-  //   if (props.stepCount !== stepCount) {
-  //     assginmentCheckStompClient(failed);
-  //   }
-  // }, [props, page, assignmentCheckTime]);
+  useEffect(() => {
+    const success = 'success';
+    const failed = 'failed';
+    if (page === 'newPage') {
+      assginmentCheckStompClient(success);
+    }
+    if (props.stepCount !== stepCount) {
+      assginmentCheckStompClient(failed);
+    }
+  }, [props, page, assignmentCheckTime]);
 
   // 과제 공유 성공시 응답 소켓 메서드
   const assginmentCheckStompClient = async (state) => {
@@ -107,8 +121,11 @@ export function StudentStepCompnent(props) {
       timestamp: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
     };
 
-    if (assginmentStompClient.current) {
-      console.log('공유 성공 보내기');
+    if (
+      assginmentStompClient.current &&
+      assginmentStompClient.current.connected
+    ) {
+      console.log('공유 성공 보내기 : ' + JSON.stringify(message, null, 2));
       await assginmentStompClient.current.publish({
         destination: '/app/assginment-status', // 메시지를 보낼 경로
         body: JSON.stringify(message), // 메시지 본문
@@ -141,11 +158,6 @@ export function StudentStepCompnent(props) {
       fetchStudentId();
     }
   }, [eclassUuid, studentId]);
-
-  // // Page와 eClassUuid가 맞는지 여부를 메모이제이션
-  // const shouldRenderAssign = useMemo(() => {
-  //   return ;
-  // }, [page, props.uuid, socketEclassUuid, stepCount]);
 
   return (
     <div>
