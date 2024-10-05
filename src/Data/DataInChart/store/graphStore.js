@@ -17,17 +17,19 @@ export const useGraphDataStore = create((set, get) => ({
           name,
           type: selectVariableType(name),
           isSelected: false,
-          dropdownSelect: false,
+          isMoreSelected: false,
         }))
       : data[0].map((name) => ({
           name,
           type: selectVariableType(name),
           isSelected: false,
+          isMoreSelected: false,
         })),
 
   graphIdx: 0,
 
   selectedYVariableIndexs: [],
+  selectedMoreYVariableIndexs: [],
 
   selctedXVariableIndex: -1,
 
@@ -42,11 +44,13 @@ export const useGraphDataStore = create((set, get) => ({
               name,
               type: selectVariableType(name),
               isSelected: false,
+              isMoreSelected: false,
               variableIndex: index,
             };
           }),
           title: '',
           selectedYVariableIndexs: [],
+          selectedMoreYVariableIndexs: [],
           selctedXVariableIndex: -1,
         };
       return {
@@ -56,6 +60,7 @@ export const useGraphDataStore = create((set, get) => ({
           name: variable.name,
           type: variable.type,
           isSelected: variable.isSelected,
+          isMoreSelected: variable.isMoreSelected,
           variableIndex: index,
         })),
       };
@@ -70,10 +75,12 @@ export const useGraphDataStore = create((set, get) => ({
           name: variable.name,
           type: variable.type,
           isSelected: variable.isSelected,
+          isMoreSelected: variable.isMoreSelected,
           variableIndex: index,
         })),
         title,
         selectedYVariableIndexs: [...state.selectedYVariableIndexs],
+        selectedMoreYVariableIndexs: [...state.selectedMoreYVariableIndexs],
       };
     }),
 
@@ -83,6 +90,7 @@ export const useGraphDataStore = create((set, get) => ({
         ...state,
         graphIdx: index,
         selectedYVariableIndexs: [...state.selectedYVariableIndexs],
+        selectedMoreYVariableIndexs: [...state.selectedMoreYVariableIndexs],
       };
     }),
 
@@ -92,11 +100,11 @@ export const useGraphDataStore = create((set, get) => ({
         name: variable.name,
         type: variable.type,
         isSelected: variable.isSelected,
+        isMoreSelected: variable.isMoreSelected,
         variableIndex: index,
       }));
 
       newVariables[variableIdx].isSelected = true;
-      console.log(state.selectedYVariableIndexs);
 
       return {
         ...state,
@@ -105,6 +113,7 @@ export const useGraphDataStore = create((set, get) => ({
           ...state.selectedYVariableIndexs,
           variableIdx,
         ],
+        selectedMoreYVariableIndexs: state.selectedMoreYVariableIndexs,
       };
     }),
 
@@ -114,6 +123,7 @@ export const useGraphDataStore = create((set, get) => ({
         name: variable.name,
         type: variable.type,
         isSelected: variable.isSelected,
+        isMoreSelected: variable.isMoreSelected,
         variableIndex: index,
       }));
 
@@ -127,6 +137,7 @@ export const useGraphDataStore = create((set, get) => ({
         ...state,
         variables: newVariables,
         selectedYVariableIndexs: filteredVariables,
+        selectedMoreYVariableIndexs: state.selectedMoreYVariableIndexs,
       };
     }),
 
@@ -136,6 +147,7 @@ export const useGraphDataStore = create((set, get) => ({
         name: variable.name,
         type: variable.type,
         isSelected: variable.isSelected,
+        isMoreSelected: variable.isMoreSelected,
         variableIndex: index,
       }));
 
@@ -145,6 +157,7 @@ export const useGraphDataStore = create((set, get) => ({
         ...state,
         variables: newVariables,
         selectedYVariableIndexs: state.selectedYVariableIndexs,
+        selectedMoreYVariableIndexs: state.selectedMoreYVariableIndexs,
         selctedXVariableIndex: variableIdx,
       };
     }),
@@ -155,6 +168,7 @@ export const useGraphDataStore = create((set, get) => ({
         name: variable.name,
         type: variable.type,
         isSelected: variable.isSelected,
+        isMoreSelected: variable.isMoreSelected,
         variableIndex: index,
       }));
 
@@ -164,7 +178,55 @@ export const useGraphDataStore = create((set, get) => ({
         ...state,
         variables: newVariables,
         selectedYVariableIndexs: state.selectedYVariableIndexs,
+        selectedMoreYVariableIndexs: state.selectedMoreYVariableIndexs,
         selctedXVariableIndex: variableIdx,
+      };
+    }),
+
+  addSelectedMoreYVariableIndexs: (variableIdx) =>
+    set((state) => {
+      const newVariables = state.variables.map((variable, index) => ({
+        name: variable.name,
+        type: variable.type,
+        isSelected: variable.isSelected,
+        isMoreSelected: variable.isMoreSelected,
+        variableIndex: index,
+      }));
+
+      newVariables[variableIdx].isMoreSelected = true;
+
+      return {
+        ...state,
+        variables: newVariables,
+        selectedYVariableIndexs: state.selectedYVariableIndexs,
+        selectedMoreYVariableIndexs: [
+          ...state.selectedMoreYVariableIndexs,
+          variableIdx,
+        ],
+      };
+    }),
+
+  deleteSelectedMoreYVariableIndexs: (variableIdx) =>
+    set((state) => {
+      const newVariables = state.variables.map((variable, index) => ({
+        name: variable.name,
+        type: variable.type,
+        isSelected: variable.isSelected,
+        isMoreSelected: variable.isMoreSelected,
+        variableIndex: index,
+      }));
+
+      const filteredVariables = [...state.selectedMoreYVariableIndexs].filter(
+        (variableIndex) => variableIndex !== variableIdx,
+      );
+
+      newVariables[variableIdx].isMoreSelected = false;
+
+      return {
+        ...state,
+        variables: newVariables,
+        selectedYVariableIndexs: state.selectedYVariableIndexs,
+        selectedMoreYVariableIndexs: filteredVariables,
       };
     }),
 }));

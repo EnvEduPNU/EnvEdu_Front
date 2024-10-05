@@ -2,23 +2,41 @@ import { useEffect, useRef, useState } from 'react';
 import { Chart } from 'chart.js';
 import { useGraphDataStore } from '../../../store/graphStore';
 import Dropdown from '../Dropdown';
+import ComboDropdown from '../ComboDropdown';
 
 const backgroundColor = [
+  'rgba(50, 205, 50, 0.6)', // 진한 라임 그린
   'rgba(255, 69, 0, 0.6)', // 진한 오렌지-레드
   'rgba(30, 144, 255, 0.6)', // 진한 도저 블루
   'rgba(255, 215, 0, 0.6)', // 진한 골드
-  'rgba(50, 205, 50, 0.6)', // 진한 라임 그린
   'rgba(186, 85, 211, 0.6)', // 진한 오키드 (보라)
   'rgba(255, 127, 80, 0.6)', // 진한 코럴
 ];
-
 const borderColor = [
+  'rgba(34, 139, 34, 1)', // 포레스트 그린
   'rgba(255, 0, 0, 1)', // 레드
   'rgba(0, 0, 255, 1)', // 블루
   'rgba(255, 165, 0, 1)', // 오렌지
-  'rgba(34, 139, 34, 1)', // 포레스트 그린
   'rgba(147, 112, 219, 1)', // 미디엄 퍼플
   'rgba(255, 69, 0, 1)', // 오렌지-레드
+];
+
+const moreBackgroundColor = [
+  'rgba(30, 144, 255, 0.6)', // 도저 블루
+  'rgba(186, 85, 211, 0.6)', // 오키드
+  'rgba(255, 182, 193, 0.6)', // 라이트 핑크
+  'rgba(255, 99, 71, 0.6)', // 토마토
+  'rgba(255, 215, 0, 0.6)', // 골드
+  'rgba(60, 179, 113, 0.6)', // 미디엄 시아 그린
+];
+
+const moreBorderColor = [
+  'rgba(100, 149, 237, 1)', // 칼리코 블루
+  'rgba(75, 0, 130, 1)', // 인디고
+  'rgba(255, 99, 71, 1)', // 토마토
+  'rgba(255, 69, 0, 1)', // 진한 오렌지-레드
+  'rgba(255, 140, 0, 1)', // 다크 오렌지
+  'rgba(0, 128, 0, 1)', // 녹색
 ];
 
 function ComboGraph() {
@@ -27,184 +45,195 @@ function ComboGraph() {
     variables,
     selectedYVariableIndexs,
     addSelectedYVariableIndexs,
+    selectedMoreYVariableIndexs,
+    addSelectedMoreYVariableIndexs,
     selctedXVariableIndex,
     selectXVariableIndex,
   } = useGraphDataStore();
 
   const chartRef = useRef(null);
-  const myChartRef = useRef(null); // Chart 객체를 참조'
+  const myChartRef = useRef(null);
 
   const [barDatas, setBarDatas] = useState({
-    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-    datasets: [
-      {
-        type: 'bar',
-        label: '# TEST',
-        data: [50, 10, 40, 10, 20, 30],
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(153, 102, 255, 0.2)',
-          'rgba(255, 159, 64, 0.2)',
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(153, 102, 255, 0.2)',
-          'rgba(255, 159, 64, 0.2)',
-        ],
-        borderColor: [
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)',
-        ],
-        borderWidth: 1,
-      },
-      {
-        type: 'line',
-        label: '# TEST',
-        data: [12, 19, 3, 5, 2, 3],
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(153, 102, 255, 0.2)',
-          'rgba(255, 159, 64, 0.2)',
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(153, 102, 255, 0.2)',
-          'rgba(255, 159, 64, 0.2)',
-        ],
-        borderColor: [
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)',
-        ],
-        borderWidth: 1,
-      },
-    ],
+    labels: [],
+    datasets: [],
   });
 
   // 초기 데이터 세팅
   useEffect(() => {
-    if (selectedYVariableIndexs.length === 0) {
-      const findedYindex = variables.findIndex(
-        (variable) =>
-          variable.isSelected === false && variable.type === 'Numeric',
+    if (!selectedYVariableIndexs.length) {
+      const firstYIndex = variables.findIndex(
+        (variable) => !variable.isSelected && variable.type === 'Numeric',
       );
-      if (findedYindex !== -1) {
-        addSelectedYVariableIndexs(findedYindex);
-      }
+      if (firstYIndex !== -1) addSelectedYVariableIndexs(firstYIndex);
     }
-    if (selctedXVariableIndex === -1) {
-      const findedXindex = variables.findIndex(
-        (variable) => variable.isSelected === false,
-      );
-      console.log(findedXindex);
-      if (findedXindex !== -1) {
-        selectXVariableIndex(findedXindex);
-      }
-    }
-  }, [data]);
 
+    if (!selectedMoreYVariableIndexs.length) {
+      const firstMoreYIndex = variables.findIndex(
+        (variable) => !variable.isMoreSelected && variable.type === 'Numeric',
+      );
+      if (firstMoreYIndex !== -1)
+        addSelectedMoreYVariableIndexs(firstMoreYIndex);
+    }
+
+    if (selctedXVariableIndex === -1) {
+      const firstXIndex = variables.findIndex(
+        (variable) => !variable.isSelected,
+      );
+      if (firstXIndex !== -1) selectXVariableIndex(firstXIndex);
+    }
+  }, [data, variables]);
+
+  // 차트 데이터 업데이트
+  useEffect(() => {
+    if (!data.length) return;
+
+    const updatedBarDatas = {
+      labels: data.slice(1).map((row) => row[selctedXVariableIndex]),
+      datasets: [
+        ...selectedYVariableIndexs.map((yIndex, i) => ({
+          type: 'bar',
+          label: data[0][yIndex],
+          data: data.slice(1).map((row) => row[yIndex]),
+          backgroundColor: backgroundColor[i % backgroundColor.length],
+          borderColor: borderColor[i % borderColor.length],
+          borderWidth: 1,
+          yAxisID: 'y1',
+        })),
+        ...selectedMoreYVariableIndexs.map((yIndex, i) => ({
+          type: 'line',
+          label: data[0][yIndex],
+          data: data.slice(1).map((row) => row[yIndex]),
+          backgroundColor: moreBackgroundColor[i % moreBackgroundColor.length],
+          borderColor: moreBorderColor[i % moreBorderColor.length],
+          borderWidth: 1,
+          yAxisID: 'y2',
+        })),
+      ],
+    };
+
+    setBarDatas(updatedBarDatas);
+  }, [
+    data,
+    selectedYVariableIndexs,
+    selectedMoreYVariableIndexs,
+    selctedXVariableIndex,
+  ]);
+
+  // 차트 생성 및 업데이트
   useEffect(() => {
     const ctx = chartRef.current.getContext('2d');
 
-    // 기존 차트가 있다면 먼저 파괴
-    if (myChartRef.current) {
-      myChartRef.current.destroy();
-    }
+    if (myChartRef.current) myChartRef.current.destroy();
 
-    // 새로운 차트 생성
+    const y1Data = barDatas.datasets
+      .filter((ds) => ds.yAxisID === 'y1')
+      .flatMap((ds) => ds.data);
+    const y2Data = barDatas.datasets
+      .filter((ds) => ds.yAxisID === 'y2')
+      .flatMap((ds) => ds.data);
+
+    const y1Max = Math.ceil(Math.max(...y1Data));
+    const y2Max = Math.ceil(Math.max(...y2Data));
+
+    // Y1과 Y2 데이터의 대표 label text 가져오기
+    const y1Label = data[0][selectedYVariableIndexs[0]]; // 첫 번째 Y1 변수의 label
+    const y2Label = data[0][selectedMoreYVariableIndexs[0]]; // 첫 번째 Y2 변수의 label
+
     myChartRef.current = new Chart(ctx, {
       type: 'bar',
       data: barDatas,
       options: {
         responsive: true,
         scales: {
-          y: {
+          y1: {
+            position: 'left',
             beginAtZero: true,
+            max: y1Max,
+            title: {
+              rotation: 0, // 제목 회전 각도 (0이면 수평)
+              display: true,
+              text: y1Label, // Y1 축 제목
+              font: {
+                size: 16, // 제목 글자 크기
+                weight: '', // 제목 두께
+                family: 'Arial', // 글꼴 패밀리
+              },
+              color: 'black', // 제목 색상
+              padding: {
+                top: 10, // 제목 위 여백
+                bottom: 10, // 제목 아래 여백
+              },
+            },
+          },
+          y2: {
+            position: 'right',
+            beginAtZero: true,
+            max: y2Max,
+            grid: {
+              drawOnChartArea: false,
+            },
+            title: {
+              display: true,
+              text: y2Label, // Y1 축 제목
+              font: {
+                size: 16, // 제목 글자 크기
+                weight: '', // 제목 두께
+                family: 'Arial', // 글꼴 패밀리
+              },
+              color: 'black', // 제목 색상
+              padding: {
+                top: 10, // 제목 위 여백
+                bottom: 10, // 제목 아래 여백
+              },
+            },
           },
         },
       },
     });
 
-    // 컴포넌트 언마운트 시 차트 파괴
     return () => {
-      if (myChartRef.current) {
-        myChartRef.current.destroy();
-      }
+      if (myChartRef.current) myChartRef.current.destroy();
     };
   }, [barDatas]);
 
-  // data와 selectedYVariables가 바뀔때마다 그래프 데이터를 업데이트
-  useEffect(() => {
-    const updatedBarDatas = {
-      labels: data.slice(1).map((row) => row[selctedXVariableIndex]),
-      datasets: selectedYVariableIndexs.map((selctedYIndex) => ({
-        label: data[0][selctedYIndex],
-        data: data.slice(1).map((row) => row[selctedYIndex]),
-        borderWidth: 1,
-        backgroundColor: backgroundColor[selctedYIndex],
-        borderColor: borderColor[selctedYIndex],
-      })),
-    };
-
-    setBarDatas(updatedBarDatas);
-  }, [data, selectedYVariableIndexs, selctedXVariableIndex]);
-
-  // 새로운 Dropdown을 추가하는 함수
+  // 새로운 Y 변수 추가 함수
   const addYDropdown = () => {
-    const findedindex = variables.findIndex(
-      (variable) =>
-        variable.isSelected === false && variable.type === 'Numeric',
+    const availableIndex = variables.findIndex(
+      (variable) => !variable.isSelected && variable.type === 'Numeric',
     );
-    if (findedindex !== -1) {
-      addSelectedYVariableIndexs(findedindex);
-    } else alert('추가 할 데이터가 없습니다.');
+    if (availableIndex !== -1) {
+      addSelectedYVariableIndexs(availableIndex);
+    } else {
+      alert('추가할 데이터가 없습니다.');
+    }
+  };
+
+  // 새로운 Y2 변수 추가 함수
+  const addMoreYDropdown = () => {
+    const availableIndex = variables.findIndex(
+      (variable) => !variable.isMoreSelected && variable.type === 'Numeric',
+    );
+    if (availableIndex !== -1) {
+      addSelectedMoreYVariableIndexs(availableIndex);
+    } else {
+      alert('추가할 데이터가 없습니다.');
+    }
   };
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
-      <div className="flex" style={{ width: '1400px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <div className="flex" style={{ width: '1600px' }}>
+        {/* Y축 Dropdown */}
         <div
           style={{
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center', // 수직 정렬
-            gap: '10px', // 드롭다운 간 간격
+            alignItems: 'center',
+            gap: '10px',
           }}
         >
-          {/* 기존 드롭다운들 표시 */}
-          {selectedYVariableIndexs.map((variableIndex, index) => (
+          {selectedYVariableIndexs.map((variableIndex) => (
             <div
               key={variableIndex}
               style={{ width: '150px', textAlign: 'center' }}
@@ -212,68 +241,70 @@ function ComboGraph() {
               <Dropdown type="y" selectedIndex={variableIndex} />
             </div>
           ))}
-
-          {/* + 버튼 */}
-          <button
-            type="button"
-            style={{
-              width: '40px', // 작은 크기의 버튼
-              height: '40px', // 정사각형 버튼
-              backgroundColor: '#6b7280', // 차분한 중간 회색 (bg-gray-500)
-              color: 'white', // 텍스트 흰색
-              borderRadius: '50%', // 동그란 버튼
-              border: 'none', // 기본 브라우저 스타일 제거
-              outline: 'none', // 기본 포커스 스타일 제거
-              cursor: 'pointer', // 마우스 포인터
-              display: 'flex', // 플렉스 박스
-              justifyContent: 'center', // 가로 정렬
-              alignItems: 'center', // 세로 정렬
-              fontSize: '20px', // 더 큰 텍스트 크기
-              boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)', // 부드러운 그림자 효과
-              transition: 'background-color 0.3s ease', // 배경색 변경 애니메이션
-            }}
-            onClick={addYDropdown}
-            onMouseEnter={(e) => {
-              e.target.style.backgroundColor = '#4b5563'; // hover:bg-gray-600
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.backgroundColor = '#6b7280'; // 기본 색상으로 돌아감
-            }}
-          >
+          <button type="button" style={buttonStyle} onClick={addYDropdown}>
             +
           </button>
         </div>
-        {/* <div
-        style={{
-          width: '50px',
-          display: 'flex',
-          alignItems: 'center', // 세로 가운데 정렬
-          justifyContent: 'center', // 가로 가운데 정렬 (필요한 경우)
-        }}
-      >
-        Y축 범위 설정
-        <Slider
-          orientation="vertical"
-          value={yScalseValue}
-          onChange={handleChangeXScaleValue}
-        />
-      </div> */}
-        <div style={{ width: '1200px' }}>
+
+        {/* 차트 */}
+        <div
+          style={{ width: '1200px', marginLeft: '25px', marginRight: '25px' }}
+        >
           <canvas ref={chartRef} id="myChart"></canvas>
         </div>
+
+        {/* Y2축 Dropdown */}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '10px',
+          }}
+        >
+          {selectedMoreYVariableIndexs.map((variableIndex) => (
+            <div
+              key={variableIndex}
+              style={{ width: '150px', textAlign: 'center' }}
+            >
+              <ComboDropdown type="y" selectedIndex={variableIndex} />
+            </div>
+          ))}
+          <button type="button" style={buttonStyle} onClick={addMoreYDropdown}>
+            +
+          </button>
+        </div>
       </div>
-      {/* <div
-      style={{ width: '1200px', textAlign: 'center', marginLeft: '200px' }}
-    >
-      X축 범위 설정
-    </div> */}
+
+      {/* X축 Dropdown */}
       <div
-        style={{ width: '1350px', textAlign: 'right', marginBottom: '20px' }}
+        style={{
+          width: '1375px',
+          textAlign: 'right',
+          marginBottom: '20px',
+          marginTop: '10px',
+        }}
       >
         <Dropdown type="x" selectedIndex={selctedXVariableIndex} />
       </div>
     </div>
   );
 }
+
+const buttonStyle = {
+  width: '40px',
+  height: '40px',
+  backgroundColor: '#6b7280',
+  color: 'white',
+  borderRadius: '50%',
+  border: 'none',
+  outline: 'none',
+  cursor: 'pointer',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  fontSize: '20px',
+  boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
+};
 
 export default ComboGraph;

@@ -174,7 +174,7 @@ function LineGraph() {
         flexDirection: 'column',
       }}
     >
-      <div className="flex" style={{ width: '1400px' }}>
+      <div className="flex" style={{ width: '1425px' }}>
         <div
           style={{
             display: 'flex',
@@ -238,7 +238,7 @@ function LineGraph() {
             onChange={handleChangeXScaleValue}
           />
         </div> */}
-        <div style={{ width: '1200px' }}>
+        <div style={{ width: '1200px', marginLeft: '25px' }}>
           <Line data={barDatas} options={barOptions} />
         </div>
       </div>
@@ -248,7 +248,12 @@ function LineGraph() {
         X축 범위 설정
       </div> */}
       <div
-        style={{ width: '1400px', textAlign: 'right', marginBottom: '20px' }}
+        style={{
+          width: '1375px',
+          textAlign: 'right',
+          marginBottom: '20px',
+          marginTop: '10px',
+        }}
       >
         <Dropdown type="x" selectedIndex={selctedXVariableIndex} />
       </div>

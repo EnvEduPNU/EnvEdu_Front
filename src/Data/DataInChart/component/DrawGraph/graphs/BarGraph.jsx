@@ -107,7 +107,7 @@ function BarGraph() {
       const findedXindex = variables.findIndex(
         (variable) => variable.isSelected === false,
       );
-      console.log(findedXindex);
+
       if (findedXindex !== -1) {
         selectXVariableIndex(findedXindex);
       }
@@ -174,7 +174,7 @@ function BarGraph() {
         flexDirection: 'column',
       }}
     >
-      <div className="flex" style={{ width: '1400px' }}>
+      <div className="flex" style={{ width: '1425px' }}>
         <div
           style={{
             display: 'flex',
@@ -238,7 +238,7 @@ function BarGraph() {
             onChange={handleChangeXScaleValue}
           />
         </div> */}
-        <div style={{ width: '1200px' }}>
+        <div style={{ width: '1200px', marginLeft: '25px' }}>
           <Bar data={barDatas} options={barOptions} />
         </div>
       </div>
@@ -248,7 +248,12 @@ function BarGraph() {
         X축 범위 설정
       </div> */}
       <div
-        style={{ width: '1400px', textAlign: 'right', marginBottom: '20px' }}
+        style={{
+          width: '1375px',
+          textAlign: 'right',
+          marginBottom: '20px',
+          marginTop: '10px',
+        }}
       >
         <Dropdown type="x" selectedIndex={selctedXVariableIndex} />
       </div>

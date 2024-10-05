@@ -1,17 +1,46 @@
 import React from 'react';
-import { Doughnut } from 'react-chartjs-2';
 import { useEffect, useState } from 'react';
 import { useGraphDataStore } from '../../../store/graphStore';
 import Dropdown from '../Dropdown';
 import { Slider } from '@mui/material';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { Doughnut, Pie } from 'react-chartjs-2';
+import { Chart, layouts, scales } from 'chart.js';
+
+// Register the plugin to all charts:
+Chart.register(ChartDataLabels);
 
 const backgroundColor = [
-  'rgba(255, 69, 0, 0.6)', // 진한 오렌지-레드
-  'rgba(30, 144, 255, 0.6)', // 진한 도저 블루
-  'rgba(255, 215, 0, 0.6)', // 진한 골드
-  'rgba(50, 205, 50, 0.6)', // 진한 라임 그린
-  'rgba(186, 85, 211, 0.6)', // 진한 오키드 (보라)
-  'rgba(255, 127, 80, 0.6)', // 진한 코럴
+  'rgba(255, 99, 132, 0.6)', // 연한 빨강
+  'rgba(54, 162, 235, 0.6)', // 연한 파랑
+  'rgba(255, 206, 86, 0.6)', // 연한 노랑
+  'rgba(75, 192, 192, 0.6)', // 연한 청록색
+  'rgba(153, 102, 255, 0.6)', // 연한 보라색
+  'rgba(255, 159, 64, 0.6)', // 연한 주황색
+  'rgba(0, 128, 0, 0.6)', // 진한 초록색
+  'rgba(0, 255, 127, 0.6)', // 연한 그린
+  'rgba(128, 0, 128, 0.6)', // 진한 퍼플
+  'rgba(255, 140, 0, 0.6)', // 다크 오렌지
+  'rgba(210, 105, 30, 0.6)', // 초콜릿 브라운
+  'rgba(220, 20, 60, 0.6)', // 크림슨 레드
+  'rgba(255, 69, 0, 0.6)', // 오렌지-레드
+  'rgba(30, 144, 255, 0.6)', // 도저 블루
+  'rgba(255, 215, 0, 0.6)', // 골드
+  'rgba(50, 205, 50, 0.6)', // 라임 그린
+  'rgba(186, 85, 211, 0.6)', // 오키드
+  'rgba(255, 127, 80, 0.6)', // 코럴
+  'rgba(64, 224, 208, 0.6)', // 터키옥색
+  'rgba(255, 105, 180, 0.6)', // 핫핑크
+  'rgba(0, 191, 255, 0.6)', // 딥 스카이 블루
+  'rgba(46, 139, 87, 0.6)', // 시다 그린
+  'rgba(123, 104, 238, 0.6)', // 미디엄 슬레이트 블루
+  'rgba(255, 20, 147, 0.6)', // 딥 핑크
+  'rgba(105, 105, 105, 0.6)', // 다크 그레이
+  'rgba(189, 183, 107, 0.6)', // 다크 카키
+  'rgba(0, 255, 255, 0.6)', // 시안
+  'rgba(255, 228, 225, 0.6)', // 미스트 로즈
+  'rgba(139, 69, 19, 0.6)', // 새들 브라운
+  'rgba(72, 61, 139, 0.6)', // 다크 슬레이트 블루
 ];
 
 const borderColor = [
@@ -75,18 +104,59 @@ function DoughnutGraph() {
   const [barOptions, setBarOptions] = useState({
     responsive: true,
     scales: {
-      y: {
-        beginAtZero: true,
+      x: {
+        display: false, // X축 숨기기
       },
-      // 값 범위 조절 문제
-      // x: {
-      //   min: 0, // X축의 최소값 설정
-      //   max: 10, // X축의 최대값 설정
-      // },
-      // y: {
-      //   min: 10,
-      //   max: 50,
-      // },
+      y: {
+        display: false, // Y축 숨기기
+      },
+    },
+    layout: {
+      padding: {
+        right: 130,
+        left: 90,
+      },
+    },
+
+    plugins: {
+      legend: {
+        display: 'auto', // 범례 (레이블) 표시
+        position: 'top', // 범례 위치
+      },
+      datalabels: {
+        display: 'auto', // 범례 (레이블) 표시
+        color: 'black', // 레이블 텍스트 색상
+        font: {
+          size: 12, // 레이블 크기
+          weight: 'bold', // 레이블 두께
+        },
+        // 퍼센트는 원 안에, 레이블(이름)은 원 밖에 배치
+        labels: {
+          name: {
+            // 레이블(이름) 설정
+            align: 'end', // 원 밖에 배치
+            anchor: 'end',
+            color: 'black',
+            formatter: function (value, context) {
+              return context.chart.data.labels[context.dataIndex]; // 레이블 텍스트 반환
+            },
+            offset: 10, // 원과 레이블 사이 간격
+          },
+          value: {
+            // 퍼센트는 따로 설정
+            anchor: 'center',
+            align: 'center',
+            formatter: function (value, context) {
+              const total = context.chart.data.datasets[0].data.reduce(
+                (acc, val) => acc + val,
+                0,
+              );
+              const percentage = ((value / total) * 100).toFixed(2);
+              return `${percentage}%`; // 퍼센트 반환
+            },
+          },
+        },
+      },
     },
   });
 
@@ -108,7 +178,7 @@ function DoughnutGraph() {
       const findedXindex = variables.findIndex(
         (variable) => variable.isSelected === false,
       );
-      console.log(findedXindex);
+
       if (findedXindex !== -1) {
         selectXVariableIndex(findedXindex);
       }
@@ -130,13 +200,17 @@ function DoughnutGraph() {
   useEffect(() => {
     const updatedBarDatas = {
       labels: data.slice(1).map((row) => row[selctedXVariableIndex]),
-      datasets: selectedYVariableIndexs.map((selctedYIndex) => ({
-        label: data[0][selctedYIndex],
-        data: data.slice(1).map((row) => row[selctedYIndex]),
-        borderWidth: 1,
-        backgroundColor: backgroundColor[selctedYIndex],
-        borderColor: borderColor[selctedYIndex],
-      })),
+      datasets: selectedYVariableIndexs.map((selctedYIndex) => {
+        return {
+          label: data[0][selctedYIndex],
+          data: data.slice(1).map((row) => row[selctedYIndex]),
+          borderWidth: 1,
+          backgroundColor: Array.from(
+            { length: data.slice(1).length },
+            (value, index) => backgroundColor[index % backgroundColor.length],
+          ),
+        };
+      }),
     };
 
     setBarDatas(updatedBarDatas);
@@ -239,8 +313,8 @@ function DoughnutGraph() {
             onChange={handleChangeXScaleValue}
           />
         </div> */}
-        <div style={{ width: '500px' }}>
-          <Doughnut data={barDatas} options={barOptions} />
+        <div style={{ width: '700px' }}>
+          <Pie data={barDatas} options={barOptions} />
         </div>
       </div>
       {/* <div
