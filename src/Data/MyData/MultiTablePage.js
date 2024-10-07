@@ -1,81 +1,211 @@
-import React from "react";
-import {
-  Container,
-  Grid,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from "@mui/material";
-
-const createData = (name, value) => {
-  return { name, value };
-};
-
-const rows = [
-  createData("2024-07-08", "Data 1"),
-  createData("2024-07-08", "Data 2"),
-  createData("2024-07-08", "Data 3"),
-];
+import React, { useState } from 'react';
+import { Container, Button, IconButton, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import LectureCard from './LectureCard'; // 분리된 카드 컴포넌트
+import TextDataCardModal from './modal/TextDataCardModal'; // 분리된 모달 컴포넌트
+import ExcelDataModal from './modal/ExcelDataModal'; // 분리된 엑셀 모달 컴포넌트
+import * as XLSX from 'xlsx';
 
 const MultiTablePage = () => {
+  const navigate = useNavigate();
+  const [excelData, setExcelData] = useState([]);
+  const [excelModalOpen, setExcelModalOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedCard, setSelectedCard] = useState(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // 엑셀 파일 업로드 및 데이터 읽기
+  const handleExcelUpload = (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+      const jsonData = XLSX.utils.sheet_to_json(worksheet);
+      setExcelData(jsonData);
+      setExcelModalOpen(true); // 엑셀 파일 업로드 후 모달 열기
+    };
+    reader.readAsArrayBuffer(file);
+  };
+
+  // 모달 열기/닫기
+  const handleOpenModal = (card) => {
+    setSelectedCard(card);
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setSelectedCard(null);
+  };
+
+  const handleExcelModalClose = () => {
+    setExcelModalOpen(false);
+  };
+
+  // 카드 데이터
+  const cards = [
+    { name: 'Card 1', date: '2024-10-01', imageUrl: null },
+    { name: 'Card 2', date: '2024-10-02', imageUrl: null },
+    { name: 'Card 3', date: '2024-10-03', imageUrl: null },
+    { name: 'Card 4', date: '2024-10-04', imageUrl: null },
+    { name: 'Card 5', date: '2024-10-05', imageUrl: null },
+  ];
+
+  const nextCard = () => {
+    if (currentIndex < cards.length - 4) {
+      setCurrentIndex((prevIndex) => prevIndex + 1);
+    }
+  };
+
+  const prevCard = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex((prevIndex) => prevIndex - 1);
+    }
+  };
+
   return (
     <Container>
-      <Typography variant="h4" sx={{ marginBottom: "3vh" }}>
-        My Data 메인 페이지
-      </Typography>
-      <Grid container spacing={3}>
-        {[...Array(4)].map((_, index) => (
-          <Grid item xs={12} md={6} key={index}>
-            {index == 0 && (
-              <Typography variant="h5" sx={{ marginBottom: "2vh" }}>
-                최근 측정 데이터
-              </Typography>
-            )}
-            {index == 1 && (
-              <Typography variant="h5" sx={{ marginBottom: "2vh" }}>
-                최근 수업 자료
-              </Typography>
-            )}
-            {index == 2 && (
-              <Typography variant="h5" sx={{ marginBottom: "2vh" }}>
-                최근 제출된 과제
-              </Typography>
-            )}
-            {index == 3 && (
-              <Typography variant="h5" sx={{ marginBottom: "2vh" }}>
-                최근 진행한 수업
-              </Typography>
-            )}
-            <Paper sx={{ marginBottom: "20px" }}>
-              <TableContainer>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>저장 일시</TableCell>
-                      <TableCell>이름</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {rows.map((row) => (
-                      <TableRow key={row.name}>
-                        <TableCell component="th" scope="row">
-                          {row.name}
-                        </TableCell>
-                        <TableCell>{row.value}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Paper>
-          </Grid>
-        ))}
-      </Grid>
+      {/* 첫 번째 섹션: 버튼 그룹 */}
+      <div
+        style={{
+          backgroundColor: '#f7f7f7',
+          padding: '20px',
+          borderRadius: '8px',
+          marginBottom: '20px',
+        }}
+      >
+        <div>
+          <Typography variant="h5" sx={{ margin: '0 40px 20px 30px' }}>
+            추가하고 싶은 데이터를 추가해주세요!
+          </Typography>
+        </div>
+
+        {/* 버튼 그룹 */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            margin: '0 40px 20px 30px',
+          }}
+        >
+          <Button
+            variant="contained"
+            size="large"
+            sx={{
+              height: '100px',
+              flex: '1',
+              marginRight: '10px',
+              fontSize: '1.5rem',
+            }}
+            component="label"
+          >
+            커스텀데이터
+            <input
+              type="file"
+              accept=".xlsx, .xls"
+              onChange={handleExcelUpload}
+              hidden
+            />
+          </Button>
+
+          <Button
+            variant="contained"
+            size="large"
+            sx={{
+              height: '100px',
+              flex: '1',
+              marginRight: '10px',
+              fontSize: '1.5rem',
+            }}
+            onClick={() => navigate('/openAPI')}
+          >
+            공공데이터
+          </Button>
+
+          <Button
+            variant="contained"
+            size="large"
+            sx={{ height: '100px', flex: '1', fontSize: '1.5rem' }}
+            onClick={() => navigate('/socket')}
+          >
+            Seed데이터
+          </Button>
+        </div>
+      </div>
+
+      {/* 두 번째 섹션: 카드 목록 */}
+      <div
+        style={{
+          backgroundColor: '#f7f7f7',
+          padding: '20px',
+          borderRadius: '8px',
+        }}
+      >
+        <div>
+          <Typography variant="h5" sx={{ margin: '0 40px 20px 30px' }}>
+            TextBook에 있는 Data들도 추가할 수 있어요!
+          </Typography>
+        </div>
+
+        {/* 슬라이드 화살표 및 카드 목록 */}
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <IconButton onClick={prevCard} disabled={currentIndex === 0}>
+            <ArrowBackIosIcon />
+          </IconButton>
+
+          <div
+            style={{
+              display: 'flex',
+              overflow: 'auto',
+              flex: '1',
+              padding: '0 10px',
+              height: '200px',
+            }}
+          >
+            {cards.slice(currentIndex, currentIndex + 4).map((card, index) => (
+              <div
+                style={{
+                  flex: '1',
+                  maxWidth: 'calc(25% - 10px)',
+                  marginRight: index !== 3 ? '10px' : '0',
+                }}
+                key={index}
+              >
+                <LectureCard card={card} handleOpenModal={handleOpenModal} />
+              </div>
+            ))}
+          </div>
+
+          <IconButton
+            onClick={nextCard}
+            disabled={currentIndex >= cards.length - 4}
+          >
+            <ArrowForwardIosIcon />
+          </IconButton>
+        </div>
+      </div>
+
+      {/* Excel 데이터 모달 */}
+      {excelModalOpen && (
+        <ExcelDataModal
+          open={excelModalOpen}
+          handleClose={handleExcelModalClose}
+          data={excelData}
+        />
+      )}
+
+      {/* 모달 컴포넌트 */}
+      {modalOpen && selectedCard && (
+        <TextDataCardModal
+          open={modalOpen}
+          handleClose={handleCloseModal}
+          card={selectedCard}
+        />
+      )}
     </Container>
   );
 };

@@ -1,0 +1,32 @@
+.myData-container {
+  display: flex;
+  gap: 20px;
+  box-sizing: border-box;
+  height: 100vh; /* 화면의 높이를 꽉 채우도록 설정 */
+}
+
+.myData-left {
+  height: 100%; /* 컨테이너의 전체 높이를 차지 */
+  width: 30rem;
+  padding: 0 0 0 20px;
+  box-sizing: border-box;
+  background-color: none;
+  border-radius: 8px;
+  box-shadow: none;
+  overflow-y: auto;
+}
+
+.myData-right {
+  height: 100%; /* 컨테이너의 전체 높이를 차지 */
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: none;
+  overflow-y: auto;
+}
+
+/* 오른쪽 섹션은 약간의 스타일 변화를 주기 위해 다른 배경 색상 사용 */
+.myData-right {
+  background-color: #ffffff;
+}
