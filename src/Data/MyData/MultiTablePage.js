@@ -19,6 +19,7 @@ const MultiTablePage = () => {
   // 엑셀 파일 업로드 및 데이터 읽기
   const handleExcelUpload = (event) => {
     const file = event.target.files[0];
+    if (!file) return; // 파일이 선택되지 않은 경우 처리하지 않음
     const reader = new FileReader();
     reader.onload = (e) => {
       const data = new Uint8Array(e.target.result);
@@ -27,8 +28,15 @@ const MultiTablePage = () => {
       const jsonData = XLSX.utils.sheet_to_json(worksheet);
       setExcelData(jsonData);
       setExcelModalOpen(true); // 엑셀 파일 업로드 후 모달 열기
+      event.target.value = ''; // 파일 인풋 초기화
     };
     reader.readAsArrayBuffer(file);
+  };
+
+  // 엑셀 모달 닫기
+  const handleExcelModalClose = () => {
+    setExcelModalOpen(false);
+    setExcelData([]); // 모달을 닫을 때 excelData 초기화
   };
 
   // 모달 열기/닫기
@@ -40,10 +48,6 @@ const MultiTablePage = () => {
   const handleCloseModal = () => {
     setModalOpen(false);
     setSelectedCard(null);
-  };
-
-  const handleExcelModalClose = () => {
-    setExcelModalOpen(false);
   };
 
   // 카드 데이터
@@ -80,7 +84,7 @@ const MultiTablePage = () => {
       >
         <div>
           <Typography variant="h5" sx={{ margin: '0 40px 20px 30px' }}>
-            추가하고 싶은 데이터를 추가해주세요!
+            저장하고 싶은 데이터를 추가해주세요!
           </Typography>
         </div>
 
@@ -100,6 +104,11 @@ const MultiTablePage = () => {
               flex: '1',
               marginRight: '10px',
               fontSize: '1.5rem',
+              backgroundColor: '#E6E6FA', // 연보라색 배경색
+              color: '#000', // 텍스트 색상
+              '&:hover': {
+                backgroundColor: '#D8BFD8', // 호버 시 조금 더 진한 연보라색
+              },
             }}
             component="label"
           >
@@ -107,7 +116,9 @@ const MultiTablePage = () => {
             <input
               type="file"
               accept=".xlsx, .xls"
-              onChange={handleExcelUpload}
+              onChange={(e) => {
+                handleExcelUpload(e);
+              }}
               hidden
             />
           </Button>
@@ -120,6 +131,11 @@ const MultiTablePage = () => {
               flex: '1',
               marginRight: '10px',
               fontSize: '1.5rem',
+              backgroundColor: '#E6E6FA', // 연보라색 배경색
+              color: '#000', // 텍스트 색상
+              '&:hover': {
+                backgroundColor: '#D8BFD8', // 호버 시 조금 더 진한 연보라색
+              },
             }}
             onClick={() => navigate('/openAPI')}
           >
@@ -129,7 +145,16 @@ const MultiTablePage = () => {
           <Button
             variant="contained"
             size="large"
-            sx={{ height: '100px', flex: '1', fontSize: '1.5rem' }}
+            sx={{
+              height: '100px',
+              flex: '1',
+              fontSize: '1.5rem',
+              backgroundColor: '#E6E6FA', // 연보라색 배경색
+              color: '#000', // 텍스트 색상
+              '&:hover': {
+                backgroundColor: '#D8BFD8', // 호버 시 조금 더 진한 연보라색
+              },
+            }}
             onClick={() => navigate('/socket')}
           >
             Seed데이터
