@@ -3,7 +3,7 @@ import { useGraphDataStore } from '../../store/graphStore';
 import { AiFillCaretDown } from 'react-icons/ai';
 import { GoX } from 'react-icons/go';
 
-function Dropdown({ type, moreStyle, selectedIndex }) {
+function ScatterDropdown({ type, moreStyle, selectedIndex }) {
   const {
     variables,
     addSelectedYVariableIndexs,
@@ -13,6 +13,7 @@ function Dropdown({ type, moreStyle, selectedIndex }) {
   } = useGraphDataStore();
 
   const [isOpen, setIsOpen] = useState(false);
+  console.log(selectedIndex);
 
   const selectDropdownItem = (data) => {
     console.log(data);
@@ -189,8 +190,9 @@ function Dropdown({ type, moreStyle, selectedIndex }) {
 
         {/* 드롭다운 리스트 */}
         {isOpen &&
-          variables.filter((data) => data.isSelected === false).length !==
-            0 && (
+          variables.filter(
+            (data) => data.isSelected === false && data.type === 'Numeric',
+          ).length !== 0 && (
             <div
               style={{
                 position: 'absolute', // absolute
@@ -207,7 +209,10 @@ function Dropdown({ type, moreStyle, selectedIndex }) {
               }}
             >
               {variables
-                .filter((data) => data.isSelected === false)
+                .filter(
+                  (data) =>
+                    data.isSelected === false && data.type === 'Numeric',
+                )
                 .map((data) => (
                   <div
                     key={data.name}
@@ -248,4 +253,4 @@ function Dropdown({ type, moreStyle, selectedIndex }) {
     );
 }
 
-export default Dropdown;
+export default ScatterDropdown;

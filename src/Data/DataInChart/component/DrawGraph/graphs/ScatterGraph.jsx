@@ -1,8 +1,9 @@
-import { Bar } from 'react-chartjs-2';
+import { Scatter } from 'react-chartjs-2';
 import { useEffect, useState } from 'react';
 import { useGraphDataStore } from '../../../store/graphStore';
 import Dropdown from '../Dropdown';
 import { Slider } from '@mui/material';
+import ScatterDropdown from '../ScatterDropdown';
 
 const backgroundColor = [
   'rgba(255, 69, 0, 0.6)', // 진한 오렌지-레드
@@ -30,6 +31,8 @@ function ScatterGraph() {
     addSelectedYVariableIndexs,
     selctedXVariableIndex,
     selectXVariableIndex,
+    graphIdx,
+    title,
   } = useGraphDataStore();
 
   const [barDatas, setBarDatas] = useState({
@@ -74,28 +77,30 @@ function ScatterGraph() {
   const [barOptions, setBarOptions] = useState({
     responsive: true,
     scales: {
-      // y: {
-      //   beginAtZero: true,
-      // },
-      // 값 범위 조절 문제
-      x: {
-        min: 0, // X축의 최소값 설정
-        max: 10, // X축의 최대값 설정
-      },
       y: {
-        min: 10,
-        max: 50,
+        beginAtZero: true,
       },
+      // 값 범위 조절 문제
+      // x: {
+      //   min: 0, // X축의 최소값 설정
+      //   max: 10, // X축의 최대값 설정
+      // },
+      // y: {
+      //   min: 10,
+      //   max: 50,
+      // },
     },
   });
 
   // 값 범위 조절 문제
-  const [yScalseValue, setYScaleValue] = useState([0, 100]);
+  // const [yScalseValue, setYScaleValue] = useState([0, 100]);
 
   // 초기 데이터 세팅
   useEffect(() => {
+    console.log(variables);
+    let findedYindex, findedXindex;
     if (selectedYVariableIndexs.length === 0) {
-      const findedYindex = variables.findIndex(
+      findedYindex = variables.findIndex(
         (variable) =>
           variable.isSelected === false && variable.type === 'Numeric',
       );
@@ -103,16 +108,20 @@ function ScatterGraph() {
         addSelectedYVariableIndexs(findedYindex);
       }
     }
+
     if (selctedXVariableIndex === -1) {
-      const findedXindex = variables.findIndex(
-        (variable) => variable.isSelected === false,
+      findedXindex = variables.findIndex(
+        (variable, index) =>
+          variable.isSelected === false &&
+          variable.type === 'Numeric' &&
+          findedYindex !== index,
       );
-      console.log(findedXindex);
+
       if (findedXindex !== -1) {
         selectXVariableIndex(findedXindex);
       }
     }
-  }, [data]);
+  }, [data, graphIdx]);
 
   // 새로운 Dropdown을 추가하는 함수
   const addYDropdown = () => {
@@ -131,41 +140,43 @@ function ScatterGraph() {
       labels: data.slice(1).map((row) => row[selctedXVariableIndex]),
       datasets: selectedYVariableIndexs.map((selctedYIndex) => ({
         label: data[0][selctedYIndex],
-        data: data.slice(1).map((row) => row[selctedYIndex]),
+        data: data.slice(1).map((row) => ({
+          x: row[selctedXVariableIndex],
+          y: row[selctedYIndex],
+        })),
         borderWidth: 1,
         backgroundColor: backgroundColor[selctedYIndex],
         borderColor: borderColor[selctedYIndex],
       })),
     };
-
     setBarDatas(updatedBarDatas);
   }, [data, selectedYVariableIndexs, selctedXVariableIndex]);
 
   // 값 범위 조절 문제
-  useEffect(() => {
-    console.log(yScalseValue);
-    setBarOptions((prev) => ({
-      ...prev,
-      scales: {
-        // y: {
-        //   beginAtZero: true,
-        // },
-        x: {
-          min: 0, // X축의 최소값 설정
-          max: 10, // X축의 최대값 설정
-        },
-        y: {
-          min: yScalseValue[0],
-          max: yScalseValue[1],
-        },
-      },
-    }));
-  }, [yScalseValue]);
+  // useEffect(() => {
+  //   console.log(yScalseValue);
+  //   setBarOptions((prev) => ({
+  //     ...prev,
+  //     scales: {
+  //       // y: {
+  //       //   beginAtZero: true,
+  //       // },
+  //       x: {
+  //         min: 0, // X축의 최소값 설정
+  //         max: 10, // X축의 최대값 설정
+  //       },
+  //       y: {
+  //         min: yScalseValue[0],
+  //         max: yScalseValue[1],
+  //       },
+  //     },
+  //   }));
+  // }, [yScalseValue]);
 
-  const handleChangeXScaleValue = (event, newValue) => {
-    console.log(newValue);
-    setYScaleValue(newValue);
-  };
+  // const handleChangeXScaleValue = (event, newValue) => {
+  //   console.log(newValue);
+  //   setYScaleValue(newValue);
+  // };
 
   return (
     <div
@@ -174,7 +185,19 @@ function ScatterGraph() {
         flexDirection: 'column',
       }}
     >
-      <div className="flex" style={{ width: '1400px' }}>
+      <div
+        style={{
+          margin: '0 0 20px 650px', // 위아래 간격 추가
+          padding: '10px 20px', // 내부 여백 추가
+          color: '#333', // 텍스트 색상
+          fontSize: '24px', // 제목 크기
+          fontWeight: 'bold', // 글씨 두껍게
+          borderRadius: '10px', // 모서리 둥글게
+        }}
+      >
+        {title}
+      </div>
+      <div className="flex" style={{ width: '1425px' }}>
         <div
           style={{
             display: 'flex',
@@ -223,7 +246,7 @@ function ScatterGraph() {
             +
           </button>
         </div>
-        <div
+        {/* <div
           style={{
             width: '50px',
             display: 'flex',
@@ -237,9 +260,9 @@ function ScatterGraph() {
             value={yScalseValue}
             onChange={handleChangeXScaleValue}
           />
-        </div>
-        <div style={{ width: '1200px' }}>
-          <Bar data={barDatas} options={barOptions} />
+        </div> */}
+        <div style={{ width: '1200px', marginLeft: '25px' }}>
+          <Scatter data={barDatas} options={barOptions} />
         </div>
       </div>
       {/* <div
@@ -248,9 +271,14 @@ function ScatterGraph() {
         X축 범위 설정
       </div> */}
       <div
-        style={{ width: '1400px', textAlign: 'right', marginBottom: '20px' }}
+        style={{
+          width: '1375px',
+          textAlign: 'right',
+          marginBottom: '20px',
+          marginTop: '10px',
+        }}
       >
-        <Dropdown type="x" selectedIndex={selctedXVariableIndex} />
+        <ScatterDropdown type="x" selectedIndex={selctedXVariableIndex} />
       </div>
     </div>
   );

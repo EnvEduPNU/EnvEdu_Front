@@ -17,6 +17,7 @@ import ExpertCustomTable from '../common/ExpertCustomTable';
 
 import ExpertCustomGraph from './ExpertCustomGraph';
 import ExpertCustomGraphHeader from './ExpertCustomGraphHeader';
+import Header from '../Header/Header';
 
 // 테이블 아니면 그래프 선택하는 탭 컴포넌트
 function TableOrGraph({ dataCategory }) {
@@ -43,7 +44,9 @@ function TableOrGraph({ dataCategory }) {
 
   return (
     <Styled.Wrapper>
-      <Typography sx={{ fontSize: '3vh' }}>Data&Chart</Typography>
+      <div style={{ fontSize: '3vh', fontWeight: 'bold', marginLeft: '48px' }}>
+        Data&Chart
+      </div>
 
       {tab === 'table' && (
         <Styled.CustomTableWrapper>
@@ -51,7 +54,21 @@ function TableOrGraph({ dataCategory }) {
             <CustomTable tableSaveClick={tableSaveClick} />
           )}
 
-          {dataCategory === 'ExpertData' && <ExpertCustomTable />}
+          {dataCategory === 'ExpertData' && (
+            <div className="flex w-full">
+              <div className="mt-32 mr-12">
+                <Header />
+              </div>
+              <div
+                style={{
+                  flexGrow: 1,
+                  borderTop: '1px solid rgba(34, 36, 38, 0.15)',
+                }}
+              >
+                <ExpertCustomTable />
+              </div>
+            </div>
+          )}
 
           <div style={{ display: 'flex', flexDirection: 'row' }}>
             <PublicDataButton buttonName={'공공데이터 가져오기'} />
@@ -78,10 +95,15 @@ function TableOrGraph({ dataCategory }) {
           )}
 
           {dataCategory === 'ExpertData' && (
-            <>
-              <ExpertCustomGraphHeader />
-              <ExpertCustomGraph />
-            </>
+            <div className="flex">
+              <div className="mt-32 mr-12">
+                <Header />
+              </div>
+              <div>
+                <ExpertCustomGraphHeader />
+                <ExpertCustomGraph />
+              </div>
+            </div>
           )}
         </>
       )}

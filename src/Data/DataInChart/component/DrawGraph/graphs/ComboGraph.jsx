@@ -3,6 +3,7 @@ import { Chart } from 'chart.js';
 import { useGraphDataStore } from '../../../store/graphStore';
 import Dropdown from '../Dropdown';
 import ComboDropdown from '../ComboDropdown';
+import { Slider } from '@mui/material';
 
 const backgroundColor = [
   'rgba(50, 205, 50, 0.6)', // 진한 라임 그린
@@ -49,6 +50,8 @@ function ComboGraph() {
     addSelectedMoreYVariableIndexs,
     selctedXVariableIndex,
     selectXVariableIndex,
+    graphIdx,
+    title,
   } = useGraphDataStore();
 
   const chartRef = useRef(null);
@@ -58,6 +61,176 @@ function ComboGraph() {
     labels: [],
     datasets: [],
   });
+
+  const [barOptions, setBarOptions] = useState({
+    responsive: true,
+    scales: {
+      y1: {
+        position: 'left',
+        beginAtZero: true,
+        // max: y1Max,
+        title: {
+          rotation: 0, // 제목 회전 각도 (0이면 수평)
+          display: true,
+          // text: y1Label, // Y1 축 제목
+          font: {
+            size: 16, // 제목 글자 크기
+            weight: '', // 제목 두께
+            family: 'Arial', // 글꼴 패밀리
+          },
+          color: 'black', // 제목 색상
+          padding: {
+            top: 10, // 제목 위 여백
+            bottom: 10, // 제목 아래 여백
+          },
+        },
+      },
+      y2: {
+        position: 'right',
+        beginAtZero: true,
+        // max: y2Max,
+        grid: {
+          drawOnChartArea: false,
+        },
+        title: {
+          display: true,
+          // text: y2Label, // Y1 축 제목
+          font: {
+            size: 16, // 제목 글자 크기
+            weight: '', // 제목 두께
+            family: 'Arial', // 글꼴 패밀리
+          },
+          color: 'black', // 제목 색상
+          padding: {
+            top: 10, // 제목 위 여백
+            bottom: 10, // 제목 아래 여백
+          },
+        },
+      },
+    },
+  });
+
+  // 값 범위 조절 문제(Y)
+  const [yScaleValue, setYScaleValue] = useState([0, 100]);
+
+  // 값 최대 최소 범위 조절 문제(Y)
+  const [yScaleMinMaxValue, setYScaleMinMaxValue] = useState([0, 100]);
+
+  // 값 범위 조절 문제(Y2)
+  const [y2ScaleValue, setY2ScaleValue] = useState([0, 100]);
+
+  // 값 최대 최소 범위 조절 문제(Y2)
+  const [y2ScaleMinMaxValue, setY2ScaleMinMaxValue] = useState([0, 100]);
+
+  // 값 범위 조절 문제(X)
+  const [xScaleValue, setXScaleValue] = useState([0, 100]);
+
+  // 값 최대 최소 범위 조절 문제(X)
+  const [xScaleMinMaxValue, setXScaleMinMaxValue] = useState([0, 100]);
+
+  useEffect(() => {
+    // if (selectedYVariableIndexs.length === 3) setYScaleMinMaxValue([0, 1000]);
+    let isPostive = true;
+    let isNegitive = true;
+    let maxValue = -Infinity;
+    let minValue = Infinity;
+
+    let is2Postive = true;
+    let is2Negitive = true;
+    let max2Value = -Infinity;
+    let min2Value = Infinity;
+
+    // 양수 인지 아닌지 판단
+    for (let i = 0; i < selectedYVariableIndexs.length; i++) {
+      const selctedYVariableIndex = selectedYVariableIndexs[i];
+      for (let j = 1; j < data.length; j++) {
+        if (data[j][selctedYVariableIndex] < 0) {
+          isPostive = false;
+        }
+        maxValue = Math.max(maxValue, data[j][selctedYVariableIndex]);
+        minValue = Math.min(minValue, data[j][selctedYVariableIndex]);
+      }
+    }
+
+    // 음수 인지 아닌지 판단
+    for (let i = 0; i < selectedYVariableIndexs.length; i++) {
+      const selctedYVariableIndex = selectedYVariableIndexs[i];
+      for (let j = 1; j < data.length; j++) {
+        if (data[j][selctedYVariableIndex] > 0) {
+          isNegitive = false;
+          break;
+        }
+        if (isNegitive === false) break;
+      }
+    }
+
+    if (isPostive && isNegitive) {
+      // 양수, 음수 다 있을 때
+      setYScaleMinMaxValue([
+        Math.ceil(Math.floor(minValue) / 10) * 10,
+        Math.ceil(Math.ceil(maxValue) / 10) * 10,
+      ]);
+      setYScaleValue([
+        Math.ceil(Math.floor(minValue) / 10) * 10,
+        Math.ceil(Math.ceil(maxValue) / 10) * 10,
+      ]);
+    } else if (isPostive) {
+      // 양수만 있을 때
+      setYScaleMinMaxValue([0, Math.ceil(Math.ceil(maxValue) / 10) * 10]);
+      setYScaleValue([0, Math.ceil(Math.ceil(maxValue) / 10) * 10]);
+    } else if (isNegitive) {
+      // 음수만 있을 때
+      setYScaleMinMaxValue([Math.ceil(Math.floor(minValue) / 10) * 10, 0]);
+      setYScaleValue([Math.ceil(Math.floor(minValue) / 10) * 10, 0]);
+    }
+
+    // 양수 인지 아닌지 판단
+    for (let i = 0; i < selectedMoreYVariableIndexs.length; i++) {
+      const selctedY2VariableIndex = selectedMoreYVariableIndexs[i];
+      for (let j = 1; j < data.length; j++) {
+        if (data[j][selctedY2VariableIndex] < 0) {
+          is2Postive = false;
+        }
+        max2Value = Math.max(max2Value, data[j][selctedY2VariableIndex]);
+        min2Value = Math.min(min2Value, data[j][selctedY2VariableIndex]);
+      }
+    }
+
+    // 음수 인지 아닌지 판단
+    for (let i = 0; i < selectedMoreYVariableIndexs.length; i++) {
+      const selctedY2VariableIndex = selectedMoreYVariableIndexs[i];
+      for (let j = 1; j < data.length; j++) {
+        if (data[j][selctedY2VariableIndex] > 0) {
+          is2Negitive = false;
+          break;
+        }
+        if (is2Negitive === false) break;
+      }
+    }
+
+    if (is2Postive && is2Negitive) {
+      // 양수, 음수 다 있을 때
+      setY2ScaleMinMaxValue([
+        Math.ceil(Math.floor(min2Value) / 10) * 10,
+        Math.ceil(Math.ceil(max2Value) / 10) * 10,
+      ]);
+      setY2ScaleValue([
+        Math.ceil(Math.floor(min2Value) / 10) * 10,
+        Math.ceil(Math.ceil(max2Value) / 10) * 10,
+      ]);
+    } else if (is2Postive) {
+      // 양수만 있을 때
+      setY2ScaleMinMaxValue([0, Math.ceil(Math.ceil(max2Value) / 10) * 10]);
+      setY2ScaleValue([0, Math.ceil(Math.ceil(max2Value) / 10) * 10]);
+    } else if (is2Negitive) {
+      // 음수만 있을 때
+      setY2ScaleMinMaxValue([Math.ceil(Math.floor(min2Value) / 10) * 10, 0]);
+      setY2ScaleValue([Math.ceil(Math.floor(min2Value) / 10) * 10, 0]);
+    }
+
+    setXScaleMinMaxValue([0, data.length - 2]);
+    setXScaleValue([0, data.length - 2]);
+  }, [graphIdx, selectedYVariableIndexs, selectedMoreYVariableIndexs]);
 
   // 초기 데이터 세팅
   useEffect(() => {
@@ -82,7 +255,7 @@ function ComboGraph() {
       );
       if (firstXIndex !== -1) selectXVariableIndex(firstXIndex);
     }
-  }, [data, variables]);
+  }, [data, graphIdx]);
 
   // 차트 데이터 업데이트
   useEffect(() => {
@@ -126,76 +299,17 @@ function ComboGraph() {
 
     if (myChartRef.current) myChartRef.current.destroy();
 
-    const y1Data = barDatas.datasets
-      .filter((ds) => ds.yAxisID === 'y1')
-      .flatMap((ds) => ds.data);
-    const y2Data = barDatas.datasets
-      .filter((ds) => ds.yAxisID === 'y2')
-      .flatMap((ds) => ds.data);
-
-    const y1Max = Math.ceil(Math.max(...y1Data));
-    const y2Max = Math.ceil(Math.max(...y2Data));
-
-    // Y1과 Y2 데이터의 대표 label text 가져오기
-    const y1Label = data[0][selectedYVariableIndexs[0]]; // 첫 번째 Y1 변수의 label
-    const y2Label = data[0][selectedMoreYVariableIndexs[0]]; // 첫 번째 Y2 변수의 label
-
     myChartRef.current = new Chart(ctx, {
       type: 'bar',
       data: barDatas,
-      options: {
-        responsive: true,
-        scales: {
-          y1: {
-            position: 'left',
-            beginAtZero: true,
-            max: y1Max,
-            title: {
-              rotation: 0, // 제목 회전 각도 (0이면 수평)
-              display: true,
-              text: y1Label, // Y1 축 제목
-              font: {
-                size: 16, // 제목 글자 크기
-                weight: '', // 제목 두께
-                family: 'Arial', // 글꼴 패밀리
-              },
-              color: 'black', // 제목 색상
-              padding: {
-                top: 10, // 제목 위 여백
-                bottom: 10, // 제목 아래 여백
-              },
-            },
-          },
-          y2: {
-            position: 'right',
-            beginAtZero: true,
-            max: y2Max,
-            grid: {
-              drawOnChartArea: false,
-            },
-            title: {
-              display: true,
-              text: y2Label, // Y1 축 제목
-              font: {
-                size: 16, // 제목 글자 크기
-                weight: '', // 제목 두께
-                family: 'Arial', // 글꼴 패밀리
-              },
-              color: 'black', // 제목 색상
-              padding: {
-                top: 10, // 제목 위 여백
-                bottom: 10, // 제목 아래 여백
-              },
-            },
-          },
-        },
-      },
+
+      options: barOptions,
     });
 
     return () => {
       if (myChartRef.current) myChartRef.current.destroy();
     };
-  }, [barDatas]);
+  }, [barDatas, barOptions]);
 
   // 새로운 Y 변수 추가 함수
   const addYDropdown = () => {
@@ -221,8 +335,93 @@ function ComboGraph() {
     }
   };
 
+  // 값 범위 조절 문제
+  useEffect(() => {
+    // Y1과 Y2 데이터의 대표 label text 가져오기
+    const y1Label = data[0][selectedYVariableIndexs[0]]; // 첫 번째 Y1 변수의 label
+    const y2Label = data[0][selectedMoreYVariableIndexs[0]]; // 첫 번째 Y2 변수의 label
+
+    setBarOptions({
+      responsive: true,
+      scales: {
+        x: {
+          min: xScaleValue[0], // X축의 최소값 설정
+          max: xScaleValue[1], // X축의 최대값 설정
+        },
+        y1: {
+          position: 'left',
+          beginAtZero: true,
+          min: yScaleValue[0],
+          max: yScaleValue[1],
+          title: {
+            rotation: 0, // 제목 회전 각도 (0이면 수평)
+            display: true,
+            text: y1Label, // Y1 축 제목
+            font: {
+              size: 16, // 제목 글자 크기
+              weight: '', // 제목 두께
+              family: 'Arial', // 글꼴 패밀리
+            },
+            color: 'black', // 제목 색상
+            padding: {
+              top: 10, // 제목 위 여백
+              bottom: 10, // 제목 아래 여백
+            },
+          },
+        },
+        y2: {
+          position: 'right',
+          beginAtZero: true,
+          min: y2ScaleValue[0],
+          max: y2ScaleValue[1],
+          grid: {
+            drawOnChartArea: false,
+          },
+          title: {
+            display: true,
+            text: y2Label, // Y1 축 제목
+            font: {
+              size: 16, // 제목 글자 크기
+              weight: '', // 제목 두께
+              family: 'Arial', // 글꼴 패밀리
+            },
+            color: 'black', // 제목 색상
+            padding: {
+              top: 10, // 제목 위 여백
+              bottom: 10, // 제목 아래 여백
+            },
+          },
+        },
+      },
+    });
+  }, [xScaleValue, yScaleValue, y2ScaleValue]);
+
+  const handleChangeYScaleValue = (event, newValue) => {
+    setYScaleValue(newValue);
+  };
+
+  const handleChangeY2ScaleValue = (event, newValue) => {
+    setY2ScaleValue(newValue);
+  };
+
+  const handleChangeXScaleValue = (event, newValue) => {
+    setXScaleValue(newValue);
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <div
+        style={{
+          margin: '0 0 20px 650px', // 위아래 간격 추가
+          padding: '10px 20px', // 내부 여백 추가
+          color: '#333', // 텍스트 색상
+          fontSize: '24px', // 제목 크기
+          fontWeight: 'bold', // 글씨 두껍게
+          borderRadius: '10px', // 모서리 둥글게
+        }}
+      >
+        {title}
+      </div>
       <div className="flex" style={{ width: '1600px' }}>
         {/* Y축 Dropdown */}
         <div
@@ -245,12 +444,89 @@ function ComboGraph() {
             +
           </button>
         </div>
-
-        {/* 차트 */}
         <div
-          style={{ width: '1200px', marginLeft: '25px', marginRight: '25px' }}
+          style={{
+            display: 'flex',
+            alignItems: 'center', // 세로 가운데 정렬
+            justifyContent: 'center', // 가로 가운데 정렬
+          }}
         >
+          <div
+            style={{
+              width: '50px',
+              height: '400px',
+            }}
+          >
+            <Slider
+              orientation="vertical"
+              valueLabelDisplay="auto"
+              value={yScaleValue}
+              min={yScaleMinMaxValue[0]}
+              max={yScaleMinMaxValue[1]}
+              onChange={handleChangeYScaleValue}
+              sx={{
+                color: '#1976d2', // 슬라이더의 트랙 및 thumb 색상
+                '& .MuiSlider-thumb': {
+                  backgroundColor: '#fff', // thumb의 배경색
+                  border: '2px solid #1976d2', // thumb의 테두리 색상
+                },
+                '& .MuiSlider-track': {
+                  backgroundColor: '#1976d2', // 슬라이더 트랙 색상
+                },
+                '& .MuiSlider-rail': {
+                  backgroundColor: '#ddd', // 슬라이더 레일 색상
+                },
+                '& .MuiSlider-valueLabel': {
+                  backgroundColor: '#1976d2', // value label 색상
+                  color: '#fff',
+                },
+              }}
+            />
+          </div>
+        </div>
+        {/* 차트 */}
+        <div style={{ width: '1200px' }}>
           <canvas ref={chartRef} id="myChart"></canvas>
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center', // 세로 가운데 정렬
+            justifyContent: 'center', // 가로 가운데 정렬
+          }}
+        >
+          <div
+            style={{
+              width: '50px',
+              height: '400px',
+            }}
+          >
+            <Slider
+              orientation="vertical"
+              valueLabelDisplay="auto"
+              value={y2ScaleValue}
+              min={y2ScaleMinMaxValue[0]}
+              max={y2ScaleMinMaxValue[1]}
+              onChange={handleChangeY2ScaleValue}
+              sx={{
+                color: '#1976d2', // 슬라이더의 트랙 및 thumb 색상
+                '& .MuiSlider-thumb': {
+                  backgroundColor: '#fff', // thumb의 배경색
+                  border: '2px solid #1976d2', // thumb의 테두리 색상
+                },
+                '& .MuiSlider-track': {
+                  backgroundColor: '#1976d2', // 슬라이더 트랙 색상
+                },
+                '& .MuiSlider-rail': {
+                  backgroundColor: '#ddd', // 슬라이더 레일 색상
+                },
+                '& .MuiSlider-valueLabel': {
+                  backgroundColor: '#1976d2', // value label 색상
+                  color: '#fff',
+                },
+              }}
+            />
+          </div>
         </div>
 
         {/* Y2축 Dropdown */}
@@ -275,7 +551,41 @@ function ComboGraph() {
           </button>
         </div>
       </div>
-
+      <div
+        style={{ width: '1200px', textAlign: 'center', marginLeft: '200px' }}
+      >
+        <div
+          style={{
+            width: '400px',
+            margin: '0 auto',
+          }}
+        >
+          <Slider
+            valueLabelDisplay="auto"
+            value={xScaleValue}
+            min={xScaleMinMaxValue[0]}
+            max={xScaleMinMaxValue[1]}
+            onChange={handleChangeXScaleValue}
+            sx={{
+              color: '#1976d2', // 슬라이더의 트랙 및 thumb 색상
+              '& .MuiSlider-thumb': {
+                backgroundColor: '#fff', // thumb의 배경색
+                border: '2px solid #1976d2', // thumb의 테두리 색상
+              },
+              '& .MuiSlider-track': {
+                backgroundColor: '#1976d2', // 슬라이더 트랙 색상
+              },
+              '& .MuiSlider-rail': {
+                backgroundColor: '#ddd', // 슬라이더 레일 색상
+              },
+              '& .MuiSlider-valueLabel': {
+                backgroundColor: '#1976d2', // value label 색상
+                color: '#fff',
+              },
+            }}
+          />
+        </div>
+      </div>
       {/* X축 Dropdown */}
       <div
         style={{

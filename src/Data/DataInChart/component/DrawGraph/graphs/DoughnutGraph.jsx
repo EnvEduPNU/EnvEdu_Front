@@ -60,6 +60,8 @@ function DoughnutGraph() {
     addSelectedYVariableIndexs,
     selctedXVariableIndex,
     selectXVariableIndex,
+    graphIdx,
+    title,
   } = useGraphDataStore();
 
   const [barDatas, setBarDatas] = useState({
@@ -183,7 +185,7 @@ function DoughnutGraph() {
         selectXVariableIndex(findedXindex);
       }
     }
-  }, [data]);
+  }, [data, graphIdx]);
 
   // 새로운 Dropdown을 추가하는 함수
   const addYDropdown = () => {
@@ -249,6 +251,18 @@ function DoughnutGraph() {
         flexDirection: 'column',
       }}
     >
+      <div
+        style={{
+          margin: '0 0 20px 250px', // 위아래 간격 추가
+          padding: '10px 20px', // 내부 여백 추가
+          color: '#333', // 텍스트 색상
+          fontSize: '24px', // 제목 크기
+          fontWeight: 'bold', // 글씨 두껍게
+          borderRadius: '10px', // 모서리 둥글게
+        }}
+      >
+        {title}
+      </div>
       <div className="flex" style={{ width: '1400px' }}>
         <div
           style={{
