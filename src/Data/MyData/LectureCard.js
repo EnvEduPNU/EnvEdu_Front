@@ -67,7 +67,7 @@ const LectureCard = ({ card, handleOpenModal }) => {
           />
         )}
         <Typography variant="h6" sx={{ mt: 1 }}>
-          {card.name}
+          {card.title}
         </Typography>
         <Typography variant="body2">{card.date}</Typography>
       </CardContent>

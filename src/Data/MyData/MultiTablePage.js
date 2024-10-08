@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Button, IconButton, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
@@ -7,6 +7,7 @@ import LectureCard from './LectureCard'; // 분리된 카드 컴포넌트
 import TextDataCardModal from './modal/TextDataCardModal'; // 분리된 모달 컴포넌트
 import ExcelDataModal from './modal/ExcelDataModal'; // 분리된 엑셀 모달 컴포넌트
 import * as XLSX from 'xlsx';
+import { customAxios } from '../../Common/CustomAxios';
 
 const MultiTablePage = () => {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const MultiTablePage = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [cards, setCards] = useState([]); // cards 상태 변경
 
   // 엑셀 파일 업로드 및 데이터 읽기
   const handleExcelUpload = (event) => {
@@ -50,15 +52,28 @@ const MultiTablePage = () => {
     setSelectedCard(null);
   };
 
-  // 카드 데이터
-  const cards = [
-    { name: 'Card 1', date: '2024-10-01', imageUrl: null },
-    { name: 'Card 2', date: '2024-10-02', imageUrl: null },
-    { name: 'Card 3', date: '2024-10-03', imageUrl: null },
-    { name: 'Card 4', date: '2024-10-04', imageUrl: null },
-    { name: 'Card 5', date: '2024-10-05', imageUrl: null },
-  ];
+  // 서버에서 전체 카드 데이터를 가져오기 위한 useEffect
+  useEffect(() => {
+    // 데이터 로드 함수
+    const fetchCards = async () => {
+      try {
+        const response = await customAxios.get(
+          '/api/data-in-textbooks/getAllRecords',
+        ); // API 엔드포인트 호출
+        setCards(response.data); // 받아온 데이터를 cards 상태에 저장
 
+        console.log(
+          '들어온 카드 데이터 확인 : ' + JSON.stringify(response.data, null, 2),
+        );
+      } catch (error) {
+        console.error('Error fetching cards:', error);
+      }
+    };
+
+    fetchCards(); // 컴포넌트가 마운트될 때 데이터 로드
+  }, []);
+
+  // 카드 슬라이드
   const nextCard = () => {
     if (currentIndex < cards.length - 4) {
       setCurrentIndex((prevIndex) => prevIndex + 1);

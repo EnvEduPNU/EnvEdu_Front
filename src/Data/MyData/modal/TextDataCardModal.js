@@ -22,28 +22,40 @@ const TextDataCardModal = ({ open, handleClose, card }) => {
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: 400,
+          width: 600,
+          maxHeight: '80vh', // 최대 높이 설정
+          overflowY: 'auto', // 세로 스크롤 추가
           bgcolor: 'background.paper',
           boxShadow: 24,
           p: 4,
         }}
       >
         <Typography variant="h6" component="h2">
-          {card.name}
+          {card.title}
         </Typography>
-        <TableContainer component={Paper} sx={{ mt: 2 }}>
-          <Table>
+        <Typography variant="subtitle1" sx={{ mt: 2 }}>
+          {card.content}
+        </Typography>
+        <TableContainer
+          component={Paper}
+          sx={{ mt: 2, maxHeight: '60vh', overflowY: 'auto' }}
+        >
+          <Table stickyHeader>
             <TableHead>
               <TableRow>
-                <TableCell>환경 데이터 헤더 1</TableCell>
-                <TableCell>환경 데이터 헤더 2</TableCell>
+                {card.properties.map((property, index) => (
+                  <TableCell key={index}>{property}</TableCell>
+                ))}
               </TableRow>
             </TableHead>
             <TableBody>
-              <TableRow>
-                <TableCell>데이터 1</TableCell>
-                <TableCell>데이터 2</TableCell>
-              </TableRow>
+              {card.data.map((row, rowIndex) => (
+                <TableRow key={rowIndex}>
+                  {Object.keys(row).map((key, colIndex) => (
+                    <TableCell key={colIndex}>{row[key]}</TableCell>
+                  ))}
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </TableContainer>
