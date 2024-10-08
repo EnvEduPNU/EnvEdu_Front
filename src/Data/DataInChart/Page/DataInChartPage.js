@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import TableOrGraph from '../component/DrawGraph/TableOrGraph';
-import LeftSlidePage from './LeftSlidePage';
+import LeftSlidePage from './leftSlidePage';
 import styled from '@emotion/styled';
 
 const StyledDiv = styled.div`
