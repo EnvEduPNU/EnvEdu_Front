@@ -1,12 +1,11 @@
-import "./leftSlidePage.scss";
-import Header from "../component/Header/Header";
-import MyDataDropdown from "./MyDataDropdown";
-import ExpertDataButton from "./ExpertDataButton";
+import './leftSlidePage.scss';
+import Header from '../component/Header/Header';
+import MyDataDropdown from './MyDataDropdown';
+import ExpertDataButton from './ExpertDataButton';
 
 export default function LeftSlidePage({ setDataCategory }) {
   return (
     <div className="e-class-mydata">
-      <Header />
       <div className="myData-left">
         <div className="myData-summary">
           <ExpertDataButton setDataCategory={setDataCategory} />

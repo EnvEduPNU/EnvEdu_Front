@@ -1,7 +1,7 @@
-import { useState } from "react";
-import TableOrGraph from "../component/DrawGraph/TableOrGraph";
-import LeftSlidePage from "./leftSlidePage";
-import styled from "@emotion/styled";
+import { useState } from 'react';
+import TableOrGraph from '../component/DrawGraph/TableOrGraph';
+import LeftSlidePage from './LeftSlidePage';
+import styled from '@emotion/styled';
 
 const StyledDiv = styled.div`
   display: flex;
@@ -11,7 +11,7 @@ const StyledDiv = styled.div`
 
 // Data & Chart 메인 페이지
 function DataInChartPage() {
-  const [dataCategory, setDataCategory] = useState("");
+  const [dataCategory, setDataCategory] = useState('');
 
   return (
     <StyledDiv>
