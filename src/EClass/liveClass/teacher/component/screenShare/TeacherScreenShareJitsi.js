@@ -24,9 +24,15 @@ const TeacherScreenShareJitsi = ({
   useEffect(() => {
     setIsLoading(true); // 화면 공유 시작 시 로딩 상태 설정
 
+    if (jitsiApiRef.current && sharedScreenState == false) {
+      alert('화상 수업을 종료합니다!');
+      jitsiApiRef.current.dispose(); // JitsiMeeting 인스턴스 정리
+      jitsiApiRef.current = null;
+    }
+
     // 컴포넌트가 언마운트되거나 sharedScreenState가 false일 때 연결 닫기
     return () => {
-      if (jitsiApiRef.current && sharedScreenState == false) {
+      if (jitsiApiRef.current) {
         jitsiApiRef.current.dispose(); // JitsiMeeting 인스턴스 정리
         jitsiApiRef.current = null;
       }
