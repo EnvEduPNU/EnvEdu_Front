@@ -26,7 +26,7 @@ const TeacherScreenShareJitsi = ({
 
     // 컴포넌트가 언마운트되거나 sharedScreenState가 false일 때 연결 닫기
     return () => {
-      if (jitsiApiRef.current) {
+      if (jitsiApiRef.current && sharedScreenState == false) {
         jitsiApiRef.current.dispose(); // JitsiMeeting 인스턴스 정리
         jitsiApiRef.current = null;
       }
