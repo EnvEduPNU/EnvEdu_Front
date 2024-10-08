@@ -39,7 +39,7 @@ const TeacherScreenShareJitsi = ({
         <JitsiMeeting
           domain="meet.jit.si"
           // 나중에 eClassName으로 바꾸고 학생도 바꿔주기
-          roomName={'My Custom Room'}
+          roomName="myCustomRoom"
           configOverwrite={{
             startWithAudioMuted: true,
             disableModeratorIndicator: true,
