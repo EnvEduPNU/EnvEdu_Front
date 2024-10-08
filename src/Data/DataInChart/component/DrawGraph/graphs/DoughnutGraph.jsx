@@ -270,6 +270,7 @@ function DoughnutGraph() {
             flexDirection: 'column',
             alignItems: 'center', // 수직 정렬
             gap: '10px', // 드롭다운 간 간격
+            marginTop: '20px',
           }}
         >
           {/* 기존 드롭다운들 표시 */}
