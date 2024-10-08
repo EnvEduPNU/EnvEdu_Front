@@ -430,6 +430,7 @@ function ComboGraph() {
             flexDirection: 'column',
             alignItems: 'center',
             gap: '10px',
+            marginTop: '20px',
           }}
         >
           {selectedYVariableIndexs.map((variableIndex) => (
@@ -536,6 +537,7 @@ function ComboGraph() {
             flexDirection: 'column',
             alignItems: 'center',
             gap: '10px',
+            marginTop: '20px',
           }}
         >
           {selectedMoreYVariableIndexs.map((variableIndex) => (
