@@ -111,25 +111,31 @@ const DataTable = ({ type, id }) => {
   return (
     <>
       {details.length !== 0 ? (
-        <>
+        <div style={{ position: 'relative' }}>
           {/* 엑셀 다운로드 버튼 */}
-          <div style={{ position: 'absolute', top: '10px', right: '10px' }}>
-            <button
-              className="excel-download"
-              onClick={handleDownload}
-              style={{ fontSize: '12px', padding: '5px 10px' }}
-            >
-              엑셀 파일로 저장
-            </button>
-          </div>
-
-          <table border="1" className="myData-detail">
+          <button
+            className="excel-download"
+            onClick={handleDownload}
+            style={{ fontSize: '12px', padding: '5px 10px' }}
+          >
+            엑셀 파일로 저장
+          </button>
+          <table
+            border="1"
+            className="myData-detail"
+            style={{ tableLayout: 'fixed', width: '100%' }}
+          >
             <thead>
               <tr>
                 {headers.map((header) => (
-                  <th key={header}>{engToKor(header)}</th>
+                  <th
+                    key={header}
+                    style={{ width: `${100 / headers.length}%` }}
+                  >
+                    {engToKor(header)}
+                  </th>
                 ))}
-                <th>
+                <th style={{ width: '50px' }}>
                   <input
                     type="checkbox"
                     onChange={handleFullCheck}
@@ -143,7 +149,15 @@ const DataTable = ({ type, id }) => {
                 ? details.data.map((row, rowIndex) => (
                     <tr key={rowIndex}>
                       {details.properties.map((property, propertyIndex) => (
-                        <td key={propertyIndex}>{row[propertyIndex]}</td>
+                        <td
+                          key={propertyIndex}
+                          style={{
+                            wordWrap: 'break-word',
+                            overflow: 'hidden',
+                          }}
+                        >
+                          {row[propertyIndex]}
+                        </td>
                       ))}
                       <td>
                         <input
@@ -157,7 +171,15 @@ const DataTable = ({ type, id }) => {
                 : details.map((item) => (
                     <tr key={item.id}>
                       {headers.map((header) => (
-                        <td key={header}>{item[header]}</td>
+                        <td
+                          key={header}
+                          style={{
+                            wordWrap: 'break-word',
+                            overflow: 'hidden',
+                          }}
+                        >
+                          {item[header]}
+                        </td>
                       ))}
                       <td>
                         <input
@@ -170,7 +192,7 @@ const DataTable = ({ type, id }) => {
                   ))}
             </tbody>
           </table>
-        </>
+        </div>
       ) : (
         <div
           style={{
