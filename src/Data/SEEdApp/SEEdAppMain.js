@@ -32,19 +32,34 @@ function useBlocker(when = true) {
 export default function Index() {
   const [clickedIndex, setClickedIndex] = useState();
   const [connectableSocket, setConnectableSocket] = useState([]);
+  const [isLoading, setIsLoading] = useState(true); // 로딩 상태 추가
 
   useBlocker(globalClickCheck !== null);
 
   useEffect(() => {
-    customAxios.get(`/seed/device`).then((response) => {
-      setConnectableSocket(response.data.relatedUserDeviceList);
-      console.log(
-        '소켓 디바이스 내역 :' +
-          JSON.stringify(response.data.relatedUserDeviceList),
-      );
-    });
-    globalClickCheck = null;
+    const username = localStorage.getItem('username');
+
+    if (!username) {
+      alert('로그인이 필요합니다. 로그인 페이지로 이동합니다.');
+      window.location.href = '/login'; // 로그인 페이지로 이동
+    } else {
+      // 로그인 상태일 때 로딩 완료 처리
+      setIsLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    if (!isLoading) {
+      customAxios.get(`/seed/device`).then((response) => {
+        setConnectableSocket(response.data.relatedUserDeviceList);
+        console.log(
+          '소켓 디바이스 내역 :' +
+            JSON.stringify(response.data.relatedUserDeviceList),
+        );
+      });
+      globalClickCheck = null;
+    }
+  }, [isLoading]);
 
   const handleShowing = (index) => {
     if (globalClickCheck === index && globalClickCheck !== null) {
@@ -64,6 +79,11 @@ export default function Index() {
     setClickedIndex(false);
     globalClickCheck = null;
   };
+
+  // 로딩 중일 때는 로딩 화면을 보여줌
+  if (isLoading) {
+    return <div>로딩 중...</div>; // 로딩 중 메시지 표시
+  }
 
   return (
     <div className="sample">

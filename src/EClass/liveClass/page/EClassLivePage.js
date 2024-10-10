@@ -6,6 +6,11 @@ import { StudentClassroomPage } from './StudentClassroomPage';
 function EClassLivePage() {
   const role = localStorage.getItem('role');
 
+  if (!role) {
+    alert('로그인이 필요합니다. 로그인 페이지로 이동합니다.');
+    window.location.href = '/login'; // 로그인 페이지로 이동
+  }
+
   console.log(' 권한 : ' + role);
 
   return (
