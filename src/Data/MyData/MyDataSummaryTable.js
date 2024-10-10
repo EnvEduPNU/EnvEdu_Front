@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { IconButton, Modal, Box, Typography } from '@mui/material';
 import NoteIcon from '@mui/icons-material/Note'; // 메모 아이콘
 import DeleteIcon from '@mui/icons-material/Delete'; // 삭제 아이콘
-import axios from 'axios'; // 삭제 요청을 보내기 위한 axios import
+import { customAxios } from '../../Common/CustomAxios'; // 삭제 요청을 보내기 위한 axios import
 
 const MyDataSummaryTable = ({ summary, getTable }) => {
   const [open, setOpen] = useState(false);
   const [selectedMemo, setSelectedMemo] = useState('');
+
+  useEffect(() => {
+    console.log('summary 확인 : ' + JSON.stringify(summary, null, 2));
+  }, []);
 
   // 모달 열기
   const handleOpen = (memo) => {
@@ -21,10 +25,10 @@ const MyDataSummaryTable = ({ summary, getTable }) => {
   };
 
   // 삭제 요청 메서드
-  const handleDelete = (dataUUID) => {
+  const handleDelete = (id) => {
     if (window.confirm('이 항목을 삭제하시겠습니까?')) {
-      axios
-        .delete(`/api/data/${dataUUID}`) // 실제 API 엔드포인트와 함께 사용
+      customAxios
+        .delete(`/api/data/${id}`) // 실제 API 엔드포인트와 함께 사용
         .then((response) => {
           alert('데이터가 성공적으로 삭제되었습니다.');
           window.location.reload(); // 삭제 후 페이지 새로고침
@@ -96,7 +100,7 @@ const MyDataSummaryTable = ({ summary, getTable }) => {
                   <IconButton
                     onClick={(e) => {
                       e.stopPropagation(); // 행 클릭 이벤트와 분리
-                      handleDelete(item.dataUUID);
+                      handleDelete(item.id);
                     }}
                     aria-label="delete item"
                   >
