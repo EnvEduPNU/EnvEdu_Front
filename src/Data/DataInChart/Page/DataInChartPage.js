@@ -32,6 +32,7 @@ function DataInChartPage() {
   const [photoList, setPhotoList] = useState([]); // 사진 리스트 상태
   const [selectedPhoto, setSelectedPhoto] = useState(null); // 모달에 표시할 선택된 사진
   const [openModal, setOpenModal] = useState(false); // 모달 상태
+  const [dataCategory, setDataCategory] = useState('');
 
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
