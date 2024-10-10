@@ -114,7 +114,7 @@ function rowContent(index, row, handleClick, selectedRow, handleOpenModal) {
   );
 }
 
-export default function TeacherReportTable({ selectedEClassUuid }) {
+export default function StudentReportTable({ selectedEClassUuid }) {
   const [selectedRow, setSelectedRow] = useState(null);
   const [rows, setRows] = useState([]);
   const [reportData, setReportData] = useState(null);
@@ -222,6 +222,7 @@ export default function TeacherReportTable({ selectedEClassUuid }) {
       <Typography
         variant="h5"
         sx={{
+          margin: '20px 0 10px 0',
           fontFamily: "'Montserrat', sans-serif",
           fontWeight: '600',
           fontSize: '1.5rem',
@@ -229,30 +230,17 @@ export default function TeacherReportTable({ selectedEClassUuid }) {
       >
         {' 보고서 제출 '}
       </Typography>
-      <Paper className="virtuoso-table">
+      <Paper style={{ height: 130, width: '100%' }} className="virtuoso-table">
         <TableContainer component={Paper}>
           <Table stickyHeader>{fixedHeaderContent()}</Table>
         </TableContainer>
-        {rows.length > 0 ? (
-          <TableVirtuoso
-            data={rows}
-            components={VirtuosoTableComponents}
-            itemContent={(index, row) =>
-              rowContent(
-                index,
-                row,
-                handleRowClick,
-                selectedRow,
-                handleOpenModal,
-              )
-            }
-            style={{ height: '100%' }}
-          />
-        ) : (
-          <Typography style={{ padding: '5.5rem' }}>
-            EClass를 선택해주세요.
-          </Typography>
-        )}
+        <TableVirtuoso
+          data={rows}
+          components={VirtuosoTableComponents}
+          itemContent={(index, row) =>
+            rowContent(index, row, handleRowClick, selectedRow, handleOpenModal)
+          }
+        />
       </Paper>
 
       {isModalOpen && (
