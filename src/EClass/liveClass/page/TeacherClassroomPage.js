@@ -21,8 +21,8 @@ export function TeacherClassroomPage() {
   }, [selectedEClassUuid]);
 
   return (
-    <>
-      <div style={{ width: '80%', height: '100%' }}>
+    <div style={{ display: 'flex' }}>
+      <div style={{ width: '100%', height: '100%' }}>
         <Typography
           variant="h4"
           sx={{
@@ -35,7 +35,7 @@ export function TeacherClassroomPage() {
         >
           {` E-Class `}
         </Typography>
-        <div style={{ minHeight: '40rem' }}>
+        <div>
           <TeacherEclassTable setSelectedEClassUuid={setSelectedEClassUuid} />
         </div>
 
@@ -72,21 +72,17 @@ export function TeacherClassroomPage() {
         style={{
           marginLeft: '20px',
           height: '100%',
-          padding: '0 0 10px 0',
-          width: '40%',
-          overflow: 'auto', // 내용이 넘칠 때 스크롤을 추가
+          padding: '50px 0 10px 0',
+          width: '60%',
         }}
       >
-        <div style={{ height: '50px' }}></div>
         <TeacherStudentList
           eclassUuid={studentListUuid}
           selectedEClassUuid={selectedEClassUuid}
         />
 
-        <Divider sx={{ margin: '15px 0' }} />
-
         <TeacherReportTable selectedEClassUuid={selectedEClassUuid} />
       </div>
-    </>
+    </div>
   );
 }

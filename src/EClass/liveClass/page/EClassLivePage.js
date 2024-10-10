@@ -1,13 +1,6 @@
 import React from 'react';
-import styled from '@emotion/styled';
 import { TeacherClassroomPage } from './TeacherClassroomPage';
 import { StudentClassroomPage } from './StudentClassroomPage';
-
-const StyledDiv = styled.div`
-  display: flex;
-  height: 80%;
-  margin: 20px 20vh 20px 20vh;
-`;
 
 // E-Class 화면 공유 페이지
 function EClassLivePage() {
@@ -16,10 +9,10 @@ function EClassLivePage() {
   console.log(' 권한 : ' + role);
 
   return (
-    <StyledDiv>
+    <div style={{ margin: '0 20vh 0 20vh' }}>
       {role === 'ROLE_EDUCATOR' && <TeacherClassroomPage />}
       {role === 'ROLE_STUDENT' && <StudentClassroomPage />}
-    </StyledDiv>
+    </div>
   );
 }
 

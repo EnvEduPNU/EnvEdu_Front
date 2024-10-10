@@ -114,7 +114,7 @@ function rowContent(index, row, handleClick, selectedRow, handleOpenModal) {
   );
 }
 
-export default function StudentReportTable({ selectedEClassUuid }) {
+export default function TeacherReportTable({ selectedEClassUuid }) {
   const [selectedRow, setSelectedRow] = useState(null);
   const [rows, setRows] = useState([]);
   const [reportData, setReportData] = useState(null);
@@ -229,7 +229,7 @@ export default function StudentReportTable({ selectedEClassUuid }) {
       >
         {' 보고서 제출 '}
       </Typography>
-      <Paper style={{ height: 130, width: '100%' }} className="virtuoso-table">
+      <Paper style={{ height: 220, width: '100%' }} className="virtuoso-table">
         <TableContainer component={Paper}>
           <Table stickyHeader>{fixedHeaderContent()}</Table>
         </TableContainer>

@@ -14,8 +14,8 @@ import { customAxios } from '../../../../../../Common/CustomAxios';
 import { useNavigate } from 'react-router-dom';
 
 const columns = [
-  { label: '번호', dataKey: 'Num', width: '10%' },
-  { label: '이름', dataKey: 'Name', width: '15%' },
+  { label: '번호', dataKey: 'Num', width: '8%' },
+  { label: '이름', dataKey: 'Name', width: '10%' },
   { label: '강사', dataKey: 'Teacher', width: '15%' },
   { label: '개설일', dataKey: 'CreateEclassDate', width: '15%' },
   { label: '수업자료', dataKey: 'LectureDataName', width: '15%' },
