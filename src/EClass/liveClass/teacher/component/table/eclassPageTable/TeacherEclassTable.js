@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { TableVirtuoso } from "react-virtuoso";
+import React, { useState, useEffect, useCallback } from 'react';
+import { TableVirtuoso } from 'react-virtuoso';
 import {
   Table,
   TableBody,
@@ -9,17 +9,17 @@ import {
   TableRow,
   Paper,
   Button,
-} from "@mui/material";
-import { customAxios } from "../../../../../../Common/CustomAxios";
-import { useNavigate } from "react-router-dom";
+} from '@mui/material';
+import { customAxios } from '../../../../../../Common/CustomAxios';
+import { useNavigate } from 'react-router-dom';
 
 const columns = [
-  { label: "번호", dataKey: "Num", width: "10%" },
-  { label: "이름", dataKey: "Name", width: "15%" },
-  { label: "강사", dataKey: "Teacher", width: "15%" },
-  { label: "개설일", dataKey: "CreateEclassDate", width: "15%" },
-  { label: "수업자료", dataKey: "LectureDataName", width: "15%" },
-  { label: "", dataKey: "Action", width: "20%" },
+  { label: '번호', dataKey: 'Num', width: '10%' },
+  { label: '이름', dataKey: 'Name', width: '15%' },
+  { label: '강사', dataKey: 'Teacher', width: '15%' },
+  { label: '개설일', dataKey: 'CreateEclassDate', width: '15%' },
+  { label: '수업자료', dataKey: 'LectureDataName', width: '15%' },
+  { label: '', dataKey: 'Action', width: '20%' },
 ];
 
 const createData = (index, item) => ({
@@ -34,28 +34,28 @@ const createData = (index, item) => ({
 });
 
 const deleteData = async (row, handleDelete) => {
-  const confirmation = window.confirm("정말 삭제하시겠습니까?");
+  const confirmation = window.confirm('정말 삭제하시겠습니까?');
   if (!confirmation) return;
 
   try {
     const respDeleteEclass = await customAxios.delete(
-      `/api/eclass/delete?eClassUuid=${row.eClassUuid}`
+      `/api/eclass/delete?eClassUuid=${row.eClassUuid}`,
     );
     console.log(respDeleteEclass.data);
 
     try {
       const respDeleteEclassStudent = await customAxios.delete(
-        `/api/eclass/student/joined/delete?eClassUuid=${row.eClassUuid}`
+        `/api/eclass/student/joined/delete?eClassUuid=${row.eClassUuid}`,
       );
       console.log(respDeleteEclassStudent.data);
     } catch (error) {
-      console.error("Eclass 학생 삭제 에러:", error);
+      console.error('Eclass 학생 삭제 에러:', error);
     }
 
     handleDelete(row);
     window.location.reload();
   } catch (error) {
-    console.error("Eclass 리스트 삭제 에러:", error);
+    console.error('Eclass 리스트 삭제 에러:', error);
   }
 };
 
@@ -66,7 +66,7 @@ const VirtuosoTableComponents = {
   Table: (props) => (
     <Table
       {...props}
-      sx={{ borderCollapse: "separate", tableLayout: "fixed" }}
+      sx={{ borderCollapse: 'separate', tableLayout: 'fixed' }}
     />
   ),
   TableHead: (props) => <TableHead {...props} />,
@@ -86,10 +86,10 @@ const fixedHeaderContent = () => (
           align="center"
           style={{
             width: column.width,
-            backgroundColor: "#dcdcdc",
+            backgroundColor: '#dcdcdc',
             fontFamily: "'Montserrat', sans-serif",
-            fontWeight: "600",
-            fontSize: "1rem",
+            fontWeight: '600',
+            fontSize: '1rem',
           }}
         >
           {column.label}
@@ -109,39 +109,39 @@ export default function TeacherEclassTable({ setSelectedEClassUuid }) {
       setSelectedRow(id);
       setSelectedEClassUuid(row.eClassUuid);
     },
-    [setSelectedEClassUuid]
+    [setSelectedEClassUuid],
   );
 
   const handleDelete = useCallback((row) => {
     setRowData((prevRowData) =>
-      prevRowData.filter((prevRow) => prevRow.Num !== row.Num)
+      prevRowData.filter((prevRow) => prevRow.Num !== row.Num),
     );
     console.log(`Row with id ${row.Num} deleted`);
   }, []);
 
   const handleClickOutside = useCallback(
     (event) => {
-      if (!event.target.closest(".virtuoso-table")) {
+      if (!event.target.closest('.virtuoso-table')) {
         setSelectedRow(null);
-        setSelectedEClassUuid(null);
+        // setSelectedEClassUuid(null);
       }
     },
-    [setSelectedEClassUuid]
+    [setSelectedEClassUuid],
   );
 
   const joinEclass = async (row) => {
     console.log(
-      "Navigating to eClassPage with row:",
-      JSON.stringify(row, null, 2)
+      'Navigating to eClassPage with row:',
+      JSON.stringify(row, null, 2),
     );
 
     const { eClassUuid, LectureData: lectureDataUuid, Name: eClassName } = row;
 
     try {
       const response = await customAxios.patch(
-        `/api/eclass/eclass-start?uuid=${eClassUuid}`
+        `/api/eclass/eclass-start?uuid=${eClassUuid}`,
       );
-      console.log("Eclass started:", response.data);
+      console.log('Eclass started:', response.data);
 
       navigate(`/LiveTeacherPage/${eClassUuid}`, {
         state: {
@@ -151,7 +151,7 @@ export default function TeacherEclassTable({ setSelectedEClassUuid }) {
         },
       });
     } catch (error) {
-      console.error("Eclass 시작 에러:", error);
+      console.error('Eclass 시작 에러:', error);
     }
   };
 
@@ -163,17 +163,17 @@ export default function TeacherEclassTable({ setSelectedEClassUuid }) {
           align="center"
           style={{
             width: column.width,
-            backgroundColor: selectedRow === row.Num ? "#f0f0f0" : "inherit",
-            cursor: "pointer",
+            backgroundColor: selectedRow === row.Num ? '#f0f0f0' : 'inherit',
+            cursor: 'pointer',
             fontFamily: "'Asap', sans-serif",
-            fontSize: "0.9rem",
+            fontSize: '0.9rem',
           }}
           onClick={() =>
-            column.dataKey !== "Action" && handleRowClick(row.Num, row)
+            column.dataKey !== 'Action' && handleRowClick(row.Num, row)
           }
         >
-          {column.dataKey === "Action" ? (
-            <div style={{ display: "flex", justifyContent: "center" }}>
+          {column.dataKey === 'Action' ? (
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
               <Button
                 variant="contained"
                 color="secondary"
@@ -181,12 +181,12 @@ export default function TeacherEclassTable({ setSelectedEClassUuid }) {
                 sx={{
                   marginRight: 1,
                   fontFamily: "'Asap', sans-serif",
-                  fontWeight: "600",
-                  fontSize: "0.9rem",
-                  color: "grey",
-                  backgroundColor: "#feecfe",
-                  borderRadius: "2.469rem",
-                  border: "none",
+                  fontWeight: '600',
+                  fontSize: '0.9rem',
+                  color: 'grey',
+                  backgroundColor: '#feecfe',
+                  borderRadius: '2.469rem',
+                  border: 'none',
                 }}
               >
                 들어가기
@@ -197,9 +197,9 @@ export default function TeacherEclassTable({ setSelectedEClassUuid }) {
                 onClick={() => deleteData(row, handleDelete)}
                 sx={{
                   fontFamily: "'Asap', sans-serif",
-                  fontWeight: "600",
-                  fontSize: "0.9rem",
-                  borderRadius: "2.469rem",
+                  fontWeight: '600',
+                  fontSize: '0.9rem',
+                  borderRadius: '2.469rem',
                 }}
               >
                 삭제
@@ -215,34 +215,34 @@ export default function TeacherEclassTable({ setSelectedEClassUuid }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const name = localStorage.getItem("username");
+      const name = localStorage.getItem('username');
       try {
-        const response = await customAxios.get("/api/eclass/list");
+        const response = await customAxios.get('/api/eclass/list');
         const list = response.data;
 
-        console.log("Eclass list:", list);
+        console.log('Eclass list:', list);
 
         const filteredList = list.filter((item) => item.username === name);
         const rows = filteredList.map((item, index) => createData(index, item));
 
         setRowData(rows);
       } catch (error) {
-        console.error("Eclass 리스트 조회 에러:", error);
+        console.error('Eclass 리스트 조회 에러:', error);
       }
     };
 
     fetchData();
-    document.addEventListener("click", handleClickOutside);
+    document.addEventListener('click', handleClickOutside);
 
     return () => {
-      document.removeEventListener("click", handleClickOutside);
+      document.removeEventListener('click', handleClickOutside);
     };
   }, [handleClickOutside]);
 
   return (
     <div>
       <Paper
-        style={{ height: "100%", width: "100%" }}
+        style={{ height: '100%', width: '100%' }}
         className="virtuoso-table"
       >
         <TableContainer component={Paper}>
@@ -252,7 +252,7 @@ export default function TeacherEclassTable({ setSelectedEClassUuid }) {
           data={rowData}
           components={VirtuosoTableComponents}
           itemContent={(index, row) => rowContent(index, row)}
-          style={{ height: "580px" }}
+          style={{ height: '580px' }}
         />
       </Paper>
     </div>

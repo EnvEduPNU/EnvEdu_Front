@@ -141,7 +141,6 @@ export default function StudentReportTable({ selectedEClassUuid }) {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setReportData(null);
   };
 
   useEffect(() => {

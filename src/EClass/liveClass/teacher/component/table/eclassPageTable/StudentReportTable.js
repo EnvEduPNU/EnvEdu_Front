@@ -141,7 +141,6 @@ export default function StudentReportTable({ selectedEClassUuid }) {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setReportData(null);
   };
 
   useEffect(() => {
@@ -243,11 +242,11 @@ export default function StudentReportTable({ selectedEClassUuid }) {
         />
       </Paper>
 
-      {isModalOpen && (
+      {isModalOpen && reportData && (
         <ReportViewModal
           open={isModalOpen}
           onClose={handleCloseModal}
-          tableData={reportData.filter(
+          tableData={reportData?.filter(
             (data) => data.username === selectedReport.current,
           )}
         />
