@@ -75,7 +75,7 @@ const MultiTablePage = () => {
 
   // 카드 슬라이드
   const nextCard = () => {
-    if (currentIndex < cards.length - 4) {
+    if (currentIndex < cards.length - 3) {
       setCurrentIndex((prevIndex) => prevIndex + 1);
     }
   };
@@ -87,7 +87,7 @@ const MultiTablePage = () => {
   };
 
   return (
-    <Container>
+    <Container sx={{ minWidth: '50rem' }}>
       {/* 첫 번째 섹션: 버튼 그룹 */}
       <div
         style={{
@@ -127,7 +127,7 @@ const MultiTablePage = () => {
             }}
             component="label"
           >
-            커스텀데이터
+            내 컴퓨터에서 불러오기
             <input
               type="file"
               accept=".xlsx, .xls"
@@ -200,18 +200,18 @@ const MultiTablePage = () => {
           <div
             style={{
               display: 'flex',
-              overflow: 'auto',
+              overflow: 'hidden',
               flex: '1',
               padding: '0 10px',
-              height: '200px',
+              height: '280px',
             }}
           >
-            {cards.slice(currentIndex, currentIndex + 4).map((card, index) => (
+            {cards.slice(currentIndex, currentIndex + 3).map((card, index) => (
               <div
                 style={{
                   flex: '1',
-                  maxWidth: 'calc(25% - 10px)',
-                  marginRight: index !== 3 ? '10px' : '0',
+                  minWidth: 'calc(33.33% - 10px)',
+                  marginRight: index !== 2 ? '10px' : '0',
                 }}
                 key={index}
               >
@@ -222,7 +222,7 @@ const MultiTablePage = () => {
 
           <IconButton
             onClick={nextCard}
-            disabled={currentIndex >= cards.length - 4}
+            disabled={currentIndex >= cards.length - 3}
           >
             <ArrowForwardIosIcon />
           </IconButton>

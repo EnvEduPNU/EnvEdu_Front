@@ -57,6 +57,7 @@ const MyData = () => {
 
   return (
     <div className="myData-container">
+      {/* 왼쪽 데이터 테이블 */}
       <section className="myData-left" aria-labelledby="myData-heading">
         <MyDataSummaryTable summary={summary} getTable={getTable} />
       </section>

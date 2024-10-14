@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { customAxios } from '../../Common/CustomAxios';
 import { engToKor } from './engToKor';
 import * as XLSX from 'xlsx';
+import { useNavigate } from 'react-router-dom';
 
 const DataTable = ({ type, id }) => {
   const [details, setDetails] = useState([]);
@@ -9,6 +10,8 @@ const DataTable = ({ type, id }) => {
   const [selectedItems, setSelectedItems] = useState([]);
   const [isFull, setIsFull] = useState(false);
   const [isCustom, setIsCustom] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (type === 'CUSTOM') {
@@ -112,14 +115,23 @@ const DataTable = ({ type, id }) => {
     <>
       {details.length !== 0 ? (
         <div style={{ position: 'relative' }}>
-          {/* 엑셀 다운로드 버튼 */}
-          <button
-            className="excel-download"
-            onClick={handleDownload}
-            style={{ fontSize: '12px', padding: '5px 10px' }}
-          >
-            엑셀 파일로 저장
-          </button>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            {/* 엑셀 다운로드 버튼 */}
+            <button
+              className="excel-download"
+              onClick={handleDownload}
+              style={{ fontSize: '12px', padding: '5px 10px' }}
+            >
+              엑셀 파일로 저장
+            </button>
+            <button
+              className="excel-download"
+              onClick={() => navigate(-1)} // 뒤로가기 기능
+              style={{ fontSize: '12px', padding: '5px 10px' }}
+            >
+              뒤로가기
+            </button>
+          </div>
           <table
             border="1"
             className="myData-detail"
@@ -154,7 +166,11 @@ const DataTable = ({ type, id }) => {
                           style={{
                             wordWrap: 'break-word',
                             overflow: 'hidden',
+                            whiteSpace: 'nowrap',
+                            textOverflow: 'ellipsis',
+                            maxWidth: '150px',
                           }}
+                          title={row[propertyIndex]} // 마우스 오버 시 전체 내용 표시
                         >
                           {row[propertyIndex]}
                         </td>
@@ -176,7 +192,11 @@ const DataTable = ({ type, id }) => {
                           style={{
                             wordWrap: 'break-word',
                             overflow: 'hidden',
+                            whiteSpace: 'nowrap',
+                            textOverflow: 'ellipsis',
+                            maxWidth: '150px',
                           }}
+                          title={item[header]} // 마우스 오버 시 전체 내용 표시
                         >
                           {item[header]}
                         </td>
