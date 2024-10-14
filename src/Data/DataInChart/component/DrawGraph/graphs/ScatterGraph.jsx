@@ -97,8 +97,8 @@ function ScatterGraph() {
 
   // 초기 데이터 세팅
   useEffect(() => {
-    console.log(variables);
-    let findedYindex, findedXindex;
+    let findedYindex = -1;
+    let findedXindex = -1;
     if (selectedYVariableIndexs.length === 0) {
       findedYindex = variables.findIndex(
         (variable) =>
@@ -108,19 +108,20 @@ function ScatterGraph() {
         addSelectedYVariableIndexs(findedYindex);
       }
     }
-
     if (selctedXVariableIndex === -1) {
       findedXindex = variables.findIndex(
-        (variable, index) =>
+        (variable) =>
           variable.isSelected === false &&
-          variable.type === 'Numeric' &&
-          findedYindex !== index,
+          findedYindex !== variable.variableIndex,
       );
 
       if (findedXindex !== -1) {
         selectXVariableIndex(findedXindex);
       }
     }
+
+    console.log(data);
+    console.log(findedYindex, findedXindex);
   }, [data, graphIdx]);
 
   // 새로운 Dropdown을 추가하는 함수

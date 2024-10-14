@@ -105,8 +105,8 @@ function LineGraph() {
 
   useEffect(() => {
     // if (selectedYVariableIndexs.length === 3) setYScaleMinMaxValue([0, 1000]);
-    let isPostive = true;
-    let isNegitive = true;
+    let isPostive = false;
+    let isNegitive = false;
     let maxValue = -Infinity;
     let minValue = Infinity;
 
@@ -114,8 +114,8 @@ function LineGraph() {
     for (let i = 0; i < selectedYVariableIndexs.length; i++) {
       const selctedYVariableIndex = selectedYVariableIndexs[i];
       for (let j = 1; j < data.length; j++) {
-        if (data[j][selctedYVariableIndex] < 0) {
-          isPostive = false;
+        if (data[j][selctedYVariableIndex] > 0) {
+          isPostive = true;
         }
         maxValue = Math.max(maxValue, data[j][selctedYVariableIndex]);
         minValue = Math.min(minValue, data[j][selctedYVariableIndex]);
@@ -126,8 +126,8 @@ function LineGraph() {
     for (let i = 0; i < selectedYVariableIndexs.length; i++) {
       const selctedYVariableIndex = selectedYVariableIndexs[i];
       for (let j = 1; j < data.length; j++) {
-        if (data[j][selctedYVariableIndex] > 0) {
-          isNegitive = false;
+        if (data[j][selctedYVariableIndex] < 0) {
+          isNegitive = true;
           break;
         }
         if (isNegitive === false) break;
@@ -137,21 +137,45 @@ function LineGraph() {
     if (isPostive && isNegitive) {
       // 양수, 음수 다 있을 때
       setYScaleMinMaxValue([
-        Math.ceil(Math.floor(minValue) / 10) * 10,
-        Math.ceil(Math.ceil(maxValue) / 10) * 10,
+        Math.ceil(minValue / Math.pow(10, minValue.toString().length - 1)) *
+          Math.pow(10, minValue.toString().length - 1),
+        Math.ceil(maxValue / Math.pow(10, maxValue.toString().length - 1)) *
+          Math.pow(10, maxValue.toString().length - 1),
       ]);
       setYScaleValue([
-        Math.ceil(Math.floor(minValue) / 10) * 10,
-        Math.ceil(Math.ceil(maxValue) / 10) * 10,
+        Math.ceil(minValue / Math.pow(10, minValue.toString().length - 1)) *
+          Math.pow(10, minValue.toString().length - 1),
+        Math.ceil(maxValue / Math.pow(10, maxValue.toString().length - 1)) *
+          Math.pow(10, maxValue.toString().length - 1),
       ]);
     } else if (isPostive) {
       // 양수만 있을 때
-      setYScaleMinMaxValue([0, Math.ceil(Math.ceil(maxValue) / 10) * 10]);
-      setYScaleValue([0, Math.ceil(Math.ceil(maxValue) / 10) * 10]);
+      setYScaleMinMaxValue([
+        0,
+        Math.ceil(
+          minValue / Math.pow(10, minValue.toString().split('.')[0].length - 1),
+        ) * Math.pow(10, minValue.toString().split('.')[0].length - 1),
+      ]);
+      setYScaleValue([
+        0,
+        Math.ceil(
+          maxValue / Math.pow(10, maxValue.toString().split('.')[0].length - 1),
+        ) * Math.pow(10, maxValue.toString().split('.')[0].length - 1),
+      ]);
     } else if (isNegitive) {
       // 음수만 있을 때
-      setYScaleMinMaxValue([Math.ceil(Math.floor(minValue) / 10) * 10, 0]);
-      setYScaleValue([Math.ceil(Math.floor(minValue) / 10) * 10, 0]);
+      setYScaleMinMaxValue([
+        Math.ceil(
+          minValue / Math.pow(10, minValue.toString().split('.')[0].length - 1),
+        ) * Math.pow(10, minValue.toString().split('.')[0].length - 1),
+        0,
+      ]);
+      setYScaleValue([
+        Math.ceil(
+          minValue / Math.pow(10, minValue.toString().split('.')[0].length - 1),
+        ) * Math.pow(10, minValue.toString().split('.')[0].length - 1),
+        0,
+      ]);
     }
 
     setXScaleMinMaxValue([0, data.length - 2]);
@@ -160,8 +184,10 @@ function LineGraph() {
 
   // 초기 데이터 세팅
   useEffect(() => {
+    let findedYindex = -1;
+    let findedXindex = -1;
     if (selectedYVariableIndexs.length === 0) {
-      const findedYindex = variables.findIndex(
+      findedYindex = variables.findIndex(
         (variable) =>
           variable.isSelected === false && variable.type === 'Numeric',
       );
@@ -170,14 +196,19 @@ function LineGraph() {
       }
     }
     if (selctedXVariableIndex === -1) {
-      const findedXindex = variables.findIndex(
-        (variable) => variable.isSelected === false,
+      findedXindex = variables.findIndex(
+        (variable) =>
+          variable.isSelected === false &&
+          findedYindex !== variable.variableIndex,
       );
-      console.log(findedXindex);
+
       if (findedXindex !== -1) {
         selectXVariableIndex(findedXindex);
       }
     }
+
+    console.log(data);
+    console.log(findedYindex, findedXindex);
   }, [data, graphIdx]);
 
   // 새로운 Dropdown을 추가하는 함수
@@ -219,6 +250,7 @@ function LineGraph() {
         x: {
           min: xScaleValue[0], // X축의 최소값 설정
           max: xScaleValue[1], // X축의 최대값 설정
+          offset: true, // 데이터를 라벨의 중앙으로 이동
         },
         y: {
           min: yScaleValue[0],

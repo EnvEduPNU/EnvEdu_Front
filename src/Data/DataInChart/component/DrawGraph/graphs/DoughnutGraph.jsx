@@ -167,8 +167,10 @@ function DoughnutGraph() {
 
   // 초기 데이터 세팅
   useEffect(() => {
+    let findedYindex = -1;
+    let findedXindex = -1;
     if (selectedYVariableIndexs.length === 0) {
-      const findedYindex = variables.findIndex(
+      findedYindex = variables.findIndex(
         (variable) =>
           variable.isSelected === false && variable.type === 'Numeric',
       );
@@ -177,14 +179,19 @@ function DoughnutGraph() {
       }
     }
     if (selctedXVariableIndex === -1) {
-      const findedXindex = variables.findIndex(
-        (variable) => variable.isSelected === false,
+      findedXindex = variables.findIndex(
+        (variable) =>
+          variable.isSelected === false &&
+          findedYindex !== variable.variableIndex,
       );
 
       if (findedXindex !== -1) {
         selectXVariableIndex(findedXindex);
       }
     }
+
+    console.log(data);
+    console.log(findedYindex, findedXindex);
   }, [data, graphIdx]);
 
   // 새로운 Dropdown을 추가하는 함수
