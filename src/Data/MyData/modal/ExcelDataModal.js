@@ -17,6 +17,8 @@ import {
   Typography,
   TextField,
 } from '@mui/material';
+import { v4 as uuidv4 } from 'uuid'; // uuid 라이브러리에서 v4 임포트
+import { customAxios } from '../../../Common/CustomAxios'; // Axios import
 
 const ExcelDataModal = ({ open, handleClose, data }) => {
   const [dataTypes, setDataTypes] = useState(
@@ -33,7 +35,6 @@ const ExcelDataModal = ({ open, handleClose, data }) => {
 
   // 데이터 타입 변경 핸들러
   const handleDataTypeChange = (key, value) => {
-    // 숫자로 변경할 때 모든 값이 유효한 숫자인지 확인
     if (value === 'Numeric') {
       for (const row of data) {
         if (isNaN(row[key])) {
@@ -45,7 +46,6 @@ const ExcelDataModal = ({ open, handleClose, data }) => {
       }
     }
 
-    // 타입이 유효하면 상태 업데이트
     setDataTypes((prev) => ({
       ...prev,
       [key]: value,
@@ -69,10 +69,7 @@ const ExcelDataModal = ({ open, handleClose, data }) => {
   const handleCellSave = (key) => {
     if (dataTypes[key] === 'Numeric' && isNaN(editedValue)) {
       alert(`"${key}" 열에 비숫자 값이 존재합니다.`);
-      // 올바르지 않은 값일 경우 원래 값으로 되돌리기
-      data[editedRowIndex][key] = originalValue;
-      setEditingCell(null); // 편집 모드 종료
-      setEditedRowIndex(null); // 편집 중인 행 인덱스 초기화
+      data[editedRowIndex][key] = originalValue; // 원래 값으로 되돌리기
       return; // 숫자 형식이 아닌 값이 있는 경우 종료
     }
 
@@ -83,9 +80,16 @@ const ExcelDataModal = ({ open, handleClose, data }) => {
   };
 
   // 저장하기 버튼 클릭 시 실행되는 함수
-  const handleSave = () => {
+  const handleSave = async () => {
     const jsonData = data.map((row) => {
-      const newRow = {};
+      const newRow = {
+        dataUUID: uuidv4(), // UUID 생성
+        saveDate: new Date().toISOString(), // 현재 날짜
+        memo: null, // 메모 기본값 null
+        dataLabel: 'CUSTOM', // 기본 데이터 라벨
+        userName: localStorage.getItem('username'),
+      };
+
       for (const key in row) {
         newRow[key] =
           dataTypes[key] === 'Numeric' ? Number(row[key]) : String(row[key]); // Categorical일 경우 문자열로 변환
@@ -93,8 +97,18 @@ const ExcelDataModal = ({ open, handleClose, data }) => {
       return newRow;
     });
 
-    console.log(JSON.stringify(jsonData, null, 2)); // JSON 형식으로 출력
-    handleClose(); // 모달 닫기
+    console.log('저장 요청할 것 : ' + JSON.stringify(jsonData, null, 2));
+
+    // Axios 요청
+    // await customAxios
+    //   .post('/your/api/endpoint', jsonData) // API 엔드포인트를 적절하게 수정하세요
+    //   .then((response) => {
+    //     console.log('데이터가 성공적으로 저장되었습니다:', response.data);
+    //     handleClose(); // 모달 닫기
+    //   })
+    //   .catch((error) => {
+    //     console.error('데이터 저장 중 오류 발생:', error);
+    //   });
   };
 
   return (
