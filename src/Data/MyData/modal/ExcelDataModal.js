@@ -15,6 +15,7 @@ import {
   FormControl,
   InputLabel,
   Typography,
+  TextField,
 } from '@mui/material';
 
 const ExcelDataModal = ({ open, handleClose, data }) => {
@@ -25,12 +26,60 @@ const ExcelDataModal = ({ open, handleClose, data }) => {
     }, {}),
   );
 
+  const [editingCell, setEditingCell] = useState(null);
+  const [editedValue, setEditedValue] = useState('');
+  const [editedRowIndex, setEditedRowIndex] = useState(null); // 어떤 행을 편집하는지 추적
+  const [originalValue, setOriginalValue] = useState(''); // 원래 값 저장
+
   // 데이터 타입 변경 핸들러
   const handleDataTypeChange = (key, value) => {
+    // 숫자로 변경할 때 모든 값이 유효한 숫자인지 확인
+    if (value === 'Numeric') {
+      for (const row of data) {
+        if (isNaN(row[key])) {
+          alert(
+            `"${key}" 열의 값 중 비숫자 값이 존재합니다. "${row[key]}"는 유효하지 않습니다.`,
+          );
+          return; // 유효하지 않은 값이 있는 경우 변경을 거부
+        }
+      }
+    }
+
+    // 타입이 유효하면 상태 업데이트
     setDataTypes((prev) => ({
       ...prev,
       [key]: value,
     }));
+  };
+
+  // 셀 클릭 시 편집 상태로 전환
+  const handleCellClick = (key, value, rowIndex) => {
+    setEditingCell(key);
+    setOriginalValue(value); // 현재 값을 원래 값으로 저장
+    setEditedValue(value); // 현재 값을 편집 필드에 설정
+    setEditedRowIndex(rowIndex); // 편집 중인 행의 인덱스를 설정
+  };
+
+  // 수정된 값 저장
+  const handleValueChange = (e) => {
+    setEditedValue(e.target.value);
+  };
+
+  // 수정 완료
+  const handleCellSave = (key) => {
+    if (dataTypes[key] === 'Numeric' && isNaN(editedValue)) {
+      alert(`"${key}" 열에 비숫자 값이 존재합니다.`);
+      // 올바르지 않은 값일 경우 원래 값으로 되돌리기
+      data[editedRowIndex][key] = originalValue;
+      setEditingCell(null); // 편집 모드 종료
+      setEditedRowIndex(null); // 편집 중인 행 인덱스 초기화
+      return; // 숫자 형식이 아닌 값이 있는 경우 종료
+    }
+
+    // 기존 데이터 수정
+    data[editedRowIndex][key] = editedValue; // 수정된 값으로 업데이트
+    setEditingCell(null); // 편집 모드 종료
+    setEditedRowIndex(null); // 편집 중인 행 인덱스 초기화
   };
 
   // 저장하기 버튼 클릭 시 실행되는 함수
@@ -38,10 +87,6 @@ const ExcelDataModal = ({ open, handleClose, data }) => {
     const jsonData = data.map((row) => {
       const newRow = {};
       for (const key in row) {
-        if (dataTypes[key] === 'Numeric' && isNaN(row[key])) {
-          alert(`"${key}" 열에 비숫자 값이 존재합니다.`);
-          return; // 숫자 형식이 아닌 값이 있는 경우 종료
-        }
         newRow[key] =
           dataTypes[key] === 'Numeric' ? Number(row[key]) : String(row[key]); // Categorical일 경우 문자열로 변환
       }
@@ -49,7 +94,7 @@ const ExcelDataModal = ({ open, handleClose, data }) => {
     });
 
     console.log(JSON.stringify(jsonData, null, 2)); // JSON 형식으로 출력
-    // handleClose(); // 모달 닫기
+    handleClose(); // 모달 닫기
   };
 
   return (
@@ -103,11 +148,29 @@ const ExcelDataModal = ({ open, handleClose, data }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {data.map((row, index) => (
-                <TableRow key={index}>
-                  {Object.values(row).map((value, idx) => (
-                    <TableCell key={idx} align="center">
-                      {value}
+              {data.map((row, rowIndex) => (
+                <TableRow key={rowIndex}>
+                  {Object.keys(row).map((key) => (
+                    <TableCell
+                      key={key}
+                      align="center"
+                      onClick={() => handleCellClick(key, row[key], rowIndex)} // 클릭 시 편집 모드로 전환
+                    >
+                      {editingCell === key && editedRowIndex === rowIndex ? (
+                        <TextField
+                          value={editedValue}
+                          onChange={handleValueChange}
+                          onBlur={() => handleCellSave(key)} // 블러 시 저장
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              handleCellSave(key); // 엔터키로 저장
+                            }
+                          }}
+                          autoFocus
+                        />
+                      ) : (
+                        row[key]
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
