@@ -30,10 +30,13 @@ const MyLectureList = ({ cards, handleOpenModal }) => {
       filtered = filtered.filter((card) => card.gradeLabel === selectedGrade);
     }
 
+    // 주제 필터 (입력한 텍스트가 포함된 카드 필터링)
     if (selectedSubject) {
-      filtered = filtered.filter((card) =>
-        card.subjectLabel.toLowerCase().includes(selectedSubject.toLowerCase()),
-      );
+      filtered = filtered.filter((card) => {
+        const subjectTitle = card.title.toLowerCase();
+        const searchTerm = selectedSubject.toLowerCase();
+        return subjectTitle.includes(searchTerm); // 영어 및 한국어 필터링
+      });
     }
 
     setFilteredCards(filtered);
