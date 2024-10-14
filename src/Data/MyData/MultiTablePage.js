@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Button, IconButton, Typography } from '@mui/material';
+import { Container, Button, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import LectureCard from './LectureCard'; // 분리된 카드 컴포넌트
-import TextDataCardModal from './modal/TextDataCardModal'; // 분리된 모달 컴포넌트
+import MyLectureList from './MyLectureList'; // 필터와 카드 리스트 컴포넌트
 import ExcelDataModal from './modal/ExcelDataModal'; // 분리된 엑셀 모달 컴포넌트
+import TextDataCardModal from './modal/TextDataCardModal'; // 분리된 텍스트 모달 컴포넌트
 import * as XLSX from 'xlsx';
 import { customAxios } from '../../Common/CustomAxios';
 
@@ -13,10 +11,9 @@ const MultiTablePage = () => {
   const navigate = useNavigate();
   const [excelData, setExcelData] = useState([]);
   const [excelModalOpen, setExcelModalOpen] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedCard, setSelectedCard] = useState(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [cards, setCards] = useState([]); // cards 상태 변경
+  const [cards, setCards] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false); // 모달 상태 추가
+  const [selectedCard, setSelectedCard] = useState(null); // 선택된 카드 상태 추가
 
   // 엑셀 파일 업로드 및 데이터 읽기
   const handleExcelUpload = (event) => {
@@ -41,30 +38,14 @@ const MultiTablePage = () => {
     setExcelData([]); // 모달을 닫을 때 excelData 초기화
   };
 
-  // 모달 열기/닫기
-  const handleOpenModal = (card) => {
-    setSelectedCard(card);
-    setModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setModalOpen(false);
-    setSelectedCard(null);
-  };
-
   // 서버에서 전체 카드 데이터를 가져오기 위한 useEffect
   useEffect(() => {
-    // 데이터 로드 함수
     const fetchCards = async () => {
       try {
         const response = await customAxios.get(
           '/api/data-in-textbooks/getAllRecords',
         ); // API 엔드포인트 호출
         setCards(response.data); // 받아온 데이터를 cards 상태에 저장
-
-        console.log(
-          '들어온 카드 데이터 확인 : ' + JSON.stringify(response.data, null, 2),
-        );
       } catch (error) {
         console.error('Error fetching cards:', error);
       }
@@ -73,17 +54,16 @@ const MultiTablePage = () => {
     fetchCards(); // 컴포넌트가 마운트될 때 데이터 로드
   }, []);
 
-  // 카드 슬라이드
-  const nextCard = () => {
-    if (currentIndex < cards.length - 3) {
-      setCurrentIndex((prevIndex) => prevIndex + 1);
-    }
+  // 모달 열기
+  const handleOpenModal = (card) => {
+    setSelectedCard(card);
+    setModalOpen(true);
   };
 
-  const prevCard = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex((prevIndex) => prevIndex - 1);
-    }
+  // 모달 닫기
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setSelectedCard(null);
   };
 
   return (
@@ -119,10 +99,10 @@ const MultiTablePage = () => {
               flex: '1',
               marginRight: '10px',
               fontSize: '1.5rem',
-              backgroundColor: '#E6E6FA', // 연보라색 배경색
-              color: '#000', // 텍스트 색상
+              backgroundColor: '#E6E6FA',
+              color: '#000',
               '&:hover': {
-                backgroundColor: '#D8BFD8', // 호버 시 조금 더 진한 연보라색
+                backgroundColor: '#D8BFD8',
               },
             }}
             component="label"
@@ -146,10 +126,10 @@ const MultiTablePage = () => {
               flex: '1',
               marginRight: '10px',
               fontSize: '1.5rem',
-              backgroundColor: '#E6E6FA', // 연보라색 배경색
-              color: '#000', // 텍스트 색상
+              backgroundColor: '#E6E6FA',
+              color: '#000',
               '&:hover': {
-                backgroundColor: '#D8BFD8', // 호버 시 조금 더 진한 연보라색
+                backgroundColor: '#D8BFD8',
               },
             }}
             onClick={() => navigate('/openAPI')}
@@ -164,10 +144,10 @@ const MultiTablePage = () => {
               height: '100px',
               flex: '1',
               fontSize: '1.5rem',
-              backgroundColor: '#E6E6FA', // 연보라색 배경색
-              color: '#000', // 텍스트 색상
+              backgroundColor: '#E6E6FA',
+              color: '#000',
               '&:hover': {
-                backgroundColor: '#D8BFD8', // 호버 시 조금 더 진한 연보라색
+                backgroundColor: '#D8BFD8',
               },
             }}
             onClick={() => navigate('/socket')}
@@ -177,7 +157,7 @@ const MultiTablePage = () => {
         </div>
       </div>
 
-      {/* 두 번째 섹션: 카드 목록 */}
+      {/* 두 번째 섹션: MyLectureList로 카드 리스트 표시 */}
       <div
         style={{
           backgroundColor: '#f7f7f7',
@@ -191,42 +171,8 @@ const MultiTablePage = () => {
           </Typography>
         </div>
 
-        {/* 슬라이드 화살표 및 카드 목록 */}
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton onClick={prevCard} disabled={currentIndex === 0}>
-            <ArrowBackIosIcon />
-          </IconButton>
-
-          <div
-            style={{
-              display: 'flex',
-              overflow: 'hidden',
-              flex: '1',
-              padding: '0 10px',
-              height: '280px',
-            }}
-          >
-            {cards.slice(currentIndex, currentIndex + 3).map((card, index) => (
-              <div
-                style={{
-                  flex: '1',
-                  minWidth: 'calc(33.33% - 10px)',
-                  marginRight: index !== 2 ? '10px' : '0',
-                }}
-                key={index}
-              >
-                <LectureCard card={card} handleOpenModal={handleOpenModal} />
-              </div>
-            ))}
-          </div>
-
-          <IconButton
-            onClick={nextCard}
-            disabled={currentIndex >= cards.length - 3}
-          >
-            <ArrowForwardIosIcon />
-          </IconButton>
-        </div>
+        {/* 필터링과 카드 리스트를 렌더링 */}
+        <MyLectureList cards={cards} handleOpenModal={handleOpenModal} />
       </div>
 
       {/* Excel 데이터 모달 */}

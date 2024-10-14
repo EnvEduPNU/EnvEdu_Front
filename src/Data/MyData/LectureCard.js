@@ -13,7 +13,6 @@ import CloseIcon from '@mui/icons-material/Close';
 const LectureCard = ({ card, handleOpenModal }) => {
   return (
     <Card
-      onClick={() => handleOpenModal(card)}
       sx={{
         cursor: 'pointer',
         position: 'relative',
@@ -110,29 +109,29 @@ const LectureCard = ({ card, handleOpenModal }) => {
             },
           }}
         >
-          {/* 교과서 태그 */}
+          {/* 데이터타입 태그 */}
           <Chip
             label={card.dataTypeLabel}
             sx={{
-              backgroundColor: '#FFCDD2', // 교과서 태그 색상
+              backgroundColor: '#FFCDD2',
               color: '#B71C1C',
               flexShrink: 0, // 태그가 수평 스크롤시 줄어들지 않도록 설정
             }}
           />
-          {/* 중등1 태그 */}
+          {/* 학년 태그 */}
           <Chip
             label={card.gradeLabel}
             sx={{
-              backgroundColor: '#C5E1A5', // 중등1 태그 색상
+              backgroundColor: '#C5E1A5',
               color: '#33691E',
               flexShrink: 0, // 태그가 수평 스크롤시 줄어들지 않도록 설정
             }}
           />
-          {/* 공통 태그 */}
+          {/* 주제 태그 */}
           <Chip
             label={card.subjectLabel}
             sx={{
-              backgroundColor: '#BBDEFB', // 공통 태그 색상
+              backgroundColor: '#BBDEFB',
               color: '#0D47A1',
               flexShrink: 0, // 태그가 수평 스크롤시 줄어들지 않도록 설정
             }}
