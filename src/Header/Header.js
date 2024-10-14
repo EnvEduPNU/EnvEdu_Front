@@ -181,7 +181,7 @@ function Header() {
                             Open API Data
                           </Nav.Link>
                           <Nav.Link
-                            onClick={() => handleNavLinkClick('/resource')}
+                            onClick={() => handleNavLinkClick('/resources')}
                           >
                             Education Resources
                           </Nav.Link>

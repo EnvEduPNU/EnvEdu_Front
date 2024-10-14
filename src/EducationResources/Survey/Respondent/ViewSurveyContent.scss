@@ -1,0 +1,36 @@
+.view-survey-content {
+    .invite-code {
+        background-color: #f1f1f1;
+        padding: 1rem;
+        margin-bottom: 2rem;
+        border-radius: 0.625rem;
+
+        &:focus-within {
+            transition: 0.05s;
+            border-left: 7px solid #aaaaaa;
+        }
+
+        span {
+            font-weight: bold;
+        }
+
+        .invite-code-input {
+            border-radius: 0.3125rem;
+            border: 1px solid #b2b2b2;
+            outline: none;
+            padding: 0.5rem;
+            width: 15rem;
+        }
+    }
+    
+    .upload-btn {
+        font-family: "Poppins";
+        border: none;
+        color: white;
+        background-color: rgb(94, 44, 237);
+        border-radius: 0.625rem;
+        width: 7rem;
+        height: 2.5rem;
+        margin-left: 0.25rem;
+    }
+}
