@@ -70,14 +70,14 @@ function TableOrGraph({ dataCategory }) {
             </div>
           )}
 
-          <div style={{ display: 'flex', flexDirection: 'row' }}>
-            <PublicDataButton buttonName={'공공데이터 가져오기'} />
-            <SEEdAppButton buttonName={'SEEd 측정하기'} />
-            <TableChangeButton
+          {/* <div style={{ display: 'flex', flexDirection: 'row' }}> */}
+          {/* <PublicDataButton buttonName={'공공데이터 가져오기'} />
+            <SEEdAppButton buttonName={'SEEd 측정하기'} /> */}
+          {/* <TableChangeButton
               buttonName={'테이블 저장하기'}
               setTableSaveClick={setTableSaveClick}
             />
-          </div>
+          </div> */}
         </Styled.CustomTableWrapper>
       )}
       {tab === 'graph' && (
