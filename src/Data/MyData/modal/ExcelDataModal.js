@@ -22,7 +22,7 @@ import { customAxios } from '../../../Common/CustomAxios'; // Axios import
 
 const ExcelDataModal = ({ open, handleClose, data }) => {
   const [dataTypes, setDataTypes] = useState(
-    Object.keys(data[0]).reduce((acc, key) => {
+    Object.keys(data[0]).reduce((acc, key, index) => {
       acc[key] = 'Categoric'; // 기본값은 Categorical로 설정
       return acc;
     }, {}),
@@ -81,34 +81,78 @@ const ExcelDataModal = ({ open, handleClose, data }) => {
 
   // 저장하기 버튼 클릭 시 실행되는 함수
   const handleSave = async () => {
-    const jsonData = data.map((row) => {
-      const newRow = {
-        dataUUID: uuidv4(), // UUID 생성
-        saveDate: new Date().toISOString(), // 현재 날짜
-        memo: null, // 메모 기본값 null
-        dataLabel: 'CUSTOM', // 기본 데이터 라벨
-        userName: localStorage.getItem('username'),
-      };
+    const numericFieldsList = [];
+    const stringFieldsList = [];
+
+    // 각 열의 순서를 기록할 index
+    let columnIndex = 0;
+
+    console.log('엑셀 데이터 확인 : ' + JSON.stringify(data.null, 2));
+
+    data.forEach((row) => {
+      const numericFields = {};
+      const stringFields = {};
 
       for (const key in row) {
-        newRow[key] =
-          dataTypes[key] === 'Numeric' ? Number(row[key]) : String(row[key]); // Categorical일 경우 문자열로 변환
+        // 고정된 필드는 처리하지 않고 동적 필드만 처리
+        if (
+          key !== 'dataUUID' &&
+          key !== 'saveDate' &&
+          key !== 'memo' &&
+          key !== 'dataLabel' &&
+          key !== 'userName'
+        ) {
+          // 헤더에서 설정한 데이터 타입에 따라 저장할 필드 분리
+          if (dataTypes[key] === 'Numeric') {
+            // Numeric으로 설정된 필드는 숫자로 변환하여 numericFields에 저장
+            numericFields[key] = {
+              value: Number(row[key]), // 실제 값
+              order: columnIndex, // 순서
+            };
+          } else {
+            // Categoric으로 설정된 필드는 문자열로 변환하여 stringFields에 저장
+            stringFields[key] = {
+              value: String(row[key]), // 실제 값
+              order: columnIndex, // 순서
+            };
+          }
+          columnIndex += 1; // 순서를 증가시킴
+        }
       }
-      return newRow;
+
+      // 각 행의 필드를 List에 추가
+      if (Object.keys(numericFields).length > 0) {
+        numericFieldsList.push(numericFields);
+      }
+      if (Object.keys(stringFields).length > 0) {
+        stringFieldsList.push(stringFields);
+      }
     });
 
-    console.log('저장 요청할 것 : ' + JSON.stringify(jsonData, null, 2));
+    const jsonData = {
+      dataUUID: uuidv4(), // UUID 생성
+      saveDate: new Date().toISOString(), // 현재 날짜
+      memo: null, // 메모 기본값 null
+      dataLabel: 'CUSTOM', // 기본 데이터 라벨
+      userName: localStorage.getItem('username'),
+      numericFields: numericFieldsList, // 모든 row의 numericFields를 담은 리스트
+      stringFields: stringFieldsList, // 모든 row의 stringFields를 담은 리스트
+    };
+    console.log('저장 요청할 데이터:', JSON.stringify(jsonData, null, 2));
 
-    // Axios 요청
-    // await customAxios
-    //   .post('/your/api/endpoint', jsonData) // API 엔드포인트를 적절하게 수정하세요
-    //   .then((response) => {
-    //     console.log('데이터가 성공적으로 저장되었습니다:', response.data);
-    //     handleClose(); // 모달 닫기
-    //   })
-    //   .catch((error) => {
-    //     console.error('데이터 저장 중 오류 발생:', error);
-    //   });
+    try {
+      // Axios 요청 - API 엔드포인트를 적절히 수정하세요
+      const response = await customAxios.post('/api/custom/save', jsonData);
+
+      console.log('데이터가 성공적으로 저장되었습니다:', response.data);
+
+      // handleClose(); // 모달 닫기
+      // alert('저장완료!');
+      // window.location.reload();
+    } catch (error) {
+      console.error('데이터 저장 중 오류 발생:', error);
+      // 추가적인 에러 처리가 필요한 경우 여기에 작성
+    }
   };
 
   return (
@@ -132,7 +176,7 @@ const ExcelDataModal = ({ open, handleClose, data }) => {
           <Table>
             <TableHead>
               <TableRow>
-                {Object.keys(data[0]).map((key) => (
+                {Object.keys(data[0]).map((key, index) => (
                   <TableCell
                     key={key}
                     align="center"
@@ -156,6 +200,7 @@ const ExcelDataModal = ({ open, handleClose, data }) => {
                     </FormControl>
                     <Typography variant="body1" sx={{ margin: '20px 0 0 0' }}>
                       {key}
+                      {/* 필드 순서 표시 */}
                     </Typography>
                   </TableCell>
                 ))}

@@ -31,10 +31,22 @@ const MyDataSummaryTable = ({ summary, getTable }) => {
   };
 
   // 삭제 요청 메서드
-  const handleDelete = (id) => {
+  const handleDelete = (id, type) => {
     if (window.confirm('이 항목을 삭제하시겠습니까?')) {
+      let deleteUrl = '';
+
+      if (type === '커스텀 데이터') {
+        // 커스텀 데이터일 경우
+        deleteUrl = `/api/custom/${id}`;
+
+        console.log('커스텀데이터로 설정');
+      } else {
+        // 일반 데이터일 경우
+        deleteUrl = `/api/data/${id}`;
+      }
+
       customAxios
-        .delete(`/api/data/${id}`)
+        .delete(deleteUrl)
         .then((response) => {
           alert('데이터가 성공적으로 삭제되었습니다.');
           window.location.reload();
@@ -311,7 +323,14 @@ const MyDataSummaryTable = ({ summary, getTable }) => {
                   <IconButton
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleDelete(item.id);
+                      if (item.dataLabel === '커스텀 데이터') {
+                        handleDelete(item.dataUUID, item.dataLabel);
+                        // console.log(
+                        //   '삭제 객체 확인 : ' + JSON.stringify(item, null, 2),
+                        // );
+                      } else {
+                        // handleDelete(item.id);
+                      }
                     }}
                     aria-label="delete item"
                   >

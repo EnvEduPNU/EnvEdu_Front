@@ -24,11 +24,12 @@ const MyData = () => {
   }, []);
 
   useEffect(() => {
-    if (!isLoading) {
-      customAxios
-        .get('/mydata/list')
-        .then((res) => {
-          const formattedData = res.data.map((data) => ({
+    const fetchData = async () => {
+      try {
+        if (!isLoading) {
+          // 첫 번째 요청
+          const myDataResponse = await customAxios.get('/mydata/list');
+          const myDataFormatted = myDataResponse.data.map((data) => ({
             ...data,
             saveDate: data.saveDate.split('T')[0],
             dataLabel:
@@ -38,10 +39,27 @@ const MyData = () => {
                 ? '수질 데이터'
                 : data.dataLabel,
           }));
-          setSummary(formattedData);
-        })
-        .catch((err) => console.log(err));
-    }
+
+          // 두 번째 요청
+          const customDataResponse = await customAxios.get('/api/custom/list');
+          const customDataFormatted = customDataResponse.data.map((data) => ({
+            ...data,
+            saveDate: data.saveDate.split('T')[0],
+            dataLabel:
+              data.dataLabel === 'CUSTOM' ? '커스텀 데이터' : data.dataLabel,
+            dynamicFields: data.dynamicFields || {},
+          }));
+
+          // 두 데이터를 결합하여 상태 업데이트
+          const combinedData = [...myDataFormatted, ...customDataFormatted];
+          setSummary(combinedData);
+        }
+      } catch (error) {
+        console.error('데이터 가져오기 중 오류:', error);
+      }
+    };
+
+    fetchData();
   }, [isLoading]);
 
   const getTable = (type, id) => {
