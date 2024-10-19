@@ -130,13 +130,13 @@ function ComboGraph() {
 
   useEffect(() => {
     // if (selectedYVariableIndexs.length === 3) setYScaleMinMaxValue([0, 1000]);
-    let isPostive = true;
-    let isNegitive = true;
+    let isPostive = false;
+    let isNegitive = false;
     let maxValue = -Infinity;
     let minValue = Infinity;
 
-    let is2Postive = true;
-    let is2Negitive = true;
+    let is2Postive = false;
+    let is2Negitive = false;
     let max2Value = -Infinity;
     let min2Value = Infinity;
 
@@ -144,8 +144,8 @@ function ComboGraph() {
     for (let i = 0; i < selectedYVariableIndexs.length; i++) {
       const selctedYVariableIndex = selectedYVariableIndexs[i];
       for (let j = 1; j < data.length; j++) {
-        if (data[j][selctedYVariableIndex] < 0) {
-          isPostive = false;
+        if (data[j][selctedYVariableIndex] > 0) {
+          isPostive = true;
         }
         maxValue = Math.max(maxValue, data[j][selctedYVariableIndex]);
         minValue = Math.min(minValue, data[j][selctedYVariableIndex]);
@@ -156,40 +156,64 @@ function ComboGraph() {
     for (let i = 0; i < selectedYVariableIndexs.length; i++) {
       const selctedYVariableIndex = selectedYVariableIndexs[i];
       for (let j = 1; j < data.length; j++) {
-        if (data[j][selctedYVariableIndex] > 0) {
-          isNegitive = false;
+        if (data[j][selctedYVariableIndex] < 0) {
+          isNegitive = true;
           break;
         }
-        if (isNegitive === false) break;
+        if (isNegitive === true) break;
       }
     }
 
     if (isPostive && isNegitive) {
       // 양수, 음수 다 있을 때
       setYScaleMinMaxValue([
-        Math.ceil(Math.floor(minValue) / 10) * 10,
-        Math.ceil(Math.ceil(maxValue) / 10) * 10,
+        Math.ceil(minValue / Math.pow(10, minValue.toString().length - 1)) *
+          Math.pow(10, minValue.toString().length - 1),
+        Math.ceil(maxValue / Math.pow(10, maxValue.toString().length - 1)) *
+          Math.pow(10, maxValue.toString().length - 1),
       ]);
       setYScaleValue([
-        Math.ceil(Math.floor(minValue) / 10) * 10,
-        Math.ceil(Math.ceil(maxValue) / 10) * 10,
+        Math.ceil(minValue / Math.pow(10, minValue.toString().length - 1)) *
+          Math.pow(10, minValue.toString().length - 1),
+        Math.ceil(maxValue / Math.pow(10, maxValue.toString().length - 1)) *
+          Math.pow(10, maxValue.toString().length - 1),
       ]);
     } else if (isPostive) {
       // 양수만 있을 때
-      setYScaleMinMaxValue([0, Math.ceil(Math.ceil(maxValue) / 10) * 10]);
-      setYScaleValue([0, Math.ceil(Math.ceil(maxValue) / 10) * 10]);
+      setYScaleMinMaxValue([
+        0,
+        Math.ceil(
+          minValue / Math.pow(10, minValue.toString().split('.')[0].length - 1),
+        ) * Math.pow(10, minValue.toString().split('.')[0].length - 1),
+      ]);
+      setYScaleValue([
+        0,
+        Math.ceil(
+          maxValue / Math.pow(10, maxValue.toString().split('.')[0].length - 1),
+        ) * Math.pow(10, maxValue.toString().split('.')[0].length - 1),
+      ]);
     } else if (isNegitive) {
       // 음수만 있을 때
-      setYScaleMinMaxValue([Math.ceil(Math.floor(minValue) / 10) * 10, 0]);
-      setYScaleValue([Math.ceil(Math.floor(minValue) / 10) * 10, 0]);
+      setYScaleMinMaxValue([
+        Math.ceil(
+          minValue / Math.pow(10, minValue.toString().split('.')[0].length - 1),
+        ) * Math.pow(10, minValue.toString().split('.')[0].length - 1),
+        0,
+      ]);
+      setYScaleValue([
+        Math.ceil(
+          minValue / Math.pow(10, minValue.toString().split('.')[0].length - 1),
+        ) * Math.pow(10, minValue.toString().split('.')[0].length - 1),
+        0,
+      ]);
     }
 
     // 양수 인지 아닌지 판단
     for (let i = 0; i < selectedMoreYVariableIndexs.length; i++) {
       const selctedY2VariableIndex = selectedMoreYVariableIndexs[i];
       for (let j = 1; j < data.length; j++) {
-        if (data[j][selctedY2VariableIndex] < 0) {
-          is2Postive = false;
+        if (data[j][selctedY2VariableIndex] > 0) {
+          is2Postive = true;
         }
         max2Value = Math.max(max2Value, data[j][selctedY2VariableIndex]);
         min2Value = Math.min(min2Value, data[j][selctedY2VariableIndex]);
@@ -200,32 +224,60 @@ function ComboGraph() {
     for (let i = 0; i < selectedMoreYVariableIndexs.length; i++) {
       const selctedY2VariableIndex = selectedMoreYVariableIndexs[i];
       for (let j = 1; j < data.length; j++) {
-        if (data[j][selctedY2VariableIndex] > 0) {
-          is2Negitive = false;
+        if (data[j][selctedY2VariableIndex] < 0) {
+          is2Negitive = true;
           break;
         }
-        if (is2Negitive === false) break;
+        if (is2Negitive === true) break;
       }
     }
 
     if (is2Postive && is2Negitive) {
       // 양수, 음수 다 있을 때
       setY2ScaleMinMaxValue([
-        Math.ceil(Math.floor(min2Value) / 10) * 10,
-        Math.ceil(Math.ceil(max2Value) / 10) * 10,
+        Math.ceil(min2Value / Math.pow(10, min2Value.toString().length - 1)) *
+          Math.pow(10, min2Value.toString().length - 1),
+        Math.ceil(max2Value / Math.pow(10, max2Value.toString().length - 1)) *
+          Math.pow(10, max2Value.toString().length - 1),
       ]);
       setY2ScaleValue([
-        Math.ceil(Math.floor(min2Value) / 10) * 10,
-        Math.ceil(Math.ceil(max2Value) / 10) * 10,
+        Math.ceil(min2Value / Math.pow(10, min2Value.toString().length - 1)) *
+          Math.pow(10, min2Value.toString().length - 1),
+        Math.ceil(max2Value / Math.pow(10, max2Value.toString().length - 1)) *
+          Math.pow(10, max2Value.toString().length - 1),
       ]);
-    } else if (is2Postive) {
+    } else if (isPostive) {
       // 양수만 있을 때
-      setY2ScaleMinMaxValue([0, Math.ceil(Math.ceil(max2Value) / 10) * 10]);
-      setY2ScaleValue([0, Math.ceil(Math.ceil(max2Value) / 10) * 10]);
+      setY2ScaleMinMaxValue([
+        0,
+        Math.ceil(
+          min2Value /
+            Math.pow(10, min2Value.toString().split('.')[0].length - 1),
+        ) * Math.pow(10, min2Value.toString().split('.')[0].length - 1),
+      ]);
+      setY2ScaleValue([
+        0,
+        Math.ceil(
+          max2Value /
+            Math.pow(10, max2Value.toString().split('.')[0].length - 1),
+        ) * Math.pow(10, max2Value.toString().split('.')[0].length - 1),
+      ]);
     } else if (is2Negitive) {
       // 음수만 있을 때
-      setY2ScaleMinMaxValue([Math.ceil(Math.floor(min2Value) / 10) * 10, 0]);
-      setY2ScaleValue([Math.ceil(Math.floor(min2Value) / 10) * 10, 0]);
+      setY2ScaleMinMaxValue([
+        Math.ceil(
+          min2Value /
+            Math.pow(10, min2Value.toString().split('.')[0].length - 1),
+        ) * Math.pow(10, min2Value.toString().split('.')[0].length - 1),
+        0,
+      ]);
+      setY2ScaleValue([
+        Math.ceil(
+          min2Value /
+            Math.pow(10, min2Value.toString().split('.')[0].length - 1),
+        ) * Math.pow(10, min2Value.toString().split('.')[0].length - 1),
+        0,
+      ]);
     }
 
     setXScaleMinMaxValue([0, data.length - 2]);
@@ -233,28 +285,72 @@ function ComboGraph() {
   }, [graphIdx, selectedYVariableIndexs, selectedMoreYVariableIndexs]);
 
   // 초기 데이터 세팅
-  useEffect(() => {
-    if (!selectedYVariableIndexs.length) {
-      const firstYIndex = variables.findIndex(
-        (variable) => !variable.isSelected && variable.type === 'Numeric',
-      );
-      if (firstYIndex !== -1) addSelectedYVariableIndexs(firstYIndex);
-    }
+  // useEffect(() => {
+  //   if (!selectedYVariableIndexs.length) {
+  //     const firstYIndex = variables.findIndex(
+  //       (variable) => !variable.isSelected && variable.type === 'Numeric',
+  //     );
+  //     if (firstYIndex !== -1) addSelectedYVariableIndexs(firstYIndex);
+  //   }
 
-    if (!selectedMoreYVariableIndexs.length) {
+  //   if (!selectedMoreYVariableIndexs.length) {
+  //     const firstMoreYIndex = variables.findIndex(
+  //       (variable) => !variable.isMoreSelected && variable.type === 'Numeric',
+  //     );
+  //     if (firstMoreYIndex !== -1)
+  //       addSelectedMoreYVariableIndexs(firstMoreYIndex);
+  //   }
+
+  //   if (selctedXVariableIndex === -1) {
+  //     const firstXIndex = variables.findIndex(
+  //       (variable) => !variable.isSelected,
+  //     );
+  //     if (firstXIndex !== -1) selectXVariableIndex(firstXIndex);
+  //   }
+  // }, [data, graphIdx]);
+
+  // 초기 데이터 세팅
+  useEffect(() => {
+    let firstYIndex = -1;
+    let firstMoreYIndex = -1;
+    let findedXindex = -1;
+
+    if (selectedYVariableIndexs.length === 0) {
+      firstYIndex = variables.findIndex(
+        (variable) =>
+          variable.isSelected === false && variable.type === 'Numeric',
+      );
+      if (firstYIndex !== -1) {
+        addSelectedYVariableIndexs(firstYIndex);
+      }
+    }
+    console.log(firstYIndex);
+    if (!selectedMoreYVariableIndexs.length === 0) {
       const firstMoreYIndex = variables.findIndex(
-        (variable) => !variable.isMoreSelected && variable.type === 'Numeric',
+        (variable) =>
+          !variable.isMoreSelected &&
+          variable.type === 'Numeric' &&
+          firstYIndex !== variable.variableIndex,
       );
       if (firstMoreYIndex !== -1)
         addSelectedMoreYVariableIndexs(firstMoreYIndex);
     }
 
     if (selctedXVariableIndex === -1) {
-      const firstXIndex = variables.findIndex(
-        (variable) => !variable.isSelected,
+      findedXindex = variables.findIndex(
+        (variable) =>
+          variable.isSelected === false &&
+          firstYIndex !== variable.variableIndex &&
+          firstMoreYIndex !== variable.variableIndex,
       );
-      if (firstXIndex !== -1) selectXVariableIndex(firstXIndex);
+
+      if (findedXindex !== -1) {
+        selectXVariableIndex(findedXindex);
+      }
     }
+
+    console.log(data);
+    console.log(firstYIndex, findedXindex);
   }, [data, graphIdx]);
 
   // 차트 데이터 업데이트
@@ -430,6 +526,7 @@ function ComboGraph() {
             flexDirection: 'column',
             alignItems: 'center',
             gap: '10px',
+            marginTop: '20px',
           }}
         >
           {selectedYVariableIndexs.map((variableIndex) => (
@@ -536,6 +633,7 @@ function ComboGraph() {
             flexDirection: 'column',
             alignItems: 'center',
             gap: '10px',
+            marginTop: '20px',
           }}
         >
           {selectedMoreYVariableIndexs.map((variableIndex) => (

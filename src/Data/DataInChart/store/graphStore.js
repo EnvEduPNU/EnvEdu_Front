@@ -48,7 +48,7 @@ export const useGraphDataStore = create((set, get) => ({
               variableIndex: index,
             };
           }),
-          title: '',
+          title,
           selectedYVariableIndexs: [],
           selectedMoreYVariableIndexs: [],
           selctedXVariableIndex: -1,
