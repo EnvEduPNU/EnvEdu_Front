@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react';
 import TableOrGraph from '../../../Data/DataInChart/component/DrawGraph/TableOrGraph';
 import LeftSlidePage from '../../../Data/DataInChart/Page/leftSlidePage';
 import styled from '@emotion/styled';
+import { Button } from 'react-bootstrap';
 
 // 모달 배경 및 컨테이너 스타일 정의
 const ModalBackground = styled.div`
   position: fixed;
-  top: 0;
+  top: 100px;
   left: 0;
   width: 100%;
   height: 100%;
@@ -34,7 +35,7 @@ const StyledDiv = styled.div`
 `;
 
 // Data & Chart 메인 페이지
-function DataInChartModal({ isModalOpen }) {
+function DataInChartModal({ isModalOpen, setIsModalOpen }) {
   const [dataCategory, setDataCategory] = useState('');
   const [isLoading, setIsLoading] = useState(true); // 로딩 상태 추가
   const [localIsModalOpen, setLocalIsModalOpen] = useState(isModalOpen); // 모달 열고 닫기 상태 추가
@@ -53,10 +54,15 @@ function DataInChartModal({ isModalOpen }) {
 
   // dataCategory가 변경되면 스텝을 완료로 변경
   useEffect(() => {
+    console.log('스텝 설정 확인: ' + isStepComplete);
     if (dataCategory) {
       setIsStepComplete(true); // dataCategory가 설정되면 스텝 완료로 설정
     }
   }, [dataCategory]);
+
+  useEffect(() => {
+    console.log('스텝 설정 확인: ' + isStepComplete);
+  }, [isStepComplete]);
 
   // 로딩 중일 때는 로딩 화면을 보여줌
   if (isLoading) {
@@ -68,19 +74,36 @@ function DataInChartModal({ isModalOpen }) {
       {localIsModalOpen && (
         <ModalBackground>
           <ModalContainer>
-            <button onClick={() => setLocalIsModalOpen(false)}>닫기</button>
-
             <StyledDiv>
-              {/* 왼쪽 사이드 메뉴 */}
-              <LeftSlidePage setDataCategory={setDataCategory} />
-
               {/* 오른쪽 테이블 및 그래프 */}
               {isStepComplete ? (
-                <TableOrGraph dataCategory={dataCategory} />
+                <div>
+                  <Button
+                    onClick={() => {
+                      setIsStepComplete(false);
+                      setDataCategory('');
+                    }}
+                  >
+                    데이터 선택
+                  </Button>
+                  <TableOrGraph dataCategory={dataCategory} />
+                </div>
               ) : (
-                <div>카테고리를 선택해주세요</div>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <div>카테고리를 선택해주세요</div>
+                  <LeftSlidePage setDataCategory={setDataCategory} />
+                </div>
               )}
             </StyledDiv>
+
+            <button
+              onClick={() => {
+                setLocalIsModalOpen(false);
+                setIsModalOpen(false);
+              }}
+            >
+              닫기
+            </button>
           </ModalContainer>
         </ModalBackground>
       )}

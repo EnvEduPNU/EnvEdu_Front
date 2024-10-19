@@ -233,7 +233,7 @@ export const CreateLectureSourcePage = (props) => {
                 .tz('Asia/Seoul')
                 .format('YYYY-MM-DDTHH:mm:ssZ'),
               stepName: lectureName,
-              stepCount: stepCount - 1,
+              stepCount: stepCount,
               contents: contents.map((content) => ({
                 stepNum: content.stepNum,
                 contentName: content.contentName,

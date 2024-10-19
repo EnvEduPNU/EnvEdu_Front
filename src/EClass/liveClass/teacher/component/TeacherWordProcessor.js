@@ -19,6 +19,7 @@ import { useCreateLectureSourceStore } from '../../store/CreateLectureSourceStor
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import './TeacherWordProcessor.scss';
+import DataInChartModal from '../../dataInChartStep/DataInChartModal';
 
 Quill.register('modules/imageActions', ImageActions);
 Quill.register('modules/imageFormats', ImageFormats);
@@ -106,6 +107,8 @@ export default function TeacherWordProcessor({
 
   const [isUpdated, setIsUpdated] = useState(false); // 첫 번째 useEffect 완료 상태
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const quillRef = useRef(null);
 
   // 첫 번째 useEffect: stepperStepName 배열을 업데이트
@@ -141,25 +144,40 @@ export default function TeacherWordProcessor({
       console.log('step 넘버들: ' + stepNumbers);
       console.log('activeStep : ' + activeStep);
 
+      let stepData = null;
+
       // store에서 현재 activeStep에 해당하는 내용을 로드
       if (stepNumbers.includes(activeStep)) {
-        let stepData = null;
+        console.log('현재 스토어에 저장된 수업 자료 로드');
 
-        // if (stepperStepName !== undefined) {
-        //   stepperStepName.forEach((contentss) => {
-        //     if (contentss.stepNum === activeStep) {
-        //       stepData = contentss;
-        //     }
-        //   });
-        // }
+        // 현재 스토어에서 로드
         contents.forEach((contentss) => {
           if (contentss.stepNum === activeStep) {
             stepData = contentss;
           }
         });
 
-        console.log('처음 stepData : ' + JSON.stringify(stepData, null, 2));
+        console.log(
+          '스토어에서 불러온 stepData : ' + JSON.stringify(stepData, null, 2),
+        );
+      } else if (stepperStepName.length > 0) {
+        console.log('예전에 만들어 놓은 수업자료 로드');
 
+        // 이미 만들어진 수업 자료에서 로드
+        stepperStepName.forEach((contentss) => {
+          if (contentss.stepNum === activeStep) {
+            stepData = contentss;
+          }
+        });
+
+        console.log(
+          '이전 스텝 저장소에서 불러온 stepData : ' +
+            JSON.stringify(stepData, null, 2),
+        );
+      }
+
+      // stepData 가 존재할 경우 처리
+      if (stepData) {
         const contentsArray = Array.isArray(stepData.contents)
           ? stepData.contents
           : [stepData.contents];
@@ -185,7 +203,8 @@ export default function TeacherWordProcessor({
 
       setIsUpdated(false);
     }
-  }, [isUpdated, activeStep]); // isUpdated와 activeStep 변경 시 실행
+  }, [isUpdated, activeStep, contents, stepperStepName]);
+  // isUpdated와 activeStep 변경 시 실행
 
   const handleChange = (content, delta, source, editor) => {
     setValue(content);
@@ -252,6 +271,13 @@ export default function TeacherWordProcessor({
 
   const handleAddTextBox = () => {
     setLocalContents([...localContents, { type: 'textBox', content: '' }]); // 새로운 빈 텍스트 박스를 추가
+  };
+
+  const handleAddDataChart = () => {
+    setLocalContents([
+      ...localContents,
+      { type: 'dataInChartButton', content: '' },
+    ]); // 새로운 빈 텍스트 박스를 추가
   };
 
   const handleTextBoxChange = (index, event) => {
@@ -761,6 +787,14 @@ export default function TeacherWordProcessor({
               <DeleteIcon />
             </IconButton>
           </div>
+        ) : item.type === 'dataInChartButton' ? (
+          <>
+            <Button onClick={() => setIsModalOpen(true)}>그래프 그리기</Button>
+            <DataInChartModal
+              isModalOpen={isModalOpen}
+              setIsModalOpen={setIsModalOpen}
+            />
+          </>
         ) : null}
       </div>
     );
@@ -852,6 +886,15 @@ export default function TeacherWordProcessor({
               sx={{ margin: '20px 10px 0 0', width: '10rem' }}
             >
               답변 박스 추가
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              className="yellow-btn" // yellow-btn 클래스 적용
+              onClick={handleAddDataChart}
+              sx={{ margin: '20px 10px 0 0', width: '10rem' }}
+            >
+              그래프 그리기 버튼
             </Button>
           </div>
           <div
