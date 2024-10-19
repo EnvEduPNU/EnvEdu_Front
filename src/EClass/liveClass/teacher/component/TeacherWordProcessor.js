@@ -110,20 +110,20 @@ export default function TeacherWordProcessor({
 
   // 첫 번째 useEffect: stepperStepName 배열을 업데이트
   useEffect(() => {
-    if (stepperStepName && stepperStepName.length > 0) {
-      stepperStepName.forEach((step, index) => {
-        updateContent(index, step); // 각 step을 updateContent로 업데이트
-      });
+    // if (stepperStepName && stepperStepName.length > 0) {
+    //   stepperStepName.forEach((step, index) => {
+    //     updateContent(index, step); // 각 step을 updateContent로 업데이트
+    //   });
 
-      setIsUpdated(true); // 업데이트 완료 후 isUpdated를 true로 설정
-    }
-  }, [stepperStepName]);
+    setIsUpdated(true); // 업데이트 완료 후 isUpdated를 true로 설정
+    // }
+  }, []);
 
   useEffect(() => {
     if (stepperStepName && stepperStepName.length > 0) {
       setIsUpdated(true);
     }
-  }, [activeStep]);
+  }, [activeStep, stepperStepName]);
 
   // 두 번째 useEffect: isUpdated가 true일 때 실행
   useEffect(() => {
@@ -137,6 +137,7 @@ export default function TeacherWordProcessor({
 
       const stepNumbers = contents.map((contentss) => contentss.stepNum);
 
+      console.log('전체 스텝수: ' + stepCount);
       console.log('step 넘버들: ' + stepNumbers);
       console.log('activeStep : ' + activeStep);
 
@@ -144,19 +145,18 @@ export default function TeacherWordProcessor({
       if (stepNumbers.includes(activeStep)) {
         let stepData = null;
 
-        if (stepperStepName !== undefined) {
-          stepperStepName.forEach((contentss) => {
-            if (contentss.stepNum === activeStep) {
-              stepData = contentss;
-            }
-          });
-        } else {
-          contents.forEach((contentss) => {
-            if (contentss.stepNum === activeStep) {
-              stepData = contentss;
-            }
-          });
-        }
+        // if (stepperStepName !== undefined) {
+        //   stepperStepName.forEach((contentss) => {
+        //     if (contentss.stepNum === activeStep) {
+        //       stepData = contentss;
+        //     }
+        //   });
+        // }
+        contents.forEach((contentss) => {
+          if (contentss.stepNum === activeStep) {
+            stepData = contentss;
+          }
+        });
 
         console.log('처음 stepData : ' + JSON.stringify(stepData, null, 2));
 
@@ -464,12 +464,8 @@ export default function TeacherWordProcessor({
           stepData.contents.push(item);
         }
 
-        // item은 localContent것이고 stepData는 store에 저장할 content이다.
-        // 따라서 현재 localContent에 있는 것을 stepData에 옮겨주는 작업 필요
-        // 그런데 문제는 위의 deleteImage 부분에서 stepData에 모두 저장을 해주어 file이 존재할텐데
-        // 아래의 최종 저장 Data쪽에서 이미지가 안나온다.
         if (item.type === 'file') {
-          console.log('이미지 이름 나와야할텐데 : ' + item.content.name);
+          console.log('이미지 이름 : ' + item.content.name);
           stepData.contents.push(item);
         }
       }
@@ -493,7 +489,7 @@ export default function TeacherWordProcessor({
           updateContent(activeStep, stepData);
         }
 
-        alert('Step 업데이트 완료 activeStep : ' + activeStep);
+        alert('Step 업데이트 완료');
         console.log('업데이트된 데이터:', stepData);
       } else {
         addContent(stepData);
@@ -781,47 +777,53 @@ export default function TeacherWordProcessor({
   return (
     <DndProvider backend={HTML5Backend}>
       <Container>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            width: '70rem',
-            height: '36.5rem',
-          }}
-        >
-          {/* 왼쪽에 과제 만드는 미리보기란에 랜더링 되는 곳 */}
-          <Paper
+        {stepCount >= activeStep ? (
+          <div
             style={{
-              padding: 20,
-              width: '100%',
-              height: '100%',
-              boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
-              overflowY: 'auto',
+              display: 'flex',
+              flexDirection: 'row',
+              width: '70rem',
+              height: '36.5rem',
             }}
           >
-            {localContents.map((item, index) => (
-              <DraggableItem
-                key={index}
-                index={index}
-                item={item}
-                moveItem={moveItem}
-                handleDeleteContent={handleDeleteContent}
-                handleTextBoxChange={handleTextBoxChange}
-              />
-            ))}
-          </Paper>
+            {/* 왼쪽에 과제 만드는 미리보기란에 랜더링 되는 곳 */}
+            <Paper
+              style={{
+                padding: 20,
+                width: '100%',
+                height: '100%',
+                boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+                overflowY: 'auto',
+              }}
+            >
+              {localContents.map((item, index) => (
+                <DraggableItem
+                  key={index}
+                  index={index}
+                  item={item}
+                  moveItem={moveItem}
+                  handleDeleteContent={handleDeleteContent}
+                  handleTextBoxChange={handleTextBoxChange}
+                />
+              ))}
+            </Paper>
 
-          {/* 오른쪽 WordProcessor 편집창 */}
-          <ReactQuill
-            ref={quillRef}
-            value={value}
-            style={{ width: '55%', height: '88%', margin: '0 0 0 10px' }}
-            onChange={handleChange}
-            modules={modules}
-            formats={formats}
-            placeholder="내용을 입력하세요..."
-          />
-        </div>
+            {/* 오른쪽 WordProcessor 편집창 */}
+            <ReactQuill
+              ref={quillRef}
+              value={value}
+              style={{ width: '55%', height: '88%', margin: '0 0 0 10px' }}
+              onChange={handleChange}
+              modules={modules}
+              formats={formats}
+              placeholder="내용을 입력하세요..."
+            />
+          </div>
+        ) : (
+          <Typography>Finish 버튼으로 수업자료 생성을 완료하세요.</Typography>
+        )}
+
+        {/* 여기에 다 만들기 */}
         <div
           style={{
             display: 'flex',
@@ -842,7 +844,6 @@ export default function TeacherWordProcessor({
               summary={summary}
               onSelectData={handleSelectData}
             />
-
             <Button
               variant="contained"
               color="primary"

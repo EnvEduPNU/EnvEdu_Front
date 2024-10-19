@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Paper, TextField, Typography } from '@mui/material';
+import DataInChartModal from '../../dataInChartStep/DataInChartModal';
 
 // TeacherRenderAssign 컴포넌트는 데이터 배열을 받아 각 항목을 Paper에 렌더링합니다.
 function TeacherRenderAssign({ data }) {
@@ -81,7 +82,8 @@ function RenderContent({ content, onSubmitTextBox }) {
       // 여기서 content.content는 React 엘리먼트 트리로 구성된 객체이므로
       // renderElement를 사용하여 동적으로 렌더링.
       return <div>{renderElement(content.content)}</div>;
-
+    case 'dataInChartButton':
+      return <DataInChartModal />;
     case 'emptyBox':
       return (
         <div
