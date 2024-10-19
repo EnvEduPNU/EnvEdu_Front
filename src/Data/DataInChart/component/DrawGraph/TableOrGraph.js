@@ -1,21 +1,23 @@
-import { Typography } from "@mui/material";
-import { useTabStore } from "../../store/tabStore";
-import CustomTable from "../CustomTable/CustomTable";
-import CustomTableHeader from "../CustomTable/CustomTableHeader/CustomTableHeader";
+import { Typography } from '@mui/material';
+import { useTabStore } from '../../store/tabStore';
+import CustomTable from '../CustomTable/CustomTable';
+import CustomTableHeader from '../CustomTable/CustomTableHeader/CustomTableHeader';
 
-import GraphAndEditor from "../GraphAndEditor/GraphAndEditor";
-import PublicDataButton from "./PublicDataButton";
-import SEEdAppButton from "./SEEdAppButton";
-import * as Styled from "./Styled";
-import { useEffect, useState } from "react";
+import GraphAndEditor from '../GraphAndEditor/GraphAndEditor';
+import PublicDataButton from './PublicDataButton';
+import SEEdAppButton from './SEEdAppButton';
+import * as Styled from './Styled';
+import { useEffect, useState } from 'react';
 
-import GraphSelector from "../GraphSelector/GraphSelector";
-import PdfButton from "./PdfButton";
-import GraphSaveButton from "./GraphSaveButton";
-import TableChangeButton from "./TableChangeButton";
-import ExpertCustomTable from "../common/ExpertCustomTable";
-import ExpertCustomTableHeader from "../CustomTable/ExpertCustomTableHeader";
-import ExpertCustomGraph from "./ExpertCustomGraph";
+import GraphSelector from '../GraphSelector/GraphSelector';
+import PdfButton from './PdfButton';
+import GraphSaveButton from './GraphSaveButton';
+import TableChangeButton from './TableChangeButton';
+import ExpertCustomTable from '../common/ExpertCustomTable';
+
+import ExpertCustomGraph from './ExpertCustomGraph';
+import ExpertCustomGraphHeader from './ExpertCustomGraphHeader';
+import Header from '../Header/Header';
 
 // 테이블 아니면 그래프 선택하는 탭 컴포넌트
 function TableOrGraph({ dataCategory }) {
@@ -42,45 +44,66 @@ function TableOrGraph({ dataCategory }) {
 
   return (
     <Styled.Wrapper>
-      <Typography sx={{ fontSize: "3vh" }}>Data&Chart</Typography>
+      <div style={{ fontSize: '3vh', fontWeight: 'bold', marginLeft: '48px' }}>
+        Data&Chart
+      </div>
 
-      {tab === "table" && (
+      {tab === 'table' && (
         <Styled.CustomTableWrapper>
-          {dataCategory === "MyData" && (
+          {dataCategory === 'MyData' && (
             <CustomTable tableSaveClick={tableSaveClick} />
           )}
 
-          {dataCategory === "ExpertData" && <ExpertCustomTable />}
+          {dataCategory === 'ExpertData' && (
+            <div className="flex w-full">
+              <div className="mt-32 mr-12">
+                <Header />
+              </div>
+              <div
+                style={{
+                  flexGrow: 1,
+                  borderTop: '1px solid rgba(34, 36, 38, 0.15)',
+                }}
+              >
+                <ExpertCustomTable />
+              </div>
+            </div>
+          )}
 
-          <div style={{ display: "flex", flexDirection: "row" }}>
-            <PublicDataButton buttonName={"공공데이터 가져오기"} />
-            <SEEdAppButton buttonName={"SEEd 측정하기"} />
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <PublicDataButton buttonName={'공공데이터 가져오기'} />
+            <SEEdAppButton buttonName={'SEEd 측정하기'} />
             <TableChangeButton
-              buttonName={"테이블 저장하기"}
+              buttonName={'테이블 저장하기'}
               setTableSaveClick={setTableSaveClick}
             />
           </div>
         </Styled.CustomTableWrapper>
       )}
-      {tab === "graph" && (
+      {tab === 'graph' && (
         <>
-          {dataCategory === "MyData" && (
+          {dataCategory === 'MyData' && (
             <>
               <CustomTableHeader />
               <GraphAndEditor pdfClick={pdfClick} />
-              <div style={{ display: "flex", flexDirection: "row" }}>
-                <GraphSaveButton buttonName={"그래프 저장"} />
+              <div style={{ display: 'flex', flexDirection: 'row' }}>
+                <GraphSaveButton buttonName={'그래프 저장'} />
                 <GraphSelector />
-                <PdfButton buttonName={"PDF 보기"} setPdfClick={setPdfClick} />
+                <PdfButton buttonName={'PDF 보기'} setPdfClick={setPdfClick} />
               </div>
             </>
           )}
 
-          {dataCategory === "ExpertData" && (
-            <>
-              <ExpertCustomTableHeader />
-              <ExpertCustomGraph />
-            </>
+          {dataCategory === 'ExpertData' && (
+            <div className="flex">
+              <div className="mt-32 mr-12">
+                <Header />
+              </div>
+              <div>
+                <ExpertCustomGraphHeader />
+                <ExpertCustomGraph />
+              </div>
+            </div>
           )}
         </>
       )}

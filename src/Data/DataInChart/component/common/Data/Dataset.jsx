@@ -1,29 +1,27 @@
-import * as Styled from "./Styled";
+import * as Styled from './Styled';
 
-import { useEffect } from "react";
-import { useGraphDataStore } from "../../../store/graphStore";
-import { useTabStore } from "../../../store/tabStore";
-import { sampleDatas } from "../../../data/sampleDatas";
+import { useGraphDataStore } from '../../../store/graphStore';
+import { sampleDatas } from '../../../data/sampleDatas';
 
 function Dataset({ setModalOpen, setDataCategory }) {
   const { setData, setTitle } = useGraphDataStore();
-  const { tab, changeTab } = useTabStore();
 
   const onClickBtn = (key) => {
-    setData(sampleDatas[key]);
+    setData(sampleDatas[key], key);
     setTitle(key);
-    localStorage.setItem("data", JSON.stringify(sampleDatas[key]));
-    localStorage.setItem("title", JSON.stringify(key));
-    console.log("ExpertDataSet localStorage에 저장 완료!");
+    localStorage.setItem('data', JSON.stringify(sampleDatas[key]));
+    localStorage.setItem('title', JSON.stringify(key));
+    console.log('ExpertDataSet localStorage에 저장 완료!');
+
     setModalOpen(false);
-    setDataCategory("ExpertData");
+    setDataCategory('ExpertData');
   };
 
   return (
     <Styled.Wrapper>
       <Styled.Box key="header">
         <Styled.Number>순서</Styled.Number>
-        <Styled.Data style={{ background: "#f9fafb" }}>
+        <Styled.Data style={{ background: '#f9fafb' }}>
           Dataset Name
         </Styled.Data>
       </Styled.Box>

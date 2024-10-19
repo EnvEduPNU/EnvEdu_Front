@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
-import SockJS from "sockjs-client";
-import Stomp from "stompjs";
-import { useLiveClassPartStore } from "../../../store/LiveClassPartStore";
+import React, { useEffect, useRef, useState } from 'react';
+import SockJS from 'sockjs-client';
+import { Client } from '@stomp/stompjs';
+import { useLiveClassPartStore } from '../../../store/LiveClassPartStore';
 
 export function TeacherStepShareButton({
   stepCount,
@@ -18,27 +18,30 @@ export function TeacherStepShareButton({
   const [reportSubmit, setReportSubmit] = useState();
 
   const updateShareStatus = useLiveClassPartStore(
-    (state) => state.updateShareStatus
+    (state) => state.updateShareStatus,
   );
 
   useEffect(() => {
     if (!stompClientRef.current) {
-      const token = localStorage.getItem("access_token").replace("Bearer ", "");
+      const token = localStorage.getItem('access_token').replace('Bearer ', '');
       const sock = new SockJS(
-        `${process.env.REACT_APP_API_URL}/ws?token=${token}`
+        `${process.env.REACT_APP_API_URL}/ws?token=${token}`,
       );
-      const stompClient = Stomp.over(sock);
+      const stompClient = new Client({ webSocketFactory: () => sock });
 
-      stompClient.connect(
-        {},
-        () => {
-          stompClientRef.current = stompClient;
+      stompClientRef.current = stompClient;
 
-          // 과제 공유 성공 메시지 구독
-          stompClient.subscribe("/topic/assginment-status", (message) => {
+      stompClientRef.current.onConnect = (frame) => {
+        console.log('커넥션 생성 완료 : ' + frame);
+
+        // 학생 상태 성공 메시지 구독
+        stompClientRef.current.subscribe(
+          '/topic/assginment-status',
+          (message) => {
             const parsedMessage = JSON.parse(message.body);
             console.log(
-              "과제 공유 : " + JSON.stringify(parsedMessage, null, 2)
+              '학생 상태 공유 응답받기: ' +
+                JSON.stringify(parsedMessage, null, 2),
             );
 
             setSessionId(parsedMessage.sessionId);
@@ -65,7 +68,7 @@ export function TeacherStepShareButton({
 
                 // 기존 상태에서 shareState.sessionId와 동일한 객체가 있는지 확인
                 const existingIndex = validPrevState.findIndex(
-                  (item) => item.sessionId === shareState.sessionId
+                  (item) => item.sessionId === shareState.sessionId,
                 );
 
                 if (existingIndex !== -1) {
@@ -81,23 +84,24 @@ export function TeacherStepShareButton({
             };
 
             addAssginmentShareCheck(shareState);
-          });
-        },
-        onError
-      );
+          },
+        );
+      };
+
+      stompClientRef.current.activate();
     }
 
     function onError(error) {
-      console.error("STOMP 연결 에러:", error);
+      console.error('STOMP 연결 에러:', error);
       alert(
-        "웹소켓 연결에 실패했습니다. 네트워크 설정을 확인하거나 관리자에게 문의하세요."
+        '웹소켓 연결에 실패했습니다. 네트워크 설정을 확인하거나 관리자에게 문의하세요.',
       );
     }
 
     return () => {
       if (stompClientRef.current) {
-        stompClientRef.current.disconnect(() => {
-          console.log("Disconnected");
+        stompClientRef.current.deactivate(() => {
+          console.log('Disconnected');
         });
         stompClientRef.current = null; // 참조 제거
       }
@@ -107,23 +111,27 @@ export function TeacherStepShareButton({
   // 과제 공유 소켓 전달
   const sendMessage = () => {
     if (!stepCount) {
-      alert("공유할 스텝을 선택해주세요");
+      alert('공유할 스텝을 선택해주세요');
       return;
     }
 
     if (stompClientRef.current && !sharedScreenState) {
-      console.log("스텝카운트 " + stepCount);
+      console.log('스텝카운트 ' + stepCount);
 
       const message = {
-        page: "newPage", // JSON 객체에서 "newPage"를 값으로 하는 'page' 키 생성
+        page: 'newPage', // JSON 객체에서 "newPage"를 값으로 하는 'page' 키 생성
         stepCount: stepCount,
         lectureDataUuid: lectureDataUuid,
       };
-      stompClientRef.current.send("/app/switch", {}, JSON.stringify(message));
+      stompClientRef.current.publish({
+        destination: '/app/switch', // 메시지를 보낼 경로
+        body: JSON.stringify(message), // 메시지 본문
+        headers: {}, // (선택 사항) 헤더
+      });
     }
 
     if (sharedScreenState) {
-      alert("화면 공유 중 입니다!");
+      alert('화면 공유 중 입니다!');
     }
   };
 
@@ -134,13 +142,17 @@ export function TeacherStepShareButton({
       updateShareStatus(sessionId, shared, false);
 
       const message = {
-        page: "stop", // JSON 객체에서 "stop"를 값으로 하는 'page' 키 생성
+        page: 'stop', // JSON 객체에서 "stop"를 값으로 하는 'page' 키 생성
       };
-      stompClientRef.current.send("/app/switch", {}, JSON.stringify(message));
+      stompClientRef.current.publish({
+        destination: '/app/switch', // 메시지를 보낼 경로
+        body: JSON.stringify(message), // 메시지 본문
+        headers: {}, // (선택 사항) 헤더
+      });
     }
 
     if (sharedScreenState) {
-      alert("화면 공유 중 입니다!");
+      alert('화면 공유 중 입니다!');
     }
   };
 
@@ -149,16 +161,16 @@ export function TeacherStepShareButton({
       <button
         onClick={sendMessage}
         style={{
-          width: "18%",
-          marginLeft: "10px",
+          width: '18%',
+          marginLeft: '10px',
           marginRight: 1,
           fontFamily: "'Asap', sans-serif", // 버튼에 Asap 폰트 적용
-          fontWeight: "600",
-          fontSize: "0.9rem",
-          color: "grey",
-          backgroundColor: "#feecfe",
-          borderRadius: "2.469rem",
-          border: "none",
+          fontWeight: '600',
+          fontSize: '0.9rem',
+          color: 'grey',
+          backgroundColor: '#feecfe',
+          borderRadius: '2.469rem',
+          border: 'none',
         }}
       >
         과제 공유
@@ -166,16 +178,16 @@ export function TeacherStepShareButton({
       <button
         onClick={sendStopMessage}
         style={{
-          width: "18%",
-          margin: "10px 0 0 10px ",
+          width: '18%',
+          margin: '10px 0 0 10px ',
           marginRight: 1,
           fontFamily: "'Asap', sans-serif", // 버튼에 Asap 폰트 적용
-          fontWeight: "600",
-          fontSize: "0.9rem",
-          color: "grey",
-          backgroundColor: "#feecfe",
-          borderRadius: "2.469rem",
-          border: "none",
+          fontWeight: '600',
+          fontSize: '0.9rem',
+          color: 'grey',
+          backgroundColor: '#feecfe',
+          borderRadius: '2.469rem',
+          border: 'none',
         }}
       >
         과제 중지

@@ -1,25 +1,23 @@
-import React from "react";
-import styled from "@emotion/styled";
-import { TeacherClassroomPage } from "./TeacherClassroomPage";
-import { StudentClassroomPage } from "./StudentClassroomPage";
-
-const StyledDiv = styled.div`
-  display: flex;
-  margin: 0 0 0 10px;
-  width: 100%;
-`;
+import React from 'react';
+import { TeacherClassroomPage } from './TeacherClassroomPage';
+import { StudentClassroomPage } from './StudentClassroomPage';
 
 // E-Class 화면 공유 페이지
 function EClassLivePage() {
-  const role = localStorage.getItem("role");
+  const role = localStorage.getItem('role');
 
-  console.log(" 권한 : " + role);
+  if (!role) {
+    alert('로그인이 필요합니다. 로그인 페이지로 이동합니다.');
+    window.location.href = '/login'; // 로그인 페이지로 이동
+  }
+
+  console.log(' 권한 : ' + role);
 
   return (
-    <StyledDiv>
-      {role === "ROLE_EDUCATOR" && <TeacherClassroomPage />}
-      {role === "ROLE_STUDENT" && <StudentClassroomPage />}
-    </StyledDiv>
+    <div style={{ margin: '0 20vh 0 20vh' }}>
+      {role === 'ROLE_EDUCATOR' && <TeacherClassroomPage />}
+      {role === 'ROLE_STUDENT' && <StudentClassroomPage />}
+    </div>
   );
 }
 

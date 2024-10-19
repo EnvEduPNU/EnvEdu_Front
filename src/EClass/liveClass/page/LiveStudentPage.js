@@ -1,17 +1,18 @@
-import React, { useEffect, useRef, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
-import { useLocation, useNavigate } from "react-router-dom";
-import { Typography } from "@mui/material";
-import StudentAssignmentTable from "../student/component/table/StudentAssignmentTable";
-import { StudentStepCompnent } from "../student/component/StudentStepCompnent";
-import { customAxios } from "../../../Common/CustomAxios";
-import SockJS from "sockjs-client";
-import Stomp from "stompjs";
-import StudentScreenShare from "../student/screenShare/StudentScreenShare";
-import StudentReportTable from "../teacher/component/table/eclassPageTable/StudentReportTable";
+import React, { useEffect, useRef, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Box, CircularProgress, Typography } from '@mui/material';
+import StudentAssignmentTable from '../student/component/table/StudentAssignmentTable';
+import { StudentStepCompnent } from '../student/component/StudentStepCompnent';
+import { customAxios } from '../../../Common/CustomAxios';
+import SockJS from 'sockjs-client';
+import StudentReportTable from '../teacher/component/table/eclassPageTable/StudentReportTable';
+
+import { Client } from '@stomp/stompjs';
+import { StudentScreenShareJitsi } from '../student/screenShare/StudentScreenShareJitsi';
 
 export const LiveStudentPage = () => {
-  const sessionId = useRef("");
+  const sessionId = useRef('');
   const [sessionIdState, setSessionIdState] = useState();
   const [finished, setFinished] = useState(false);
   const [tableData, setTableData] = useState([]);
@@ -19,48 +20,115 @@ export const LiveStudentPage = () => {
   const [stepCount, setStepCount] = useState();
   const [reportTable, setReportTable] = useState([]);
   const [classProcess, setClassProcess] = useState(true);
-  const [page, setPage] = useState("defaultPage");
-  const [isVideoReady, setIsVideoReady] = useState(false);
+  const [page, setPage] = useState('defaultPage');
+  const [sharedScreenState, setSharedScreenState] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // 스피너 상태 관리
 
   const location = useLocation();
   const { lectureDataUuid, row, eClassUuid } = location.state || {};
 
   const stompClients = useRef(null);
+  const ScreanSharestompClients = useRef(null);
+  const sendScreenShareStClient = useRef(null);
+
   const navigate = useNavigate();
 
   // stompClients 커넥션 생성 훅
   useEffect(() => {
     if (!stompClients.current) {
-      const token = localStorage.getItem("access_token").replace("Bearer ", "");
+      const token = localStorage.getItem('access_token').replace('Bearer ', '');
       const sock = new SockJS(
-        `${process.env.REACT_APP_API_URL}/ws?token=${token}`
+        `${process.env.REACT_APP_API_URL}/ws?token=${token}`,
       );
-      stompClients.current = Stomp.over(sock);
+      stompClients.current = new Client({ webSocketFactory: () => sock });
 
-      stompClients.current.connect(
-        {}, // 연결 옵션
-        onConnect, // 연결 성공 시 실행할 함수
-        onError // 연결 실패 시 실행할 함수
+      stompClients.current.onConnect = (frame) => {
+        console.log('학생 입장 소켓 연결 성공', frame);
+        sendMessage(true); // 연결 성공 후에만 sendMessage(true)를 실행
+      };
+
+      stompClients.current.activate();
+    }
+    return () => {
+      if (stompClients.current) {
+        stompClients.current.deactivate(() => {
+          console.log('학생 입장 소켓 연결 해제');
+        });
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!sendScreenShareStClient.current) {
+      const token = localStorage.getItem('access_token').replace('Bearer ', '');
+      const sock = new SockJS(
+        `${process.env.REACT_APP_API_URL}/ws?token=${token}`,
       );
-    }
+      sendScreenShareStClient.current = new Client({
+        webSocketFactory: () => sock,
+      });
 
-    function onConnect() {
-      console.log("STOMP 연결 성공");
-      sendMessage(true); // 연결 성공 후에만 sendMessage(true)를 실행
-    }
+      sendScreenShareStClient.current.onConnect = (frame) => {
+        console.log('화면 상태 소켓 연결 성공', frame);
+        sendMessage(true); // 연결 성공 후에만 sendMessage(true)를 실행
+      };
 
-    function onError(error) {
-      console.error("STOMP 연결 에러:", error);
-      alert(
-        "웹소켓 연결에 실패했습니다. 네트워크 설정을 확인하거나 관리자에게 문의하세요."
+      sendScreenShareStClient.current.activate();
+    }
+    return () => {
+      if (sendScreenShareStClient.current) {
+        sendScreenShareStClient.current.deactivate(() => {
+          console.log('화면 상태 소켓 연결 해제');
+        });
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!ScreanSharestompClients.current) {
+      const token = localStorage.getItem('access_token').replace('Bearer ', '');
+      const sock = new SockJS(
+        `${process.env.REACT_APP_API_URL}/screen-share?token=${token}`,
       );
+      ScreanSharestompClients.current = new Client({
+        webSocketFactory: () => sock,
+      });
+
+      ScreanSharestompClients.current.onConnect = (frame) => {
+        console.log('화면 공유 소켓 연결 성공', frame);
+
+        ScreanSharestompClients.current.subscribe(
+          '/topic/screen-share-flag',
+          function (message) {
+            const parsedMessage = JSON.parse(message.body);
+            console.log(
+              '화면 공유 상태 : ' + JSON.stringify(parsedMessage, null, 2),
+            );
+
+            setTimeout(() => {
+              setSharedScreenState(parsedMessage.screenShared);
+            }, 1000);
+
+            sendStateMessage(parsedMessage.screenShared);
+          },
+        );
+      };
+
+      ScreanSharestompClients.current.activate();
     }
+    return () => {
+      if (ScreanSharestompClients.current) {
+        ScreanSharestompClients.current.deactivate(() => {
+          console.log('화면 공유 상태 소켓 연결 해제');
+        });
+      }
+    };
   }, []);
 
   // 각 학생의 E-Class에 대한 Session Id 생성 훅
   useEffect(() => {
     console.log(
-      "[LiveStudentPage] 이클래스 UUID: " + JSON.stringify(eClassUuid, null, 2)
+      '[LiveStudentPage] 이클래스 UUID: ' + JSON.stringify(eClassUuid, null, 2),
     );
 
     const initializeSession = async () => {
@@ -78,56 +146,80 @@ export const LiveStudentPage = () => {
       sendMessage(false);
     };
 
-    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener('beforeunload', handleBeforeUnload);
 
     return () => {
       sendMessage(false);
-      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, []);
 
   // 수업 종료 훅
   useEffect(() => {
     if (!classProcess) {
-      alert("수업이 종료되었습니다!");
+      alert('수업이 종료되었습니다!');
       sendMessage(false);
-      navigate("/");
+      navigate('/');
       window.location.reload();
     }
   }, [classProcess]);
 
   // 화면 공유 아닐때 Default Page 설정 훅
   useEffect(() => {
-    if (!isVideoReady) {
-      setPage("defaultPage");
+    if (!sharedScreenState) {
+      setPage('defaultPage');
     }
-  }, [isVideoReady, setPage]);
+  }, [sharedScreenState, setPage]);
 
   const sendMessage = async (state) => {
     const message = {
       entered: state,
       sessionId: sessionId.current,
+      sharedScreenState: sharedScreenState,
     };
     if (
       stompClients &&
       stompClients.current &&
       stompClients.current.connected
     ) {
-      await stompClients.current.send(
-        "/app/student-entered",
-        {},
-        JSON.stringify(message)
-      );
+      await stompClients.current.publish({
+        destination: '/app/student-entered', // 메시지를 보낼 경로
+        body: JSON.stringify(message), // 메시지 본문
+        headers: {}, // 선택적 헤더
+      });
     } else {
-      console.error("STOMP 클라이언트가 연결되지 않았습니다.");
+      console.error('STOMP 클라이언트가 연결되지 않았습니다.');
+    }
+  };
+
+  const sendStateMessage = async (state) => {
+    const shareState = {
+      sessionId: sessionId.current,
+      shared: state,
+    };
+    console.log(
+      '화면 공유 상태 응답하기 : ' + JSON.stringify(shareState, null, 2),
+    );
+    if (
+      sendScreenShareStClient &&
+      sendScreenShareStClient.current &&
+      sendScreenShareStClient.current.connected
+    ) {
+      await sendScreenShareStClient.current.publish({
+        destination: '/app/assginment-status', // 메시지를 보낼 경로
+        body: JSON.stringify(shareState), // 메시지 본문
+        headers: {}, // 선택적 헤더
+      });
+    } else {
+      console.error('STOMP 클라이언트가 연결되지 않았습니다.');
     }
   };
 
   const registerSessionId = async (sessionId) => {
     try {
-      const userName = localStorage.getItem("username");
+      const userName = localStorage.getItem('username');
 
-      const resp = await customAxios.post("/api/sessions/register-session", {
+      const resp = await customAxios.post('/api/sessions/register-session', {
         eclassUuid: eClassUuid,
         sessionId: sessionId,
         userName: userName,
@@ -135,19 +227,19 @@ export const LiveStudentPage = () => {
 
       return resp.data;
     } catch (error) {
-      console.error("세션 ID 등록 중 오류 발생:", error);
+      console.error('세션 ID 등록 중 오류 발생:', error);
       return null;
     }
   };
 
   return (
-    <div style={{ display: "flex", margin: "0 20vh" }}>
-      <div style={{ display: "inline-block", width: "100%", height: "100%" }}>
-        <Typography variant="h4" sx={{ margin: "0 20px 0 20px" }}>
+    <div style={{ display: 'flex', margin: '0 20vh' }}>
+      <div style={{ display: 'inline-block', width: '100%', height: '100%' }}>
+        <Typography variant="h4" sx={{ margin: '0 20px 0 20px' }}>
           {row.Name}
         </Typography>
-        <div style={{ margin: "0 20px 0 20px" }}>
-          {!isVideoReady && (
+        <div style={{ margin: '0 20px 0 20px' }}>
+          {!sharedScreenState && (
             <StudentStepCompnent
               setPage={setPage}
               setStepCount={setStepCount}
@@ -161,16 +253,34 @@ export const LiveStudentPage = () => {
               lectureDataUuid={lectureDataUuid}
             />
           )}
-          {sessionIdState && (
-            <StudentScreenShare
-              sessionId={sessionIdState}
-              setIsVideoReady={setIsVideoReady}
+          {/* 스피너 표시 */}
+          {isLoading && (
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                minHeight: '70vh',
+                margin: '20px 10px 0 0',
+                border: '1px solid grey',
+                zIndex: 1000,
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          )}
+
+          {/* 화면 공유 메서드 */}
+          {sharedScreenState && (
+            <StudentScreenShareJitsi
+              sharedScreenState={sharedScreenState}
+              setIsLoading={setIsLoading} // setIsLoading을 props로 전달
             />
           )}
         </div>
       </div>
 
-      <div style={{ width: "25%", marginRight: "30px" }}>
+      <div style={{ width: '25%', marginRight: '30px' }}>
         <StudentAssignmentTable
           setCourseStep={setCourseStep}
           setTableData={setTableData}

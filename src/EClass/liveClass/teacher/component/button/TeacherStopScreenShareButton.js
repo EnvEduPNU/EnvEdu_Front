@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
-import SockJS from "sockjs-client";
-import Stomp from "stompjs";
+import React, { useEffect, useRef, useState } from 'react';
+import SockJS from 'sockjs-client';
+import Stomp from 'stompjs';
 
 let globalStompClient;
 
@@ -9,17 +9,17 @@ export function TeacherStopScreenShareButton() {
   useEffect(() => {
     // SockJS 연결 설정
 
-    const token = localStorage.getItem("access_token").replace("Bearer ", "");
+    const token = localStorage.getItem('access_token').replace('Bearer ', '');
 
     const sock = new SockJS(
-      `${process.env.REACT_APP_API_URL}/ws?token=${token}`
+      `${process.env.REACT_APP_API_URL}/ws?token=${token}`,
     );
 
     const stompClient = Stomp.over(sock);
 
     if (stompClient && !stompClient.connected) {
       console.log(
-        "스톰프 존재하는지 : " + JSON.stringify(stompClient, null, 2)
+        '스톰프 존재하는지 : ' + JSON.stringify(stompClient, null, 2),
       );
 
       stompClient.connect(
@@ -27,16 +27,16 @@ export function TeacherStopScreenShareButton() {
         () => {
           globalStompClient = stompClient;
         },
-        onError
+        onError,
       );
     } else {
-      console.log("커넥션이 이미 있습니다.");
+      console.log('커넥션이 이미 있습니다.');
     }
 
     function onError(error) {
-      console.error("STOMP 연결 에러:", error);
+      console.error('STOMP 연결 에러:', error);
       alert(
-        "웹소켓 연결에 실패했습니다. 네트워크 설정을 확인하거나 관리자에게 문의하세요."
+        '웹소켓 연결에 실패했습니다. 네트워크 설정을 확인하거나 관리자에게 문의하세요.',
       );
     }
 
@@ -44,7 +44,7 @@ export function TeacherStopScreenShareButton() {
     return () => {
       if (stompClient) {
         stompClient.disconnect(() => {
-          console.log("Disconnected");
+          console.log('Disconnected');
         });
       }
     };
@@ -53,15 +53,19 @@ export function TeacherStopScreenShareButton() {
   const sendMessage = () => {
     if (globalStompClient) {
       const message = {
-        page: "newPage", // JSON 객체에서 "newPage"를 값으로 하는 'page' 키 생성
+        page: 'newPage', // JSON 객체에서 "newPage"를 값으로 하는 'page' 키 생성
       };
-      globalStompClient.send("/app/switch", {}, JSON.stringify(message));
+      globalStompClient.current.publish({
+        destination: '/app/switch', // 메시지를 보낼 경로
+        body: JSON.stringify(message), // 메시지 본문
+        headers: {}, // (선택 사항) 헤더
+      });
     }
   };
 
   return (
     <>
-      <button onClick={sendMessage} style={{ marginLeft: "10px" }}>
+      <button onClick={sendMessage} style={{ marginLeft: '10px' }}>
         과제 공유
       </button>
     </>

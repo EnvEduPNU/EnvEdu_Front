@@ -1,0 +1,29 @@
+.myData-container {
+  display: flex;
+  box-sizing: border-box;
+  height: 100vh; /* 화면의 높이를 꽉 채우도록 설정 */
+  overflow: hidden; /* 컨테이너가 넘치는 것을 방지 */
+}
+
+.myData-left {
+  height: 100%; /* 컨테이너의 전체 높이를 차지 */
+  width: 26rem;
+  padding: 0 0 0 20px;
+  box-sizing: border-box;
+  background-color: none;
+  border-radius: 8px;
+  box-shadow: none;
+  overflow-y: auto; /* 스크롤을 위해 설정 */
+  flex-shrink: 0; /* 왼쪽 섹션이 줄어들지 않도록 설정 */
+}
+
+.myData-right {
+  height: 100%; /* 컨테이너의 전체 높이를 차지 */
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: #ffffff; /* 오른쪽 섹션 배경색 */
+  border-radius: 8px;
+  box-shadow: none;
+  overflow-y: auto; /* 스크롤을 위해 설정 */
+  flex-grow: 1; /* 오른쪽 섹션이 남은 공간을 차지하도록 설정 */
+}

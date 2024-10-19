@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
-import "react-quill/dist/quill.snow.css"; // Quill 스타일
-import ReactQuill, { Quill } from "react-quill";
+import React, { useState, useEffect, useRef } from 'react';
+// @ts-ignore
+import ReactQuill, { Quill } from 'react-quill';
+import 'react-quill/dist/quill.snow.css'; // Quill 스타일
 import {
   Container,
   Button,
@@ -8,19 +9,19 @@ import {
   Typography,
   TextField,
   IconButton,
-} from "@mui/material";
-import { ImageActions } from "@xeger/quill-image-actions";
-import { ImageFormats } from "@xeger/quill-image-formats";
-import DeleteIcon from "@mui/icons-material/Delete";
-import DataTableButton from "./button/DataTableButton";
-import { customAxios } from "../../../../Common/CustomAxios";
-import { useCreateLectureSourceStore } from "../../store/CreateLectureSourceStore";
-import { DndProvider, useDrag, useDrop } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
-import "./TeacherWordProcessor.scss";
+} from '@mui/material';
+import { ImageActions } from '@xeger/quill-image-actions';
+import { ImageFormats } from '@xeger/quill-image-formats';
+import DeleteIcon from '@mui/icons-material/Delete';
+import DataTableButton from './button/DataTableButton';
+import { customAxios } from '../../../../Common/CustomAxios';
+import { useCreateLectureSourceStore } from '../../store/CreateLectureSourceStore';
+import { DndProvider, useDrag, useDrop } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import './TeacherWordProcessor.scss';
 
-Quill.register("modules/imageActions", ImageActions);
-Quill.register("modules/imageFormats", ImageFormats);
+Quill.register('modules/imageActions', ImageActions);
+Quill.register('modules/imageFormats', ImageFormats);
 
 let imageFile = [];
 
@@ -30,12 +31,12 @@ const modules = {
   toolbar: {
     container: [
       [{ align: [] }],
-      [{ header: "1" }, { header: "2" }, { font: [] }],
-      [{ size: ["small", false, "large", "huge", "16px"] }], // 글자 크기 설정
-      ["bold", "italic", "underline", "strike", "blockquote"],
-      [{ list: "ordered" }, { list: "bullet" }],
-      ["link", "image", "video"],
-      ["clean"],
+      [{ header: '1' }, { header: '2' }, { font: [] }],
+      [{ size: ['small', false, 'large', 'huge', '16px'] }], // 글자 크기 설정
+      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      ['link', 'image', 'video'],
+      ['clean'],
     ],
     handlers: {
       image: imageHandler,
@@ -44,9 +45,9 @@ const modules = {
 };
 
 function imageHandler() {
-  const input = document.createElement("input");
-  input.setAttribute("type", "file");
-  input.setAttribute("accept", "image/*");
+  const input = document.createElement('input');
+  input.setAttribute('type', 'file');
+  input.setAttribute('accept', 'image/*');
   input.click();
 
   input.onchange = async () => {
@@ -57,7 +58,7 @@ function imageHandler() {
     const reader = new FileReader();
     reader.onloadend = () => {
       const base64Image = reader.result;
-      this.quill.insertEmbed(range.index, "image", base64Image);
+      this.quill.insertEmbed(range.index, 'image', base64Image);
     };
     reader.readAsDataURL(file);
 
@@ -66,23 +67,23 @@ function imageHandler() {
 }
 
 const formats = [
-  "header",
-  "font",
-  "size",
-  "bold",
-  "italic",
-  "underline",
-  "strike",
-  "blockquote",
-  "list",
-  "bullet",
-  "link",
-  "image",
-  "video",
-  "align",
-  "float",
-  "height",
-  "width",
+  'header',
+  'font',
+  'size',
+  'bold',
+  'italic',
+  'underline',
+  'strike',
+  'blockquote',
+  'list',
+  'bullet',
+  'link',
+  'image',
+  'video',
+  'align',
+  'float',
+  'height',
+  'width',
 ];
 
 export default function TeacherWordProcessor({
@@ -97,7 +98,7 @@ export default function TeacherWordProcessor({
 }) {
   const [value, setValue] = useState();
   const [localContents, setLocalContents] = useState([]);
-  const [contentName, setContentName] = useState("");
+  const [contentName, setContentName] = useState('');
   const { contents, addContent, updateContent, clearContents } =
     useCreateLectureSourceStore();
   const [isEditing, setIsEditing] = useState(false);
@@ -130,14 +131,14 @@ export default function TeacherWordProcessor({
       imageFile = null;
 
       console.log(
-        "[TeacherWordProcessor] stepperStepName : " +
-          JSON.stringify(stepperStepName, null, 2)
+        '[TeacherWordProcessor] stepperStepName : ' +
+          JSON.stringify(stepperStepName, null, 2),
       );
 
       const stepNumbers = contents.map((contentss) => contentss.stepNum);
 
-      console.log("step 넘버들: " + stepNumbers);
-      console.log("activeStep : " + activeStep);
+      console.log('step 넘버들: ' + stepNumbers);
+      console.log('activeStep : ' + activeStep);
 
       // store에서 현재 activeStep에 해당하는 내용을 로드
       if (stepNumbers.includes(activeStep)) {
@@ -157,7 +158,7 @@ export default function TeacherWordProcessor({
           });
         }
 
-        console.log("처음 stepData : " + JSON.stringify(stepData, null, 2));
+        console.log('처음 stepData : ' + JSON.stringify(stepData, null, 2));
 
         const contentsArray = Array.isArray(stepData.contents)
           ? stepData.contents
@@ -165,13 +166,13 @@ export default function TeacherWordProcessor({
 
         const formattedContents = contentsArray
           .filter((content) => {
-            if (content.type === "img" && !content.content) {
+            if (content.type === 'img' && !content.content) {
               return false;
             }
             return true;
           })
           .map((item, index) => {
-            if (typeof item.content === "object" && item.type !== "file") {
+            if (typeof item.content === 'object' && item.type !== 'file') {
               item.content = JSON.stringify(item.content);
             }
             return item;
@@ -191,7 +192,7 @@ export default function TeacherWordProcessor({
 
     // Quill editor의 root element에서 이미지를 찾습니다.
     const quillEditor = quillRef.current.getEditor();
-    const imageElements = quillEditor.root.querySelectorAll("img");
+    const imageElements = quillEditor.root.querySelectorAll('img');
 
     imageElements.forEach((img) => {
       img.onload = () => {
@@ -205,7 +206,7 @@ export default function TeacherWordProcessor({
   const handleSave = () => {
     const contentHtml = value; // ReactQuill의 value
     const quillEditor = quillRef.current.getEditor();
-    const imageElements = quillEditor.root.querySelectorAll("img");
+    const imageElements = quillEditor.root.querySelectorAll('img');
 
     let imgX = null;
     let imgY = null;
@@ -224,33 +225,33 @@ export default function TeacherWordProcessor({
       }
     });
 
-    console.log("포함된 html : " + JSON.stringify(contentHtml, null, 2));
+    console.log('포함된 html : ' + JSON.stringify(contentHtml, null, 2));
 
     if (imageFile) {
-      console.log("이미지파일 확인 : " + imageFile.name);
+      console.log('이미지파일 확인 : ' + imageFile.name);
       setLocalContents([
         ...localContents,
-        { type: "html", content: contentHtml },
-        { type: "file", content: imageFile, x: imgX, y: imgY },
+        { type: 'html', content: contentHtml },
+        { type: 'file', content: imageFile, x: imgX, y: imgY },
       ]);
     } else {
       setLocalContents([
         ...localContents,
-        { type: "html", content: contentHtml },
+        { type: 'html', content: contentHtml },
       ]);
     }
 
     imageFile = null;
-    setValue("");
+    setValue('');
   };
 
   const handleAddTitle = () => {
-    const newContents = localContents.filter((item) => item.type !== "title");
-    setLocalContents([{ type: "title", content: contentName }, ...newContents]); // title을 항상 맨 위에 추가
+    const newContents = localContents.filter((item) => item.type !== 'title');
+    setLocalContents([{ type: 'title', content: contentName }, ...newContents]); // title을 항상 맨 위에 추가
   };
 
   const handleAddTextBox = () => {
-    setLocalContents([...localContents, { type: "textBox", content: "" }]); // 새로운 빈 텍스트 박스를 추가
+    setLocalContents([...localContents, { type: 'textBox', content: '' }]); // 새로운 빈 텍스트 박스를 추가
   };
 
   const handleTextBoxChange = (index, event) => {
@@ -263,11 +264,11 @@ export default function TeacherWordProcessor({
     // 특정 인덱스를 제외한 새로운 콘텐츠 배열 생성
     const newContents = localContents.filter((_, i) => i !== index);
 
-    console.log("컨텐츠 지을 부분 : " + JSON.stringify(newContents, null, 2));
+    console.log('컨텐츠 지을 부분 : ' + JSON.stringify(newContents, null, 2));
 
     // deleteImage가 제공된 경우 새로운 객체를 추가
     if (deleteImage) {
-      newContents.push({ type: "deleteImage", url: deleteImage });
+      newContents.push({ type: 'deleteImage', url: deleteImage });
     }
 
     // 상태 업데이트
@@ -276,14 +277,14 @@ export default function TeacherWordProcessor({
 
   const handleSelectData = async (type, id) => {
     try {
-      let path = "";
-      if (type === "수질 데이터") {
+      let path = '';
+      if (type === '수질 데이터') {
         path = `/ocean-quality/mine/chunk?dataUUID=${id}`;
-      } else if (type === "대기질 데이터") {
+      } else if (type === '대기질 데이터') {
         path = `/air-quality/mine/chunk?dataUUID=${id}`;
-      } else if (type === "SEED") {
+      } else if (type === 'SEED') {
         path = `/seed/mine/chunk?dataUUID=${id}`;
-      } else if (type === "CUSTOM") {
+      } else if (type === 'CUSTOM') {
         path = `/dataLiteracy/customData/download/${id}`;
       }
 
@@ -293,30 +294,30 @@ export default function TeacherWordProcessor({
       // JSON 데이터를 테이블 형식으로 변환하여 contents에 추가
       let headers = Object.keys(dataContent[0]).filter(
         (key) =>
-          key !== "id" &&
-          key !== "dataUUID" &&
-          key !== "saveDate" &&
-          key !== "dateString" &&
-          key !== "sessionid" &&
-          key !== "unit"
+          key !== 'id' &&
+          key !== 'dataUUID' &&
+          key !== 'saveDate' &&
+          key !== 'dateString' &&
+          key !== 'sessionid' &&
+          key !== 'unit',
       );
 
       const attributesToCheck = [
-        "co2",
-        "dox",
-        "dust",
-        "hum",
-        "hum_EARTH",
-        "lux",
-        "ph",
-        "pre",
-        "temp",
-        "tur",
+        'co2',
+        'dox',
+        'dust',
+        'hum',
+        'hum_EARTH',
+        'lux',
+        'ph',
+        'pre',
+        'temp',
+        'tur',
       ];
 
       for (const attribute of attributesToCheck) {
         const isAllZero = response.data.every(
-          (item) => item[attribute] === -99999
+          (item) => item[attribute] === -99999,
         );
         if (isAllZero) {
           headers = headers.filter((header) => header !== attribute);
@@ -324,19 +325,19 @@ export default function TeacherWordProcessor({
       }
 
       const tableContent = (
-        <div style={{ width: "auto", overflowX: "auto" }}>
+        <div style={{ width: 'auto', overflowX: 'auto' }}>
           <div
             style={{
-              transform: "scale(1)",
-              transformOrigin: "top left",
+              transform: 'scale(1)',
+              transformOrigin: 'top left',
             }}
           >
             <table
               style={{
-                width: "100%",
-                marginTop: "10px",
-                borderCollapse: "collapse",
-                tableLayout: "fixed", // 테이블 셀 너비를 고정
+                width: '100%',
+                marginTop: '10px',
+                borderCollapse: 'collapse',
+                tableLayout: 'fixed', // 테이블 셀 너비를 고정
               }}
             >
               <thead>
@@ -345,11 +346,11 @@ export default function TeacherWordProcessor({
                     <th
                       key={header}
                       style={{
-                        border: "1px solid #ddd",
-                        padding: "8px",
-                        backgroundColor: "#f2f2f2",
-                        wordWrap: "break-word", // 긴 단어를 줄바꿈
-                        fontSize: "10px", // 테이블 길이에 맞춰서 size 조절 수정해야함
+                        border: '1px solid #ddd',
+                        padding: '8px',
+                        backgroundColor: '#f2f2f2',
+                        wordWrap: 'break-word', // 긴 단어를 줄바꿈
+                        fontSize: '10px', // 테이블 길이에 맞춰서 size 조절 수정해야함
                       }}
                     >
                       {header}
@@ -359,15 +360,15 @@ export default function TeacherWordProcessor({
               </thead>
               <tbody>
                 {dataContent.map((row, rowIndex) => (
-                  <tr key={rowIndex} style={{ borderBottom: "1px solid #ddd" }}>
+                  <tr key={rowIndex} style={{ borderBottom: '1px solid #ddd' }}>
                     {headers.map((header) => (
                       <td
                         key={`${rowIndex}-${header}`}
                         style={{
-                          border: "1px solid #ddd",
-                          padding: "8px",
-                          wordWrap: "break-word", // 긴 단어를 줄바꿈
-                          fontSize: "10px", // 테이블 길이에 맞춰서 size 조절 수정해야함
+                          border: '1px solid #ddd',
+                          padding: '8px',
+                          wordWrap: 'break-word', // 긴 단어를 줄바꿈
+                          fontSize: '10px', // 테이블 길이에 맞춰서 size 조절 수정해야함
                         }}
                       >
                         {row[header]}
@@ -383,26 +384,26 @@ export default function TeacherWordProcessor({
 
       setLocalContents([
         ...localContents,
-        { type: "data", content: tableContent },
+        { type: 'data', content: tableContent },
       ]);
 
       setAddTableFlag(true);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error('Error fetching data:', error);
     }
   };
 
   // 이미지 삭제 요청 함수
   const deleteImage = async (imageUrl) => {
     try {
-      const response = await customAxios.delete("/api/images/delete", {
+      const response = await customAxios.delete('/api/images/delete', {
         headers: {
-          "X-Previous-Image-URL": imageUrl,
+          'X-Previous-Image-URL': imageUrl,
         },
       });
-      console.log("Image deleted successful:", response.data);
+      console.log('Image deleted successful:', response.data);
     } catch (error) {
-      console.error("Failed to delete image:", error);
+      console.error('Failed to delete image:', error);
     }
   };
 
@@ -415,42 +416,42 @@ export default function TeacherWordProcessor({
     };
     let newLocalContents = [...localContents];
 
-    console.log("타입 확인용 : " + JSON.stringify(localContents, null, 2));
+    console.log('타입 확인용 : ' + JSON.stringify(localContents, null, 2));
 
     for (const item of localContents) {
-      if (item.type === "deleteImage") {
-        console.log("삭제해야하는 이미지 url : " + item.url);
+      if (item.type === 'deleteImage') {
+        console.log('삭제해야하는 이미지 url : ' + item.url);
 
         try {
           await deleteImage(item.url);
-          console.log("이미지 삭제 성공:", item.url);
+          console.log('이미지 삭제 성공:', item.url);
           newLocalContents = newLocalContents.filter(
-            (content) => content.url !== item.url
+            (content) => content.url !== item.url,
           );
           setLocalContents(newLocalContents);
         } catch (error) {
-          console.error("이미지 삭제 실패:", error);
+          console.error('이미지 삭제 실패:', error);
         }
       }
 
-      if (item.type === "html") {
-        const div = document.createElement("div");
+      if (item.type === 'html') {
+        const div = document.createElement('div');
         div.innerHTML = item.content;
-        const images = div.querySelectorAll("img");
+        const images = div.querySelectorAll('img');
 
         images.forEach((img) => {
           const src = img.src;
-          if (src.startsWith("data:image/")) {
-            const base64Data = src.split(",")[1]; // Extract base64 part
+          if (src.startsWith('data:image/')) {
+            const base64Data = src.split(',')[1]; // Extract base64 part
             stepData.contents.push({
-              type: "img",
+              type: 'img',
               src: base64Data,
               x: item.x,
               y: item.y,
             });
           } else {
             stepData.contents.push({
-              type: "img",
+              type: 'img',
               src,
               x: item.x,
               y: item.y,
@@ -459,7 +460,7 @@ export default function TeacherWordProcessor({
         });
         stepData.contents.push(item);
       } else {
-        if (item.type !== "deleteImage" && item.type !== "file") {
+        if (item.type !== 'deleteImage' && item.type !== 'file') {
           stepData.contents.push(item);
         }
 
@@ -467,20 +468,20 @@ export default function TeacherWordProcessor({
         // 따라서 현재 localContent에 있는 것을 stepData에 옮겨주는 작업 필요
         // 그런데 문제는 위의 deleteImage 부분에서 stepData에 모두 저장을 해주어 file이 존재할텐데
         // 아래의 최종 저장 Data쪽에서 이미지가 안나온다.
-        if (item.type === "file") {
-          console.log("이미지 이름 나와야할텐데 : " + item.content.name);
+        if (item.type === 'file') {
+          console.log('이미지 이름 나와야할텐데 : ' + item.content.name);
           stepData.contents.push(item);
         }
       }
     }
 
     if (stepCount >= activeStep) {
-      console.log("스텝 카운트 : " + stepCount);
-      console.log("액티브 스텝 : " + activeStep);
-      console.log("최종 저장 stepData : " + JSON.stringify(stepData, null, 2));
+      console.log('스텝 카운트 : ' + stepCount);
+      console.log('액티브 스텝 : ' + activeStep);
+      console.log('최종 저장 stepData : ' + JSON.stringify(stepData, null, 2));
       stepData.contents.forEach((content) => {
-        if (content.type === "file") {
-          console.log("step 저장전 이미지 확인2222 : " + content.content.name);
+        if (content.type === 'file') {
+          console.log('step 저장전 이미지 확인2222 : ' + content.content.name);
         }
       });
 
@@ -492,28 +493,28 @@ export default function TeacherWordProcessor({
           updateContent(activeStep, stepData);
         }
 
-        alert("Step 업데이트 완료 activeStep : " + activeStep);
-        console.log("업데이트된 데이터:", stepData);
+        alert('Step 업데이트 완료 activeStep : ' + activeStep);
+        console.log('업데이트된 데이터:', stepData);
       } else {
         addContent(stepData);
-        alert("Step 저장 완료");
-        console.log("저장된 데이터:", stepData);
+        alert('Step 저장 완료');
+        console.log('저장된 데이터:', stepData);
       }
     }
 
     handleNextStep();
 
     setLocalContents([]);
-    setContentName("");
+    setContentName('');
     setIsEditing(false);
   };
 
   const createElementFromJson = (json) => {
-    if (typeof json === "string") {
+    if (typeof json === 'string') {
       json = JSON.parse(json);
     }
 
-    if (typeof json === "object" && json !== null) {
+    if (typeof json === 'object' && json !== null) {
       const { type, props } = json;
       const children = props.children;
 
@@ -522,7 +523,7 @@ export default function TeacherWordProcessor({
         { ...props },
         Array.isArray(children)
           ? children.map((child, index) => createElementFromJson(child))
-          : children
+          : children,
       );
     }
 
@@ -537,22 +538,22 @@ export default function TeacherWordProcessor({
       try {
         return JSON.parse(content);
       } catch (error) {
-        console.error("Failed to parse content:", error);
+        console.error('Failed to parse content:', error);
         return null;
       }
     };
 
     {
-      console.log("테이블은? : " + JSON.stringify(content, null, 2));
+      console.log('테이블은? : ' + JSON.stringify(content, null, 2));
     }
 
-    console.log(" 플래그 : " + addTableFlag);
+    console.log(' 플래그 : ' + addTableFlag);
 
     let parseContentData = null;
 
     // 첫번째 만드는 데이터 테이블 뷰
     if (addTableFlag) {
-      console.log("첫번째 테이블");
+      console.log('첫번째 테이블');
       parseContentData = content;
     }
     // 수정하는 테이블 뷰
@@ -576,22 +577,22 @@ export default function TeacherWordProcessor({
     }
 
     const headers = dataContent[0].props.children.props.children.map(
-      (header) => header.key
+      (header) => header.key,
     );
 
     const body = dataContent[1].props.children.map((body) =>
-      body.props.children.map((node) => node.props.children)
+      body.props.children.map((node) => node.props.children),
     );
 
     return (
-      <div style={{ width: "auto", overflowX: "auto" }}>
-        <div style={{ transform: "scale(1)", transformOrigin: "top left" }}>
+      <div style={{ width: 'auto', overflowX: 'auto' }}>
+        <div style={{ transform: 'scale(1)', transformOrigin: 'top left' }}>
           <table
             style={{
-              width: "100%",
-              marginTop: "10px",
-              borderCollapse: "collapse",
-              tableLayout: "fixed",
+              width: '100%',
+              marginTop: '10px',
+              borderCollapse: 'collapse',
+              tableLayout: 'fixed',
             }}
           >
             <thead>
@@ -600,11 +601,11 @@ export default function TeacherWordProcessor({
                   <th
                     key={header}
                     style={{
-                      border: "1px solid #ddd",
-                      padding: "8px",
-                      backgroundColor: "#f2f2f2",
-                      wordWrap: "break-word",
-                      fontSize: "10px",
+                      border: '1px solid #ddd',
+                      padding: '8px',
+                      backgroundColor: '#f2f2f2',
+                      wordWrap: 'break-word',
+                      fontSize: '10px',
                     }}
                   >
                     {header}
@@ -614,15 +615,15 @@ export default function TeacherWordProcessor({
             </thead>
             <tbody>
               {body.slice(1).map((row, rowIndex) => (
-                <tr key={rowIndex} style={{ borderBottom: "1px solid #ddd" }}>
+                <tr key={rowIndex} style={{ borderBottom: '1px solid #ddd' }}>
                   {headers.map((header, colIndex) => (
                     <td
                       key={colIndex}
                       style={{
-                        border: "1px solid #ddd",
-                        padding: "8px",
-                        wordWrap: "break-word",
-                        fontSize: "10px",
+                        border: '1px solid #ddd',
+                        padding: '8px',
+                        wordWrap: 'break-word',
+                        fontSize: '10px',
                       }}
                     >
                       {row[colIndex]}
@@ -648,9 +649,9 @@ export default function TeacherWordProcessor({
 
     // title 타입이 아닐 때만 드래그 기능을 적용
     const [, drop] = useDrop({
-      accept: "content",
+      accept: 'content',
       hover: (draggedItem) => {
-        if (draggedItem.index !== index && item.type !== "title") {
+        if (draggedItem.index !== index && item.type !== 'title') {
           moveItem(draggedItem.index, index);
           draggedItem.index = index;
         }
@@ -658,16 +659,16 @@ export default function TeacherWordProcessor({
     });
 
     const [{ isDragging }, drag] = useDrag({
-      type: "content",
+      type: 'content',
       item: { index },
-      canDrag: item.type !== "title", // title 타입은 드래그 불가
+      canDrag: item.type !== 'title', // title 타입은 드래그 불가
       collect: (monitor) => ({
         isDragging: monitor.isDragging(),
       }),
     });
 
     // title 타입이 아닌 경우에만 drag 기능을 적용
-    if (item.type !== "title") {
+    if (item.type !== 'title') {
       drag(drop(ref));
     }
 
@@ -676,32 +677,32 @@ export default function TeacherWordProcessor({
         ref={ref}
         style={{
           opacity: isDragging ? 0.5 : 1,
-          position: "relative",
-          margin: "10px 0",
+          position: 'relative',
+          margin: '10px 0',
         }}
       >
-        {item.type === "html" ? (
-          <div style={{ display: "flex", flexDirection: "row" }}>
+        {item.type === 'html' ? (
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
             <div
-              style={{ whiteSpace: "pre-wrap" }}
+              style={{ whiteSpace: 'pre-wrap' }}
               dangerouslySetInnerHTML={{ __html: item.content }}
             />
             <IconButton
               onClick={() => handleDeleteContent(index)}
               aria-label="delete"
               color="secondary"
-              sx={{ width: "30px" }}
+              sx={{ width: '30px' }}
             >
               <DeleteIcon />
             </IconButton>
           </div>
-        ) : item.type === "textBox" ? (
+        ) : item.type === 'textBox' ? (
           <div
             style={{
-              display: "flex",
-              alignItems: "center",
-              position: "relative",
-              width: "100%",
+              display: 'flex',
+              alignItems: 'center',
+              position: 'relative',
+              width: '100%',
             }}
           >
             <TextField
@@ -717,22 +718,22 @@ export default function TeacherWordProcessor({
               onClick={() => handleDeleteContent(index)}
               aria-label="delete"
               color="secondary"
-              sx={{ width: "30px" }}
+              sx={{ width: '30px' }}
             >
               <DeleteIcon />
             </IconButton>
           </div>
-        ) : item.type === "title" ? (
+        ) : item.type === 'title' ? (
           <Typography variant="h4" sx={{ marginBottom: 2 }}>
             {item.content}
           </Typography>
-        ) : item.type === "data" ? (
+        ) : item.type === 'data' ? (
           <div
             style={{
-              display: "flex",
-              alignItems: "center",
-              position: "relative",
-              width: "100%",
+              display: 'flex',
+              alignItems: 'center',
+              position: 'relative',
+              width: '100%',
             }}
           >
             <DataTableLoad content={item.content} />
@@ -740,18 +741,18 @@ export default function TeacherWordProcessor({
               onClick={() => handleDeleteContent(index)}
               aria-label="delete"
               color="secondary"
-              sx={{ width: "30px" }}
+              sx={{ width: '30px' }}
             >
               <DeleteIcon />
             </IconButton>
           </div>
-        ) : item.type === "img" ? (
+        ) : item.type === 'img' ? (
           <div
             style={{
-              display: "flex",
-              alignItems: "center",
-              position: "relative",
-              width: "100%",
+              display: 'flex',
+              alignItems: 'center',
+              position: 'relative',
+              width: '100%',
             }}
           >
             <img src={item.content} style={{ width: item.x, height: item.y }} />
@@ -759,7 +760,7 @@ export default function TeacherWordProcessor({
               onClick={() => handleDeleteContent(index, item.content)}
               aria-label="delete"
               color="secondary"
-              sx={{ width: "30px" }}
+              sx={{ width: '30px' }}
             >
               <DeleteIcon />
             </IconButton>
@@ -782,20 +783,20 @@ export default function TeacherWordProcessor({
       <Container>
         <div
           style={{
-            display: "flex",
-            flexDirection: "row",
-            width: "70rem",
-            height: "36.5rem",
+            display: 'flex',
+            flexDirection: 'row',
+            width: '70rem',
+            height: '36.5rem',
           }}
         >
           {/* 왼쪽에 과제 만드는 미리보기란에 랜더링 되는 곳 */}
           <Paper
             style={{
               padding: 20,
-              width: "100%",
-              height: "100%",
-              boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
-              overflowY: "auto",
+              width: '100%',
+              height: '100%',
+              boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+              overflowY: 'auto',
             }}
           >
             {localContents.map((item, index) => (
@@ -814,7 +815,7 @@ export default function TeacherWordProcessor({
           <ReactQuill
             ref={quillRef}
             value={value}
-            style={{ width: "55%", height: "88%", margin: "0 0 0 10px" }}
+            style={{ width: '55%', height: '88%', margin: '0 0 0 10px' }}
             onChange={handleChange}
             modules={modules}
             formats={formats}
@@ -823,17 +824,17 @@ export default function TeacherWordProcessor({
         </div>
         <div
           style={{
-            display: "flex",
-            width: "100%",
-            flexDirection: "row",
-            justifyContent: "space-between",
+            display: 'flex',
+            width: '100%',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
           }}
         >
           <div
             style={{
-              display: "flex",
-              justifyContent: "flex-start",
-              width: "100%",
+              display: 'flex',
+              justifyContent: 'flex-start',
+              width: '100%',
             }}
           >
             {/* 데이터 추가하기 버튼 */}
@@ -847,24 +848,24 @@ export default function TeacherWordProcessor({
               color="primary"
               className="yellow-btn" // yellow-btn 클래스 적용
               onClick={handleAddTextBox}
-              sx={{ margin: "20px 10px 0 0", width: "10rem" }}
+              sx={{ margin: '20px 10px 0 0', width: '10rem' }}
             >
               답변 박스 추가
             </Button>
           </div>
           <div
             style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              margin: "20px 0 0 0",
-              width: "100%",
+              display: 'flex',
+              justifyContent: 'flex-end',
+              margin: '20px 0 0 0',
+              width: '100%',
             }}
           >
             <Button
               variant="contained"
               color="primary"
               onClick={handleSave}
-              sx={{ width: "10rem", marginRight: "1rem" }}
+              sx={{ width: '10rem', marginRight: '1rem' }}
             >
               포함하기
             </Button>
@@ -875,7 +876,7 @@ export default function TeacherWordProcessor({
                   variant="contained"
                   color="secondary"
                   onClick={handleNext}
-                  sx={{ width: "10rem" }}
+                  sx={{ width: '10rem' }}
                 >
                   Finish
                 </Button>
@@ -884,7 +885,7 @@ export default function TeacherWordProcessor({
                   variant="contained"
                   color="secondary"
                   onClick={handleNext}
-                  sx={{ width: "10rem" }}
+                  sx={{ width: '10rem' }}
                 >
                   다음 단계
                 </Button>
