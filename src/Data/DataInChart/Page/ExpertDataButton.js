@@ -4,7 +4,7 @@ import Button from '@mui/material/Button';
 import { Typography } from '@mui/material';
 import ExpertDataList from './ExpertDataList';
 
-export default function ExpertDataButton({ setDataCategory }) {
+export default function ExpertDataButton() {
   const [isOpenDropdown, setIsOpenDropdown] = useState(false);
 
   const handleClick = () => {
@@ -31,7 +31,7 @@ export default function ExpertDataButton({ setDataCategory }) {
         </Typography>
       </Button>
 
-      {isOpenDropdown && <ExpertDataList setDataCategory={setDataCategory} />}
+      {isOpenDropdown && <ExpertDataList />}
     </div>
   );
 }

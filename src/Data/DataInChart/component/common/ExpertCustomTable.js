@@ -10,9 +10,11 @@ import {
   DialogTitle,
   TextField,
 } from '@mui/material';
+import { saveCustomTableApi } from '../../../apis/tables';
+import { customAxios } from '../../../../Common/CustomAxios';
 
-function ExpertCustomTable({ onAddPhoto }) {
-  const { data, title, setData } = useGraphDataStore();
+function ExpertCustomTable({ onAddPhoto, setSummary }) {
+  const { data, title, setData, variables } = useGraphDataStore();
   const [isEditing, setIsEditing] = useState(false);
   const [openModal, setOpenModal] = useState(false); // 모달 열기/닫기 상태
   const [photoTitle, setPhotoTitle] = useState(''); // 사진 제목 상태
@@ -139,6 +141,83 @@ function ExpertCustomTable({ onAddPhoto }) {
     }
   };
 
+  const saveCustomTable = async () => {
+    try {
+      const date = new Date();
+      console.log(data);
+      console.log(variables);
+
+      const stringFields = [];
+      const numericFields = [];
+      let order = 0;
+      for (let i = 1; i < data.length; i++) {
+        for (let j = 0; j < data[0].length; j++) {
+          const value = data[i][j];
+          if (variables[j].type === 'Categorical') {
+            stringFields.push({
+              [variables[j].name]: {
+                value,
+                order,
+              },
+            });
+          } else {
+            numericFields.push({
+              [variables[j].name]: {
+                value,
+                order,
+              },
+            });
+          }
+          order++;
+        }
+      }
+
+      const payload = {
+        dataUUID: crypto.randomUUID(),
+        saveDate: new Date(date.getTime() + 9 * 60 * 60 * 1000).toISOString(),
+        memo: '메모',
+        dataLabel: 'CUSTOM',
+        userName: localStorage.getItem('username'),
+        numericFields,
+        stringFields,
+      };
+
+      const response = await saveCustomTableApi(payload);
+
+      await customAxios
+        .get('/mydata/list')
+        .then((res) => {
+          console.log('My Data list : ' + JSON.stringify(res.data, null, 2));
+
+          const formattedData = res.data.map((data) => ({
+            ...data,
+            saveDate: data.saveDate.split('T')[0],
+            dataLabel:
+              data.dataLabel === 'AIRQUALITY'
+                ? '대기질 데이터'
+                : data.dataLabel === 'OCEANQUALITY'
+                ? '수질 데이터'
+                : data.dataLabel,
+          }));
+
+          setSummary(formattedData);
+        })
+        .catch((err) => console.log(err));
+
+      await customAxios.get('/api/custom/list').then((res) => {
+        console.log(res.data);
+        const formattedData = res.data.map((table) => ({
+          saveDate: table.saveDate.split('T')[0],
+          dataLabel: 'CUSTOM',
+          dataUUID: table.dataUUID,
+          memo: table.memo,
+        }));
+        setSummary((prev) => [...prev, ...formattedData]);
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
   if (!isEditing)
     return (
       <div>

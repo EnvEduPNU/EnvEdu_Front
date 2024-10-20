@@ -26,7 +26,8 @@ import usePhotoStore from '../store/photoStore';
 import LeftTeacherAssignTable from './leftTeacherAssignTable';
 
 function DataInChartPage() {
-  const [dataCategory, setDataCategory] = useState('');
+  const [filteredData, setFilteredData] = useState([]);
+  const [summary, setSummary] = useState([]);
   const [isLoading, setIsLoading] = useState(true); // 로딩 상태 추가
   const [photoList, setPhotoList] = useState([]); // 사진 리스트 상태
   const [selectedPhoto, setSelectedPhoto] = useState(null); // 모달에 표시할 선택된 사진
@@ -129,7 +130,6 @@ function DataInChartPage() {
   const boxBackgroundColor = isDrawGraph ? '#e0f7fa' : '#f0f0f0'; // 옅은 파란색 또는 옅은 회색 배경
   const textColor = isDrawGraph ? 'blue' : 'gray'; // 파란색 또는 회색 텍스트
   const iconColor = isDrawGraph ? 'primary' : 'disabled'; // 파란색 또는 회색 아이콘
-
   return (
     <div
       style={{
