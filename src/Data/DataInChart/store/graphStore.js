@@ -33,26 +33,40 @@ export const useGraphDataStore = create((set, get) => ({
 
   selctedXVariableIndex: -1,
 
-  setData: (newData, title) =>
+  setData: (newData, title, isNew, newVariables) =>
     set((state) => {
-      if (state.title !== title)
-        return {
-          ...state,
-          data: newData,
-          variables: newData[0].map((name, index) => {
-            return {
-              name,
-              type: selectVariableType(name),
-              isSelected: false,
-              isMoreSelected: false,
-              variableIndex: index,
-            };
-          }),
-          title,
-          selectedYVariableIndexs: [],
-          selectedMoreYVariableIndexs: [],
-          selctedXVariableIndex: -1,
-        };
+      console.log(newVariables);
+      if (state.title !== title || isNew) {
+        if (newVariables !== undefined)
+          return {
+            ...state,
+            data: newData,
+            variables: newVariables,
+            title,
+            selectedYVariableIndexs: [],
+            selectedMoreYVariableIndexs: [],
+            selctedXVariableIndex: -1,
+          };
+        else
+          return {
+            ...state,
+            data: newData,
+            variables: newData[0].map((name, index) => {
+              return {
+                name,
+                type: selectVariableType(name),
+                isSelected: false,
+                isMoreSelected: false,
+                variableIndex: index,
+              };
+            }),
+            title,
+            selectedYVariableIndexs: [],
+            selectedMoreYVariableIndexs: [],
+            selctedXVariableIndex: -1,
+          };
+      }
+
       return {
         ...state,
         data: newData,

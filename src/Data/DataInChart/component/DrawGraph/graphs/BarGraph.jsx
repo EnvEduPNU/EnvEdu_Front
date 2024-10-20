@@ -33,7 +33,7 @@ function BarGraph() {
     selectXVariableIndex,
     graphIdx,
   } = useGraphDataStore();
-
+  console.log(data);
   const [barDatas, setBarDatas] = useState({
     labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
     datasets: [
@@ -128,50 +128,110 @@ function BarGraph() {
     if (isPostive && isNegitive) {
       // 양수, 음수 다 있을 때
       setYScaleMinMaxValue([
-        Math.ceil(minValue / Math.pow(10, minValue.toString().length - 1)) *
-          Math.pow(10, minValue.toString().length - 1),
-        Math.ceil(maxValue / Math.pow(10, maxValue.toString().length - 1)) *
-          Math.pow(10, maxValue.toString().length - 1),
+        minValue ===
+        Math.ceil(
+          minValue / Math.pow(10, minValue.toString().split('.')[0].length - 2),
+        ) *
+          Math.pow(10, minValue.toString().split('.')[0].length - 2)
+          ? minValue - 1
+          : Math.ceil(
+              minValue /
+                Math.pow(10, minValue.toString().split('.')[0].length - 2),
+            ) * Math.pow(10, minValue.toString().split('.')[0].length - 2),
+        maxValue ===
+        Math.ceil(
+          maxValue / Math.pow(10, maxValue.toString().split('.')[0].length - 1),
+        ) *
+          Math.pow(10, maxValue.toString().split('.')[0].length - 1)
+          ? maxValue + 1
+          : Math.ceil(
+              maxValue /
+                Math.pow(10, maxValue.toString().split('.')[0].length - 1),
+            ) * Math.pow(10, maxValue.toString().split('.')[0].length - 1),
       ]);
       setYScaleValue([
-        Math.ceil(minValue / Math.pow(10, minValue.toString().length - 1)) *
-          Math.pow(10, minValue.toString().length - 1),
-        Math.ceil(maxValue / Math.pow(10, maxValue.toString().length - 1)) *
-          Math.pow(10, maxValue.toString().length - 1),
+        minValue ===
+        Math.ceil(
+          minValue / Math.pow(10, minValue.toString().split('.')[0].length - 2),
+        ) *
+          Math.pow(10, minValue.toString().split('.')[0].length - 2)
+          ? minValue - 1
+          : Math.ceil(
+              minValue /
+                Math.pow(10, minValue.toString().split('.')[0].length - 2),
+            ) * Math.pow(10, minValue.toString().split('.')[0].length - 2),
+        maxValue ===
+        Math.ceil(
+          maxValue / Math.pow(10, maxValue.toString().split('.')[0].length - 1),
+        ) *
+          Math.pow(10, maxValue.toString().split('.')[0].length - 1)
+          ? maxValue + 1
+          : Math.ceil(
+              maxValue /
+                Math.pow(10, maxValue.toString().split('.')[0].length - 1),
+            ) * Math.pow(10, maxValue.toString().split('.')[0].length - 1),
       ]);
     } else if (isPostive) {
       // 양수만 있을 때
       setYScaleMinMaxValue([
         0,
+        maxValue ===
         Math.ceil(
-          minValue / Math.pow(10, minValue.toString().split('.')[0].length - 1),
-        ) * Math.pow(10, minValue.toString().split('.')[0].length - 1),
+          maxValue / Math.pow(10, maxValue.toString().split('.')[0].length - 1),
+        ) *
+          Math.pow(10, maxValue.toString().split('.')[0].length - 1)
+          ? maxValue + 1
+          : Math.ceil(
+              maxValue /
+                Math.pow(10, maxValue.toString().split('.')[0].length - 1),
+            ) * Math.pow(10, maxValue.toString().split('.')[0].length - 1),
       ]);
       setYScaleValue([
         0,
+        maxValue ===
         Math.ceil(
           maxValue / Math.pow(10, maxValue.toString().split('.')[0].length - 1),
-        ) * Math.pow(10, maxValue.toString().split('.')[0].length - 1),
+        ) *
+          Math.pow(10, maxValue.toString().split('.')[0].length - 1)
+          ? maxValue + 1
+          : Math.ceil(
+              maxValue /
+                Math.pow(10, maxValue.toString().split('.')[0].length - 1),
+            ) * Math.pow(10, maxValue.toString().split('.')[0].length - 1),
       ]);
     } else if (isNegitive) {
       // 음수만 있을 때
       setYScaleMinMaxValue([
+        minValue ===
         Math.ceil(
-          minValue / Math.pow(10, minValue.toString().split('.')[0].length - 1),
-        ) * Math.pow(10, minValue.toString().split('.')[0].length - 1),
+          minValue / Math.pow(10, minValue.toString().split('.')[0].length - 2),
+        ) *
+          Math.pow(10, minValue.toString().split('.')[0].length - 2)
+          ? minValue - 1
+          : Math.ceil(
+              minValue /
+                Math.pow(10, minValue.toString().split('.')[0].length - 2),
+            ) * Math.pow(10, minValue.toString().split('.')[0].length - 2),
         0,
       ]);
       setYScaleValue([
+        minValue ===
         Math.ceil(
-          minValue / Math.pow(10, minValue.toString().split('.')[0].length - 1),
-        ) * Math.pow(10, minValue.toString().split('.')[0].length - 1),
+          minValue / Math.pow(10, minValue.toString().split('.')[0].length - 2),
+        ) *
+          Math.pow(10, minValue.toString().split('.')[0].length - 2)
+          ? minValue - 1
+          : Math.ceil(
+              minValue /
+                Math.pow(10, minValue.toString().split('.')[0].length - 2),
+            ) * Math.pow(10, minValue.toString().split('.')[0].length - 2),
         0,
       ]);
     }
 
     setXScaleMinMaxValue([0, data.length - 2]);
     setXScaleValue([0, data.length - 2]);
-  }, [graphIdx, selectedYVariableIndexs]);
+  }, [data, graphIdx, selectedYVariableIndexs]);
 
   // 초기 데이터 세팅
   useEffect(() => {
@@ -241,10 +301,20 @@ function BarGraph() {
         x: {
           min: xScaleValue[0], // X축의 최소값 설정
           max: xScaleValue[1], // X축의 최대값 설정
+          ticks: {
+            font: {
+              size: 14, // x축 단위 글꼴 크기
+            },
+          },
         },
         y: {
           min: yScaleValue[0],
           max: yScaleValue[1],
+          ticks: {
+            font: {
+              size: 20, // y축 단위 글꼴 크기
+            },
+          },
         },
       },
     }));
@@ -350,18 +420,26 @@ function BarGraph() {
               sx={{
                 color: '#1976d2', // 슬라이더의 트랙 및 thumb 색상
                 '& .MuiSlider-thumb': {
-                  backgroundColor: '#fff', // thumb의 배경색
-                  border: '2px solid #1976d2', // thumb의 테두리 색상
+                  backgroundColor: '#fff', // thumb 배경색
+                  border: '2px solid #1976d2', // thumb 테두리 색상
+                  width: '20px', // thumb 크기
+                  height: '20px', // thumb 크기
+                  '&:hover': {
+                    boxShadow: '0 0 0 8px rgba(25, 118, 210, 0.16)', // hover 시 그림자
+                  },
                 },
                 '& .MuiSlider-track': {
-                  backgroundColor: '#1976d2', // 슬라이더 트랙 색상
+                  backgroundColor: '#1976d2', // 트랙 색상
+                  width: '8px', // 트랙 너비 (세로 슬라이더에서 width로 설정)
                 },
                 '& .MuiSlider-rail': {
-                  backgroundColor: '#ddd', // 슬라이더 레일 색상
+                  backgroundColor: '#ddd', // 레일 색상
+                  width: '8px', // 레일 너비 (세로 슬라이더에서 width로 설정)
                 },
                 '& .MuiSlider-valueLabel': {
-                  backgroundColor: '#1976d2', // value label 색상
-                  color: '#fff',
+                  backgroundColor: '#1976d2', // value label 배경색
+                  color: '#fff', // value label 텍스트 색상
+                  fontSize: '14px', // value label 글자 크기
                 },
               }}
             />
@@ -377,6 +455,7 @@ function BarGraph() {
         <div
           style={{
             width: '400px',
+            marginTop: '15px',
             margin: '0 auto',
           }}
         >
@@ -389,18 +468,26 @@ function BarGraph() {
             sx={{
               color: '#1976d2', // 슬라이더의 트랙 및 thumb 색상
               '& .MuiSlider-thumb': {
-                backgroundColor: '#fff', // thumb의 배경색
-                border: '2px solid #1976d2', // thumb의 테두리 색상
+                backgroundColor: '#fff', // thumb 배경색
+                border: '2px solid #1976d2', // thumb 테두리 색상
+                width: '20px', // thumb 크기
+                height: '20px', // thumb 크기
+                '&:hover': {
+                  boxShadow: '0 0 0 8px rgba(25, 118, 210, 0.16)', // hover 시 그림자
+                },
               },
               '& .MuiSlider-track': {
-                backgroundColor: '#1976d2', // 슬라이더 트랙 색상
+                backgroundColor: '#1976d2', // 트랙 색상
+                height: '8px', // 트랙 높이
               },
               '& .MuiSlider-rail': {
-                backgroundColor: '#ddd', // 슬라이더 레일 색상
+                backgroundColor: '#ddd', // 레일 색상
+                height: '8px', // 레일 높이
               },
               '& .MuiSlider-valueLabel': {
-                backgroundColor: '#1976d2', // value label 색상
-                color: '#fff',
+                backgroundColor: '#1976d2', // value label 배경색
+                color: '#fff', // value label 텍스트 색상
+                fontSize: '14px', // value label 글자 크기
               },
             }}
           />

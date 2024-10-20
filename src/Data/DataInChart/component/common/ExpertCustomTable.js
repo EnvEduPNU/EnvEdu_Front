@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useGraphDataStore } from '../../store/graphStore';
 import { AiOutlineDelete } from 'react-icons/ai';
+import { saveCustomTableApi } from '../../../apis/tables';
+import { customAxios } from '../../../../Common/CustomAxios';
 
-function ExpertCustomTable() {
-  const { data, title, setData } = useGraphDataStore();
+function ExpertCustomTable({ setSummary }) {
+  const { data, title, setData, variables } = useGraphDataStore();
   const [isEditing, setIsEditing] = useState(false);
 
   const [modificationData, setModificationData] = useState([]);
@@ -90,6 +92,84 @@ function ExpertCustomTable() {
       return updatedData;
     });
   };
+
+  const saveCustomTable = async () => {
+    try {
+      const date = new Date();
+      console.log(data);
+      console.log(variables);
+
+      const stringFields = [];
+      const numericFields = [];
+      let order = 0;
+      for (let i = 1; i < data.length; i++) {
+        for (let j = 0; j < data[0].length; j++) {
+          const value = data[i][j];
+          if (variables[j].type === 'Categorical') {
+            stringFields.push({
+              [variables[j].name]: {
+                value,
+                order,
+              },
+            });
+          } else {
+            numericFields.push({
+              [variables[j].name]: {
+                value,
+                order,
+              },
+            });
+          }
+          order++;
+        }
+      }
+
+      const payload = {
+        dataUUID: crypto.randomUUID(),
+        saveDate: new Date(date.getTime() + 9 * 60 * 60 * 1000).toISOString(),
+        memo: '메모',
+        dataLabel: 'CUSTOM',
+        userName: localStorage.getItem('username'),
+        numericFields,
+        stringFields,
+      };
+
+      const response = await saveCustomTableApi(payload);
+
+      await customAxios
+        .get('/mydata/list')
+        .then((res) => {
+          console.log('My Data list : ' + JSON.stringify(res.data, null, 2));
+
+          const formattedData = res.data.map((data) => ({
+            ...data,
+            saveDate: data.saveDate.split('T')[0],
+            dataLabel:
+              data.dataLabel === 'AIRQUALITY'
+                ? '대기질 데이터'
+                : data.dataLabel === 'OCEANQUALITY'
+                ? '수질 데이터'
+                : data.dataLabel,
+          }));
+
+          setSummary(formattedData);
+        })
+        .catch((err) => console.log(err));
+
+      await customAxios.get('/api/custom/list').then((res) => {
+        console.log(res.data);
+        const formattedData = res.data.map((table) => ({
+          saveDate: table.saveDate.split('T')[0],
+          dataLabel: 'CUSTOM',
+          dataUUID: table.dataUUID,
+          memo: table.memo,
+        }));
+        setSummary((prev) => [...prev, ...formattedData]);
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
   if (!isEditing)
     return (
       <div>
@@ -107,8 +187,8 @@ function ExpertCustomTable() {
 
             <button
               className="px-2 py-1 text-md ml-4 bg-gray-800 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50"
-              // onClick={}
               style={{ fontSize: '16px' }}
+              onClick={saveCustomTable}
             >
               저장하기
             </button>

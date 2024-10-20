@@ -1,26 +1,22 @@
-import * as React from "react";
-import { useEffect, useState } from "react";
-import Box from "@mui/material/Box";
-import Modal from "@mui/material/Modal";
-import Dataset from "../component/common/Data/Dataset";
+import * as React from 'react';
+import { useEffect, useState } from 'react';
+import Box from '@mui/material/Box';
+import Modal from '@mui/material/Modal';
+import Dataset from '../component/common/Data/Dataset';
 
 const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
   width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
   boxShadow: 24,
   p: 4,
 };
 
-export default function ExpertDataModal({
-  modalOpen,
-  setModalOpen,
-  setDataCategory,
-}) {
+export default function ExpertDataModal({ modalOpen, setModalOpen }) {
   const handleClose = () => {
     setModalOpen(false);
   };
@@ -33,10 +29,7 @@ export default function ExpertDataModal({
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <Dataset
-            setModalOpen={setModalOpen}
-            setDataCategory={setDataCategory}
-          />
+          <Dataset setModalOpen={setModalOpen} />
         </Box>
       </Modal>
     </div>

@@ -79,6 +79,18 @@ function ScatterGraph() {
     scales: {
       y: {
         beginAtZero: true,
+        ticks: {
+          font: {
+            size: 20, // y축 단위 글꼴 크기
+          },
+        },
+      },
+      x: {
+        ticks: {
+          font: {
+            size: 20, // y축 단위 글꼴 크기
+          },
+        },
       },
       // 값 범위 조절 문제
       // x: {
@@ -119,9 +131,6 @@ function ScatterGraph() {
         selectXVariableIndex(findedXindex);
       }
     }
-
-    console.log(data);
-    console.log(findedYindex, findedXindex);
   }, [data, graphIdx]);
 
   // 새로운 Dropdown을 추가하는 함수

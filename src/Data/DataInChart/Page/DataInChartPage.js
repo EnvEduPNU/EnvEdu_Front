@@ -11,15 +11,20 @@ const StyledDiv = styled.div`
 
 // Data & Chart 메인 페이지
 function DataInChartPage() {
-  const [dataCategory, setDataCategory] = useState('');
-
+  const [filteredData, setFilteredData] = useState([]);
+  const [summary, setSummary] = useState([]);
   return (
     <StyledDiv>
       {/* 왼쪽 사이드 메뉴 */}
-      <LeftSlidePage setDataCategory={setDataCategory} />
+      <LeftSlidePage
+        filteredData={filteredData}
+        setFilteredData={setFilteredData}
+        summary={summary}
+        setSummary={setSummary}
+      />
 
       {/* 오른쪽 테이블 및 그래프 */}
-      <TableOrGraph dataCategory={dataCategory} />
+      <TableOrGraph setSummary={setSummary} />
     </StyledDiv>
   );
 }
