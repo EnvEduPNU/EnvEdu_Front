@@ -47,9 +47,12 @@ function StudentRenderAssign({
   const { getStorePhotoList, setStorePhotoList } = usePhotoStore();
 
   useEffect(() => {
-    console.log('사진 저장소 확인 : ', getStorePhotoList());
     const photoList = getStorePhotoList();
-    setLocalStoredPhotoList(photoList);
+    if (photoList) {
+      console.log('사진 수 : ', getStorePhotoList().length);
+
+      setLocalStoredPhotoList(photoList);
+    }
   }, []);
 
   const handleNavigate = (uuid, username, contentName, stepNum) => {
@@ -153,8 +156,8 @@ function StudentRenderAssign({
                     return {
                       type: 'img',
                       content: imageUrl,
-                      x: 300 + idx * 10, // 이미지 위치 조정
-                      y: 300 + idx * 10,
+                      x: 1000 + idx * 10, // 이미지 위치 조정
+                      y: 1500 + idx * 10,
                     };
                   },
                 );
@@ -369,21 +372,32 @@ function RenderContent({
             그래프 그리기
           </Button>
 
-          <div style={{ marginTop: '10px' }}>
-            {storedPhotoList.length > 0 ? (
-              <ul style={{ listStyle: 'none', padding: 0 }}>
-                {storedPhotoList.map((photo, index) => (
-                  <li
+          <div
+            style={{
+              marginTop: '10px',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(600px, 1fr))', // auto-fit을 사용하고 minmax 값 조정
+              gap: '10px',
+              justifyContent: 'center',
+            }}
+          >
+            {storedPhotoList.length > 0
+              ? storedPhotoList.map((photo, index) => (
+                  <div
                     key={index}
-                    style={{ marginBottom: '20px', position: 'relative' }}
+                    style={{
+                      marginBottom: '20px',
+                      position: 'relative',
+                      textAlign: 'center',
+                    }}
                   >
-                    <Typography variant="subtitle1">{photo.title}</Typography>
+                    {/* <Typography variant="subtitle1">{photo.title}</Typography> */}
                     <img
                       src={photo.image}
                       alt={photo.title}
                       style={{
-                        width: '300px',
-                        height: '300px',
+                        width: '100%', // 그리드 셀에 맞게 이미지 크기 조정
+                        height: 'auto',
                         objectFit: 'cover',
                       }}
                     />
@@ -399,12 +413,9 @@ function RenderContent({
                     >
                       <DeleteIcon />
                     </IconButton>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              ''
-            )}
+                  </div>
+                ))
+              : ''}
           </div>
         </div>
       );

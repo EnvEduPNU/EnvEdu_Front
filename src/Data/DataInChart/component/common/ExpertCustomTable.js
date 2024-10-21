@@ -100,9 +100,22 @@ function ExpertCustomTable({ onAddPhoto }) {
   // 테이블을 캡처하고 모달을 여는 함수
   const handleCaptureTable = async () => {
     if (tableRef.current) {
-      // html2canvas를 사용하여 테이블 영역을 캡처
-      const canvas = await html2canvas(tableRef.current);
-      const imgData = canvas.toDataURL('image/png'); // 캡처한 데이터를 이미지로 변환
+      const tableElement = tableRef.current;
+
+      // 테이블의 크기를 동적으로 측정
+      const tableWidth = tableElement.scrollWidth;
+      const tableHeight = tableElement.scrollHeight;
+
+      // html2canvas로 캡처할 때 크기 설정
+      const canvas = await html2canvas(tableElement, {
+        width: tableWidth, // 테이블의 전체 너비
+        height: tableHeight, // 테이블의 전체 높이
+        windowWidth: tableWidth, // 캡처할 영역의 너비
+        windowHeight: tableHeight, // 캡처할 영역의 높이
+      });
+
+      // 캡처한 데이터를 이미지로 변환
+      const imgData = canvas.toDataURL('image/png');
       setCapturedImage(imgData); // 캡처된 이미지를 상태에 저장
       setOpenModal(true); // 모달 열기
     }

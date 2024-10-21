@@ -155,7 +155,7 @@ function DataInChartPage() {
           </Box>
         </div>
 
-        {/* 왼쪽 사이드 메뉴 */}
+        {/* --------------------------------------------------- 왼쪽 사이드 메뉴 -------------------------------------- */}
         <LeftSlidePage setDataCategory={setDataCategory} />
 
         {/* 사진 저장 리스트 */}
@@ -256,10 +256,10 @@ function DataInChartPage() {
         </div>
       </div>
 
-      {/* 오른쪽 테이블 및 그래프 */}
+      {/* ---------------------------------------- 오른쪽 테이블 및 그래프 ----------------------------------------- */}
       <TableOrGraph dataCategory={dataCategory} setPhoto={handleAddPhoto} />
 
-      {/* 모달 */}
+      {/* ---------------------------------------- 모달 -------------------------------------------------------*/}
       {selectedPhoto && (
         <Dialog open={openModal} onClose={handleCloseModal}>
           <DialogTitle>{selectedPhoto.title}</DialogTitle>
