@@ -5,6 +5,24 @@ import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { v4 as uuidv4 } from 'uuid';
 import DataInChartModal from '../../dataInChartStep/DataInChartModal';
+import { useNavigate } from 'react-router-dom';
+import usePhotoStore from '../../../../Data/DataInChart/store/photoStore';
+import axios from 'axios';
+
+// Base64를 File로 변환하는 함수
+function base64ToFile(base64Data, filename) {
+  const arr = base64Data.split(',');
+  const mime = arr[0].match(/:(.*?);/)[1];
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+
+  return new File([u8arr], filename, { type: mime });
+}
 
 function StudentRenderAssign({
   tableData,
@@ -14,16 +32,33 @@ function StudentRenderAssign({
   studentId,
   sessionIdState,
   eclassUuid,
+  setAssginmentFetch,
 }) {
   const [textBoxValues, setTextBoxValues] = useState({});
   const [data, setData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열기 상태 추가
+  const navigate = useNavigate();
+  const [storedPhotoList, setStoredPhotoList] = useState([]);
+
+  // Zustand store에서 getStorePhotoList 가져오기
+  const { getStorePhotoList } = usePhotoStore();
+
+  useEffect(() => {
+    console.log('사진 저장소 확인 : ', getStorePhotoList());
+    const photoList = getStorePhotoList();
+    setStoredPhotoList(photoList);
+  }, []);
+
+  const handleNavigate = (uuid, username, contentName, stepNum) => {
+    const id = 'drawGraph';
+    navigate(
+      `/data-in-chart?id=${id}&uuid=${uuid}&username=${username}&contentName=${contentName}&stepNum=${stepNum}`,
+    );
+  };
 
   useEffect(() => {
     console.log('stepCount : ' + JSON.stringify(stepCount, null, 2));
-
     const parseStepCount = parseInt(stepCount);
-
     let filteredContents = latestTableData
       ? latestTableData
           .flatMap((data) => data.contents)
@@ -31,7 +66,6 @@ function StudentRenderAssign({
       : tableData
           .flatMap((data) => data.contents)
           .filter((content) => content.stepNum === parseStepCount);
-
     setData(filteredContents);
   }, [stepCount, latestTableData, tableData]);
 
@@ -45,55 +79,83 @@ function StudentRenderAssign({
     }));
   };
 
-  const handleSubmit = async () => {
-    console.log(
-      'textBoxValues 확인 : ' + JSON.stringify(textBoxValues, null, 2),
-    );
+  // 이미지 파일 업로드 메서드
+  const handleUpload = async (image, contentUuid) => {
+    try {
+      const response = await customAxios.get('/api/images/presigned-url', {
+        params: { fileName: contentUuid },
+      });
+      const { preSignedUrl, imageUrl } = response.data;
+      const contentType = 'image/jpg';
 
+      await axios.put(preSignedUrl, image, {
+        headers: {
+          'Content-Type': contentType,
+        },
+      });
+
+      return imageUrl;
+    } catch (error) {
+      console.error('파일 업로드 오류:', error);
+      throw error;
+    }
+  };
+
+  const handleSubmit = async () => {
     const studentName = localStorage.getItem('username');
     const dataToUse = latestTableData || tableData;
-
-    console.log('테이블데이터 : ' + JSON.stringify(tableData, null, 2));
-    console.log(
-      '레이티스트데이터 : ' + JSON.stringify(latestTableData, null, 2),
-    );
-
     const stepCount = tableData[0].stepCount;
     const stepCheck = new Array(stepCount).fill(false);
 
-    const updatedData = dataToUse.map((data) => ({
-      uuid: uuidv4(),
+    const updatedDataPromises = dataToUse.map(async (data) => ({
+      uuid: data.uuid,
       timestamp: new Date().toISOString(),
       username: studentName,
       stepName: data.stepName,
       stepCount: data.stepCount,
-      contents: data.contents.map((item) => ({
-        contentName: item.contentName,
-        stepNum: item.stepNum,
-        contents: item.contents.map((contentItem, index) => {
-          if (contentItem.type === 'textBox') {
-            const updatedContent =
-              textBoxValues[item.stepNum]?.[index] || contentItem.content;
-
-            if (updatedContent && updatedContent.trim() !== '') {
-              const stepIndex = item.stepNum - 1;
-              if (stepIndex >= 0 && stepIndex < stepCount) {
-                stepCheck[stepIndex] = true;
+      contents: await Promise.all(
+        data.contents.map(async (item) => ({
+          contentName: item.contentName,
+          stepNum: item.stepNum,
+          contents: await Promise.all(
+            item.contents.map(async (contentItem, index) => {
+              if (contentItem.type === 'textBox') {
+                const updatedContent =
+                  textBoxValues[item.stepNum]?.[index] || contentItem.content;
+                if (updatedContent && updatedContent.trim() !== '') {
+                  const stepIndex = item.stepNum - 1;
+                  if (stepIndex >= 0 && stepIndex < stepCount) {
+                    stepCheck[stepIndex] = true;
+                  }
+                }
+                return { ...contentItem, content: updatedContent };
               }
-            }
 
-            return {
-              ...contentItem,
-              content: updatedContent,
-            };
-          }
-          return contentItem;
-        }),
-      })),
+              if (
+                contentItem.type === 'dataInChartButton' &&
+                storedPhotoList.length > 0
+              ) {
+                const base64Image = storedPhotoList[0].image;
+                const filename = `image_${uuidv4()}.jpg`;
+                const imageFile = base64ToFile(base64Image, filename);
+                const contentUuid = uuidv4();
+                const imageUrl = await handleUpload(imageFile, contentUuid);
+                return {
+                  type: 'img',
+                  content: imageUrl,
+                  x: 300,
+                  y: 300,
+                };
+              }
+
+              return contentItem;
+            }),
+          ),
+        })),
+      ),
     }));
 
-    console.log('업데이트 되는 데이터' + JSON.stringify(stepCheck, null, 2));
-    console.log('학생 아이디 : ' + studentId);
+    const updatedData = await Promise.all(updatedDataPromises);
 
     const requestData = {
       stepCheck: stepCheck,
@@ -108,32 +170,34 @@ function StudentRenderAssign({
 
     if (window.confirm('제출하시겠습니까?')) {
       try {
-        await customAxios.post(
-          '/api/eclass/student/assginmentUuid/update',
-          assignmentUuidRegistData,
-        );
-
-        const stepCheckResponse = await customAxios.post(
-          '/api/eclass/student/assignment/stepCheck',
-          requestData,
-        );
-
-        alert('제출 완료했습니다.');
-        console.log('Step Check Response:', stepCheckResponse);
-
         assginmentStompClient();
 
-        const assignmentResponse = assginmentCheck
-          ? await customAxios.put('/api/assignment/update', updatedData)
-          : await customAxios.post('/api/assignment/save', updatedData);
+        try {
+          await customAxios.post(
+            '/api/eclass/student/assginmentUuid/update',
+            assignmentUuidRegistData,
+          );
 
-        console.log(
-          assginmentCheck ? '수정 완료' : '새로 저장 완료',
-          assignmentResponse,
-        );
+          await customAxios.post(
+            '/api/eclass/student/assignment/stepCheck',
+            requestData,
+          );
+
+          await (assginmentCheck
+            ? customAxios.put('/api/assignment/update', updatedData)
+            : customAxios.post('/api/assignment/save', updatedData));
+
+          console.log('제출된 객체 : ', updatedData);
+          setAssginmentFetch(true);
+          alert('제출 완료했습니다.');
+          window.location.reload();
+        } catch (error) {
+          console.error('Error during submission:', error);
+          alert('제출 중 오류가 발생했습니다. 다시 시도해주세요.');
+        }
       } catch (error) {
-        console.error('Error during submission:', error);
-        alert('제출 중 오류가 발생했습니다. 다시 시도해주세요.');
+        console.error('Error during stomp connection:', error);
+        alert('Stomp 연결에 문제가 있습니다.');
       }
     }
   };
@@ -152,7 +216,7 @@ function StudentRenderAssign({
 
     const stompClient = new Client({ webSocketFactory: () => socket });
 
-    stompClient.connected({}, () => {
+    stompClient.onConnect({}, () => {
       stompClient.send('/app/assginment-status', {}, JSON.stringify(message));
     });
   };
@@ -176,10 +240,13 @@ function StudentRenderAssign({
                   content={content}
                   textBoxValue={textBoxValues[stepData.stepNum]?.[idx] || ''}
                   setTextBoxValue={(id, text) =>
-                    handleTextBoxSubmit(stepData.stepNum, id, text)
+                    handleTextBoxSubmit(stepData.stepNum, id, text, content)
                   }
                   index={idx}
-                  onOpenModal={() => setIsModalOpen(true)} // 모달 열기 함수 전달
+                  onOpenModal={() => setIsModalOpen(true)}
+                  onNavigate={handleNavigate}
+                  storedPhotoList={storedPhotoList}
+                  stepData={stepData}
                 />
               ))}
             </div>
@@ -204,18 +271,18 @@ function StudentRenderAssign({
           </Button>
         </React.Fragment>
       ))}
-      {isModalOpen && <DataInChartModal isModalOpen={isModalOpen} />}{' '}
-      {/* 모달 렌더링 */}
+      {isModalOpen && <DataInChartModal isModalOpen={isModalOpen} />}
     </div>
   );
 }
 
 function RenderContent({
   content,
-  textBoxValue,
   setTextBoxValue,
   index,
-  onOpenModal,
+  onNavigate,
+  stepData,
+  storedPhotoList,
 }) {
   const handleTextChange = (event) => {
     setTextBoxValue(index, event.target.value);
@@ -259,14 +326,43 @@ function RenderContent({
       );
     case 'dataInChartButton':
       return (
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={onOpenModal} // 모달 열기
-          sx={{ margin: '20px 10px 0 0', width: '10rem' }}
-        >
-          그래프 그리기 추가
-        </Button>
+        <>
+          <Button
+            onClick={() =>
+              onNavigate(
+                stepData.uuid,
+                stepData.username,
+                content.contentName,
+                content.stepNum,
+              )
+            }
+          >
+            그래프 그리기
+          </Button>
+
+          <div style={{ marginTop: '10px' }}>
+            {storedPhotoList.length > 0 ? (
+              <ul style={{ listStyle: 'none', padding: 0 }}>
+                {storedPhotoList.map((photo, index) => (
+                  <li key={index} style={{ marginBottom: '20px' }}>
+                    <Typography variant="subtitle1">{photo.title}</Typography>
+                    <img
+                      src={photo.image}
+                      alt={photo.title}
+                      style={{
+                        width: '300px',
+                        height: '300px',
+                        objectFit: 'cover',
+                      }}
+                    />
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <Typography>No photo list available.</Typography>
+            )}
+          </div>
+        </>
       );
     case 'emptyBox':
       return (

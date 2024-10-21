@@ -124,10 +124,10 @@ function ClassData() {
 
   return (
     <div
-      className="myData-container"
       style={{
         display: 'flex',
         justifyContent: 'center',
+        marginBottom: '2rem',
       }}
     >
       {/* {showLectureList && (
@@ -142,7 +142,7 @@ function ClassData() {
         </div>
       )} */}
 
-      <div className="myData-right">
+      <div>
         {!showLectureList && !stepName && (
           <div
             style={{

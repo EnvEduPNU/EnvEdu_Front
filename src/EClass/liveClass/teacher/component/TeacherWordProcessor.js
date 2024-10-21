@@ -20,6 +20,7 @@ import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import './TeacherWordProcessor.scss';
 import DataInChartModal from '../../dataInChartStep/DataInChartModal';
+import { useNavigate } from 'react-router-dom';
 
 Quill.register('modules/imageActions', ImageActions);
 Quill.register('modules/imageFormats', ImageFormats);
@@ -110,6 +111,7 @@ export default function TeacherWordProcessor({
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const quillRef = useRef(null);
+  const navigate = useNavigate();
 
   // 첫 번째 useEffect: stepperStepName 배열을 업데이트
   useEffect(() => {
@@ -789,15 +791,21 @@ export default function TeacherWordProcessor({
           </div>
         ) : item.type === 'dataInChartButton' ? (
           <>
-            <Button onClick={() => setIsModalOpen(true)}>그래프 그리기</Button>
+            {/* <Button onClick={() => setIsModalOpen(true)}>그래프 그리기</Button>
             <DataInChartModal
               isModalOpen={isModalOpen}
               setIsModalOpen={setIsModalOpen}
-            />
+            /> */}
+            <Button onClick={handleNavigate}>그래프 그리기</Button>
           </>
         ) : null}
       </div>
     );
+  };
+
+  const handleNavigate = () => {
+    const id = 'drawGraph';
+    navigate(`/data-in-chart?id=${id}`); // 쿼리 파라미터로 id 전달
   };
 
   const moveItem = (dragIndex, hoverIndex) => {
@@ -810,13 +818,13 @@ export default function TeacherWordProcessor({
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <Container>
+      <Container disableGutters>
         {stepCount >= activeStep ? (
           <div
             style={{
               display: 'flex',
               flexDirection: 'row',
-              width: '70rem',
+              width: '100%',
               height: '36.5rem',
             }}
           >

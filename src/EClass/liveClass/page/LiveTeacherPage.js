@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { Typography, CircularProgress, Box } from '@mui/material';
 import { customAxios } from '../../../Common/CustomAxios';
@@ -22,6 +22,7 @@ export const LiveTeacherPage = () => {
   const { eClassUuid } = useParams();
   const location = useLocation();
   const { lectureDataUuid, eClassName } = location.state || {};
+
   const navigate = useNavigate();
 
   const closeEclass = async () => {

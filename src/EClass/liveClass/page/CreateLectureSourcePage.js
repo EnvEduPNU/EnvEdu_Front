@@ -332,7 +332,6 @@ export const CreateLectureSourcePage = (props) => {
 
   return (
     <>
-      {/* 전체 컨테이너에 flex 스타일 적용 */}
       <div
         style={{
           display: 'flex',
@@ -359,7 +358,7 @@ export const CreateLectureSourcePage = (props) => {
               onDoubleClick={handleDoubleClick}
               style={{
                 cursor: 'pointer',
-                margin: ' 0 20px 0 0',
+                margin: '20px 0 0 10px',
               }}
             >
               {lectureName || '더블클릭하여 수업 자료 이름을 입력하세요.'}
@@ -375,7 +374,7 @@ export const CreateLectureSourcePage = (props) => {
               background: '#f3b634',
               padding: '0.5rem', // 단위 추가
               borderRadius: '0.3125rem',
-              marginBottom: '0.5rem',
+              margin: '0.5rem 0 0.5rem 0',
               width: '20%',
               height: '3.5rem',
               textAlign: 'center',

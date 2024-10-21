@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
 import TableOrGraph from '../../../Data/DataInChart/component/DrawGraph/TableOrGraph';
-import LeftSlidePage from '../../../Data/DataInChart/Page/leftSlidePage';
 import styled from '@emotion/styled';
 import { Button } from 'react-bootstrap';
+import ReactDOM from 'react-dom';
+import ExpertDataButton from '../../../Data/DataInChart/Page/ExpertDataButton';
+import MyDataDropdown from '../../../Data/DataInChart/Page/MyDataDropdown';
 
 // 모달 배경 및 컨테이너 스타일 정의
 const ModalBackground = styled.div`
   position: fixed;
-  top: 100px;
+  top: 0;
   left: 0;
   width: 100%;
   height: 100%;
@@ -20,94 +22,125 @@ const ModalBackground = styled.div`
 
 const ModalContainer = styled.div`
   background-color: white;
-  width: 80%;
-  height: 80%;
+  width: 60%;
+  height: 60%;
   padding: 20px;
+  margin: 20px 0 0 0;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+`;
+
+const CloseButton = styled.button`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
 `;
 
 const StyledDiv = styled.div`
   display: flex;
   padding: 0;
   width: 100%;
+  justify-content: center;
 `;
 
-// Data & Chart 메인 페이지
+// React Portal을 이용한 모달 컴포넌트
 function DataInChartModal({ isModalOpen, setIsModalOpen }) {
   const [dataCategory, setDataCategory] = useState('');
-  const [isLoading, setIsLoading] = useState(true); // 로딩 상태 추가
-  const [localIsModalOpen, setLocalIsModalOpen] = useState(isModalOpen); // 모달 열고 닫기 상태 추가
-  const [isStepComplete, setIsStepComplete] = useState(false); // 다음 스텝 여부 상태 추가
+  const [isLoading, setIsLoading] = useState(true);
+  const [localIsModalOpen, setLocalIsModalOpen] = useState(isModalOpen);
+  const [isStepComplete, setIsStepComplete] = useState(false);
 
   useEffect(() => {
     const username = localStorage.getItem('username');
 
     if (!username) {
       alert('로그인이 필요합니다. 로그인 페이지로 이동합니다.');
-      window.location.href = '/login'; // 로그인 페이지로 이동
+      window.location.href = '/login';
     } else {
-      setIsLoading(false); // 로그인 확인이 완료되면 로딩 상태 해제
+      setIsLoading(false);
     }
   }, []);
 
-  // dataCategory가 변경되면 스텝을 완료로 변경
   useEffect(() => {
-    console.log('스텝 설정 확인: ' + isStepComplete);
     if (dataCategory) {
-      setIsStepComplete(true); // dataCategory가 설정되면 스텝 완료로 설정
+      setIsStepComplete(true);
     }
   }, [dataCategory]);
 
   useEffect(() => {
-    console.log('스텝 설정 확인: ' + isStepComplete);
-  }, [isStepComplete]);
+    if (localIsModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
 
-  // 로딩 중일 때는 로딩 화면을 보여줌
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [localIsModalOpen]);
+
+  // 모달 외부 클릭 막기
+  const handleModalClick = (e) => {
+    e.stopPropagation();
+  };
+
   if (isLoading) {
-    return <div>로딩 중...</div>; // 로딩 중 메시지 표시
+    return <div>로딩 중...</div>;
   }
 
-  return (
-    <>
-      {localIsModalOpen && (
-        <ModalBackground>
-          <ModalContainer>
-            <StyledDiv>
-              {/* 오른쪽 테이블 및 그래프 */}
-              {isStepComplete ? (
-                <div>
-                  <Button
-                    onClick={() => {
-                      setIsStepComplete(false);
-                      setDataCategory('');
-                    }}
-                  >
-                    데이터 선택
-                  </Button>
-                  <TableOrGraph dataCategory={dataCategory} />
-                </div>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <div>카테고리를 선택해주세요</div>
-                  <LeftSlidePage setDataCategory={setDataCategory} />
-                </div>
-              )}
-            </StyledDiv>
+  // React Portal을 통해 모달을 body 바로 아래에 렌더링
+  return ReactDOM.createPortal(
+    localIsModalOpen && (
+      <ModalBackground onClick={() => setIsModalOpen(false)}>
+        <ModalContainer onClick={handleModalClick}>
+          <CloseButton
+            onClick={() => {
+              setLocalIsModalOpen(false);
+              setIsModalOpen(false);
+            }}
+          >
+            &times;
+          </CloseButton>
+          <StyledDiv>
+            {isStepComplete ? (
+              <div style={{ maxHeight: '50rem', minWidth: '50rem' }}>
+                <Button
+                  onClick={() => {
+                    setIsStepComplete(false);
+                    setDataCategory('');
+                  }}
+                >
+                  데이터 선택
+                </Button>
+                <TableOrGraph dataCategory={dataCategory} />
+              </div>
+            ) : (
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                <div>카테고리를 선택해주세요</div>
+                <ExpertDataButton setDataCategory={setDataCategory} />
 
-            <button
-              onClick={() => {
-                setLocalIsModalOpen(false);
-                setIsModalOpen(false);
-              }}
-            >
-              닫기
-            </button>
-          </ModalContainer>
-        </ModalBackground>
-      )}
-    </>
+                <MyDataDropdown />
+              </div>
+            )}
+          </StyledDiv>
+        </ModalContainer>
+      </ModalBackground>
+    ),
+    document.body, // 모달을 body 바로 아래로 이동하여 DndProvider 영향에서 벗어남
   );
 }
 

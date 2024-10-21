@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from 'react';
-import './Header.scss';
 import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { customAxios } from '../Common/CustomAxios';

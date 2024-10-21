@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   Paper,
   Typography,
@@ -8,16 +8,16 @@ import {
   DialogTitle,
   Grid,
   Button,
-} from "@mui/material";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
+} from '@mui/material';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 function ReportViewModal({ open, onClose, tableData }) {
   const [data, setData] = useState([]);
 
-  console.log("테이블 데이터 : " + JSON.stringify(tableData, null, 2));
-
   useEffect(() => {
+    console.log('테이블 데이터 : ' + JSON.stringify(tableData, null, 2));
+
     if (tableData) {
       setData(tableData[0]?.contents);
     }
@@ -29,24 +29,24 @@ function ReportViewModal({ open, onClose, tableData }) {
       <DialogContent
         dividers
         style={{
-          maxHeight: "80vh", // 최대 높이 설정
-          overflowY: "auto", // 내용이 넘치는 경우에만 스크롤 활성화
+          maxHeight: '80vh', // 최대 높이 설정
+          overflowY: 'auto', // 내용이 넘치는 경우에만 스크롤 활성화
         }}
       >
         <Paper
           id="report-content" // PDF 생성할 영역의 ID 설정
           style={{
-            width: "100%",
-            padding: "20px", // Paper에 패딩 추가
-            backgroundColor: "white", // 더 밝은 배경색으로 변경
+            width: '100%',
+            padding: '20px', // Paper에 패딩 추가
+            backgroundColor: 'white', // 더 밝은 배경색으로 변경
           }}
         >
-          <Typography variant="h3" sx={{ marginBottom: "20px" }}>
+          <Typography variant="h3" sx={{ marginBottom: '20px' }}>
             {tableData[0]?.stepName}
           </Typography>
           <Typography
             variant="h6"
-            sx={{ marginBottom: "40px", textAlign: "right" }}
+            sx={{ marginBottom: '40px', textAlign: 'right' }}
           >
             {tableData[0]?.username} {/* localStorage의 username을 보여줌 */}
           </Typography>
@@ -65,7 +65,7 @@ function ReportViewModal({ open, onClose, tableData }) {
                         {stepData.contents
                           .filter(
                             (content) =>
-                              content !== null && content !== undefined
+                              content !== null && content !== undefined,
                           ) // null 또는 undefined가 아닌 경우만 필터링
                           .map((content, contentIndex) => {
                             const contentKey =
@@ -106,38 +106,38 @@ function RenderContent({ content, setTextBoxValue, index }) {
     setTextBoxValue(index, event.target.value);
   };
   switch (content.type) {
-    case "title":
+    case 'title':
       return (
         <Typography variant="h6" gutterBottom>
-          {content.content || "No Title"}{" "}
+          {content.content || 'No Title'}{' '}
           {/* content.content가 null일 경우 기본값 제공 */}
         </Typography>
       );
-    case "html":
+    case 'html':
       return (
         <div
-          style={{ whiteSpace: "pre-wrap" }}
+          style={{ whiteSpace: 'pre-wrap' }}
           dangerouslySetInnerHTML={{
-            __html: content.content || "<p>No Content</p>",
+            __html: content.content || '<p>No Content</p>',
           }} // 기본 HTML 콘텐츠 제공
         />
       );
-    case "textBox":
+    case 'textBox':
       return (
         <TextField
-          value={content.content || ""} // content.content가 null이면 빈 문자열로 처리
+          value={content.content || ''} // content.content가 null이면 빈 문자열로 처리
           onChange={handleTextChange}
           variant="outlined"
           fullWidth
           multiline
           minRows={3}
           maxRows={5}
-          sx={{ marginBottom: "20px" }} // 간격 조정
+          sx={{ marginBottom: '20px' }} // 간격 조정
         />
       );
-    case "img":
+    case 'img':
       return content.content ? ( // content.content가 있을 경우에만 이미지 렌더링
-        <div style={{ textAlign: "center", marginBottom: "20px" }}>
+        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
           <img
             src={content.content}
             alt="Assignment Content"
@@ -149,21 +149,21 @@ function RenderContent({ content, setTextBoxValue, index }) {
           No Image Available
         </Typography>
       );
-    case "data":
+    case 'data':
       if (content.content) {
         return <div>{renderElement(content.content)}</div>;
       } else {
         return <div>No Table</div>;
       }
 
-    case "emptyBox":
+    case 'emptyBox':
       return (
         <div
           style={{
-            border: "1px dashed #ddd",
-            padding: "10px",
-            textAlign: "center",
-            margin: "10px 0",
+            border: '1px dashed #ddd',
+            padding: '10px',
+            textAlign: 'center',
+            margin: '10px 0',
           }}
         >
           <Typography variant="h6" color="textSecondary">
@@ -177,7 +177,7 @@ function RenderContent({ content, setTextBoxValue, index }) {
 }
 
 function renderElement(node) {
-  if (typeof node !== "object" || node === null) {
+  if (typeof node !== 'object' || node === null) {
     return node;
   }
 
@@ -189,20 +189,20 @@ function renderElement(node) {
     { ...props, key },
     Array.isArray(children)
       ? children.map(renderElement)
-      : renderElement(children)
+      : renderElement(children),
   );
 }
 
 const handleDownloadPdf = async () => {
-  const input = document.getElementById("report-content");
+  const input = document.getElementById('report-content');
 
   // html2canvas 옵션 설정
   const canvas = await html2canvas(input, {
     scale: 3, // 캔버스 스케일 조정으로 화질 개선
   });
 
-  const imgData = canvas.toDataURL("image/png");
-  const pdf = new jsPDF("p", "mm", "a4");
+  const imgData = canvas.toDataURL('image/png');
+  const pdf = new jsPDF('p', 'mm', 'a4');
 
   const imgWidth = 210; // A4 폭(mm)
   const pageHeight = 297; // A4 높이(mm)
@@ -211,17 +211,17 @@ const handleDownloadPdf = async () => {
   let heightLeft = imgHeight;
   let position = 0;
 
-  pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+  pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
   heightLeft -= pageHeight;
 
   while (heightLeft >= 0) {
     position = heightLeft - imgHeight;
     pdf.addPage();
-    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
     heightLeft -= pageHeight;
   }
 
-  pdf.save("report.pdf");
+  pdf.save('report.pdf');
 };
 
 export default ReportViewModal;

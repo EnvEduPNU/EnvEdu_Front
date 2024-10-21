@@ -20,19 +20,15 @@ import ExpertCustomGraphHeader from './ExpertCustomGraphHeader';
 import Header from '../Header/Header';
 
 // 테이블 아니면 그래프 선택하는 탭 컴포넌트
-function TableOrGraph({ dataCategory }) {
+function TableOrGraph({ dataCategory, setPhoto }) {
   const { tab } = useTabStore();
 
   const [pdfClick, setPdfClick] = useState(false);
   const [tableSaveClick, setTableSaveClick] = useState(false);
 
-  // graph 탭을 선택한 후 현재 페이지에서 이동할 경우 table로 초기화 시켜줘야한다.
-  // 안그러면 현재 페이지 코드를 table에 종속시켜 놓은 코드가 존재하기에 오류가 난다.
-  // useEffect(() => {
-  //   if (location.pathname === "/data-in-chart") {
-  //     changeTab("table");
-  //   }
-  // }, [location, changeTab]);
+  const handleAddPhoto = (newPhoto) => {
+    setPhoto(newPhoto);
+  };
 
   useEffect(() => {
     return setPdfClick(false);
@@ -65,19 +61,10 @@ function TableOrGraph({ dataCategory }) {
                   borderTop: '1px solid rgba(34, 36, 38, 0.15)',
                 }}
               >
-                <ExpertCustomTable />
+                <ExpertCustomTable onAddPhoto={handleAddPhoto} />
               </div>
             </div>
           )}
-
-          {/* <div style={{ display: 'flex', flexDirection: 'row' }}> */}
-          {/* <PublicDataButton buttonName={'공공데이터 가져오기'} />
-            <SEEdAppButton buttonName={'SEEd 측정하기'} /> */}
-          {/* <TableChangeButton
-              buttonName={'테이블 저장하기'}
-              setTableSaveClick={setTableSaveClick}
-            />
-          </div> */}
         </Styled.CustomTableWrapper>
       )}
       {tab === 'graph' && (
@@ -101,7 +88,7 @@ function TableOrGraph({ dataCategory }) {
               </div>
               <div>
                 <ExpertCustomGraphHeader />
-                <ExpertCustomGraph />
+                <ExpertCustomGraph onAddPhoto={handleAddPhoto} />
               </div>
             </div>
           )}

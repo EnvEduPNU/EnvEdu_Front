@@ -24,6 +24,8 @@ export const LiveStudentPage = () => {
   const [sharedScreenState, setSharedScreenState] = useState(false);
   const [isLoading, setIsLoading] = useState(false); // 스피너 상태 관리
 
+  const [assginmentFetch, setAssginmentFetch] = useState(false);
+
   const location = useLocation();
   const { lectureDataUuid, row, eClassUuid } = location.state || {};
 
@@ -32,6 +34,14 @@ export const LiveStudentPage = () => {
   const sendScreenShareStClient = useRef(null);
 
   const navigate = useNavigate();
+
+  const photoList = location.state?.photoList || []; // state가 없을 경우 빈 배열로 초기화
+
+  useEffect(() => {
+    // if (photoList.length > 0) {
+    console.log('테이블/그래프 캡쳐 리스트 :', photoList);
+    // }
+  }, [photoList]);
 
   // stompClients 커넥션 생성 훅
   useEffect(() => {
@@ -251,6 +261,7 @@ export const LiveStudentPage = () => {
               sessionIdState={sessionIdState}
               eclassUuid={eClassUuid}
               lectureDataUuid={lectureDataUuid}
+              setAssginmentFetch={setAssginmentFetch}
             />
           )}
           {/* 스피너 표시 */}
@@ -289,6 +300,7 @@ export const LiveStudentPage = () => {
           stepCount={stepCount}
           reportTable={reportTable}
           eclassUuid={eClassUuid}
+          assginmentFetch={assginmentFetch}
         />
         <StudentReportTable selectedEClassUuid={eClassUuid} />
       </div>
