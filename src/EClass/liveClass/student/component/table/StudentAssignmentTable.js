@@ -113,6 +113,13 @@ export default function StudentAssignmentTable(props) {
 
         const assignmentResponse = await customAxios.get(
           `/api/assignment/getstep?uuid=${assignmentUuidResp.data}`,
+<<<<<<< HEAD
+=======
+        );
+
+        console.log(
+          '수업 정보 확인 : ' + JSON.stringify(assignmentResponse, null, 2),
+>>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
         );
 
         // console.log(
@@ -124,6 +131,13 @@ export default function StudentAssignmentTable(props) {
 
           const lectureResponse = await customAxios.get(
             '/api/steps/getLectureContent',
+<<<<<<< HEAD
+=======
+          );
+
+          console.log(
+            '수업 자료 확인 : ' + JSON.stringify(lectureResponse, null, 2),
+>>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
           );
 
           // console.log(
@@ -256,7 +270,11 @@ export default function StudentAssignmentTable(props) {
   const [openModal, setOpenModal] = useState(false);
 
   const handleAssignmentReport = () => {
+<<<<<<< HEAD
     // console.log('Assignment data:', JSON.stringify(allTableData, null, 2));
+=======
+    console.log('Assignment data:', JSON.stringify(allTableData, null, 2));
+>>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
     setOpenModal(true);
   };
 

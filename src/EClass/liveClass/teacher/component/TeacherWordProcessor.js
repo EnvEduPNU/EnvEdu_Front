@@ -876,99 +876,11 @@ export default function TeacherWordProcessor({
           </div>
         ) : item.type === 'dataInChartButton' ? (
           <>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                width: '100%',
-              }}
-            >
-              <Button
-                sx={{
-                  backgroundColor: '#6200ea', // 버튼 배경색 (보라색)
-                  color: 'white', // 텍스트 색상
-                  padding: '10px 20px', // 패딩
-                  borderRadius: '20px', // 버튼의 모서리를 둥글게
-                  boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', // 그림자 효과
-                  fontWeight: 'bold', // 글씨 굵기
-                  fontSize: '1rem', // 글씨 크기
-                  transition: 'background-color 0.3s ease', // 배경색 전환 효과
-                  '&:hover': {
-                    backgroundColor: '#3700b3', // hover 시 배경색 (어두운 보라색)
-                  },
-                }}
-                onClick={handleNavigate}
-              >
-                그래프 그리기
-              </Button>
-              <Button
-                sx={{
-                  backgroundColor: '#6200ea', // 버튼 배경색 (보라색)
-                  color: 'white', // 텍스트 색상
-                  borderRadius: '10rem', // 버튼의 모서리를 둥글게
-                  boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', // 그림자 효과
-                  fontWeight: 'bold', // 글씨 굵기
-                  fontSize: '1rem', // 글씨 크기
-                  transition: 'background-color 0.3s ease', // 배경색 전환 효과
-                  '&:hover': {
-                    backgroundColor: '#3700b3', // hover 시 배경색 (어두운 보라색)
-                  },
-                }}
-                onClick={handleModalOpen} // 버튼 클릭 시 메뉴 열기
-              >
-                +
-              </Button>
-              <Modal
-                open={modalOpen}
-                onClose={handleModalClose}
-                aria-labelledby="data-modal-title"
-                aria-describedby="data-modal-description"
-              >
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    width: 400,
-                    bgcolor: 'background.paper',
-                    border: '2px solid #000',
-                    boxShadow: 24,
-                    p: 4,
-                  }}
-                >
-                  <Typography id="data-modal-title" variant="h6" component="h2">
-                    데이터 추가
-                  </Typography>
-                  <Button onClick={handleAddDataChartFromComputer}>
-                    내 컴퓨터에서 불러오기
-                  </Button>
-                  <Button onClick={handleAddDataChartFromMyData}>
-                    MyData에서 불러오기
-                  </Button>
-                </Box>
-              </Modal>
-
-              {/* 엑셀 데이터를 처리하는 모달 */}
-              {excelModalOpen && (
-                <ExcelDataModal
-                  open={excelModalOpen}
-                  handleClose={handleExcelModalClose}
-                  data={excelData}
-                  eclassFlag={excelModalOpen}
-                  onSave={handleAfterExcelData} // 모달에서 저장된 데이터를 처리
-                />
-              )}
-              <IconButton
-                onClick={() => handleDeleteContent(index)}
-                aria-label="delete"
-                color="secondary"
-                sx={{ width: '30px' }}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </div>
+            <Button onClick={() => setIsModalOpen(true)}>그래프 그리기</Button>
+            <DataInChartModal
+              isModalOpen={isModalOpen}
+              setIsModalOpen={setIsModalOpen}
+            />
           </>
         ) : null}
       </div>
@@ -990,38 +902,37 @@ export default function TeacherWordProcessor({
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <Container disableGutters sx={{ minHeight: '20rem' }}>
+      <Container>
         {stepCount >= activeStep ? (
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <div
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              width: '70rem',
+              height: '36.5rem',
+            }}
+          >
+            {/* 왼쪽에 과제 만드는 미리보기란에 랜더링 되는 곳 */}
+            <Paper
               style={{
-                display: 'flex',
-                flexDirection: 'row',
+                padding: 20,
                 width: '100%',
-                height: '36.5rem',
+                height: '100%',
+                boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+                overflowY: 'auto',
               }}
             >
-              {/* 왼쪽에 과제 만드는 미리보기란에 랜더링 되는 곳 */}
-              <Paper
-                style={{
-                  padding: 20,
-                  width: '100%',
-                  height: '100%',
-                  boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
-                  overflowY: 'auto',
-                }}
-              >
-                {localContents.map((item, index) => (
-                  <DraggableItem
-                    key={index}
-                    index={index}
-                    item={item}
-                    moveItem={moveItem}
-                    handleDeleteContent={handleDeleteContent}
-                    handleTextBoxChange={handleTextBoxChange}
-                  />
-                ))}
-              </Paper>
+              {localContents.map((item, index) => (
+                <DraggableItem
+                  key={index}
+                  index={index}
+                  item={item}
+                  moveItem={moveItem}
+                  handleDeleteContent={handleDeleteContent}
+                  handleTextBoxChange={handleTextBoxChange}
+                />
+              ))}
+            </Paper>
 
               {/* 오른쪽 WordProcessor 편집창 */}
               <ReactQuill

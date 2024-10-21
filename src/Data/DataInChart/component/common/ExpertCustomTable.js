@@ -12,6 +12,15 @@ import {
 } from '@mui/material';
 import { saveCustomTableApi } from '../../../apis/tables';
 import { customAxios } from '../../../../Common/CustomAxios';
+import html2canvas from 'html2canvas';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+} from '@mui/material';
 
 function ExpertCustomTable({ onAddPhoto, setSummary }) {
   const { data, title, setData, variables } = useGraphDataStore();
@@ -218,10 +227,40 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
       console.log(e);
     }
   };
+  // 테이블을 캡처하고 모달을 여는 함수
+  const handleCaptureTable = async () => {
+    if (tableRef.current) {
+      // html2canvas를 사용하여 테이블 영역을 캡처
+      const canvas = await html2canvas(tableRef.current);
+      const imgData = canvas.toDataURL('image/png'); // 캡처한 데이터를 이미지로 변환
+      setCapturedImage(imgData); // 캡처된 이미지를 상태에 저장
+      setOpenModal(true); // 모달 열기
+    }
+  };
+
+  // 모달 닫기 핸들러
+  const handleClose = () => {
+    setOpenModal(false);
+    setPhotoTitle(''); // 모달을 닫을 때 입력 필드 초기화
+  };
+
+  // 사진 제목 추가 핸들러
+  const handleAddPhoto = () => {
+    if (photoTitle.trim()) {
+      const newPhoto = {
+        title: photoTitle,
+        image: capturedImage,
+      };
+      onAddPhoto(newPhoto); // 상위 컴포넌트로 객체 하나만 전달
+      handleClose(); // 모달 닫기
+    }
+  };
+
   if (!isEditing)
     return (
       <div>
         <table
+<<<<<<< HEAD
           ref={tableRef}
           style={{
             width: '100%',
@@ -240,6 +279,12 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
               color: 'black',
             }}
           >
+=======
+          ref={tableRef} // 테이블을 캡처하기 위해 ref 연결
+          className="w-full border-solid border-[1px] border-[rgba(34, 36, 38, 0.15)] rounded-xl caption-top border-collapse"
+        >
+          <caption className="text-2xl font-semibold py-2 text-center text-black">
+>>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
             {title}
 
             <button
@@ -258,7 +303,31 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
             </button>
 
             <button
+<<<<<<< HEAD
               onClick={handleCaptureTable}
+=======
+              style={{
+                padding: '0.5rem 1rem',
+                fontSize: '16px',
+                marginLeft: '1rem',
+                backgroundColor: '#4a4a4a',
+                color: 'white',
+                borderRadius: '0.375rem',
+                cursor: 'pointer',
+                border: 'none',
+                outline: 'none',
+                transition: 'background-color 0.2s',
+              }}
+              onMouseOver={(e) => (e.target.style.backgroundColor = '#3b3b3b')}
+              onMouseOut={(e) => (e.target.style.backgroundColor = '#4a4a4a')}
+              className="px-2 py-1 text-md ml-4 bg-gray-800 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50"
+              onClick={handleCaptureTable} // 테이블 캡처 버튼
+            >
+              테이블 캡쳐
+            </button>
+            <button
+              onClick={saveCustomTable}
+>>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
               style={{
                 marginLeft: '15px',
                 backgroundColor: '#4a5568',
@@ -268,6 +337,12 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
                 cursor: 'pointer',
                 fontSize: '14px',
               }}
+<<<<<<< HEAD
+=======
+              onMouseOver={(e) => (e.target.style.backgroundColor = '#3b3b3b')}
+              onMouseOut={(e) => (e.target.style.backgroundColor = '#4a4a4a')}
+              className="px-2 py-1 text-md ml-4 bg-gray-800 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50"
+>>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
             >
               테이블 캡쳐
             </button>
@@ -325,6 +400,10 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
                 }}
               />
             )}
+<<<<<<< HEAD
+=======
+            {/* 사진 제목 입력 필드 */}
+>>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
             <TextField
               fullWidth
               label="사진 제목"
@@ -352,25 +431,10 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
   return (
     <div>
       <table
-        style={{
-          width: '100%',
-          borderStyle: 'solid',
-          borderWidth: '1px',
-          borderColor: 'rgba(34, 36, 38, 0.15)',
-          borderRadius: '12px',
-          captionSide: 'top',
-          borderCollapse: 'collapse',
-        }}
+        ref={tableRef} // 테이블을 캡처하기 위해 ref 연결
+        className="w-full border-solid border-[1px] border-[rgba(34, 36, 38, 0.15)] rounded-xl caption-top border-collapse"
       >
-        <caption
-          style={{
-            fontSize: '2rem',
-            fontWeight: '600',
-            padding: '0.5rem',
-            textAlign: 'center',
-            color: 'black',
-          }}
-        >
+        <caption className="text-2xl font-semibold py-2 text-center text-black">
           {title}
           <button
             onClick={handleEditComplete}
@@ -432,7 +496,20 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
                     gap: '0.5rem',
                   }}
                 >
-                  <span style={{ fontSize: '1.25rem' }}>{header}</span>
+                  <div className="inline-flex items-center space-x-2">
+                    <span className="text-xl">{header}</span>
+
+                    {/* 열 삭제 버튼 (휴지통 아이콘) */}
+                    <button
+                      className="ml-2 px-2 py-1 text-gray-700 bg-gray-100 rounded hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400"
+                      onClick={() => handleDeleteColumn(headerIndex)}
+                    >
+                      <AiOutlineDelete
+                        size={16}
+                        className="text-black font-bold"
+                      />
+                    </button>
+                  </div>
 
                   <button
                     onClick={() => handleDeleteColumn(headerIndex)}
@@ -458,53 +535,8 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
                 </div>
 
                 <button
-                  onClick={() => handleMoveColumnLeft(headerIndex)}
-                  style={{
-                    position: 'absolute',
-                    left: '1rem',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    padding: '0.25rem 0.5rem',
-                    fontSize: '0.875rem',
-                    color: '#4a4a4a',
-                    backgroundColor: '#f5f5f5',
-                    borderRadius: '0.375rem',
-                    cursor: 'pointer',
-                    border: 'none',
-                    outline: 'none',
-                  }}
-                  onMouseOver={(e) =>
-                    (e.target.style.backgroundColor = '#e0e0e0')
-                  }
-                  onMouseOut={(e) =>
-                    (e.target.style.backgroundColor = '#f5f5f5')
-                  }
-                >
-                  ◀
-                </button>
-
-                <button
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 px-2 py-1 text-sm text-gray-700 bg-gray-100 rounded hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400"
                   onClick={() => handleMoveColumnRight(headerIndex)}
-                  style={{
-                    position: 'absolute',
-                    right: '1rem',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    padding: '0.25rem 0.5rem',
-                    fontSize: '0.875rem',
-                    color: '#4a4a4a',
-                    backgroundColor: '#f5f5f5',
-                    borderRadius: '0.375rem',
-                    cursor: 'pointer',
-                    border: 'none',
-                    outline: 'none',
-                  }}
-                  onMouseOver={(e) =>
-                    (e.target.style.backgroundColor = '#e0e0e0')
-                  }
-                  onMouseOut={(e) =>
-                    (e.target.style.backgroundColor = '#f5f5f5')
-                  }
                 >
                   ▶
                 </button>

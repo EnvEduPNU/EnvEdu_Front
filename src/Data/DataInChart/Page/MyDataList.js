@@ -17,6 +17,11 @@ export default function MyDataList({
     customAxios
       .get('/mydata/list')
       .then((res) => {
+<<<<<<< HEAD
+=======
+        // console.log("My Data list : " + JSON.stringify(res.data, null, 2));
+
+>>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
         const formattedData = res.data.map((data) => ({
           ...data,
           saveDate: data.saveDate.split('T')[0],
