@@ -9,6 +9,9 @@ import { useNavigate } from 'react-router-dom';
 import usePhotoStore from '../../../../Data/DataInChart/store/photoStore';
 import axios from 'axios';
 
+import { IconButton } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+
 // Base64를 File로 변환하는 함수
 function base64ToFile(base64Data, filename) {
   const arr = base64Data.split(',');
@@ -38,15 +41,15 @@ function StudentRenderAssign({
   const [data, setData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열기 상태 추가
   const navigate = useNavigate();
-  const [storedPhotoList, setStoredPhotoList] = useState([]);
+  const [localStoredPhotoList, setLocalStoredPhotoList] = useState([]);
 
   // Zustand store에서 getStorePhotoList 가져오기
-  const { getStorePhotoList } = usePhotoStore();
+  const { getStorePhotoList, setStorePhotoList } = usePhotoStore();
 
   useEffect(() => {
     console.log('사진 저장소 확인 : ', getStorePhotoList());
     const photoList = getStorePhotoList();
-    setStoredPhotoList(photoList);
+    setLocalStoredPhotoList(photoList);
   }, []);
 
   const handleNavigate = (uuid, username, contentName, stepNum) => {
@@ -131,26 +134,40 @@ function StudentRenderAssign({
                 return { ...contentItem, content: updatedContent };
               }
 
+              // dataInChartButton이 있는 경우 처리
               if (
                 contentItem.type === 'dataInChartButton' &&
-                storedPhotoList.length > 0
+                localStoredPhotoList.length > 0
               ) {
-                const base64Image = storedPhotoList[0].image;
-                const filename = `image_${uuidv4()}.jpg`;
-                const imageFile = base64ToFile(base64Image, filename);
-                const contentUuid = uuidv4();
-                const imageUrl = await handleUpload(imageFile, contentUuid);
-                return {
-                  type: 'img',
-                  content: imageUrl,
-                  x: 300,
-                  y: 300,
-                };
+                // 1. dataInChartButton을 유지
+                const originalButton = { ...contentItem };
+
+                // 2. storedPhotoList의 이미지 처리
+                const imageUploadPromises = localStoredPhotoList.map(
+                  async (photo, idx) => {
+                    const base64Image = photo.image;
+                    const filename = `image_${uuidv4()}.jpg`;
+                    const imageFile = base64ToFile(base64Image, filename);
+                    const contentUuid = uuidv4();
+                    const imageUrl = await handleUpload(imageFile, contentUuid);
+                    return {
+                      type: 'img',
+                      content: imageUrl,
+                      x: 300 + idx * 10, // 이미지 위치 조정
+                      y: 300 + idx * 10,
+                    };
+                  },
+                );
+
+                const uploadedImages = await Promise.all(imageUploadPromises);
+
+                // dataInChartButton과 업로드된 이미지를 함께 반환
+                return [originalButton, ...uploadedImages];
               }
 
               return contentItem;
             }),
-          ),
+          ).then((results) => results.flat()), // 중첩 배열 평탄화
         })),
       ),
     }));
@@ -245,8 +262,10 @@ function StudentRenderAssign({
                   index={idx}
                   onOpenModal={() => setIsModalOpen(true)}
                   onNavigate={handleNavigate}
-                  storedPhotoList={storedPhotoList}
+                  storedPhotoList={localStoredPhotoList}
                   stepData={stepData}
+                  setStorePhotoList={setStorePhotoList}
+                  setLocalStoredPhotoList={setLocalStoredPhotoList}
                 />
               ))}
             </div>
@@ -283,9 +302,19 @@ function RenderContent({
   onNavigate,
   stepData,
   storedPhotoList,
+  setStorePhotoList,
+  setLocalStoredPhotoList,
 }) {
   const handleTextChange = (event) => {
     setTextBoxValue(index, event.target.value);
+  };
+
+  // 이미지 삭제 핸들러
+  const handleDeletePhoto = (index) => {
+    setStorePhotoList((prevList) => prevList.filter((_, i) => i !== index));
+    setLocalStoredPhotoList((prevList) =>
+      prevList.filter((_, i) => i !== index),
+    );
   };
 
   switch (content.type) {
@@ -326,7 +355,7 @@ function RenderContent({
       );
     case 'dataInChartButton':
       return (
-        <>
+        <div>
           <Button
             onClick={() =>
               onNavigate(
@@ -344,7 +373,10 @@ function RenderContent({
             {storedPhotoList.length > 0 ? (
               <ul style={{ listStyle: 'none', padding: 0 }}>
                 {storedPhotoList.map((photo, index) => (
-                  <li key={index} style={{ marginBottom: '20px' }}>
+                  <li
+                    key={index}
+                    style={{ marginBottom: '20px', position: 'relative' }}
+                  >
                     <Typography variant="subtitle1">{photo.title}</Typography>
                     <img
                       src={photo.image}
@@ -355,14 +387,26 @@ function RenderContent({
                         objectFit: 'cover',
                       }}
                     />
+                    <IconButton
+                      aria-label="delete"
+                      style={{
+                        position: 'absolute',
+                        top: '10px',
+                        right: '10px',
+                        backgroundColor: 'rgba(255,255,255,0.7)',
+                      }}
+                      onClick={() => handleDeletePhoto(index)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
                   </li>
                 ))}
               </ul>
             ) : (
-              <Typography>No photo list available.</Typography>
+              ''
             )}
           </div>
-        </>
+        </div>
       );
     case 'emptyBox':
       return (
