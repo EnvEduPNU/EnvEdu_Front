@@ -23,7 +23,10 @@ import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord'; // Ma
 import DeleteIcon from '@mui/icons-material/Delete'; // 삭제 아이콘
 
 import usePhotoStore from '../store/photoStore';
+<<<<<<< HEAD
 import LeftTeacherAssignTable from './leftTeacherAssignTable';
+=======
+>>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
 
 function DataInChartPage() {
   const [dataCategory, setDataCategory] = useState('');
@@ -39,6 +42,7 @@ function DataInChartPage() {
   const username = searchParams.get('username');
   const contentName = searchParams.get('contentName');
   const stepNum = searchParams.get('stepNum');
+<<<<<<< HEAD
   const content = searchParams.get('content');
 
   useEffect(() => {
@@ -50,6 +54,8 @@ function DataInChartPage() {
       '데이터 카테고리 체크 : ' + JSON.stringify(dataCategory, null, 2),
     );
   }, []);
+=======
+>>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
 
   const navigate = useNavigate(); // 페이지 이동을 위한 navigate 훅
 
@@ -167,6 +173,7 @@ function DataInChartPage() {
             <span>수업 중</span>
           </Box>
         </div>
+<<<<<<< HEAD
 
         {/* --------------------------------------------------- 왼쪽 사이드 메뉴 -------------------------------------- */}
         {content ? (
@@ -282,6 +289,124 @@ function DataInChartPage() {
       <TableOrGraph dataCategory={dataCategory} setPhoto={handleAddPhoto} />
 
       {/* ---------------------------------------- 모달 -------------------------------------------------------*/}
+=======
+
+        {/* 왼쪽 사이드 메뉴 */}
+        <LeftSlidePage
+          setDataCategory={setDataCategory}
+          filteredData={filteredData}
+          setFilteredData={setFilteredData}
+          summary={summary}
+          setSummary={setSummary}
+        />
+
+        {/* 사진 저장 리스트 */}
+        <div style={{ margin: '0 3rem 20px 3rem' }}>
+          <Typography variant="h5">사진 리스트</Typography>
+          <TableContainer
+            component={Paper}
+            sx={{
+              borderRadius: '12px',
+              border: '1px solid lightgray',
+              maxHeight: '200px', // 스크롤 활성화를 위한 높이 제한
+              overflowY: 'auto', // 스크롤 활성화
+            }}
+          >
+            <Table>
+              {/* stickyHeader로 헤더 고정 */}
+              <TableHead
+                sx={{
+                  backgroundColor: 'lightgray', // 헤더 배경색을 밝은 회색으로 설정
+                }}
+                stickyHeader
+              >
+                <TableRow>
+                  <TableCell sx={{ fontWeight: 'bold', padding: '6px 16px' }}>
+                    제목
+                  </TableCell>
+                  <TableCell
+                    sx={{ fontWeight: 'bold', padding: '6px 16px' }}
+                    align="right"
+                  ></TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {photoList.map((photo, index) => (
+                  <TableRow
+                    key={index}
+                    style={{ height: '20px' }}
+                    sx={{
+                      '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.1)' }, // Hover 효과
+                      transition: 'background-color 0.3s ease', // 부드러운 hover 전환
+                    }}
+                  >
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      sx={{
+                        cursor: 'pointer',
+                        color: 'black',
+                        fontWeight: 'bold',
+                        padding: '0 0 0 10px',
+                      }}
+                      onClick={() => handlePhotoClick(photo)}
+                    >
+                      {photo.title}
+                    </TableCell>
+                    <TableCell align="right" sx={{ padding: 0 }}>
+                      <IconButton onClick={() => handleDeletePhoto(index)}>
+                        <DeleteIcon color="error" />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {/* 기본적으로 3개의 빈 행 추가 */}
+                {Array.from({ length: emptyRows }).map((_, idx) => (
+                  <TableRow key={`empty-${idx}`} style={{ height: `20px` }}>
+                    <TableCell colSpan={2} />
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+
+          {/* 저장 및 제출 버튼 추가 */}
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              marginTop: '20px',
+            }}
+          >
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ marginRight: '10px' }}
+            >
+              저장
+            </Button>
+            {isDrawGraph && (
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={handleSubmit}
+              >
+                제출
+              </Button>
+            )}
+          </Box>
+        </div>
+      </div>
+
+      {/* 오른쪽 테이블 및 그래프 */}
+      <TableOrGraph
+        dataCategory={dataCategory}
+        setPhoto={handleAddPhoto}
+        setSummary={setSummary}
+      />
+
+      {/* 모달 */}
+>>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
       {selectedPhoto && (
         <Dialog open={openModal} onClose={handleCloseModal}>
           <DialogTitle>{selectedPhoto.title}</DialogTitle>

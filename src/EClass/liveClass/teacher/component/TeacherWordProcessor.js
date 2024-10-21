@@ -1016,38 +1016,37 @@ export default function TeacherWordProcessor({
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <Container disableGutters sx={{ minHeight: '20rem' }}>
+      <Container>
         {stepCount >= activeStep ? (
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <div
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              width: '70rem',
+              height: '36.5rem',
+            }}
+          >
+            {/* 왼쪽에 과제 만드는 미리보기란에 랜더링 되는 곳 */}
+            <Paper
               style={{
-                display: 'flex',
-                flexDirection: 'row',
+                padding: 20,
                 width: '100%',
-                height: '36.5rem',
+                height: '100%',
+                boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+                overflowY: 'auto',
               }}
             >
-              {/* 왼쪽에 과제 만드는 미리보기란에 랜더링 되는 곳 */}
-              <Paper
-                style={{
-                  padding: 20,
-                  width: '100%',
-                  height: '100%',
-                  boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
-                  overflowY: 'auto',
-                }}
-              >
-                {localContents.map((item, index) => (
-                  <DraggableItem
-                    key={index}
-                    index={index}
-                    item={item}
-                    moveItem={moveItem}
-                    handleDeleteContent={handleDeleteContent}
-                    handleTextBoxChange={handleTextBoxChange}
-                  />
-                ))}
-              </Paper>
+              {localContents.map((item, index) => (
+                <DraggableItem
+                  key={index}
+                  index={index}
+                  item={item}
+                  moveItem={moveItem}
+                  handleDeleteContent={handleDeleteContent}
+                  handleTextBoxChange={handleTextBoxChange}
+                />
+              ))}
+            </Paper>
 
               {/* 오른쪽 WordProcessor 편집창 */}
               <ReactQuill

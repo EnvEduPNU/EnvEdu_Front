@@ -395,6 +395,7 @@ export const CreateLectureSourcePage = (props) => {
                 height: '3.5rem',
                 textAlign: 'center',
                 cursor: 'pointer',
+<<<<<<< HEAD
                 border: 'none',
                 color: 'white', // 글자색 설정
               }}
