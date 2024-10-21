@@ -72,6 +72,7 @@ function StudentRenderAssign({
   const { getStorePhotoList, setStorePhotoList } = usePhotoStore();
 
   useEffect(() => {
+<<<<<<< HEAD
     console.log('데이터 확인 : ' + JSON.stringify(data, null, 2));
   }, [data]);
 
@@ -98,6 +99,14 @@ function StudentRenderAssign({
     console.log('사진 저장소 확인 : ', getStorePhotoList());
     const photoList = getStorePhotoList();
     setStoredPhotoList(photoList);
+=======
+    const photoList = getStorePhotoList();
+    if (photoList) {
+      console.log('사진 수 : ', getStorePhotoList().length);
+
+      setLocalStoredPhotoList(photoList);
+    }
+>>>>>>> 240a8d3 ([update] 캡처 사진 크기 수정 중)
   }, []);
 
   const handleNavigate = (uuid, username, contentName, stepNum) => {
@@ -336,6 +345,7 @@ function StudentRenderAssign({
                 contentItem.type === 'dataInChartButton' &&
                 storedPhotoList.length > 0
               ) {
+<<<<<<< HEAD
                 const base64Image = storedPhotoList[0].image;
                 const filename = `image_${uuidv4()}.jpg`;
                 const imageFile = base64ToFile(base64Image, filename);
@@ -347,6 +357,32 @@ function StudentRenderAssign({
                   x: 300,
                   y: 300,
                 };
+=======
+                // 1. dataInChartButton을 유지
+                const originalButton = { ...contentItem };
+
+                // 2. storedPhotoList의 이미지 처리
+                const imageUploadPromises = localStoredPhotoList.map(
+                  async (photo, idx) => {
+                    const base64Image = photo.image;
+                    const filename = `image_${uuidv4()}.jpg`;
+                    const imageFile = base64ToFile(base64Image, filename);
+                    const contentUuid = uuidv4();
+                    const imageUrl = await handleUpload(imageFile, contentUuid);
+                    return {
+                      type: 'img',
+                      content: imageUrl,
+                      x: 1000 + idx * 10, // 이미지 위치 조정
+                      y: 1500 + idx * 10,
+                    };
+                  },
+                );
+
+                const uploadedImages = await Promise.all(imageUploadPromises);
+
+                // dataInChartButton과 업로드된 이미지를 함께 반환
+                return [originalButton, ...uploadedImages];
+>>>>>>> 240a8d3 ([update] 캡처 사진 크기 수정 중)
               }
 
               return contentItem;
@@ -691,6 +727,9 @@ function RenderContent({
           </Button>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 240a8d3 ([update] 캡처 사진 크기 수정 중)
           <div
             style={{
               marginTop: '10px',
@@ -710,6 +749,7 @@ function RenderContent({
                       textAlign: 'center',
                     }}
                   >
+<<<<<<< HEAD
 =======
           <div style={{ marginTop: '10px' }}>
             {storedPhotoList.length > 0 ? (
@@ -718,11 +758,17 @@ function RenderContent({
                   <li key={index} style={{ marginBottom: '20px' }}>
                     <Typography variant="subtitle1">{photo.title}</Typography>
 >>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
+=======
+                    {/* <Typography variant="subtitle1">{photo.title}</Typography> */}
+>>>>>>> 240a8d3 ([update] 캡처 사진 크기 수정 중)
                     <img
                       src={photo.image}
                       alt={photo.title}
                       style={{
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 240a8d3 ([update] 캡처 사진 크기 수정 중)
                         width: '100%', // 그리드 셀에 맞게 이미지 크기 조정
                         height: 'auto',
                         objectFit: 'cover',
@@ -743,6 +789,7 @@ function RenderContent({
                   </div>
                 ))
               : ''}
+<<<<<<< HEAD
           </div>
         </div>
 =======
@@ -757,6 +804,8 @@ function RenderContent({
             ) : (
               <Typography>No photo list available.</Typography>
             )}
+=======
+>>>>>>> 240a8d3 ([update] 캡처 사진 크기 수정 중)
           </div>
         </>
 >>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)

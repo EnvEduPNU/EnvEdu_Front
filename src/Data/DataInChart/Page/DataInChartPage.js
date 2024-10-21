@@ -412,8 +412,12 @@ function DataInChartPage() {
         setSummary={setSummary}
       />
 
+<<<<<<< HEAD
       {/* 모달 */}
 >>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
+=======
+      {/* ---------------------------------------- 모달 -------------------------------------------------------*/}
+>>>>>>> 240a8d3 ([update] 캡처 사진 크기 수정 중)
       {selectedPhoto && (
         <Dialog open={openModal} onClose={handleCloseModal}>
           <DialogTitle>{selectedPhoto.title}</DialogTitle>
