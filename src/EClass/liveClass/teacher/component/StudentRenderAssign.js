@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Paper, Typography, Button, TextField } from '@mui/material';
 import { customAxios } from '../../../../Common/CustomAxios';
 import { Client } from '@stomp/stompjs';
@@ -57,6 +57,7 @@ function StudentRenderAssign({
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열기 상태 추가
   const navigate = useNavigate();
   const [localStoredPhotoList, setLocalStoredPhotoList] = useState([]);
+  const uploadedImagesState = useRef([]); // 업로드된 이미지 상태
 
   const [imageUrlArray, setImageUrlArray] = useState([]);
 
@@ -207,12 +208,11 @@ function StudentRenderAssign({
   const handleSubmit = async () => {
     const studentName = localStorage.getItem('username');
     const dataToUse = latestTableData || tableData;
-
-    // 만약 이미지 삭제 등으로 contents 가 수정됐을때 업데이트
-    const updatedTableData = replaceContents(dataToUse, data);
-
     const stepCount = tableData[0].stepCount;
     const stepCheck = new Array(stepCount).fill(false);
+    let flag = false;
+
+    const updatedTableData = replaceContents(dataToUse, data);
 
     const updatedDataPromises = updatedTableData.map(async (data) => ({
       uuid: data.uuid,
@@ -221,34 +221,37 @@ function StudentRenderAssign({
       stepName: data.stepName,
       stepCount: data.stepCount,
       contents: await Promise.all(
-        data.contents.map(async (item) => ({
-          contentName: item.contentName,
-          stepNum: item.stepNum,
-          contents: await Promise.all(
-            item.contents
-              .map(async (contentItem, index) => {
-                // textBox 처리
-                if (contentItem.type === 'textBox') {
-                  const updatedContent =
-                    textBoxValues[item.stepNum]?.[index] || contentItem.content;
-                  if (updatedContent && updatedContent.trim() !== '') {
-                    const stepIndex = item.stepNum - 1;
-                    if (stepIndex >= 0 && stepIndex < stepCount) {
-                      stepCheck[stepIndex] = true;
+        data.contents.map(async (item) => {
+          return {
+            contentName: item.contentName,
+            stepNum: item.stepNum,
+            contents: await Promise.all(
+              item.contents
+                .map(async (contentItem, index) => {
+                  // textBox 처리
+                  if (contentItem.type === 'textBox') {
+                    const updatedContent =
+                      textBoxValues[item.stepNum]?.[index] ||
+                      contentItem.content;
+                    if (updatedContent && updatedContent.trim() !== '') {
+                      const stepIndex = item.stepNum - 1;
+                      if (stepIndex >= 0 && stepIndex < stepCount) {
+                        stepCheck[stepIndex] = true;
+                      }
                     }
+                    return { ...contentItem, content: updatedContent };
                   }
-                  return { ...contentItem, content: updatedContent };
-                }
 
-                // dataInChartButton 처리
-                if (
-                  contentItem.type === 'dataInChartButton' &&
-                  localStoredPhotoList.length > 0
-                ) {
-                  const originalButton = { ...contentItem };
+                  // dataInChartButton 처리
+                  if (
+                    contentItem.type === 'dataInChartButton' &&
+                    localStoredPhotoList.length > 0
+                  ) {
+                    flag = true; // flag 설정하여 dataInChartButton 감지
 
-                  const imageUploadPromises = localStoredPhotoList.map(
-                    async (photo, idx) => {
+                    // 이미지 업로드 및 상태 저장
+                    let uploadedImages = [];
+                    for (const [idx, photo] of localStoredPhotoList.entries()) {
                       const base64Image = photo.image;
                       const filename = `image_${uuidv4()}.jpg`;
                       const imageFile = base64ToFile(base64Image, filename);
@@ -257,32 +260,62 @@ function StudentRenderAssign({
                         imageFile,
                         contentUuid,
                       );
-                      return {
+
+                      const uploadedImage = {
                         type: 'img',
                         content: imageUrl,
-                        x: 600 + idx * 10, // 이미지 위치 조정
+                        x: 600 + idx * 10,
                         y: 300 + idx * 10,
                       };
-                    },
-                  );
+                      uploadedImages.push(uploadedImage);
+                    }
 
-                  const uploadedImages = await Promise.all(imageUploadPromises);
+                    // 상태에 저장
+                    uploadedImagesState.current = uploadedImages;
 
-                  return [originalButton, ...uploadedImages];
-                }
+                    return { ...contentItem }; // 기존 dataInChartButton 반환
+                  }
 
-                return contentItem;
-              })
-              .filter((contentItem) => contentItem !== null), // null인 객체를 제거
-          ),
-        })),
+                  return contentItem;
+                })
+                .filter((contentItem) => contentItem !== null), // null인 객체를 제거
+            ),
+          };
+        }),
       ),
     }));
 
     const updatedData = await Promise.all(updatedDataPromises);
 
+    // 이미지 상태를 dataInChartButton 아래에 추가하는 로직
+    const finalUpdatedData = updatedData.map((dataItem) => ({
+      ...dataItem,
+      contents: dataItem.contents.map((contentItem) => {
+        const updatedContents = contentItem.contents.reduce((acc, current) => {
+          acc.push(current); // 현재 contentItem을 추가
+
+          // img 타입 추가
+          if (current.type === 'dataInChartButton' && flag) {
+            console.log(
+              '잘 들어갔나 : ' +
+                JSON.stringify(uploadedImagesState.current, null, 2),
+            );
+            uploadedImagesState.current.forEach((img) => {
+              acc.push(img); // 이미지들을 dataInChartButton 아래에 추가
+            });
+          }
+          return acc;
+        }, []);
+
+        return {
+          ...contentItem,
+          contents: updatedContents,
+        };
+      }),
+    }));
+
     console.log(
-      '저장 하기 전 데이터 : ' + JSON.stringify(updatedData, null, 2),
+      '최종 제출 데이터 : ' + JSON.stringify(finalUpdatedData, null, 2),
     );
 
     const requestData = {
@@ -292,8 +325,8 @@ function StudentRenderAssign({
 
     const assignmentUuidRegistData = {
       eclassUuid: eclassUuid,
-      assginmentUuid: updatedData[0].uuid,
-      username: updatedData[0].username,
+      assginmentUuid: finalUpdatedData[0].uuid,
+      username: finalUpdatedData[0].username,
     };
 
     if (window.confirm('제출하시겠습니까?')) {
@@ -312,8 +345,8 @@ function StudentRenderAssign({
           );
 
           await (assginmentCheck
-            ? customAxios.put('/api/assignment/update', updatedData)
-            : customAxios.post('/api/assignment/save', updatedData));
+            ? customAxios.put('/api/assignment/update', finalUpdatedData)
+            : customAxios.post('/api/assignment/save', finalUpdatedData));
 
           // S3에서 이미지 삭제 처리
           try {
@@ -540,6 +573,21 @@ function RenderContent({
                 content.stepNum,
               )
             }
+            variant="contained"
+            color="primary"
+            sx={{
+              backgroundColor: '#6200ea', // 버튼 배경색 (보라색)
+              color: 'white', // 텍스트 색상
+              padding: '10px 20px', // 패딩
+              borderRadius: '20px', // 버튼의 모서리를 둥글게
+              boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', // 그림자 효과
+              fontWeight: 'bold', // 글씨 굵기
+              fontSize: '1rem', // 글씨 크기
+              transition: 'background-color 0.3s ease', // 배경색 전환 효과
+              '&:hover': {
+                backgroundColor: '#3700b3', // hover 시 배경색 (어두운 보라색)
+              },
+            }}
           >
             그래프 그리기
           </Button>

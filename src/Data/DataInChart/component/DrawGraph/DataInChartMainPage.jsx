@@ -5,14 +5,19 @@ function MainPage() {
   const navigate = useNavigate();
 
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        height: '80vh',
+        width: '90%',
+        height: '70vh',
         backgroundColor: 'white',
+        border: '2px solid #d3d3d3', // 옅은 회색 선
+        borderRadius: '20px', // 모서리 둥글게
+        padding: '20px',
+        boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', // 그림자 추가
       }}
     >
       <Typography variant="h2" align="center" gutterBottom>
@@ -23,6 +28,7 @@ function MainPage() {
         왼쪽 데이터 테이블에서 데이터를 선택해주세요.
       </Typography>
 
+      {/* 버튼 섹션 */}
       {/* <Box
         sx={{
           display: 'flex',
@@ -66,7 +72,7 @@ function MainPage() {
           Go to Graphs
         </Button>
       </Box> */}
-    </div>
+    </Box>
   );
 }
 
