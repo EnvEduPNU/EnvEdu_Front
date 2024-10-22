@@ -143,55 +143,88 @@ function ExpertCustomTable({ onAddPhoto }) {
     return (
       <div>
         <table
-          ref={tableRef} // 테이블을 캡처하기 위해 ref 연결
-          className="w-full border-solid border-[1px] border-[rgba(34, 36, 38, 0.15)] rounded-xl caption-top border-collapse"
+          ref={tableRef}
+          style={{
+            width: '100%',
+            border: '1px solid rgba(34, 36, 38, 0.15)',
+            borderCollapse: 'collapse',
+            borderRadius: '8px',
+            captionSide: 'top',
+          }}
         >
-          <caption className="text-2xl font-semibold py-2 text-center text-black">
+          <caption
+            style={{
+              fontSize: '24px',
+              fontWeight: '600',
+              padding: '10px',
+              textAlign: 'center',
+              color: 'black',
+            }}
+          >
             {title}
 
             <button
-              className="px-2 py-1 text-md ml-4 bg-gray-800 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50"
               onClick={handleEdit}
-              style={{ fontSize: '16px' }}
+              style={{
+                marginLeft: '15px',
+                backgroundColor: '#4a5568',
+                color: 'white',
+                borderRadius: '5px',
+                padding: '8px 12px',
+                cursor: 'pointer',
+                fontSize: '14px',
+              }}
             >
               수정하기
             </button>
 
             <button
-              className="px-2 py-1 text-md ml-4 bg-gray-800 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50"
-              onClick={handleCaptureTable} // 테이블 캡처 버튼
-              style={{ fontSize: '16px' }}
+              onClick={handleCaptureTable}
+              style={{
+                marginLeft: '15px',
+                backgroundColor: '#4a5568',
+                color: 'white',
+                borderRadius: '5px',
+                padding: '8px 12px',
+                cursor: 'pointer',
+                fontSize: '14px',
+              }}
             >
               테이블 캡쳐
             </button>
           </caption>
           <thead>
             <tr>
-              {['', ...headers].map((header, headerIndex) => {
-                return (
-                  <th
-                    className="border-[1px] border-[rgba(34, 36, 38, 0.15)]  shadow-[0_8px_5px_-5px_rgba(0,0,0,0.3)] z-30 leading-[20px] py-3 px-2 text-center"
-                    key={headerIndex}
-                  >
-                    <span className="text-xl">{header}</span>
-                  </th>
-                );
-              })}
+              {['', ...headers].map((header, headerIndex) => (
+                <th
+                  key={headerIndex}
+                  style={{
+                    border: '1px solid rgba(34, 36, 38, 0.15)',
+                    padding: '10px',
+                    textAlign: 'center',
+                    fontSize: '18px',
+                  }}
+                >
+                  {header}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
             {data.slice(1).map((row, rowIndex) => (
               <tr key={rowIndex}>
-                {[rowIndex, ...row].map((value, valueIndex) => {
-                  return (
-                    <td
-                      className="border-[1px] border-[rgba(34, 36, 38, 0.15)] text-center py-2"
-                      key={valueIndex}
-                    >
-                      <span className="text-md">{value}</span>
-                    </td>
-                  );
-                })}
+                {[rowIndex, ...row].map((value, valueIndex) => (
+                  <td
+                    key={valueIndex}
+                    style={{
+                      border: '1px solid rgba(34, 36, 38, 0.15)',
+                      padding: '8px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    {value}
+                  </td>
+                ))}
               </tr>
             ))}
           </tbody>
@@ -213,7 +246,6 @@ function ExpertCustomTable({ onAddPhoto }) {
                 }}
               />
             )}
-            {/* 사진 제목 입력 필드 */}
             <TextField
               fullWidth
               label="사진 제목"
@@ -241,116 +273,151 @@ function ExpertCustomTable({ onAddPhoto }) {
   return (
     <div>
       <table
-        ref={tableRef} // 테이블을 캡처하기 위해 ref 연결
-        className="w-full border-solid border-[1px] border-[rgba(34, 36, 38, 0.15)] rounded-xl caption-top border-collapse"
+        ref={tableRef}
+        style={{
+          width: '100%',
+          border: '1px solid rgba(34, 36, 38, 0.15)',
+          borderCollapse: 'collapse',
+          borderRadius: '8px',
+        }}
       >
-        <caption className="text-2xl font-semibold py-2 text-center text-black">
+        <caption
+          style={{
+            fontSize: '24px',
+            fontWeight: '600',
+            padding: '10px',
+            textAlign: 'center',
+            color: 'black',
+          }}
+        >
           {title}
           <button
-            className="px-2 py-1 text-md ml-4 bg-gray-800 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50"
             onClick={handleEditComplete}
-            style={{ fontSize: '16px' }}
+            style={{
+              marginLeft: '15px',
+              backgroundColor: '#4a5568',
+              color: 'white',
+              borderRadius: '5px',
+              padding: '8px 12px',
+              cursor: 'pointer',
+              fontSize: '14px',
+            }}
           >
             완료
           </button>
           <button
-            className="px-2 py-1 text-md ml-4 bg-gray-800 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50"
             onClick={handleEditCancel}
-            style={{ fontSize: '16px' }}
+            style={{
+              marginLeft: '15px',
+              backgroundColor: '#4a5568',
+              color: 'white',
+              borderRadius: '5px',
+              padding: '8px 12px',
+              cursor: 'pointer',
+              fontSize: '14px',
+            }}
           >
             취소
           </button>
         </caption>
         <thead>
           <tr>
-            {['', ...modeificationHeaders].map((header, headerIndex) => {
-              if (headerIndex === 0)
-                return (
-                  <th
-                    className="border-[1px] border-[rgba(34, 36, 38, 0.15)]  shadow-[0_8px_5px_-5px_rgba(0,0,0,0.3)] z-30 leading-[20px] py-3 px-2 text-center"
-                    key={headerIndex}
+            {['', ...modeificationHeaders].map((header, headerIndex) => (
+              <th
+                key={headerIndex}
+                style={{
+                  border: '1px solid rgba(34, 36, 38, 0.15)',
+                  padding: '10px',
+                  textAlign: 'center',
+                  fontSize: '18px',
+                  position: 'relative',
+                }}
+              >
+                <div style={{ display: 'inline-flex', alignItems: 'center' }}>
+                  {header}
+                  <button
+                    onClick={() => handleDeleteColumn(headerIndex)}
+                    style={{
+                      marginLeft: '10px',
+                      backgroundColor: '#e2e8f0',
+                      color: '#1a202c',
+                      borderRadius: '5px',
+                      padding: '4px',
+                      cursor: 'pointer',
+                    }}
                   >
-                    <span className="text-xl">{header}</span>
-                  </th>
-                );
-              return (
-                <th
-                  className="relative border-[1px] border-[rgba(34, 36, 38, 0.15)]  shadow-[0_8px_5px_-5px_rgba(0,0,0,0.3)] z-30 leading-[20px] py-3 px-2 text-center"
-                  key={headerIndex}
+                    <AiOutlineDelete size={16} />
+                  </button>
+                </div>
+                <button
+                  onClick={() => handleMoveColumnLeft(headerIndex)}
+                  style={{
+                    position: 'absolute',
+                    left: '5px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    backgroundColor: '#e2e8f0',
+                    borderRadius: '5px',
+                    padding: '4px',
+                    cursor: 'pointer',
+                  }}
                 >
-                  <div className="inline-flex items-center space-x-2">
-                    <span className="text-xl">{header}</span>
-
-                    {/* 열 삭제 버튼 (휴지통 아이콘) */}
-                    <button
-                      className="ml-2 px-2 py-1 text-gray-700 bg-gray-100 rounded hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400"
-                      onClick={() => handleDeleteColumn(headerIndex)}
-                    >
-                      <AiOutlineDelete
-                        size={16}
-                        className="text-black font-bold"
-                      />
-                    </button>
-                  </div>
-
-                  <button
-                    className="absolute left-4 top-1/2 transform -translate-y-1/2 px-2 py-1 text-sm text-gray-700 bg-gray-100 rounded hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400"
-                    onClick={() => handleMoveColumnLeft(headerIndex)}
-                  >
-                    ◀
-                  </button>
-
-                  <button
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 px-2 py-1 text-sm text-gray-700 bg-gray-100 rounded hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400"
-                    onClick={() => handleMoveColumnRight(headerIndex)}
-                  >
-                    ▶
-                  </button>
-                </th>
-              );
-            })}
+                  ◀
+                </button>
+                <button
+                  onClick={() => handleMoveColumnRight(headerIndex)}
+                  style={{
+                    position: 'absolute',
+                    right: '5px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    backgroundColor: '#e2e8f0',
+                    borderRadius: '5px',
+                    padding: '4px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  ▶
+                </button>
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody>
           {modificationData.slice(1).map((row, rowIndex) => (
             <tr key={rowIndex}>
-              {[rowIndex, ...row].map((value, valueIndex) => {
-                if (valueIndex === 0)
-                  return (
-                    <td
-                      className="border-[1px] border-[rgba(34, 36, 38, 0.15)] text-center py-2"
-                      key={valueIndex}
-                    >
-                      <span className="text-md">{value}</span>
-                    </td>
-                  );
-                return (
-                  <td
-                    className="border-[1px] border-[rgba(34, 36, 38, 0.15)] text-center py-2"
-                    key={valueIndex}
-                  >
-                    <input
-                      type="text"
-                      className="text-md text-center border rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 focus:border-transparent bg-gray-50 shadow-sm placeholder-gray-400"
-                      onChange={(e) => {
-                        setModificationData((prev) => {
-                          const copiedModificationData = prev.map((value) => [
-                            ...value,
-                          ]);
-
-                          copiedModificationData[rowIndex + 1][valueIndex - 1] =
-                            e.target.value;
-
-                          return copiedModificationData;
-                        });
-                      }}
-                      value={value}
-                      placeholder="Enter text"
-                      style={{ width: 'auto' }}
-                    />
-                  </td>
-                );
-              })}
+              {[rowIndex, ...row].map((value, valueIndex) => (
+                <td
+                  key={valueIndex}
+                  style={{
+                    border: '1px solid rgba(34, 36, 38, 0.15)',
+                    padding: '8px',
+                    textAlign: 'center',
+                  }}
+                >
+                  <input
+                    type="text"
+                    value={value}
+                    onChange={(e) => {
+                      setModificationData((prev) => {
+                        const copiedModificationData = prev.map((value) => [
+                          ...value,
+                        ]);
+                        copiedModificationData[rowIndex + 1][valueIndex - 1] =
+                          e.target.value;
+                        return copiedModificationData;
+                      });
+                    }}
+                    style={{
+                      textAlign: 'center',
+                      border: '1px solid #e2e8f0',
+                      borderRadius: '5px',
+                      padding: '4px',
+                      backgroundColor: '#f7fafc',
+                    }}
+                  />
+                </td>
+              ))}
             </tr>
           ))}
         </tbody>

@@ -277,7 +277,7 @@ function BarGraph() {
       >
         {title}
       </div>
-      <div className="flex" style={{ width: '1425px' }}>
+      <div className="flex" style={{ minWidth: '500px' }}>
         <div
           style={{
             display: 'flex',
@@ -367,12 +367,12 @@ function BarGraph() {
             />
           </div>
         </div>
-        <div style={{ width: '1200px' }}>
+        <div style={{ minWidth: '800px' }}>
           <Bar data={barDatas} options={barOptions} />
         </div>
       </div>
       <div
-        style={{ width: '1200px', textAlign: 'center', marginLeft: '200px' }}
+        style={{ minWidth: '800px', textAlign: 'center', marginLeft: '200px' }}
       >
         <div
           style={{

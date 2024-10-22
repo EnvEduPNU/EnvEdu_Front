@@ -27,6 +27,21 @@ function base64ToFile(base64Data, filename) {
   return new File([u8arr], filename, { type: mime });
 }
 
+const handleDeleteFromS3 = async (imageUrl) => {
+  try {
+    await customAxios.delete('/api/images/delete', {
+      headers: {
+        'X-Previous-Image-URL': imageUrl, // 커스텀 헤더로 URL을 전달
+      },
+    });
+    console.log('이미지 삭제 성공:', imageUrl);
+    window.location.reload();
+  } catch (error) {
+    console.error('이미지 삭제 오류:', error);
+    throw error;
+  }
+};
+
 function StudentRenderAssign({
   tableData,
   latestTableData,
@@ -43,8 +58,14 @@ function StudentRenderAssign({
   const navigate = useNavigate();
   const [localStoredPhotoList, setLocalStoredPhotoList] = useState([]);
 
+  const [imageUrlArray, setImageUrlArray] = useState([]);
+
   // Zustand store에서 getStorePhotoList 가져오기
   const { getStorePhotoList, setStorePhotoList } = usePhotoStore();
+
+  // useEffect(() => {
+  //   console.log('데이터 확인 : ' + JSON.stringify(data, null, 2));
+  // }, [data]);
 
   useEffect(() => {
     const photoList = getStorePhotoList();
@@ -74,6 +95,55 @@ function StudentRenderAssign({
           .filter((content) => content.stepNum === parseStepCount);
     setData(filteredContents);
   }, [stepCount, latestTableData, tableData]);
+
+  // 로컬에서 이미지 삭제한 부분 보여주기 위한 훅
+  useEffect(() => {
+    console.log('데이터 체크 : ' + JSON.stringify(data, null, 2));
+
+    if (data && data.length > 0 && imageUrlArray.length > 0) {
+      const removeImagesFromData = async (data, imageUrlArray) => {
+        // 각 item에 대해 처리
+        const updatedDataPromises = data.map(async (item) => {
+          const updatedContents = await Promise.all(
+            item.contents.map((contentItem) => {
+              // 이미지 타입의 데이터를 처리
+              if (contentItem.type === 'img') {
+                console.log(
+                  '삭제 이미지 : ' +
+                    JSON.stringify(contentItem.content, null, 2),
+                );
+                // imageUrlArray에 있는 URL과 일치하는지 확인하고 제거
+                if (imageUrlArray.includes(contentItem.content)) {
+                  return null; // 이미지 삭제 시 null 반환
+                }
+              }
+              return contentItem; // 다른 항목은 그대로 유지
+            }),
+          );
+
+          // null 값을 필터링하여 업데이트된 데이터를 반환
+          return {
+            ...item,
+            contents: updatedContents.filter(
+              (contentItem) => contentItem !== null,
+            ),
+          };
+        });
+
+        const updatedData = await Promise.all(updatedDataPromises);
+
+        console.log(
+          '업데이트 데이터 체크 : ' + JSON.stringify(updatedData, null, 2),
+        );
+
+        return updatedData;
+      };
+
+      removeImagesFromData(data, imageUrlArray).then((updatedData) => {
+        setData(updatedData);
+      });
+    }
+  }, [imageUrlArray]);
 
   const handleTextBoxSubmit = (stepNum, index, text) => {
     setTextBoxValues((prev) => ({
@@ -107,13 +177,44 @@ function StudentRenderAssign({
     }
   };
 
+  // 이미지 삭제 등으로 수정된 테이블 contents 교체 메서드
+  const replaceContents = (tableData, data) => {
+    // tableData의 각 항목을 순회하면서 contents를 교체
+    const updatedTableData = tableData.map((tableItem) => {
+      // tableItem의 contents 중에서 stepNum이 일치하는 항목을 찾음
+      const updatedContents = tableItem.contents.map((contentItem) => {
+        // data의 stepNum과 일치하는 contents 찾기
+        const newContent = data.find(
+          (dataItem) => dataItem.stepNum === contentItem.stepNum,
+        );
+
+        // 일치하는 stepNum의 contents가 있으면 해당 contents로 교체, 아니면 기존 내용 유지
+        return newContent
+          ? { ...contentItem, contents: newContent.contents }
+          : contentItem;
+      });
+
+      // tableItem의 contents를 업데이트된 내용으로 교체
+      return {
+        ...tableItem,
+        contents: updatedContents,
+      };
+    });
+
+    return updatedTableData;
+  };
+
   const handleSubmit = async () => {
     const studentName = localStorage.getItem('username');
     const dataToUse = latestTableData || tableData;
+
+    // 만약 이미지 삭제 등으로 contents 가 수정됐을때 업데이트
+    const updatedTableData = replaceContents(dataToUse, data);
+
     const stepCount = tableData[0].stepCount;
     const stepCheck = new Array(stepCount).fill(false);
 
-    const updatedDataPromises = dataToUse.map(async (data) => ({
+    const updatedDataPromises = updatedTableData.map(async (data) => ({
       uuid: data.uuid,
       timestamp: new Date().toISOString(),
       username: studentName,
@@ -124,58 +225,65 @@ function StudentRenderAssign({
           contentName: item.contentName,
           stepNum: item.stepNum,
           contents: await Promise.all(
-            item.contents.map(async (contentItem, index) => {
-              if (contentItem.type === 'textBox') {
-                const updatedContent =
-                  textBoxValues[item.stepNum]?.[index] || contentItem.content;
-                if (updatedContent && updatedContent.trim() !== '') {
-                  const stepIndex = item.stepNum - 1;
-                  if (stepIndex >= 0 && stepIndex < stepCount) {
-                    stepCheck[stepIndex] = true;
+            item.contents
+              .map(async (contentItem, index) => {
+                // textBox 처리
+                if (contentItem.type === 'textBox') {
+                  const updatedContent =
+                    textBoxValues[item.stepNum]?.[index] || contentItem.content;
+                  if (updatedContent && updatedContent.trim() !== '') {
+                    const stepIndex = item.stepNum - 1;
+                    if (stepIndex >= 0 && stepIndex < stepCount) {
+                      stepCheck[stepIndex] = true;
+                    }
                   }
+                  return { ...contentItem, content: updatedContent };
                 }
-                return { ...contentItem, content: updatedContent };
-              }
 
-              // dataInChartButton이 있는 경우 처리
-              if (
-                contentItem.type === 'dataInChartButton' &&
-                localStoredPhotoList.length > 0
-              ) {
-                // 1. dataInChartButton을 유지
-                const originalButton = { ...contentItem };
+                // dataInChartButton 처리
+                if (
+                  contentItem.type === 'dataInChartButton' &&
+                  localStoredPhotoList.length > 0
+                ) {
+                  const originalButton = { ...contentItem };
 
-                // 2. storedPhotoList의 이미지 처리
-                const imageUploadPromises = localStoredPhotoList.map(
-                  async (photo, idx) => {
-                    const base64Image = photo.image;
-                    const filename = `image_${uuidv4()}.jpg`;
-                    const imageFile = base64ToFile(base64Image, filename);
-                    const contentUuid = uuidv4();
-                    const imageUrl = await handleUpload(imageFile, contentUuid);
-                    return {
-                      type: 'img',
-                      content: imageUrl,
-                      x: 1000 + idx * 10, // 이미지 위치 조정
-                      y: 1500 + idx * 10,
-                    };
-                  },
-                );
+                  const imageUploadPromises = localStoredPhotoList.map(
+                    async (photo, idx) => {
+                      const base64Image = photo.image;
+                      const filename = `image_${uuidv4()}.jpg`;
+                      const imageFile = base64ToFile(base64Image, filename);
+                      const contentUuid = uuidv4();
+                      const imageUrl = await handleUpload(
+                        imageFile,
+                        contentUuid,
+                      );
+                      return {
+                        type: 'img',
+                        content: imageUrl,
+                        x: 600 + idx * 10, // 이미지 위치 조정
+                        y: 300 + idx * 10,
+                      };
+                    },
+                  );
 
-                const uploadedImages = await Promise.all(imageUploadPromises);
+                  const uploadedImages = await Promise.all(imageUploadPromises);
 
-                // dataInChartButton과 업로드된 이미지를 함께 반환
-                return [originalButton, ...uploadedImages];
-              }
+                  return [originalButton, ...uploadedImages];
+                }
 
-              return contentItem;
-            }),
-          ).then((results) => results.flat()), // 중첩 배열 평탄화
+                return contentItem;
+              })
+              .filter((contentItem) => contentItem !== null), // null인 객체를 제거
+          ),
         })),
       ),
     }));
 
     const updatedData = await Promise.all(updatedDataPromises);
+
+    console.log(
+      '저장 하기 전 데이터 : ' + JSON.stringify(updatedData, null, 2),
+    );
 
     const requestData = {
       stepCheck: stepCheck,
@@ -206,6 +314,32 @@ function StudentRenderAssign({
           await (assginmentCheck
             ? customAxios.put('/api/assignment/update', updatedData)
             : customAxios.post('/api/assignment/save', updatedData));
+
+          // S3에서 이미지 삭제 처리
+          try {
+            await Promise.all(
+              imageUrlArray.map(async (imageUrl, index) => {
+                try {
+                  // S3에서 이미지 삭제 요청
+                  await handleDeleteFromS3(imageUrl);
+
+                  // 로컬 상태에서 이미지 삭제
+                  setStorePhotoList((prevList) =>
+                    prevList.filter((_, i) => i !== index),
+                  );
+                  setLocalStoredPhotoList((prevList) =>
+                    prevList.filter((_, i) => i !== index),
+                  );
+
+                  console.log('이미지 삭제 성공:', imageUrl);
+                } catch (error) {
+                  console.error('이미지 삭제 실패:', error);
+                }
+              }),
+            );
+          } catch (error) {
+            console.error('전체 이미지 삭제 처리 중 오류 발생:', error);
+          }
 
           console.log('제출된 객체 : ', updatedData);
           setAssginmentFetch(true);
@@ -269,6 +403,7 @@ function StudentRenderAssign({
                   stepData={stepData}
                   setStorePhotoList={setStorePhotoList}
                   setLocalStoredPhotoList={setLocalStoredPhotoList}
+                  setImageUrlArray={setImageUrlArray}
                 />
               ))}
             </div>
@@ -276,7 +411,7 @@ function StudentRenderAssign({
           <Button
             variant="contained"
             color="secondary"
-            onClick={handleSubmit}
+            onClick={() => handleSubmit(imageUrlArray)}
             style={{ marginTop: '10px' }}
             sx={{
               marginRight: 1,
@@ -307,17 +442,36 @@ function RenderContent({
   storedPhotoList,
   setStorePhotoList,
   setLocalStoredPhotoList,
+  setImageUrlArray,
 }) {
   const handleTextChange = (event) => {
     setTextBoxValue(index, event.target.value);
   };
 
   // 이미지 삭제 핸들러
-  const handleDeletePhoto = (index) => {
-    setStorePhotoList((prevList) => prevList.filter((_, i) => i !== index));
-    setLocalStoredPhotoList((prevList) =>
-      prevList.filter((_, i) => i !== index),
-    );
+  const handleDeletePhoto = (contentUrl) => {
+    console.log('삭제할 이미지 url : ' + JSON.stringify(contentUrl, null, 2));
+
+    // 배열에 새로운 URL이 존재하지 않는 경우에만 추가
+    setImageUrlArray((prevUrls) => {
+      if (!prevUrls.includes(contentUrl)) {
+        return [...prevUrls, contentUrl]; // 중복되지 않으면 추가
+      }
+      return prevUrls; // 이미 존재하면 배열 그대로 반환
+    });
+  };
+
+  // 로컬 이미지 삭제 핸들러
+  const handleDeleteLocalPhoto = async (index) => {
+    try {
+      // 로컬 상태에서 이미지 삭제
+      setStorePhotoList((prevList) => prevList.filter((_, i) => i !== index));
+      setLocalStoredPhotoList((prevList) =>
+        prevList.filter((_, i) => i !== index),
+      );
+    } catch (error) {
+      console.error('이미지 삭제 실패:', error);
+    }
   };
 
   switch (content.type) {
@@ -348,12 +502,30 @@ function RenderContent({
       );
     case 'img':
       return (
-        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+        <div
+          style={{
+            position: 'relative',
+            textAlign: 'center',
+            marginBottom: '20px',
+          }}
+        >
           <img
             src={content.content}
             alt="Assignment Content"
             style={{ width: content.x, height: content.y }}
           />
+          <IconButton
+            aria-label="delete"
+            style={{
+              position: 'absolute',
+              top: '10px',
+              right: '10px',
+              backgroundColor: 'rgba(255,255,255,0.7)',
+            }}
+            onClick={() => handleDeletePhoto(content.content)}
+          >
+            <DeleteIcon />
+          </IconButton>
         </div>
       );
     case 'dataInChartButton':
@@ -391,7 +563,6 @@ function RenderContent({
                       textAlign: 'center',
                     }}
                   >
-                    {/* <Typography variant="subtitle1">{photo.title}</Typography> */}
                     <img
                       src={photo.image}
                       alt={photo.title}
@@ -409,7 +580,7 @@ function RenderContent({
                         right: '10px',
                         backgroundColor: 'rgba(255,255,255,0.7)',
                       }}
-                      onClick={() => handleDeletePhoto(index)}
+                      onClick={() => handleDeleteLocalPhoto(index)}
                     >
                       <DeleteIcon />
                     </IconButton>

@@ -115,9 +115,9 @@ export default function StudentAssignmentTable(props) {
           `/api/assignment/getstep?uuid=${assignmentUuidResp.data}`,
         );
 
-        console.log(
-          '수업 정보 확인 : ' + JSON.stringify(assignmentResponse, null, 2),
-        );
+        // console.log(
+        //   '수업 정보 확인 : ' + JSON.stringify(assignmentResponse, null, 2),
+        // );
 
         if (assignmentResponse.data.length > 0) {
           const assignmentData = assignmentResponse.data;
@@ -126,9 +126,9 @@ export default function StudentAssignmentTable(props) {
             '/api/steps/getLectureContent',
           );
 
-          console.log(
-            '수업 자료 확인 : ' + JSON.stringify(lectureResponse, null, 2),
-          );
+          // console.log(
+          //   '수업 자료 확인 : ' + JSON.stringify(lectureResponse, null, 2),
+          // );
 
           const filteredData = lectureResponse.data.filter(
             (data) => data.uuid === props.lectureDataUuid,
@@ -256,7 +256,7 @@ export default function StudentAssignmentTable(props) {
   const [openModal, setOpenModal] = useState(false);
 
   const handleAssignmentReport = () => {
-    console.log('Assignment data:', JSON.stringify(allTableData, null, 2));
+    // console.log('Assignment data:', JSON.stringify(allTableData, null, 2));
     setOpenModal(true);
   };
 
