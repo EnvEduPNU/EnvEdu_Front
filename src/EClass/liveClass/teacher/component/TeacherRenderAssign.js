@@ -133,6 +133,9 @@ function RenderContent({
               )
             }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> b3f6051 ([update] e-class dataInChart 업데이트)
             variant="contained"
             color="primary"
             sx={{
@@ -148,8 +151,11 @@ function RenderContent({
                 backgroundColor: '#3700b3', // hover 시 배경색 (어두운 보라색)
               },
             }}
+<<<<<<< HEAD
 =======
 >>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
+=======
+>>>>>>> b3f6051 ([update] e-class dataInChart 업데이트)
           >
             그래프 그리기
           </Button>
@@ -175,10 +181,14 @@ function RenderContent({
               </ul>
             ) : (
 <<<<<<< HEAD
+<<<<<<< HEAD
               <Typography></Typography>
 =======
               <Typography>No photo list available.</Typography>
 >>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
+=======
+              <Typography></Typography>
+>>>>>>> b3f6051 ([update] e-class dataInChart 업데이트)
             )}
           </div>
         </>

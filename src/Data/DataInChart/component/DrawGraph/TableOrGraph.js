@@ -49,6 +49,7 @@ function TableOrGraph({ setSummary, dataCategory, setPhoto }) {
       {tab === 'table' && (
         <Styled.CustomTableWrapper>
 <<<<<<< HEAD
+<<<<<<< HEAD
           <div style={{ display: 'flex', width: '100%' }}>
             <div style={{ marginTop: '8rem', marginRight: '3rem' }}>
               <Header />
@@ -66,6 +67,10 @@ function TableOrGraph({ setSummary, dataCategory, setPhoto }) {
             </div>
           </div>
 =======
+=======
+          {dataCategory === '' && <DataInChartMainPage />}
+
+>>>>>>> b3f6051 ([update] e-class dataInChart 업데이트)
           {dataCategory === 'MyData' && (
             <CustomTable tableSaveClick={tableSaveClick} />
           )}
