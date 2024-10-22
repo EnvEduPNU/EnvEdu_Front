@@ -200,7 +200,7 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
                 : data.dataLabel,
           }));
 
-          setSummary(formattedData);
+          setSummary((prev) => [...prev, formattedData]);
         })
         .catch((err) => console.log(err));
 
