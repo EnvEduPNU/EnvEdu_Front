@@ -274,6 +274,9 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
       <div>
         <table
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> db731a4 ([update] 이미 제출되어 저장된 사진 s3등 삭제)
           ref={tableRef}
           style={{
             width: '100%',
@@ -282,6 +285,7 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
             borderRadius: '8px',
             captionSide: 'top',
           }}
+<<<<<<< HEAD
         >
           <caption
             style={{
@@ -298,6 +302,18 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
         >
           <caption className="text-2xl font-semibold py-2 text-center text-black">
 >>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
+=======
+        >
+          <caption
+            style={{
+              fontSize: '24px',
+              fontWeight: '600',
+              padding: '10px',
+              textAlign: 'center',
+              color: 'black',
+            }}
+          >
+>>>>>>> db731a4 ([update] 이미 제출되어 저장된 사진 s3등 삭제)
             {title}
 
             <button
@@ -414,9 +430,12 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
               />
             )}
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
             {/* 사진 제목 입력 필드 */}
 >>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
+=======
+>>>>>>> db731a4 ([update] 이미 제출되어 저장된 사진 s3등 삭제)
             <TextField
               fullWidth
               label="사진 제목"
@@ -444,10 +463,23 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
   return (
     <div>
       <table
-        ref={tableRef} // 테이블을 캡처하기 위해 ref 연결
-        className="w-full border-solid border-[1px] border-[rgba(34, 36, 38, 0.15)] rounded-xl caption-top border-collapse"
+        ref={tableRef}
+        style={{
+          width: '100%',
+          border: '1px solid rgba(34, 36, 38, 0.15)',
+          borderCollapse: 'collapse',
+          borderRadius: '8px',
+        }}
       >
-        <caption className="text-2xl font-semibold py-2 text-center text-black">
+        <caption
+          style={{
+            fontSize: '24px',
+            fontWeight: '600',
+            padding: '10px',
+            textAlign: 'center',
+            color: 'black',
+          }}
+        >
           {title}
           <button
             onClick={handleEditComplete}
