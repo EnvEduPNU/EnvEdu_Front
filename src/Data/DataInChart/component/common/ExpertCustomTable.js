@@ -297,11 +297,11 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
                     key={valueIndex}
                     style={{
                       border: '1px solid rgba(34, 36, 38, 0.15)',
-                      padding: '8px',
                       textAlign: 'center',
+                      padding: '0.5rem',
                     }}
                   >
-                    {value}
+                    <span style={{ fontSize: '1rem' }}>{value}</span>
                   </td>
                 ))}
               </tr>
@@ -352,19 +352,21 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
   return (
     <div>
       <table
-        ref={tableRef}
         style={{
           width: '100%',
-          border: '1px solid rgba(34, 36, 38, 0.15)',
+          borderStyle: 'solid',
+          borderWidth: '1px',
+          borderColor: 'rgba(34, 36, 38, 0.15)',
+          borderRadius: '12px',
+          captionSide: 'top',
           borderCollapse: 'collapse',
-          borderRadius: '8px',
         }}
       >
         <caption
           style={{
-            fontSize: '24px',
+            fontSize: '2rem',
             fontWeight: '600',
-            padding: '10px',
+            padding: '0.5rem',
             textAlign: 'center',
             color: 'black',
           }}
@@ -373,28 +375,38 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
           <button
             onClick={handleEditComplete}
             style={{
-              marginLeft: '15px',
-              backgroundColor: '#4a5568',
+              padding: '0.5rem 1rem',
+              fontSize: '16px',
+              marginLeft: '1rem',
+              backgroundColor: '#4a4a4a',
               color: 'white',
-              borderRadius: '5px',
-              padding: '8px 12px',
+              borderRadius: '0.375rem',
               cursor: 'pointer',
-              fontSize: '14px',
+              border: 'none',
+              outline: 'none',
+              transition: 'background-color 0.2s',
             }}
+            onMouseOver={(e) => (e.target.style.backgroundColor = '#3b3b3b')}
+            onMouseOut={(e) => (e.target.style.backgroundColor = '#4a4a4a')}
           >
             완료
           </button>
           <button
             onClick={handleEditCancel}
             style={{
-              marginLeft: '15px',
-              backgroundColor: '#4a5568',
+              padding: '0.5rem 1rem',
+              fontSize: '16px',
+              marginLeft: '1rem',
+              backgroundColor: '#4a4a4a',
               color: 'white',
-              borderRadius: '5px',
-              padding: '8px 12px',
+              borderRadius: '0.375rem',
               cursor: 'pointer',
-              fontSize: '14px',
+              border: 'none',
+              outline: 'none',
+              transition: 'background-color 0.2s',
             }}
+            onMouseOver={(e) => (e.target.style.backgroundColor = '#3b3b3b')}
+            onMouseOut={(e) => (e.target.style.backgroundColor = '#4a4a4a')}
           >
             취소
           </button>
@@ -406,55 +418,93 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
                 key={headerIndex}
                 style={{
                   border: '1px solid rgba(34, 36, 38, 0.15)',
-                  padding: '10px',
+                  boxShadow: '0 8px 5px -5px rgba(0,0,0,0.3)',
+                  zIndex: 30,
+                  padding: '0.75rem 0.5rem',
                   textAlign: 'center',
-                  fontSize: '18px',
                   position: 'relative',
                 }}
               >
-                <div style={{ display: 'inline-flex', alignItems: 'center' }}>
-                  {header}
+                <div
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                  }}
+                >
+                  <span style={{ fontSize: '1.25rem' }}>{header}</span>
+
                   <button
                     onClick={() => handleDeleteColumn(headerIndex)}
                     style={{
-                      marginLeft: '10px',
-                      backgroundColor: '#e2e8f0',
-                      color: '#1a202c',
-                      borderRadius: '5px',
-                      padding: '4px',
+                      marginLeft: '0.5rem',
+                      padding: '0.25rem 0.5rem',
+                      color: '#4a4a4a',
+                      backgroundColor: '#f5f5f5',
+                      borderRadius: '0.375rem',
                       cursor: 'pointer',
+                      border: 'none',
+                      outline: 'none',
                     }}
+                    onMouseOver={(e) =>
+                      (e.target.style.backgroundColor = '#e0e0e0')
+                    }
+                    onMouseOut={(e) =>
+                      (e.target.style.backgroundColor = '#f5f5f5')
+                    }
                   >
                     <AiOutlineDelete size={16} />
                   </button>
                 </div>
+
                 <button
                   onClick={() => handleMoveColumnLeft(headerIndex)}
                   style={{
                     position: 'absolute',
-                    left: '5px',
+                    left: '1rem',
                     top: '50%',
                     transform: 'translateY(-50%)',
-                    backgroundColor: '#e2e8f0',
-                    borderRadius: '5px',
-                    padding: '4px',
+                    padding: '0.25rem 0.5rem',
+                    fontSize: '0.875rem',
+                    color: '#4a4a4a',
+                    backgroundColor: '#f5f5f5',
+                    borderRadius: '0.375rem',
                     cursor: 'pointer',
+                    border: 'none',
+                    outline: 'none',
                   }}
+                  onMouseOver={(e) =>
+                    (e.target.style.backgroundColor = '#e0e0e0')
+                  }
+                  onMouseOut={(e) =>
+                    (e.target.style.backgroundColor = '#f5f5f5')
+                  }
                 >
                   ◀
                 </button>
+
                 <button
                   onClick={() => handleMoveColumnRight(headerIndex)}
                   style={{
                     position: 'absolute',
-                    right: '5px',
+                    right: '1rem',
                     top: '50%',
                     transform: 'translateY(-50%)',
-                    backgroundColor: '#e2e8f0',
-                    borderRadius: '5px',
-                    padding: '4px',
+                    padding: '0.25rem 0.5rem',
+                    fontSize: '0.875rem',
+                    color: '#4a4a4a',
+                    backgroundColor: '#f5f5f5',
+                    borderRadius: '0.375rem',
                     cursor: 'pointer',
+                    border: 'none',
+                    outline: 'none',
                   }}
+                  onMouseOver={(e) =>
+                    (e.target.style.backgroundColor = '#e0e0e0')
+                  }
+                  onMouseOut={(e) =>
+                    (e.target.style.backgroundColor = '#f5f5f5')
+                  }
                 >
                   ▶
                 </button>
@@ -470,31 +520,39 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
                   key={valueIndex}
                   style={{
                     border: '1px solid rgba(34, 36, 38, 0.15)',
-                    padding: '8px',
                     textAlign: 'center',
+                    padding: '0.5rem',
                   }}
                 >
-                  <input
-                    type="text"
-                    value={value}
-                    onChange={(e) => {
-                      setModificationData((prev) => {
-                        const copiedModificationData = prev.map((value) => [
-                          ...value,
-                        ]);
-                        copiedModificationData[rowIndex + 1][valueIndex - 1] =
-                          e.target.value;
-                        return copiedModificationData;
-                      });
-                    }}
-                    style={{
-                      textAlign: 'center',
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '5px',
-                      padding: '4px',
-                      backgroundColor: '#f7fafc',
-                    }}
-                  />
+                  {valueIndex === 0 ? (
+                    <span style={{ fontSize: '1rem' }}>{value}</span>
+                  ) : (
+                    <input
+                      type="text"
+                      value={value}
+                      placeholder="Enter text"
+                      onChange={(e) => {
+                        setModificationData((prev) => {
+                          const copiedModificationData = prev.map((value) => [
+                            ...value,
+                          ]);
+                          copiedModificationData[rowIndex + 1][valueIndex - 1] =
+                            e.target.value;
+                          return copiedModificationData;
+                        });
+                      }}
+                      style={{
+                        fontSize: '1rem',
+                        textAlign: 'center',
+                        border: '1px solid transparent',
+                        borderRadius: '0.375rem',
+                        padding: '0.25rem',
+                        backgroundColor: '#f9f9f9',
+                        boxShadow: '0px 1px 3px rgba(0,0,0,0.1)',
+                        width: 'auto',
+                      }}
+                    />
+                  )}
                 </td>
               ))}
             </tr>

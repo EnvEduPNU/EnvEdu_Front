@@ -44,8 +44,8 @@ function TableOrGraph({ setSummary, setPhoto, dataCategory }) {
       {/* tab의 default 는 'table' */}
       {tab === 'table' && (
         <Styled.CustomTableWrapper>
-          <div className="flex w-full">
-            <div className="mt-32 mr-12">
+          <div style={{ display: 'flex', width: '100%' }}>
+            <div style={{ marginTop: '8rem', marginRight: '3rem' }}>
               <Header />
             </div>
             <div
