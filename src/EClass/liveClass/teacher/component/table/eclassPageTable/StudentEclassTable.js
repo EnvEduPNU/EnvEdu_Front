@@ -232,7 +232,7 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
   return (
     <div>
       <Paper
-        style={{ height: '100%', width: '100%' }}
+        style={{ height: '100%', minWidth: '50rem' }}
         className="virtuoso-table"
       >
         <TableContainer component={Paper}>

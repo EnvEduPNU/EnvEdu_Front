@@ -69,7 +69,7 @@ function TableOrGraph({ dataCategory, setPhoto }) {
       )}
       {tab === 'graph' && (
         <>
-          {dataCategory === 'MyData' && (
+          {/* {dataCategory === 'MyData' && (
             <>
               <CustomTableHeader />
               <GraphAndEditor pdfClick={pdfClick} />
@@ -79,7 +79,7 @@ function TableOrGraph({ dataCategory, setPhoto }) {
                 <PdfButton buttonName={'PDF 보기'} setPdfClick={setPdfClick} />
               </div>
             </>
-          )}
+          )} */}
 
           {dataCategory === 'ExpertData' && (
             <div className="flex">
