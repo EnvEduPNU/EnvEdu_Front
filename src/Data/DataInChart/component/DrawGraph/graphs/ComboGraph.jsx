@@ -651,7 +651,7 @@ function ComboGraph() {
       >
         {title}
       </div>
-      <div className="flex" style={{ width: '1600px' }}>
+      <div style={{ display: 'flex', width: '1600px' }}>
         {/* Y축 Dropdown */}
         <div
           style={{

@@ -269,7 +269,7 @@ function DoughnutGraph() {
       >
         {title}
       </div>
-      <div className="flex" style={{ width: '1400px' }}>
+      <div style={{ display: 'flex', width: '1400px' }}>
         <div
           style={{
             display: 'flex',

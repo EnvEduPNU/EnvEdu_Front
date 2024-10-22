@@ -84,7 +84,7 @@ export default function MyDataList({
   return (
     <div style={{ display: 'flex' }}>
       <div style={{ height: '25vh', width: '20vh' }}>
-        <div style={{ marginTop: '1rem' }} className="flex">
+        <div style={{ marginTop: '1rem', display: 'flex' }}>
           <img
             src="/assets/img/folder-icon.png"
             style={{ width: '1.5rem', margin: '0 0.5rem' }}
@@ -97,7 +97,7 @@ export default function MyDataList({
           </label>
         </div>
 
-        <div style={{ marginTop: '0.5rem' }} className="flex">
+        <div style={{ marginTop: '0.5rem', display: 'flex' }}>
           <img
             src="/assets/img/folder-icon.png"
             style={{ width: '1.5rem', margin: '0 0.5rem' }}
@@ -110,7 +110,7 @@ export default function MyDataList({
           </label>
         </div>
 
-        <div style={{ marginTop: '0.5rem' }} className="flex">
+        <div style={{ marginTop: '0.5rem', display: 'flex' }}>
           <img
             src="/assets/img/folder-icon.png"
             style={{
@@ -127,7 +127,7 @@ export default function MyDataList({
           </label>
         </div>
 
-        <div style={{ marginTop: '0.5rem' }} className="flex">
+        <div style={{ marginTop: '0.5rem', display: 'flex' }}>
           <img
             src="/assets/img/folder-icon.png"
             style={{ width: '1.5rem', margin: '0 0.5rem' }}
@@ -140,7 +140,7 @@ export default function MyDataList({
           </label>
         </div>
 
-        <div style={{ marginTop: '0.5rem' }} className="flex">
+        <div style={{ marginTop: '0.5rem', display: 'flex' }}>
           <img
             src="/assets/img/folder-icon.png"
             style={{

@@ -347,7 +347,7 @@ function BarGraph() {
       >
         {title}
       </div>
-      <div className="flex" style={{ width: '1425px' }}>
+      <div style={{ display: 'flex', width: '1425px' }}>
         <div
           style={{
             display: 'flex',

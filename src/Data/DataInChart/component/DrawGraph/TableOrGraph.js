@@ -46,8 +46,8 @@ function TableOrGraph({ setSummary }) {
 
       {tab === 'table' && (
         <Styled.CustomTableWrapper>
-          <div className="flex w-full">
-            <div className="mt-32 mr-12">
+          <div style={{ display: 'flex', width: '100%' }}>
+            <div style={{ marginTop: '8rem', marginRight: '3rem' }}>
               <Header />
             </div>
             <div
@@ -72,8 +72,8 @@ function TableOrGraph({ setSummary }) {
       )}
       {tab === 'graph' && (
         <>
-          <div className="flex">
-            <div className="mt-32 mr-12">
+          <div style={{ display: 'flex' }}>
+            <div style={{ marginTop: '8rem', marginRight: '3rem' }}>
               <Header />
             </div>
             <div>

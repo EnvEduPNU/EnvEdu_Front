@@ -173,50 +173,101 @@ function ExpertCustomTable({ setSummary }) {
   if (!isEditing)
     return (
       <div>
-        <table className="w-full border-solid border-[1px] border-[rgba(34, 36, 38, 0.15)] rounded-xl caption-top border-collapse">
-          <caption className="text-2xl font-semibold py-2 text-center text-black">
+        <table
+          style={{
+            width: '100%',
+            borderStyle: 'solid',
+            borderWidth: '1px',
+            borderColor: 'rgba(34, 36, 38, 0.15)',
+            borderRadius: '12px',
+            captionSide: 'top',
+            borderCollapse: 'collapse',
+          }}
+        >
+          <caption
+            style={{
+              fontSize: '2rem',
+              fontWeight: '600',
+              padding: '0.5rem',
+              textAlign: 'center',
+              color: 'black',
+            }}
+          >
             {title}
 
             <button
-              className="px-2 py-1 text-md ml-4 bg-gray-800 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50"
               onClick={handleEdit}
-              style={{ fontSize: '16px' }}
+              style={{
+                padding: '0.5rem 1rem',
+                fontSize: '16px',
+                marginLeft: '1rem',
+                backgroundColor: '#4a4a4a',
+                color: 'white',
+                borderRadius: '0.375rem',
+                cursor: 'pointer',
+                border: 'none',
+                outline: 'none',
+                transition: 'background-color 0.2s',
+              }}
+              onMouseOver={(e) => (e.target.style.backgroundColor = '#3b3b3b')}
+              onMouseOut={(e) => (e.target.style.backgroundColor = '#4a4a4a')}
             >
               수정하기
             </button>
 
             <button
-              className="px-2 py-1 text-md ml-4 bg-gray-800 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50"
-              style={{ fontSize: '16px' }}
               onClick={saveCustomTable}
+              style={{
+                padding: '0.5rem 1rem',
+                fontSize: '16px',
+                marginLeft: '1rem',
+                backgroundColor: '#4a4a4a',
+                color: 'white',
+                borderRadius: '0.375rem',
+                cursor: 'pointer',
+                border: 'none',
+                outline: 'none',
+                transition: 'background-color 0.2s',
+              }}
+              onMouseOver={(e) => (e.target.style.backgroundColor = '#3b3b3b')}
+              onMouseOut={(e) => (e.target.style.backgroundColor = '#4a4a4a')}
             >
               저장하기
             </button>
           </caption>
           <thead>
             <tr>
-              {['', ...headers].map((header, headerIndex) => {
-                return (
-                  <th
-                    className="border-[1px] border-[rgba(34, 36, 38, 0.15)]  shadow-[0_8px_5px_-5px_rgba(0,0,0,0.3)] z-30 leading-[20px] py-3 px-2 text-center"
-                    key={headerIndex}
-                  >
-                    <span className="text-xl">{header}</span>
-                  </th>
-                );
-              })}
+              {['', ...headers].map((header, headerIndex) => (
+                <th
+                  key={headerIndex}
+                  style={{
+                    border: '1px solid rgba(34, 36, 38, 0.15)',
+                    boxShadow: '0 8px 5px -5px rgba(0,0,0,0.3)',
+                    zIndex: 30,
+                    padding: '0.75rem 0.5rem',
+                    textAlign: 'center',
+                  }}
+                >
+                  <span style={{ fontSize: '1.25rem' }}>{header}</span>
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
             {data.slice(1).map((row, rowIndex) => (
-              <tr>
-                {[rowIndex, ...row].map((value, valueIndex) => {
-                  return (
-                    <td className="border-[1px] border-[rgba(34, 36, 38, 0.15)] text-center py-2">
-                      <span className="text-md">{value}</span>
-                    </td>
-                  );
-                })}
+              <tr key={rowIndex}>
+                {[rowIndex, ...row].map((value, valueIndex) => (
+                  <td
+                    key={valueIndex}
+                    style={{
+                      border: '1px solid rgba(34, 36, 38, 0.15)',
+                      textAlign: 'center',
+                      padding: '0.5rem',
+                    }}
+                  >
+                    <span style={{ fontSize: '1rem' }}>{value}</span>
+                  </td>
+                ))}
               </tr>
             ))}
           </tbody>
@@ -226,111 +277,210 @@ function ExpertCustomTable({ setSummary }) {
 
   return (
     <div>
-      <table className="w-full border-solid border-[1px] border-[rgba(34, 36, 38, 0.15)] rounded-xl caption-top border-collapse">
-        <caption className="text-2xl font-semibold py-2 text-center text-black">
+      <table
+        style={{
+          width: '100%',
+          borderStyle: 'solid',
+          borderWidth: '1px',
+          borderColor: 'rgba(34, 36, 38, 0.15)',
+          borderRadius: '12px',
+          captionSide: 'top',
+          borderCollapse: 'collapse',
+        }}
+      >
+        <caption
+          style={{
+            fontSize: '2rem',
+            fontWeight: '600',
+            padding: '0.5rem',
+            textAlign: 'center',
+            color: 'black',
+          }}
+        >
           {title}
           <button
-            className="px-2 py-1 text-md ml-4 bg-gray-800 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50"
             onClick={handleEditComplete}
-            style={{ fontSize: '16px' }}
+            style={{
+              padding: '0.5rem 1rem',
+              fontSize: '16px',
+              marginLeft: '1rem',
+              backgroundColor: '#4a4a4a',
+              color: 'white',
+              borderRadius: '0.375rem',
+              cursor: 'pointer',
+              border: 'none',
+              outline: 'none',
+              transition: 'background-color 0.2s',
+            }}
+            onMouseOver={(e) => (e.target.style.backgroundColor = '#3b3b3b')}
+            onMouseOut={(e) => (e.target.style.backgroundColor = '#4a4a4a')}
           >
             완료
           </button>
           <button
-            className="px-2 py-1 text-md ml-4 bg-gray-800 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50"
             onClick={handleEditCancel}
-            style={{ fontSize: '16px' }}
+            style={{
+              padding: '0.5rem 1rem',
+              fontSize: '16px',
+              marginLeft: '1rem',
+              backgroundColor: '#4a4a4a',
+              color: 'white',
+              borderRadius: '0.375rem',
+              cursor: 'pointer',
+              border: 'none',
+              outline: 'none',
+              transition: 'background-color 0.2s',
+            }}
+            onMouseOver={(e) => (e.target.style.backgroundColor = '#3b3b3b')}
+            onMouseOut={(e) => (e.target.style.backgroundColor = '#4a4a4a')}
           >
             취소
           </button>
         </caption>
         <thead>
           <tr>
-            {['', ...modeificationHeaders].map((header, headerIndex) => {
-              if (headerIndex === 0)
-                return (
-                  <th
-                    className="border-[1px] border-[rgba(34, 36, 38, 0.15)]  shadow-[0_8px_5px_-5px_rgba(0,0,0,0.3)] z-30 leading-[20px] py-3 px-2 text-center"
-                    key={headerIndex}
-                  >
-                    <span className="text-xl">{header}</span>
-                  </th>
-                );
-              return (
-                <th
-                  className="relative border-[1px] border-[rgba(34, 36, 38, 0.15)]  shadow-[0_8px_5px_-5px_rgba(0,0,0,0.3)] z-30 leading-[20px] py-3 px-2 text-center"
-                  key={headerIndex}
+            {['', ...modeificationHeaders].map((header, headerIndex) => (
+              <th
+                key={headerIndex}
+                style={{
+                  border: '1px solid rgba(34, 36, 38, 0.15)',
+                  boxShadow: '0 8px 5px -5px rgba(0,0,0,0.3)',
+                  zIndex: 30,
+                  padding: '0.75rem 0.5rem',
+                  textAlign: 'center',
+                  position: 'relative',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                  }}
                 >
-                  {/* 제목 및 버튼 컨테이너 */}
-                  <div className="inline-flex items-center space-x-2">
-                    <span className="text-xl">{header}</span>
+                  <span style={{ fontSize: '1.25rem' }}>{header}</span>
 
-                    {/* 열 삭제 버튼 (휴지통 아이콘) */}
-                    <button
-                      className="ml-2 px-2 py-1 text-gray-700 bg-gray-100 rounded hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400"
-                      onClick={() => handleDeleteColumn(headerIndex)}
-                    >
-                      <AiOutlineDelete
-                        size={16}
-                        className="text-black font-bold"
-                      />
-                    </button>
-                  </div>
-
-                  {/* 왼쪽으로 열 이동 버튼 */}
                   <button
-                    className="absolute left-4 top-1/2 transform -translate-y-1/2 px-2 py-1 text-sm text-gray-700 bg-gray-100 rounded hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400"
-                    onClick={() => handleMoveColumnLeft(headerIndex)}
+                    onClick={() => handleDeleteColumn(headerIndex)}
+                    style={{
+                      marginLeft: '0.5rem',
+                      padding: '0.25rem 0.5rem',
+                      color: '#4a4a4a',
+                      backgroundColor: '#f5f5f5',
+                      borderRadius: '0.375rem',
+                      cursor: 'pointer',
+                      border: 'none',
+                      outline: 'none',
+                    }}
+                    onMouseOver={(e) =>
+                      (e.target.style.backgroundColor = '#e0e0e0')
+                    }
+                    onMouseOut={(e) =>
+                      (e.target.style.backgroundColor = '#f5f5f5')
+                    }
                   >
-                    ◀
+                    <AiOutlineDelete size={16} />
                   </button>
+                </div>
 
-                  {/* 오른쪽으로 열 이동 버튼 */}
-                  <button
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 px-2 py-1 text-sm text-gray-700 bg-gray-100 rounded hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400"
-                    onClick={() => handleMoveColumnRight(headerIndex)}
-                  >
-                    ▶
-                  </button>
-                </th>
-              );
-            })}
+                <button
+                  onClick={() => handleMoveColumnLeft(headerIndex)}
+                  style={{
+                    position: 'absolute',
+                    left: '1rem',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    padding: '0.25rem 0.5rem',
+                    fontSize: '0.875rem',
+                    color: '#4a4a4a',
+                    backgroundColor: '#f5f5f5',
+                    borderRadius: '0.375rem',
+                    cursor: 'pointer',
+                    border: 'none',
+                    outline: 'none',
+                  }}
+                  onMouseOver={(e) =>
+                    (e.target.style.backgroundColor = '#e0e0e0')
+                  }
+                  onMouseOut={(e) =>
+                    (e.target.style.backgroundColor = '#f5f5f5')
+                  }
+                >
+                  ◀
+                </button>
+
+                <button
+                  onClick={() => handleMoveColumnRight(headerIndex)}
+                  style={{
+                    position: 'absolute',
+                    right: '1rem',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    padding: '0.25rem 0.5rem',
+                    fontSize: '0.875rem',
+                    color: '#4a4a4a',
+                    backgroundColor: '#f5f5f5',
+                    borderRadius: '0.375rem',
+                    cursor: 'pointer',
+                    border: 'none',
+                    outline: 'none',
+                  }}
+                  onMouseOver={(e) =>
+                    (e.target.style.backgroundColor = '#e0e0e0')
+                  }
+                  onMouseOut={(e) =>
+                    (e.target.style.backgroundColor = '#f5f5f5')
+                  }
+                >
+                  ▶
+                </button>
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody>
           {modificationData.slice(1).map((row, rowIndex) => (
-            <tr>
-              {[rowIndex, ...row].map((value, valueIndex) => {
-                if (valueIndex === 0)
-                  return (
-                    <td className="border-[1px] border-[rgba(34, 36, 38, 0.15)] text-center py-2">
-                      <span className="text-md">{value}</span>
-                    </td>
-                  );
-                return (
-                  <td className="border-[1px] border-[rgba(34, 36, 38, 0.15)] text-center py-2">
+            <tr key={rowIndex}>
+              {[rowIndex, ...row].map((value, valueIndex) => (
+                <td
+                  key={valueIndex}
+                  style={{
+                    border: '1px solid rgba(34, 36, 38, 0.15)',
+                    textAlign: 'center',
+                    padding: '0.5rem',
+                  }}
+                >
+                  {valueIndex === 0 ? (
+                    <span style={{ fontSize: '1rem' }}>{value}</span>
+                  ) : (
                     <input
                       type="text"
-                      className="text-md text-center border rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 focus:border-transparent bg-gray-50 shadow-sm placeholder-gray-400"
+                      value={value}
+                      placeholder="Enter text"
                       onChange={(e) => {
                         setModificationData((prev) => {
                           const copiedModificationData = prev.map((value) => [
                             ...value,
                           ]);
-
                           copiedModificationData[rowIndex + 1][valueIndex - 1] =
                             e.target.value;
-
                           return copiedModificationData;
                         });
                       }}
-                      value={value}
-                      placeholder="Enter text"
-                      style={{ width: 'auto' }}
+                      style={{
+                        fontSize: '1rem',
+                        textAlign: 'center',
+                        border: '1px solid transparent',
+                        borderRadius: '0.375rem',
+                        padding: '0.25rem',
+                        backgroundColor: '#f9f9f9',
+                        boxShadow: '0px 1px 3px rgba(0,0,0,0.1)',
+                        width: 'auto',
+                      }}
                     />
-                  </td>
-                );
-              })}
+                  )}
+                </td>
+              ))}
             </tr>
           ))}
         </tbody>
