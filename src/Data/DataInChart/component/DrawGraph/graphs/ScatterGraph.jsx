@@ -193,12 +193,12 @@ function ScatterGraph() {
       style={{
         display: 'flex',
         flexDirection: 'column',
+        alignItems: 'center',
       }}
     >
       <div
         style={{
-          margin: '0 0 20px 650px', // 위아래 간격 추가
-          padding: '10px 20px', // 내부 여백 추가
+          margin: '0 0 20px 150px', // 위아래 간격 추가
           color: '#333', // 텍스트 색상
           fontSize: '24px', // 제목 크기
           fontWeight: 'bold', // 글씨 두껍게
