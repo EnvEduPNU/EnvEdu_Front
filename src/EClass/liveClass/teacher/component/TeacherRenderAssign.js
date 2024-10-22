@@ -132,6 +132,21 @@ function RenderContent({
                 contentItem.stepNum,
               )
             }
+            variant="contained"
+            color="primary"
+            sx={{
+              backgroundColor: '#6200ea', // 버튼 배경색 (보라색)
+              color: 'white', // 텍스트 색상
+              padding: '10px 20px', // 패딩
+              borderRadius: '20px', // 버튼의 모서리를 둥글게
+              boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', // 그림자 효과
+              fontWeight: 'bold', // 글씨 굵기
+              fontSize: '1rem', // 글씨 크기
+              transition: 'background-color 0.3s ease', // 배경색 전환 효과
+              '&:hover': {
+                backgroundColor: '#3700b3', // hover 시 배경색 (어두운 보라색)
+              },
+            }}
           >
             그래프 그리기
           </Button>
@@ -156,7 +171,7 @@ function RenderContent({
                 ))}
               </ul>
             ) : (
-              <Typography>No photo list available.</Typography>
+              <Typography></Typography>
             )}
           </div>
         </>

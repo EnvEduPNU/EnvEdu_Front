@@ -18,6 +18,7 @@ import ExpertCustomTable from '../common/ExpertCustomTable';
 import ExpertCustomGraph from './ExpertCustomGraph';
 import ExpertCustomGraphHeader from './ExpertCustomGraphHeader';
 import Header from '../Header/Header';
+import DataInChartMainPage from './DataInChartMainPage';
 
 // 테이블 아니면 그래프 선택하는 탭 컴포넌트
 function TableOrGraph({ dataCategory, setPhoto }) {
@@ -44,8 +45,11 @@ function TableOrGraph({ dataCategory, setPhoto }) {
         Data&Chart
       </div>
 
+      {/* tab의 default 는 'table' */}
       {tab === 'table' && (
         <Styled.CustomTableWrapper>
+          {dataCategory === '' && <DataInChartMainPage />}
+
           {dataCategory === 'MyData' && (
             <CustomTable tableSaveClick={tableSaveClick} />
           )}
