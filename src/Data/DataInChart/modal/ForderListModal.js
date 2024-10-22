@@ -8,6 +8,7 @@ import { Typography } from '@mui/material';
 import ButtonClose from '../component/DrawGraph/ButtonClose';
 
 import { useTabStore } from '../store/tabStore';
+import { convertToNumber } from '../store/utils/convertToNumber';
 
 const style = {
   position: 'absolute',
@@ -180,7 +181,7 @@ export default function ForderListModal(props) {
 
             data[Math.floor(table[key].order / columns) + 1][
               table[key].order % columns
-            ] = table[key].value;
+            ] = convertToNumber(table[key].value);
           });
 
           res.data.stringFields.forEach((table) => {
@@ -197,7 +198,7 @@ export default function ForderListModal(props) {
             }
             data[Math.floor(table[key].order / columns) + 1][
               table[key].order % columns
-            ] = table[key].value;
+            ] = convertToNumber(table[key].value);
           });
           console.log(data);
           setData(data, title, true, variables);
@@ -279,7 +280,7 @@ export default function ForderListModal(props) {
             const filteredItem = Object.keys(item)
               .filter((key) => !keysToExclude.includes(key))
               .reduce((obj, key) => {
-                obj[key] = item[key];
+                obj[key] = convertToNumber(item[key]);
                 return obj;
               }, {});
 

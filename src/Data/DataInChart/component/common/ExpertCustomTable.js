@@ -152,7 +152,7 @@ function ExpertCustomTable({ setSummary }) {
                 : data.dataLabel,
           }));
 
-          setSummary(formattedData);
+          setSummary((prev) => [...prev, formattedData]);
         })
         .catch((err) => console.log(err));
 
