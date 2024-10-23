@@ -53,7 +53,7 @@ function ClassData() {
           })),
         }));
 
-        console.log('수업 자료 들 : ' + JSON.stringify(formattedData, null, 2));
+        console.log('E-Class 들 : ' + JSON.stringify(formattedData, null, 2));
 
         setLectureSummary(formattedData);
       })
@@ -110,11 +110,11 @@ function ClassData() {
       updatedLectures.splice(index, 1);
       setLectureSummary(updatedLectures);
       setLectureUuid(uuid);
-      alert('수업 자료가 성공적으로 삭제되었습니다.');
+      alert('E-Class가 성공적으로 삭제되었습니다.');
       window.location.reload();
     } catch (error) {
       console.error('Error deleting lecture:', error);
-      alert('수업 자료 삭제 중 오류가 발생했습니다.');
+      alert('E-Class 삭제 중 오류가 발생했습니다.');
     }
   };
 
@@ -160,7 +160,7 @@ function ClassData() {
                 textAlign: 'center',
               }}
             >
-              수업자료 메인 페이지
+              E-Class 생성
             </Typography>
             <LectureCardCarousel
               lectureSummary={lectureSummary}
@@ -179,7 +179,7 @@ function ClassData() {
               }}
               onClick={handleCreateLecture}
             >
-              수업 자료 만들기
+              E-Class 만들기
             </button>
           </div>
         )}

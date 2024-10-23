@@ -7,8 +7,11 @@ import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import TextField from '@mui/material/TextField';
+import Tooltip from '@mui/material/Tooltip'; // Tooltip 컴포넌트 추가
 
 import { useCreateLectureSourceStore } from '../../store/CreateLectureSourceStore';
+
+const MAX_STEPS = 6; // 스텝의 최대 개수 설정
 
 export default function TeacherStepper({
   stepCount,
@@ -28,7 +31,6 @@ export default function TeacherStepper({
 
   // 처음에 stepperStepName이 없을 경우 기본 값 설정
   useEffect(() => {
-    // steps가 비어 있으면 steps 설정
     if (steps.length === 0) {
       setSteps(
         stepperStepName.map(
@@ -70,6 +72,11 @@ export default function TeacherStepper({
   };
 
   const addStep = () => {
+    if (steps.length >= MAX_STEPS) {
+      alert(`최대 ${MAX_STEPS}개의 스텝만 추가할 수 있습니다.`);
+      return;
+    }
+
     const newStepCount = steps.length + 1;
 
     // 새로운 step을 추가
@@ -164,58 +171,70 @@ export default function TeacherStepper({
   };
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Stepper activeStep={activeStep - 1} sx={{ margin: '10px 0 20px 0' }}>
+    <Box sx={{ display: 'flex', width: '100%' }}>
+      <Stepper
+        activeStep={activeStep - 1}
+        sx={{ width: '90%', margin: '10px 0 20px 0' }}
+      >
         {steps?.map((label, index) => (
-          <Step key={index}>
-            <StepLabel
-              onClick={handleStep(index + 1)}
-              sx={{
-                cursor: 'pointer',
-                '& .MuiStepLabel-label, & .MuiStepIcon-root': {
+          <Tooltip title="더블 클릭하여 스텝 이름 설정">
+            <Step key={index}>
+              <StepLabel
+                onClick={handleStep(index + 1)}
+                sx={{
                   cursor: 'pointer',
-                },
-                '&:hover .MuiStepLabel-label, &:hover .MuiStepIcon-root': {
-                  color: 'blue',
-                  textDecoration: 'underline',
-                },
-              }}
-            >
-              {editingStep === index ? (
-                <TextField
-                  className="editing-step"
-                  value={stepName}
-                  onChange={(e) => setStepName(e.target.value)}
-                  onBlur={() => handleBlurOrEnter(index)}
-                  onKeyDown={(e) => handleKeyDown(e, index)}
-                  autoFocus
-                />
-              ) : (
-                <span onDoubleClick={() => handleDoubleClick(index)}>
-                  {label}
-                </span>
-              )}
-            </StepLabel>
-          </Step>
+                  '& .MuiStepLabel-label, & .MuiStepIcon-root': {
+                    cursor: 'pointer',
+                  },
+                  '&:hover .MuiStepLabel-label, &:hover .MuiStepIcon-root': {
+                    color: 'blue',
+                    textDecoration: 'underline',
+                  },
+                }}
+              >
+                {editingStep === index ? (
+                  <TextField
+                    className="editing-step"
+                    value={stepName}
+                    onChange={(e) => setStepName(e.target.value)}
+                    onBlur={() => handleBlurOrEnter(index)}
+                    onKeyDown={(e) => handleKeyDown(e, index)}
+                    autoFocus
+                  />
+                ) : (
+                  <span onDoubleClick={() => handleDoubleClick(index)}>
+                    {label}
+                  </span>
+                )}
+              </StepLabel>
+            </Step>
+          </Tooltip>
         ))}
       </Stepper>
 
       <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <Button
-          variant="contained"
-          onClick={addStep}
-          sx={{ mr: 1, width: '5%' }}
-        >
-          <AddIcon />
-        </Button>
-        <Button
-          variant="contained"
-          onClick={removeStep}
-          sx={{ width: '5%' }}
-          color="secondary"
-        >
-          <RemoveIcon />
-        </Button>
+        {/* Add 버튼에 Tooltip 추가 */}
+        <Tooltip title="새로운 스텝 추가">
+          <Button
+            variant="contained"
+            onClick={addStep}
+            sx={{ mr: 1, width: '5%' }}
+          >
+            <AddIcon />
+          </Button>
+        </Tooltip>
+
+        {/* Remove 버튼에 Tooltip 추가 */}
+        <Tooltip title="마지막 스텝 제거">
+          <Button
+            variant="contained"
+            onClick={removeStep}
+            sx={{ width: '5%' }}
+            color="secondary"
+          >
+            <RemoveIcon />
+          </Button>
+        </Tooltip>
       </Box>
     </Box>
   );

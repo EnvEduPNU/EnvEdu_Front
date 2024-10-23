@@ -58,7 +58,7 @@ export function TeacherClassroomPage() {
           }}
         >
           {' '}
-          E-Class 생성
+          E-Class 실행 생성
         </button>
         <CreateLectureModal
           open={isModalOpen}

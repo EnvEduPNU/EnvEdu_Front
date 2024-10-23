@@ -6,8 +6,9 @@ import { customAxios } from '../../../Common/CustomAxios';
 import { v4 as uuidv4 } from 'uuid'; // UUID 생성 함수
 import moment from 'moment'; // 날짜 처리 라이브러리
 import axios from 'axios';
-import { Typography, TextField, Button } from '@mui/material';
+import { Typography, TextField, Button, Divider } from '@mui/material';
 import './CreateLectureSourcePage.scss'; // 스타일을 위한 SCSS 파일 임포트
+import { useNavigate } from 'react-router-dom';
 
 export const CreateLectureSourcePage = (props) => {
   const {
@@ -26,10 +27,8 @@ export const CreateLectureSourcePage = (props) => {
   const [stepperStepName, setStepperStepName] = useState(stepContents || []);
   const [isEditingLectureName, setIsEditingLectureName] = useState(false); // 수정 모드 상태
   const { contents } = useCreateLectureSourceStore();
-  const [stepAlert, setStepAlert] = useState(false);
 
-  // const { contents, clearContents, setContents, updateContent } =
-  //   useCreateLectureSourceStore();
+  const navigate = useNavigate();
 
   // props.lectureName이 변경될 때마다 lectureName 상태를 업데이트
   useEffect(() => {
@@ -95,7 +94,7 @@ export const CreateLectureSourcePage = (props) => {
   };
 
   // 다음 스텝 넘어가는 메서드
-  const handleNextStep = async () => {
+  const handleNextStep = async (moveEclass) => {
     const contentUuid = uuidv4();
 
     if (activeStep <= stepCount) {
@@ -274,6 +273,10 @@ export const CreateLectureSourcePage = (props) => {
                   changedPayload,
                 );
                 alert('복사본이 저장되었습니다.');
+
+                if (moveEclass === true) {
+                  navigate('/EClassLivePage');
+                }
               } catch (error) {
                 console.error('저장 요청 실패:', error);
                 alert('저장 요청에 실패했습니다.');
@@ -284,7 +287,9 @@ export const CreateLectureSourcePage = (props) => {
           } else {
             console.log('처음 저장 : ' + JSON.stringify(payload, null, 2));
 
-            if (window.confirm('저장하시겠습니까?')) {
+            const saveConfirm = window.confirm('저장하시겠습니까?');
+
+            if (saveConfirm) {
               try {
                 await customAxios.post(
                   '/api/steps/saveLectureContent',
@@ -294,14 +299,16 @@ export const CreateLectureSourcePage = (props) => {
                 console.error('저장 요청 실패:', error);
                 alert('저장 요청에 실패했습니다.');
               }
+              if (moveEclass === true) {
+                navigate('/EClassLivePage');
+              } else {
+                alert('저장 요청이 완료되었습니다.');
+                window.location.reload();
+              }
             } else {
               console.log('사용자가 저장을 취소했습니다.');
             }
-
-            alert('저장 요청이 완료되었습니다.');
           }
-
-          window.location.reload();
         }
       } catch (error) {
         console.error('저장 요청 실패:', error);
@@ -336,57 +343,68 @@ export const CreateLectureSourcePage = (props) => {
         style={{
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'center', // 세로 가운데 정렬
+          justifyContent: 'center',
           width: '72rem',
         }}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          {isEditingLectureName ? (
-            <TextField
-              label="수업자료 이름"
-              value={lectureName}
-              onChange={handleLectureNameChange}
-              onBlur={handleBlur}
-              onKeyPress={handleKeyPress}
-              style={{ margin: ' 0 20px 0 0', width: '55rem' }} // 넓이를 조정하여 가운데 정렬 및 사이즈 맞춤
-              margin="normal"
-              autoFocus
-            />
-          ) : (
-            <Typography
-              variant="h4"
-              onDoubleClick={handleDoubleClick}
+        {/* 제목, 돌아가기 버튼, TeacherStepper를 감싸는 회색 선과 둥근 모서리가 있는 박스 */}
+        <div
+          style={{
+            border: '1px solid lightgray', // 옅은 회색 선
+            borderRadius: '0.5rem', // 모서리 둥글게
+            padding: '20px', // 내부 여백
+            marginBottom: '20px', // 박스 아래 여백
+            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)', // 가벼운 그림자 추가 (선택사항)
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            {isEditingLectureName ? (
+              <TextField
+                label="E-Class 이름"
+                value={lectureName}
+                onChange={handleLectureNameChange}
+                onBlur={handleBlur}
+                onKeyPress={handleKeyPress}
+                style={{ margin: '0 20px 0 0', width: '55rem' }} // 넓이를 조정하여 가운데 정렬 및 사이즈 맞춤
+                margin="normal"
+                autoFocus
+              />
+            ) : (
+              <Typography
+                variant="h4"
+                onDoubleClick={handleDoubleClick}
+                style={{
+                  cursor: 'pointer',
+                  paddingTop: '10px',
+                }}
+              >
+                {lectureName || '더블클릭하여 E-Class 이름을 입력하세요.'}
+              </Typography>
+            )}
+            {/* E-Class 버튼 */}
+            <Button
+              variant="outlined"
+              onClick={handleBackClick}
               style={{
+                fontWeight: '800',
+                fontSize: '1rem',
+                background: '#f3b634',
+                padding: '0.5rem', // 단위 추가
+                borderRadius: '0.3125rem',
+                width: '20%',
+                height: '3.5rem',
+                textAlign: 'center',
                 cursor: 'pointer',
-                margin: '20px 0 0 10px',
+                border: 'none',
+                color: 'white', // 글자색 설정
               }}
             >
-              {lectureName || '더블클릭하여 수업 자료 이름을 입력하세요.'}
-            </Typography>
-          )}
-          {/* 수업자료 버튼 */}
-          <Button
-            variant="outlined"
-            onClick={handleBackClick}
-            style={{
-              fontWeight: '800',
-              fontSize: '1rem',
-              background: '#f3b634',
-              padding: '0.5rem', // 단위 추가
-              borderRadius: '0.3125rem',
-              margin: '0.5rem 0 0.5rem 0',
-              width: '20%',
-              height: '3.5rem',
-              textAlign: 'center',
-              cursor: 'pointer',
-              border: 'none',
-              color: 'white', // 글자색 설정
-            }}
-          >
-            돌아가기
-          </Button>
-        </div>
-        <div>
+              돌아가기
+            </Button>
+          </div>
+
+          <Divider sx={{ margin: '20px 0', borderWidth: '2px' }} />
+
           {/* Stepper */}
           <div
             style={{
@@ -405,22 +423,19 @@ export const CreateLectureSourcePage = (props) => {
               lectureName={lectureName}
             />
           </div>
-
-          {/* Word Processor */}
-          <div style={{ width: '100%' }}>
-            {/* Word Processor와 일치하는 넓이 */}
-            <TeacherWordProcessor
-              summary={summary}
-              lectureName={lectureName}
-              activeStep={activeStep}
-              stepCount={stepCount} // 업데이트된 stepCount를 전달
-              handleNextStep={handleNextStep}
-              stepperStepName={stepperStepName}
-              setStepperStepName={setStepperStepName}
-              setActiveStep={setActiveStep}
-            />
-          </div>
         </div>
+
+        {/* Word Processor와 일치하는 넓이 */}
+        <TeacherWordProcessor
+          summary={summary}
+          lectureName={lectureName}
+          activeStep={activeStep}
+          stepCount={stepCount} // 업데이트된 stepCount를 전달
+          handleNextStep={handleNextStep}
+          stepperStepName={stepperStepName}
+          setStepperStepName={setStepperStepName}
+          setActiveStep={setActiveStep}
+        />
       </div>
     </>
   );

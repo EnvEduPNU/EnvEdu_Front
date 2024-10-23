@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
-import { customAxios } from '../Common/CustomAxios';
 import { PiPlant } from 'react-icons/pi';
 
 function Header() {
@@ -179,35 +178,37 @@ function Header() {
                           >
                             Open API Data
                           </Nav.Link>
+
                           <Nav.Link
-                            onClick={() => handleNavLinkClick('/resources')}
+                            onClick={() => handleNavLinkClick('/myData')}
                           >
-                            Education Resources
+                            My Data
                           </Nav.Link>
                         </>
                       );
                     case 'eClass':
                       return (
                         <>
+                          {userRole === 'ROLE_EDUCATOR' && (
+                            <Nav.Link
+                              onClick={() => handleNavLinkClick('/classData')}
+                            >
+                              E-Class 생성
+                            </Nav.Link>
+                          )}
                           <Nav.Link
                             onClick={() =>
                               handleNavLinkClick('/EClassLivePage')
                             }
                           >
-                            E-Class
+                            E-Class 실행
                           </Nav.Link>
+
                           <Nav.Link
-                            onClick={() => handleNavLinkClick('/myData')}
+                            onClick={() => handleNavLinkClick('/resources')}
                           >
-                            My Data
+                            Education Resources
                           </Nav.Link>
-                          {userRole === 'ROLE_EDUCATOR' && (
-                            <Nav.Link
-                              onClick={() => handleNavLinkClick('/classData')}
-                            >
-                              수업 자료
-                            </Nav.Link>
-                          )}
                         </>
                       );
                     case 'learnMore':

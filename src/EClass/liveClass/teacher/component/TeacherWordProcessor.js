@@ -9,6 +9,7 @@ import {
   Typography,
   TextField,
   IconButton,
+  Box,
 } from '@mui/material';
 import { ImageActions } from '@xeger/quill-image-actions';
 import { ImageFormats } from '@xeger/quill-image-formats';
@@ -19,7 +20,6 @@ import { useCreateLectureSourceStore } from '../../store/CreateLectureSourceStor
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import './TeacherWordProcessor.scss';
-import DataInChartModal from '../../dataInChartStep/DataInChartModal';
 import { useNavigate } from 'react-router-dom';
 
 Quill.register('modules/imageActions', ImageActions);
@@ -150,8 +150,6 @@ export default function TeacherWordProcessor({
 
       // store에서 현재 activeStep에 해당하는 내용을 로드
       if (stepNumbers.includes(activeStep)) {
-        console.log('현재 스토어에 저장된 수업 자료 로드');
-
         // 현재 스토어에서 로드
         contents.forEach((contentss) => {
           if (contentss.stepNum === activeStep) {
@@ -163,9 +161,7 @@ export default function TeacherWordProcessor({
           '스토어에서 불러온 stepData : ' + JSON.stringify(stepData, null, 2),
         );
       } else if (stepperStepName.length > 0) {
-        console.log('예전에 만들어 놓은 수업자료 로드');
-
-        // 이미 만들어진 수업 자료에서 로드
+        // 이미 만들어진 E-Class에서 로드
         stepperStepName.forEach((contentss) => {
           if (contentss.stepNum === activeStep) {
             stepData = contentss;
@@ -435,7 +431,7 @@ export default function TeacherWordProcessor({
     }
   };
 
-  const handleNext = async () => {
+  const handleNext = async (moveEclass) => {
     const stepData = {
       stepName: lectureName,
       stepNum: activeStep,
@@ -526,7 +522,8 @@ export default function TeacherWordProcessor({
       }
     }
 
-    handleNextStep();
+    // 상위 컴포넌트의 저장 메서드
+    handleNextStep(moveEclass);
 
     setLocalContents([]);
     setContentName('');
@@ -818,121 +815,107 @@ export default function TeacherWordProcessor({
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <Container disableGutters>
+      <Container disableGutters sx={{ minHeight: '20rem' }}>
         {stepCount >= activeStep ? (
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              width: '100%',
-              height: '36.5rem',
-            }}
-          >
-            {/* 왼쪽에 과제 만드는 미리보기란에 랜더링 되는 곳 */}
-            <Paper
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <div
               style={{
-                padding: 20,
+                display: 'flex',
+                flexDirection: 'row',
                 width: '100%',
-                height: '100%',
-                boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
-                overflowY: 'auto',
+                height: '36.5rem',
               }}
             >
-              {localContents.map((item, index) => (
-                <DraggableItem
-                  key={index}
-                  index={index}
-                  item={item}
-                  moveItem={moveItem}
-                  handleDeleteContent={handleDeleteContent}
-                  handleTextBoxChange={handleTextBoxChange}
+              {/* 왼쪽에 과제 만드는 미리보기란에 랜더링 되는 곳 */}
+              <Paper
+                style={{
+                  padding: 20,
+                  width: '100%',
+                  height: '100%',
+                  boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+                  overflowY: 'auto',
+                }}
+              >
+                {localContents.map((item, index) => (
+                  <DraggableItem
+                    key={index}
+                    index={index}
+                    item={item}
+                    moveItem={moveItem}
+                    handleDeleteContent={handleDeleteContent}
+                    handleTextBoxChange={handleTextBoxChange}
+                  />
+                ))}
+              </Paper>
+
+              {/* 오른쪽 WordProcessor 편집창 */}
+              <ReactQuill
+                ref={quillRef}
+                value={value}
+                style={{ width: '55%', height: '88%', margin: '0 0 0 10px' }}
+                onChange={handleChange}
+                modules={modules}
+                formats={formats}
+                placeholder="내용을 입력하세요..."
+              />
+            </div>
+
+            <div
+              style={{
+                display: 'flex',
+                width: '100%',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-start',
+                  width: '100%',
+                }}
+              >
+                {/* 데이터 추가하기 버튼 */}
+                <DataTableButton
+                  summary={summary}
+                  onSelectData={handleSelectData}
                 />
-              ))}
-            </Paper>
-
-            {/* 오른쪽 WordProcessor 편집창 */}
-            <ReactQuill
-              ref={quillRef}
-              value={value}
-              style={{ width: '55%', height: '88%', margin: '0 0 0 10px' }}
-              onChange={handleChange}
-              modules={modules}
-              formats={formats}
-              placeholder="내용을 입력하세요..."
-            />
-          </div>
-        ) : (
-          <Typography>Finish 버튼으로 수업자료 생성을 완료하세요.</Typography>
-        )}
-
-        {/* 여기에 다 만들기 */}
-        <div
-          style={{
-            display: 'flex',
-            width: '100%',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'flex-start',
-              width: '100%',
-            }}
-          >
-            {/* 데이터 추가하기 버튼 */}
-            <DataTableButton
-              summary={summary}
-              onSelectData={handleSelectData}
-            />
-            <Button
-              variant="contained"
-              color="primary"
-              className="yellow-btn" // yellow-btn 클래스 적용
-              onClick={handleAddTextBox}
-              sx={{ margin: '20px 10px 0 0', width: '10rem' }}
-            >
-              답변 박스 추가
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              className="yellow-btn" // yellow-btn 클래스 적용
-              onClick={handleAddDataChart}
-              sx={{ margin: '20px 10px 0 0', width: '10rem' }}
-            >
-              그래프 그리기 버튼
-            </Button>
-          </div>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-              margin: '20px 0 0 0',
-              width: '100%',
-            }}
-          >
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleSave}
-              sx={{ width: '10rem', marginRight: '1rem' }}
-            >
-              포함하기
-            </Button>
-
-            <>
-              {stepCount < activeStep ? (
                 <Button
                   variant="contained"
-                  color="secondary"
-                  onClick={handleNext}
-                  sx={{ width: '10rem' }}
+                  color="primary"
+                  className="yellow-btn" // yellow-btn 클래스 적용
+                  onClick={handleAddTextBox}
+                  sx={{ margin: '20px 10px 0 0', width: '10rem' }}
                 >
-                  Finish
+                  답변 박스 추가
                 </Button>
-              ) : (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  className="yellow-btn" // yellow-btn 클래스 적용
+                  onClick={handleAddDataChart}
+                  sx={{ margin: '20px 10px 0 0', width: '10rem' }}
+                >
+                  그래프 그리기 버튼
+                </Button>
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  margin: '20px 0 0 0',
+                  width: '100%',
+                }}
+              >
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleSave}
+                  sx={{ width: '10rem', marginRight: '1rem' }}
+                >
+                  포함하기
+                </Button>
+
                 <Button
                   variant="contained"
                   color="secondary"
@@ -941,10 +924,67 @@ export default function TeacherWordProcessor({
                 >
                   다음 단계
                 </Button>
-              )}
-            </>
+              </div>
+            </div>
           </div>
-        </div>
+        ) : (
+          <>
+            {' '}
+            {/* 설명 및 버튼 박스 */}
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                border: '1px solid lightgray',
+                borderRadius: '8px',
+                padding: '20px',
+                marginTop: '20px',
+                height: '20rem',
+              }}
+            >
+              <Typography variant="h5">
+                Finish 버튼으로 E-Class 생성을 완료하세요.
+              </Typography>
+
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  width: '100%',
+                  maxWidth: '600px',
+                  marginTop: '20px',
+                }}
+              >
+                <Button
+                  variant="contained"
+                  color="primary"
+                  sx={{
+                    flexGrow: 1,
+                    marginRight: '10px',
+                    borderRadius: '8px',
+                  }}
+                  onClick={() => handleNext(true)}
+                >
+                  E-Class 바로 실행
+                </Button>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  sx={{
+                    flexGrow: 1.5,
+                    borderRadius: '8px',
+                  }}
+                  onClick={handleNext}
+                >
+                  Finish
+                </Button>
+              </Box>
+            </Box>
+          </>
+        )}
       </Container>
     </DndProvider>
   );
