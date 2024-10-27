@@ -24,9 +24,13 @@ import DeleteIcon from '@mui/icons-material/Delete'; // 삭제 아이콘
 
 import usePhotoStore from '../store/photoStore';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import LeftTeacherAssignTable from './leftTeacherAssignTable';
 =======
 >>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
+=======
+import LeftTeacherAssignTable from './leftTeacherAssignTable';
+>>>>>>> 4019a00 ([update] 선생님 데이터 로직 개발)
 
 function DataInChartPage() {
   const [dataCategory, setDataCategory] = useState('');
@@ -43,6 +47,9 @@ function DataInChartPage() {
   const contentName = searchParams.get('contentName');
   const stepNum = searchParams.get('stepNum');
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 4019a00 ([update] 선생님 데이터 로직 개발)
   const content = searchParams.get('content');
 
   useEffect(() => {
@@ -54,8 +61,11 @@ function DataInChartPage() {
       '데이터 카테고리 체크 : ' + JSON.stringify(dataCategory, null, 2),
     );
   }, []);
+<<<<<<< HEAD
 =======
 >>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
+=======
+>>>>>>> 4019a00 ([update] 선생님 데이터 로직 개발)
 
   const navigate = useNavigate(); // 페이지 이동을 위한 navigate 훅
 
@@ -291,14 +301,24 @@ function DataInChartPage() {
       {/* ---------------------------------------- 모달 -------------------------------------------------------*/}
 =======
 
-        {/* 왼쪽 사이드 메뉴 */}
-        <LeftSlidePage
-          setDataCategory={setDataCategory}
-          filteredData={filteredData}
-          setFilteredData={setFilteredData}
-          summary={summary}
-          setSummary={setSummary}
-        />
+        {/* --------------------------------------------------- 왼쪽 사이드 메뉴 -------------------------------------- */}
+        {content ? (
+          <>
+            {/* 선생님이 준 테이블 */}
+            <LeftTeacherAssignTable
+              content={content}
+              setDataCategory={setDataCategory}
+            />
+          </>
+        ) : (
+          <LeftSlidePage
+            setDataCategory={setDataCategory}
+            filteredData={filteredData}
+            setFilteredData={setFilteredData}
+            summary={summary}
+            setSummary={setSummary}
+          />
+        )}
 
         {/* 사진 저장 리스트 */}
         <div style={{ margin: '0 3rem 20px 3rem' }}>
@@ -312,13 +332,12 @@ function DataInChartPage() {
               overflowY: 'auto', // 스크롤 활성화
             }}
           >
-            <Table>
+            <Table stickyHeader>
               {/* stickyHeader로 헤더 고정 */}
               <TableHead
                 sx={{
                   backgroundColor: 'lightgray', // 헤더 배경색을 밝은 회색으로 설정
                 }}
-                stickyHeader
               >
                 <TableRow>
                   <TableCell sx={{ fontWeight: 'bold', padding: '6px 16px' }}>
