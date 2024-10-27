@@ -149,14 +149,14 @@ function ClassData() {
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              width: '80%',
+              width: '100%',
               margin: '20px 0',
             }}
           >
             <Typography
-              variant="h4"
+              variant="h3"
               sx={{
-                marginBottom: '20px',
+                marginBottom: '3rem',
                 textAlign: 'center',
               }}
             >
@@ -169,8 +169,10 @@ function ClassData() {
             />
             <button
               style={{
+                width: '30rem',
                 border: 'none',
                 fontWeight: '600',
+                fontSize: '20px',
                 borderRadius: '0.625rem',
                 marginTop: '20px',
                 padding: '10px 20px',

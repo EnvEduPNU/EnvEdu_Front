@@ -32,17 +32,16 @@ function LectureCardCarousel({
 
   return (
     <div className="carousel-container">
-      {/* 왼쪽 화살표 */}
-      <IconButton
-        onClick={prevCard}
-        className="carousel-arrow left-arrow"
-        disabled={currentIndex === 0}
-      >
-        <ArrowBackIosIcon />
-      </IconButton>
-
       {/* 카드 목록 */}
       <div className="carousel-cards">
+        {/* 왼쪽 화살표 */}
+        <IconButton
+          onClick={prevCard}
+          className="carousel-arrow left-arrow"
+          disabled={currentIndex === 0}
+        >
+          <ArrowBackIosIcon />
+        </IconButton>
         {sortedLectureSummary
           .slice(currentIndex, currentIndex + 4)
           .map((lecture, index) => {
@@ -108,16 +107,15 @@ function LectureCardCarousel({
               </div>
             );
           })}
+        {/* 오른쪽 화살표 */}
+        <IconButton
+          onClick={nextCard}
+          className="carousel-arrow right-arrow"
+          disabled={currentIndex >= sortedLectureSummary.length - 4}
+        >
+          <ArrowForwardIosIcon />
+        </IconButton>
       </div>
-
-      {/* 오른쪽 화살표 */}
-      <IconButton
-        onClick={nextCard}
-        className="carousel-arrow right-arrow"
-        disabled={currentIndex >= sortedLectureSummary.length - 4}
-      >
-        <ArrowForwardIosIcon />
-      </IconButton>
     </div>
   );
 }

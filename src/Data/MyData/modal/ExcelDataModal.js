@@ -20,7 +20,7 @@ import {
 import { v4 as uuidv4 } from 'uuid'; // uuid 라이브러리에서 v4 임포트
 import { customAxios } from '../../../Common/CustomAxios'; // Axios import
 
-const ExcelDataModal = ({ open, handleClose, data }) => {
+const ExcelDataModal = ({ open, handleClose, data, eclassFlag, onSave }) => {
   const [dataTypes, setDataTypes] = useState(
     Object.keys(data[0]).reduce((acc, key, index) => {
       acc[key] = 'Categoric'; // 기본값은 Categorical로 설정
@@ -79,15 +79,13 @@ const ExcelDataModal = ({ open, handleClose, data }) => {
     setEditedRowIndex(null); // 편집 중인 행 인덱스 초기화
   };
 
-  // 저장하기 버튼 클릭 시 실행되는 함수
+  // 테이블 설정 또는 저장하기 버튼 클릭 시 실행되는 함수
   const handleSave = async () => {
     const numericFieldsList = [];
     const stringFieldsList = [];
 
     // 각 열의 순서를 기록할 index
     let columnIndex = 0;
-
-    console.log('엑셀 데이터 확인 : ' + JSON.stringify(data.null, 2));
 
     data.forEach((row) => {
       const numericFields = {};
@@ -138,21 +136,18 @@ const ExcelDataModal = ({ open, handleClose, data }) => {
       numericFields: numericFieldsList, // 모든 row의 numericFields를 담은 리스트
       stringFields: stringFieldsList, // 모든 row의 stringFields를 담은 리스트
     };
-    console.log('저장 요청할 데이터:', JSON.stringify(jsonData, null, 2));
 
+    // 서버에 저장 요청 (일반 저장용)
     try {
-      // Axios 요청 - API 엔드포인트를 적절히 수정하세요
       const response = await customAxios.post('/api/custom/save', jsonData);
-
       console.log('데이터가 성공적으로 저장되었습니다:', response.data);
 
-      // handleClose(); // 모달 닫기
-      // alert('저장완료!');
-      // window.location.reload();
+      onSave(jsonData); // 저장 후 부모 컴포넌트로 데이터를 전달
     } catch (error) {
       console.error('데이터 저장 중 오류 발생:', error);
-      // 추가적인 에러 처리가 필요한 경우 여기에 작성
     }
+
+    handleClose(); // 모달 닫기
   };
 
   return (
@@ -200,7 +195,6 @@ const ExcelDataModal = ({ open, handleClose, data }) => {
                     </FormControl>
                     <Typography variant="body1" sx={{ margin: '20px 0 0 0' }}>
                       {key}
-                      {/* 필드 순서 표시 */}
                     </Typography>
                   </TableCell>
                 ))}
@@ -244,7 +238,7 @@ const ExcelDataModal = ({ open, handleClose, data }) => {
             sx={{ marginRight: 2 }}
             onClick={handleSave}
           >
-            저장하기
+            {eclassFlag ? '저장 및 테이블 설정' : '저장하기'}
           </Button>
           <Button variant="outlined" onClick={handleClose}>
             취소

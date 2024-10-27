@@ -10,6 +10,9 @@ import {
   TextField,
   IconButton,
   Box,
+  Menu,
+  MenuItem,
+  Modal,
 } from '@mui/material';
 import { ImageActions } from '@xeger/quill-image-actions';
 import { ImageFormats } from '@xeger/quill-image-formats';
@@ -21,6 +24,9 @@ import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import './TeacherWordProcessor.scss';
 import { useNavigate } from 'react-router-dom';
+
+import * as XLSX from 'xlsx'; // 엑셀 파일 처리를 위한 라이브러리
+import ExcelDataModal from '../../../../Data/MyData/modal/ExcelDataModal';
 
 Quill.register('modules/imageActions', ImageActions);
 Quill.register('modules/imageFormats', ImageFormats);
@@ -108,10 +114,16 @@ export default function TeacherWordProcessor({
 
   const [isUpdated, setIsUpdated] = useState(false); // 첫 번째 useEffect 완료 상태
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [excelModalOpen, setExcelModalOpen] = useState(false); // 엑셀 모달 상태 추가
+  const [excelData, setExcelData] = useState([]); // 엑셀 데이터를 저장할 상태
 
   const quillRef = useRef(null);
   const navigate = useNavigate();
+
+  const [modalOpen, setModalOpen] = useState(false); // 메뉴 대신 사용할 모달 상태
+
+  const handleModalOpen = () => setModalOpen(true);
+  const handleModalClose = () => setModalOpen(false);
 
   // 첫 번째 useEffect: stepperStepName 배열을 업데이트
   useEffect(() => {
@@ -202,7 +214,48 @@ export default function TeacherWordProcessor({
       setIsUpdated(false);
     }
   }, [isUpdated, activeStep, contents, stepperStepName]);
+
   // isUpdated와 activeStep 변경 시 실행
+  // 엑셀 파일 업로드 및 데이터 처리 메서드
+  const handleExcelUpload = (event) => {
+    const file = event.target.files[0];
+    if (!file) return; // 파일이 선택되지 않으면 리턴
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+      const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+      // 엑셀 데이터를 상태로 저장하고 모달을 열기
+      setExcelData(jsonData);
+      setExcelModalOpen(true);
+    };
+    reader.readAsArrayBuffer(file);
+  };
+
+  // 엑셀 모달 닫기
+  const handleExcelModalClose = () => {
+    setExcelModalOpen(false);
+  };
+
+  // 컴퓨터에서 엑셀 파일 불러오기
+  const handleAddDataChartFromComputer = () => {
+    handleModalClose();
+    const fileInput = document.createElement('input');
+    fileInput.setAttribute('type', 'file');
+    fileInput.setAttribute('accept', '.xlsx, .xls');
+    fileInput.onchange = handleExcelUpload;
+    fileInput.click();
+  };
+
+  // MyData에서 불러오기
+  const handleAddDataChartFromMyData = () => {
+    handleModalClose();
+    alert('MyData에서 데이터를 불러옵니다.'); // 여기에서 실제 MyData 호출 처리
+    // MyData를 불러오는 로직을 추가할 수 있습니다.
+  };
 
   const handleChange = (content, delta, source, editor) => {
     setValue(content);
@@ -262,20 +315,55 @@ export default function TeacherWordProcessor({
     setValue('');
   };
 
-  const handleAddTitle = () => {
-    const newContents = localContents.filter((item) => item.type !== 'title');
-    setLocalContents([{ type: 'title', content: contentName }, ...newContents]); // title을 항상 맨 위에 추가
-  };
+  // const handleAddTitle = () => {
+  //   const newContents = localContents.filter((item) => item.type !== 'title');
+  //   setLocalContents([{ type: 'title', content: contentName }, ...newContents]); // title을 항상 맨 위에 추가
+  // };
 
   const handleAddTextBox = () => {
     setLocalContents([...localContents, { type: 'textBox', content: '' }]); // 새로운 빈 텍스트 박스를 추가
   };
 
-  const handleAddDataChart = () => {
+  // 모달에서 데이터를 확정한 후 content에 넣기 위한 함수
+  const handleSaveExcelData = () => {
+    console.log('로컬 컨텐츠 확인 : ' + JSON.stringify(localContents, null, 2));
+    // 이미 'dataInChartButton'이 있는지 확인
+    const isChartButtonAdded = localContents.some(
+      (content) => content.type === 'dataInChartButton',
+    );
+
+    // 이미 추가된 경우 경고 메시지를 표시하고 추가를 중단
+    if (isChartButtonAdded) {
+      alert('그래프 그리기 버튼은 한 번만 추가할 수 있습니다.');
+      return;
+    }
     setLocalContents([
       ...localContents,
-      { type: 'dataInChartButton', content: '' },
-    ]); // 새로운 빈 텍스트 박스를 추가
+      { type: 'dataInChartButton', content: '' }, // 엑셀 데이터를 content에 저장
+    ]);
+  };
+
+  // 모달에서 데이터를 확정한 후 content에 넣기 위한 함수
+  const handleAfterExcelData = (EclassTable) => {
+    console.log('원본 컨텐츠: ' + JSON.stringify(localContents, null, 2));
+    const updatedContents = [...localContents];
+    const lastIndex = updatedContents.length - 1;
+
+    console.log(
+      '테이블 저장 잘 됐나 확인 1: ' + JSON.stringify(EclassTable, null, 2),
+    );
+
+    // 마지막에 추가된 dataInChartButton에 데이터를 저장
+    if (updatedContents[lastIndex].type === 'dataInChartButton') {
+      updatedContents[lastIndex].content = EclassTable.dataUUID; // 테이블 데이터를 content에 저장
+    }
+
+    console.log(
+      '테이블 저장 잘 됐나 확인 2: ' + JSON.stringify(updatedContents, null, 2),
+    );
+
+    setLocalContents(updatedContents);
+    setExcelModalOpen(false); // 모달 닫기
   };
 
   const handleTextBoxChange = (index, event) => {
@@ -788,12 +876,99 @@ export default function TeacherWordProcessor({
           </div>
         ) : item.type === 'dataInChartButton' ? (
           <>
-            {/* <Button onClick={() => setIsModalOpen(true)}>그래프 그리기</Button>
-            <DataInChartModal
-              isModalOpen={isModalOpen}
-              setIsModalOpen={setIsModalOpen}
-            /> */}
-            <Button onClick={handleNavigate}>그래프 그리기</Button>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                width: '100%',
+              }}
+            >
+              <Button
+                sx={{
+                  backgroundColor: '#6200ea', // 버튼 배경색 (보라색)
+                  color: 'white', // 텍스트 색상
+                  padding: '10px 20px', // 패딩
+                  borderRadius: '20px', // 버튼의 모서리를 둥글게
+                  boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', // 그림자 효과
+                  fontWeight: 'bold', // 글씨 굵기
+                  fontSize: '1rem', // 글씨 크기
+                  transition: 'background-color 0.3s ease', // 배경색 전환 효과
+                  '&:hover': {
+                    backgroundColor: '#3700b3', // hover 시 배경색 (어두운 보라색)
+                  },
+                }}
+                onClick={handleNavigate}
+              >
+                그래프 그리기
+              </Button>
+              <Button
+                sx={{
+                  backgroundColor: '#6200ea', // 버튼 배경색 (보라색)
+                  color: 'white', // 텍스트 색상
+                  borderRadius: '10rem', // 버튼의 모서리를 둥글게
+                  boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', // 그림자 효과
+                  fontWeight: 'bold', // 글씨 굵기
+                  fontSize: '1rem', // 글씨 크기
+                  transition: 'background-color 0.3s ease', // 배경색 전환 효과
+                  '&:hover': {
+                    backgroundColor: '#3700b3', // hover 시 배경색 (어두운 보라색)
+                  },
+                }}
+                onClick={handleModalOpen} // 버튼 클릭 시 메뉴 열기
+              >
+                +
+              </Button>
+              <Modal
+                open={modalOpen}
+                onClose={handleModalClose}
+                aria-labelledby="data-modal-title"
+                aria-describedby="data-modal-description"
+              >
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: 400,
+                    bgcolor: 'background.paper',
+                    border: '2px solid #000',
+                    boxShadow: 24,
+                    p: 4,
+                  }}
+                >
+                  <Typography id="data-modal-title" variant="h6" component="h2">
+                    데이터 추가
+                  </Typography>
+                  <Button onClick={handleAddDataChartFromComputer}>
+                    내 컴퓨터에서 불러오기
+                  </Button>
+                  <Button onClick={handleAddDataChartFromMyData}>
+                    MyData에서 불러오기
+                  </Button>
+                </Box>
+              </Modal>
+
+              {/* 엑셀 데이터를 처리하는 모달 */}
+              {excelModalOpen && (
+                <ExcelDataModal
+                  open={excelModalOpen}
+                  handleClose={handleExcelModalClose}
+                  data={excelData}
+                  eclassFlag={excelModalOpen}
+                  onSave={handleAfterExcelData} // 모달에서 저장된 데이터를 처리
+                />
+              )}
+              <IconButton
+                onClick={() => handleDeleteContent(index)}
+                aria-label="delete"
+                color="secondary"
+                sx={{ width: '30px' }}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </div>
           </>
         ) : null}
       </div>
@@ -892,11 +1067,10 @@ export default function TeacherWordProcessor({
                 <Button
                   variant="contained"
                   color="primary"
-                  className="yellow-btn" // yellow-btn 클래스 적용
-                  onClick={handleAddDataChart}
+                  onClick={handleSaveExcelData}
                   sx={{ margin: '20px 10px 0 0', width: '10rem' }}
                 >
-                  그래프 그리기 버튼
+                  그래프 그리기 추가
                 </Button>
               </div>
               <div

@@ -64,9 +64,9 @@ function StudentRenderAssign({
   // Zustand store에서 getStorePhotoList 가져오기
   const { getStorePhotoList, setStorePhotoList } = usePhotoStore();
 
-  // useEffect(() => {
-  //   console.log('데이터 확인 : ' + JSON.stringify(data, null, 2));
-  // }, [data]);
+  useEffect(() => {
+    console.log('데이터 확인 : ' + JSON.stringify(data, null, 2));
+  }, [data]);
 
   useEffect(() => {
     const photoList = getStorePhotoList();
@@ -77,10 +77,10 @@ function StudentRenderAssign({
     }
   }, []);
 
-  const handleNavigate = (uuid, username, contentName, stepNum) => {
+  const handleNavigate = (uuid, username, contentName, stepNum, content) => {
     const id = 'drawGraph';
     navigate(
-      `/data-in-chart?id=${id}&uuid=${uuid}&username=${username}&contentName=${contentName}&stepNum=${stepNum}`,
+      `/data-in-chart?id=${id}&uuid=${uuid}&username=${username}&contentName=${contentName}&stepNum=${stepNum}&content=${content.content}`,
     );
   };
 
@@ -571,6 +571,7 @@ function RenderContent({
                 stepData.username,
                 content.contentName,
                 content.stepNum,
+                content,
               )
             }
             variant="contained"
