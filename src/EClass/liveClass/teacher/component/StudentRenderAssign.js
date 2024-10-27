@@ -88,9 +88,9 @@ function StudentRenderAssign({
   // Zustand store에서 getStorePhotoList 가져오기
   const { getStorePhotoList, setStorePhotoList } = usePhotoStore();
 
-  // useEffect(() => {
-  //   console.log('데이터 확인 : ' + JSON.stringify(data, null, 2));
-  // }, [data]);
+  useEffect(() => {
+    console.log('데이터 확인 : ' + JSON.stringify(data, null, 2));
+  }, [data]);
 
   useEffect(() => {
 <<<<<<< HEAD
@@ -107,6 +107,7 @@ function StudentRenderAssign({
   }, []);
 
   const handleNavigate = (uuid, username, contentName, stepNum, content) => {
+<<<<<<< HEAD
     const id = 'drawGraph';
     navigate(
       `/data-in-chart?id=${id}&uuid=${uuid}&username=${username}&contentName=${contentName}&stepNum=${stepNum}&content=${content.content}`,
@@ -135,6 +136,11 @@ function StudentRenderAssign({
     navigate(
       `/data-in-chart?id=${id}&uuid=${uuid}&username=${username}&contentName=${contentName}&stepNum=${stepNum}`,
 >>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
+=======
+    const id = 'drawGraph';
+    navigate(
+      `/data-in-chart?id=${id}&uuid=${uuid}&username=${username}&contentName=${contentName}&stepNum=${stepNum}&content=${content.content}`,
+>>>>>>> 4019a00 ([update] 선생님 데이터 로직 개발)
     );
   };
 
@@ -793,6 +799,9 @@ function RenderContent({
                 content.contentName,
                 content.stepNum,
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 4019a00 ([update] 선생님 데이터 로직 개발)
                 content,
               )
             }
