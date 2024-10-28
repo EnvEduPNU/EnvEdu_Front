@@ -54,7 +54,6 @@ function ExpertCustomGraph({ onAddPhoto }) {
   return (
     <div>
       {/* 캡쳐하기 버튼 */}
-<<<<<<< HEAD
       <button
         onClick={handleCapture}
         style={{
@@ -73,13 +72,6 @@ function ExpertCustomGraph({ onAddPhoto }) {
         onMouseLeave={(e) => {
           e.target.style.backgroundColor = '#4a5568'; // 기본 색상으로 복구
         }}
-=======
-
-      <button
-        className="px-2 py-1 text-md ml-4 bg-gray-800 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50"
-        onClick={handleCapture} // 테이블 캡처 버튼
-        style={{ fontSize: '16px' }}
->>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
       >
         그래프 캡쳐
       </button>
@@ -87,9 +79,6 @@ function ExpertCustomGraph({ onAddPhoto }) {
       {/* 그래프 영역 */}
 
       <div ref={graphRef} style={{ margin: '20px 0' }}>
-=======
-      <div ref={graphRef}>
->>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
         {graphIdx === 0 && <BarGraph />}
         {graphIdx === 1 && <LineGraph />}
         {graphIdx === 2 && <ComboGraph />}

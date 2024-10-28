@@ -7,10 +7,11 @@ const title = JSON.parse(localStorage.getItem('title'));
 export const useGraphDataStore = create((set, get) => ({
   title: title || '',
   data: data || [],
+  data: data || [],
 
   variables:
     data && data.length > 0
-      ? data[0].map((name, index) => ({
+      ? data[0].map((name) => ({
           name,
           type: selectVariableType(name),
           isSelected: false,

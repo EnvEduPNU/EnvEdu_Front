@@ -112,7 +112,6 @@ export default function StudentAssignmentTable(props) {
         const assignmentResponse = await customAxios.get(
           `/api/assignment/getstep?uuid=${assignmentUuidResp.data}`,
         );
-
         // console.log(
         //   '수업 정보 확인 : ' + JSON.stringify(assignmentResponse, null, 2),
         // );
@@ -123,7 +122,6 @@ export default function StudentAssignmentTable(props) {
           const lectureResponse = await customAxios.get(
             '/api/steps/getLectureContent',
           );
-
           // console.log(
           //   '수업 자료 확인 : ' + JSON.stringify(lectureResponse, null, 2),
           // );

@@ -23,14 +23,7 @@ import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord'; // Ma
 import DeleteIcon from '@mui/icons-material/Delete'; // 삭제 아이콘
 
 import usePhotoStore from '../store/photoStore';
-<<<<<<< HEAD
-<<<<<<< HEAD
 import LeftTeacherAssignTable from './leftTeacherAssignTable';
-=======
->>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
-=======
-import LeftTeacherAssignTable from './leftTeacherAssignTable';
->>>>>>> 4019a00 ([update] 선생님 데이터 로직 개발)
 
 function DataInChartPage() {
   const [dataCategory, setDataCategory] = useState('');
@@ -46,10 +39,6 @@ function DataInChartPage() {
   const username = searchParams.get('username');
   const contentName = searchParams.get('contentName');
   const stepNum = searchParams.get('stepNum');
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 4019a00 ([update] 선생님 데이터 로직 개발)
   const content = searchParams.get('content');
 
   useEffect(() => {
@@ -61,11 +50,6 @@ function DataInChartPage() {
       '데이터 카테고리 체크 : ' + JSON.stringify(dataCategory, null, 2),
     );
   }, []);
-<<<<<<< HEAD
-=======
->>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
-=======
->>>>>>> 4019a00 ([update] 선생님 데이터 로직 개발)
 
   const navigate = useNavigate(); // 페이지 이동을 위한 navigate 훅
 
@@ -183,7 +167,6 @@ function DataInChartPage() {
             <span>수업 중</span>
           </Box>
         </div>
-<<<<<<< HEAD
 
         {/* --------------------------------------------------- 왼쪽 사이드 메뉴 -------------------------------------- */}
         {content ? (
