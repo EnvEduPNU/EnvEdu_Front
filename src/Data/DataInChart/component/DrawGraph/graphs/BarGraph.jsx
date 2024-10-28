@@ -402,39 +402,166 @@ function BarGraph() {
             display: 'flex',
             alignItems: 'center', // 세로 가운데 정렬
             justifyContent: 'center', // 가로 가운데 정렬
+            margin: '20px', // 좌우 마진 통합
           }}
         >
           <div
             style={{
-              width: '50px',
-              height: '400px',
+              padding: '20px', // 패딩 통합
+              border: '4px solid #1976d2', // 슬라이더와 동일한 색상
+              borderRadius: '20px', // 둥근 모서리
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)', // 더 강한 그림자 효과
+              textAlign: 'center', // 텍스트 가운데 정렬
+              backgroundColor: '#f0f4ff', // 배경색 추가
+              width: '90px', // 슬라이더 주변의 폭을 조정
+            }}
+          >
+            <div>
+              {/* 최대값 및 최소값 표시 */}
+              <div
+                style={{
+                  marginBottom: '10px',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  color: '#1976d2',
+                  display: 'flex',
+                  justifyContent: 'center',
+                }}
+              >
+                Max:
+                <span>{yScaleValue[1]}</span>
+              </div>
+              <div
+                style={{
+                  height: '400px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Slider
+                  orientation="vertical"
+                  valueLabelDisplay="auto"
+                  value={yScaleValue}
+                  min={yScaleMinMaxValue[0]}
+                  max={yScaleMinMaxValue[1]}
+                  onChange={handleChangeYScaleValue}
+                  sx={{
+                    color: '#1976d2', // 슬라이더의 트랙 및 thumb 색상
+                    '& .MuiSlider-thumb': {
+                      backgroundColor: '#fff', // thumb 배경색
+                      border: '2px solid #1976d2', // thumb 테두리 색상
+                      width: '20px', // thumb 크기
+                      height: '20px', // thumb 크기
+                      '&:hover': {
+                        boxShadow: '0 0 0 8px rgba(25, 118, 210, 0.16)', // hover 시 그림자
+                      },
+                    },
+                    '& .MuiSlider-track': {
+                      backgroundColor: '#1976d2', // 트랙 색상
+                      width: '8px', // 트랙 너비 (세로 슬라이더에서 width로 설정)
+                    },
+                    '& .MuiSlider-rail': {
+                      backgroundColor: '#ddd', // 레일 색상
+                      width: '8px', // 레일 너비 (세로 슬라이더에서 width로 설정)
+                    },
+                    '& .MuiSlider-valueLabel': {
+                      backgroundColor: '#1976d2', // value label 배경색
+                      color: '#fff', // value label 텍스트 색상
+                      fontSize: '14px', // value label 글자 크기
+                    },
+                  }}
+                />
+              </div>
+              <div
+                style={{
+                  marginTop: '10px',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  color: '#1976d2',
+                  display: 'flex',
+                  justifyContent: 'center',
+                }}
+              >
+                Min:
+                <span>{yScaleValue[0]}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style={{ width: '1200px' }}>
+          <Bar data={barDatas} options={barOptions} />
+        </div>
+      </div>
+
+      <div
+        style={{
+          border: '4px solid #1976d2', // 슬라이더와 동일한 색상
+          borderRadius: '20px', // 둥근 모서리
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)', // 더 강한 그림자 효과
+          textAlign: 'center', // 텍스트 가운데 정렬
+          backgroundColor: '#f0f4ff', // 배경색 추가
+          width: '580px',
+          marginLeft: '300px',
+          marginTop: '20px',
+          padding: '10px',
+          paddingTop: '20px',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <div
+            style={{
+              fontSize: '16px',
+              fontWeight: 'bold',
+              color: '#1976d2',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginLeft: '15px',
+              marginRight: '15px',
+            }}
+          >
+            Min:
+            <span>
+              {data?.[xScaleValue[0] + 1]?.[selctedXVariableIndex] ?? -1}
+            </span>
+          </div>
+          <div
+            style={{
+              width: '400px',
             }}
           >
             <Slider
-              orientation="vertical"
               valueLabelDisplay="auto"
-              value={yScaleValue}
-              min={yScaleMinMaxValue[0]}
-              max={yScaleMinMaxValue[1]}
-              onChange={handleChangeYScaleValue}
+              value={xScaleValue}
+              min={xScaleMinMaxValue[0]}
+              max={xScaleMinMaxValue[1]}
+              onChange={handleChangeXScaleValue}
               sx={{
                 color: '#1976d2', // 슬라이더의 트랙 및 thumb 색상
                 '& .MuiSlider-thumb': {
                   backgroundColor: '#fff', // thumb 배경색
                   border: '2px solid #1976d2', // thumb 테두리 색상
-                  width: '20px', // thumb 크기
-                  height: '20px', // thumb 크기
+                  width: '24px', // thumb 크기
+                  height: '24px', // thumb 크기
                   '&:hover': {
                     boxShadow: '0 0 0 8px rgba(25, 118, 210, 0.16)', // hover 시 그림자
                   },
                 },
                 '& .MuiSlider-track': {
                   backgroundColor: '#1976d2', // 트랙 색상
-                  width: '8px', // 트랙 너비 (세로 슬라이더에서 width로 설정)
+                  height: '12px', // 트랙 높이
                 },
                 '& .MuiSlider-rail': {
                   backgroundColor: '#ddd', // 레일 색상
-                  width: '8px', // 레일 너비 (세로 슬라이더에서 width로 설정)
+                  height: '12px', // 레일 높이
                 },
                 '& .MuiSlider-valueLabel': {
                   backgroundColor: '#1976d2', // value label 배경색
@@ -444,55 +571,26 @@ function BarGraph() {
               }}
             />
           </div>
-        </div>
-        <div style={{ width: '1200px' }}>
-          <Bar data={barDatas} options={barOptions} />
-        </div>
-      </div>
-      <div
-        style={{ width: '1200px', textAlign: 'center', marginLeft: '200px' }}
-      >
-        <div
-          style={{
-            width: '400px',
-            marginTop: '15px',
-            margin: '0 auto',
-          }}
-        >
-          <Slider
-            valueLabelDisplay="auto"
-            value={xScaleValue}
-            min={xScaleMinMaxValue[0]}
-            max={xScaleMinMaxValue[1]}
-            onChange={handleChangeXScaleValue}
-            sx={{
-              color: '#1976d2', // 슬라이더의 트랙 및 thumb 색상
-              '& .MuiSlider-thumb': {
-                backgroundColor: '#fff', // thumb 배경색
-                border: '2px solid #1976d2', // thumb 테두리 색상
-                width: '20px', // thumb 크기
-                height: '20px', // thumb 크기
-                '&:hover': {
-                  boxShadow: '0 0 0 8px rgba(25, 118, 210, 0.16)', // hover 시 그림자
-                },
-              },
-              '& .MuiSlider-track': {
-                backgroundColor: '#1976d2', // 트랙 색상
-                height: '8px', // 트랙 높이
-              },
-              '& .MuiSlider-rail': {
-                backgroundColor: '#ddd', // 레일 색상
-                height: '8px', // 레일 높이
-              },
-              '& .MuiSlider-valueLabel': {
-                backgroundColor: '#1976d2', // value label 배경색
-                color: '#fff', // value label 텍스트 색상
-                fontSize: '14px', // value label 글자 크기
-              },
+          <div
+            style={{
+              fontSize: '16px',
+              fontWeight: 'bold',
+              color: '#1976d2',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginLeft: '15px',
+              marginRight: '15px',
             }}
-          />
+          >
+            Min:
+            <span>
+              {data?.[xScaleValue[1] + 1]?.[selctedXVariableIndex] ?? -1}
+            </span>
+          </div>
         </div>
       </div>
+
       <div
         style={{
           width: '1375px',
