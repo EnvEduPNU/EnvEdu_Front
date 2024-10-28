@@ -557,11 +557,11 @@ function BarGraph() {
                 },
                 '& .MuiSlider-track': {
                   backgroundColor: '#1976d2', // 트랙 색상
-                  height: '12px', // 트랙 높이
+                  height: '8px', // 트랙 높이
                 },
                 '& .MuiSlider-rail': {
                   backgroundColor: '#ddd', // 레일 색상
-                  height: '12px', // 레일 높이
+                  height: '8px', // 레일 높이
                 },
                 '& .MuiSlider-valueLabel': {
                   backgroundColor: '#1976d2', // value label 배경색

@@ -1,5 +1,4 @@
 import './leftSlidePage.scss';
-import Header from '../component/Header/Header';
 import MyDataDropdown from './MyDataDropdown';
 import ExpertDataButton from './ExpertDataButton';
 

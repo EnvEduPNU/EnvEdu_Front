@@ -1,6 +1,6 @@
 import React from 'react';
 
-function PlaceWaterDataList({ waterlistData }) {
+function AirPlaceList({ airDataList }) {
   return (
     <div
       style={{
@@ -51,7 +51,7 @@ function PlaceWaterDataList({ waterlistData }) {
                   textAlign: 'center',
                 }}
               >
-                회차
+                이산화질소 농도(ppm)
               </th>
               <th
                 style={{
@@ -60,7 +60,7 @@ function PlaceWaterDataList({ waterlistData }) {
                   textAlign: 'center',
                 }}
               >
-                수심(m)
+                오존 농도(ppm)
               </th>
               <th
                 style={{
@@ -69,7 +69,7 @@ function PlaceWaterDataList({ waterlistData }) {
                   textAlign: 'center',
                 }}
               >
-                수온(°C)
+                미세먼지(PM10) 농도(㎍/㎥)
               </th>
               <th
                 style={{
@@ -78,7 +78,7 @@ function PlaceWaterDataList({ waterlistData }) {
                   textAlign: 'center',
                 }}
               >
-                DO(㎎/L)
+                미세먼지(PM2.5) 농도(㎍/㎥)
               </th>
               <th
                 style={{
@@ -87,57 +87,12 @@ function PlaceWaterDataList({ waterlistData }) {
                   textAlign: 'center',
                 }}
               >
-                BOD(㎎/L)
-              </th>
-              <th
-                style={{
-                  padding: '0.75rem 1.5rem',
-                  border: '1px solid #D1D5DB',
-                  textAlign: 'center',
-                }}
-              >
-                COD(㎎/L)
-              </th>
-              <th
-                style={{
-                  padding: '0.75rem 1.5rem',
-                  border: '1px solid #D1D5DB',
-                  textAlign: 'center',
-                }}
-              >
-                SS(㎎/L)
-              </th>
-              <th
-                style={{
-                  padding: '0.75rem 1.5rem',
-                  border: '1px solid #D1D5DB',
-                  textAlign: 'center',
-                }}
-              >
-                TN(㎎/L)
-              </th>
-              <th
-                style={{
-                  padding: '0.75rem 1.5rem',
-                  border: '1px solid #D1D5DB',
-                  textAlign: 'center',
-                }}
-              >
-                TP(㎎/L)
-              </th>
-              <th
-                style={{
-                  padding: '0.75rem 1.5rem',
-                  border: '1px solid #D1D5DB',
-                  textAlign: 'center',
-                }}
-              >
-                TOC(㎎/L)
+                아황산가스 농도(ppm)
               </th>
             </tr>
           </thead>
           <tbody>
-            {waterlistData.map((item, index) => (
+            {airDataList.map((item, index) => (
               <tr
                 key={index}
                 style={{
@@ -159,7 +114,7 @@ function PlaceWaterDataList({ waterlistData }) {
                     border: '1px solid #D1D5DB',
                   }}
                 >
-                  {item.ptnm}
+                  {item.stationName}
                 </td>
                 <td
                   style={{
@@ -175,7 +130,7 @@ function PlaceWaterDataList({ waterlistData }) {
                     border: '1px solid #D1D5DB',
                   }}
                 >
-                  {item.wmwk}
+                  {item.no2}
                 </td>
                 <td
                   style={{
@@ -183,7 +138,7 @@ function PlaceWaterDataList({ waterlistData }) {
                     border: '1px solid #D1D5DB',
                   }}
                 >
-                  {item.wmdep}
+                  {item.o3}
                 </td>
                 <td
                   style={{
@@ -191,7 +146,7 @@ function PlaceWaterDataList({ waterlistData }) {
                     border: '1px solid #D1D5DB',
                   }}
                 >
-                  {item.temp}
+                  {item.pm10}
                 </td>
                 <td
                   style={{
@@ -199,7 +154,7 @@ function PlaceWaterDataList({ waterlistData }) {
                     border: '1px solid #D1D5DB',
                   }}
                 >
-                  {item.do}
+                  {item.pm25}
                 </td>
                 <td
                   style={{
@@ -207,47 +162,7 @@ function PlaceWaterDataList({ waterlistData }) {
                     border: '1px solid #D1D5DB',
                   }}
                 >
-                  {item.bod}
-                </td>
-                <td
-                  style={{
-                    padding: '0.75rem 1.5rem',
-                    border: '1px solid #D1D5DB',
-                  }}
-                >
-                  {item.cod}
-                </td>
-                <td
-                  style={{
-                    padding: '0.75rem 1.5rem',
-                    border: '1px solid #D1D5DB',
-                  }}
-                >
-                  {item.ss}
-                </td>
-                <td
-                  style={{
-                    padding: '0.75rem 1.5rem',
-                    border: '1px solid #D1D5DB',
-                  }}
-                >
-                  {item.tn}
-                </td>
-                <td
-                  style={{
-                    padding: '0.75rem 1.5rem',
-                    border: '1px solid #D1D5DB',
-                  }}
-                >
-                  {item.tp}
-                </td>
-                <td
-                  style={{
-                    padding: '0.75rem 1.5rem',
-                    border: '1px solid #D1D5DB',
-                  }}
-                >
-                  {item.toc}
+                  {item.so2Value}
                 </td>
               </tr>
             ))}
@@ -258,4 +173,4 @@ function PlaceWaterDataList({ waterlistData }) {
   );
 }
 
-export default PlaceWaterDataList;
+export default AirPlaceList;

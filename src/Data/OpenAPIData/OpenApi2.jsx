@@ -32,39 +32,46 @@ function OpenApi2() {
   return (
     <div
       style={{
-        minWidth: '1200px',
+        display: 'flex',
+        justifyContent: 'center',
       }}
     >
       <div
         style={{
-          display: 'flex',
-          gap: '1.5rem',
-          justifyContent: 'center',
-          padding: '1rem 0',
+          width: '1200px',
         }}
       >
-        <button
-          onClick={() => handleSelect('측정소별 수질 정보')}
-          style={buttonStyle('측정소별 수질 정보')}
+        <div
+          style={{
+            display: 'flex',
+            gap: '1.5rem',
+            justifyContent: 'center',
+            padding: '1rem 0',
+          }}
         >
-          측정소별 수질 정보
-        </button>
-        <button
-          onClick={() => handleSelect('측정소별 대기질 정보')}
-          style={buttonStyle('측정소별 대기질 정보')}
-        >
-          측정소별 대기질 정보
-        </button>
-        <button
-          onClick={() => handleSelect('시도별 대기질 정보')}
-          style={buttonStyle('시도별 대기질 정보')}
-        >
-          시도별 대기질 정보
-        </button>
+          <button
+            onClick={() => handleSelect('측정소별 수질 정보')}
+            style={buttonStyle('측정소별 수질 정보')}
+          >
+            측정소별 수질 정보
+          </button>
+          <button
+            onClick={() => handleSelect('측정소별 대기질 정보')}
+            style={buttonStyle('측정소별 대기질 정보')}
+          >
+            측정소별 대기질 정보
+          </button>
+          <button
+            onClick={() => handleSelect('시도별 대기질 정보')}
+            style={buttonStyle('시도별 대기질 정보')}
+          >
+            시도별 대기질 정보
+          </button>
+        </div>
+        {selected === '측정소별 수질 정보' && <PlaceWater />}
+        {selected === '측정소별 대기질 정보' && <PlaceAir />}
+        {selected === '시도별 대기질 정보' && <CityAir />}
       </div>
-      {selected === '측정소별 수질 정보' && <PlaceWater />}
-      {selected === '측정소별 대기질 정보' && <PlaceAir />}
-      {selected === '시도별 대기질 정보' && <CityAir />}
     </div>
   );
 }
