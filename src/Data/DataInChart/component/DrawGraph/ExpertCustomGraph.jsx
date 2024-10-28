@@ -54,8 +54,6 @@ function ExpertCustomGraph({ onAddPhoto }) {
   return (
     <div>
       {/* 캡쳐하기 버튼 */}
-<<<<<<< HEAD
-<<<<<<< HEAD
       <button
         onClick={handleCapture}
         style={{
@@ -74,47 +72,13 @@ function ExpertCustomGraph({ onAddPhoto }) {
         onMouseLeave={(e) => {
           e.target.style.backgroundColor = '#4a5568'; // 기본 색상으로 복구
         }}
-=======
-
-      <button
-        className="px-2 py-1 text-md ml-4 bg-gray-800 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50"
-        onClick={handleCapture} // 테이블 캡처 버튼
-        style={{ fontSize: '16px' }}
->>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
-=======
-      <button
-        onClick={handleCapture}
-        style={{
-          padding: '10px 15px',
-          marginLeft: '15px',
-          backgroundColor: '#4a5568',
-          color: 'white',
-          borderRadius: '5px',
-          cursor: 'pointer',
-          fontSize: '16px',
-          display: 'inline-block', // 버튼 크기를 확실히 차지하도록 설정
-        }}
-        onMouseEnter={(e) => {
-          e.target.style.backgroundColor = '#2d3748'; // hover 시 색상 변경
-        }}
-        onMouseLeave={(e) => {
-          e.target.style.backgroundColor = '#4a5568'; // 기본 색상으로 복구
-        }}
->>>>>>> db731a4 ([update] 이미 제출되어 저장된 사진 s3등 삭제)
       >
         그래프 캡쳐
       </button>
 
       {/* 그래프 영역 */}
-<<<<<<< HEAD
-<<<<<<< HEAD
+
       <div ref={graphRef} style={{ margin: '20px 0' }}>
-=======
-      <div ref={graphRef}>
->>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
-=======
-      <div ref={graphRef} style={{ margin: '20px 0' }}>
->>>>>>> db731a4 ([update] 이미 제출되어 저장된 사진 s3등 삭제)
         {graphIdx === 0 && <BarGraph />}
         {graphIdx === 1 && <LineGraph />}
         {graphIdx === 2 && <ComboGraph />}

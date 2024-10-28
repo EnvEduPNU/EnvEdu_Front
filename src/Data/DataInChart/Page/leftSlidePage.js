@@ -3,12 +3,7 @@ import './leftSlidePage.scss';
 import ExpertDataList from './ExpertDataList';
 import MyDataList from './MyDataList';
 
-export default function LeftSlidePage({
-  filteredData,
-  setFilteredData,
-  summary,
-  setSummary,
-}) {
+export default function LeftSlidePage({ setDataCategory }) {
   return (
     <div style={{ margin: '0 5rem 0 3rem' }}>
       <div>

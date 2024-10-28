@@ -876,13 +876,6 @@ export default function TeacherWordProcessor({
           </div>
         ) : item.type === 'dataInChartButton' ? (
           <>
-<<<<<<< HEAD
-            <Button onClick={() => setIsModalOpen(true)}>그래프 그리기</Button>
-            <DataInChartModal
-              isModalOpen={isModalOpen}
-              setIsModalOpen={setIsModalOpen}
-            />
-=======
             <div
               style={{
                 display: 'flex',
@@ -976,7 +969,6 @@ export default function TeacherWordProcessor({
                 <DeleteIcon />
               </IconButton>
             </div>
->>>>>>> 4019a00 ([update] 선생님 데이터 로직 개발)
           </>
         ) : null}
       </div>
@@ -998,37 +990,38 @@ export default function TeacherWordProcessor({
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <Container>
+      <Container disableGutters sx={{ minHeight: '20rem' }}>
         {stepCount >= activeStep ? (
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              width: '70rem',
-              height: '36.5rem',
-            }}
-          >
-            {/* 왼쪽에 과제 만드는 미리보기란에 랜더링 되는 곳 */}
-            <Paper
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <div
               style={{
-                padding: 20,
+                display: 'flex',
+                flexDirection: 'row',
                 width: '100%',
-                height: '100%',
-                boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
-                overflowY: 'auto',
+                height: '36.5rem',
               }}
             >
-              {localContents.map((item, index) => (
-                <DraggableItem
-                  key={index}
-                  index={index}
-                  item={item}
-                  moveItem={moveItem}
-                  handleDeleteContent={handleDeleteContent}
-                  handleTextBoxChange={handleTextBoxChange}
-                />
-              ))}
-            </Paper>
+              {/* 왼쪽에 과제 만드는 미리보기란에 랜더링 되는 곳 */}
+              <Paper
+                style={{
+                  padding: 20,
+                  width: '100%',
+                  height: '100%',
+                  boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+                  overflowY: 'auto',
+                }}
+              >
+                {localContents.map((item, index) => (
+                  <DraggableItem
+                    key={index}
+                    index={index}
+                    item={item}
+                    moveItem={moveItem}
+                    handleDeleteContent={handleDeleteContent}
+                    handleTextBoxChange={handleTextBoxChange}
+                  />
+                ))}
+              </Paper>
 
               {/* 오른쪽 WordProcessor 편집창 */}
               <ReactQuill

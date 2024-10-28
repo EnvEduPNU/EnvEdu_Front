@@ -5,18 +5,12 @@ function MainPage() {
   const navigate = useNavigate();
 
   return (
-<<<<<<< HEAD
-    <Box
-      sx={{
-=======
     <div
       style={{
->>>>>>> b3f6051 ([update] e-class dataInChart 업데이트)
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-<<<<<<< HEAD
         width: '90%',
         height: '70vh',
         backgroundColor: 'white',
@@ -24,10 +18,6 @@ function MainPage() {
         borderRadius: '20px', // 모서리 둥글게
         padding: '20px',
         boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', // 그림자 추가
-=======
-        height: '80vh',
-        backgroundColor: 'white',
->>>>>>> b3f6051 ([update] e-class dataInChart 업데이트)
       }}
     >
       <Typography variant="h2" align="center" gutterBottom>
@@ -38,10 +28,6 @@ function MainPage() {
         왼쪽 데이터 테이블에서 데이터를 선택해주세요.
       </Typography>
 
-<<<<<<< HEAD
-      {/* 버튼 섹션 */}
-=======
->>>>>>> b3f6051 ([update] e-class dataInChart 업데이트)
       {/* <Box
         sx={{
           display: 'flex',
@@ -85,11 +71,7 @@ function MainPage() {
           Go to Graphs
         </Button>
       </Box> */}
-<<<<<<< HEAD
-    </Box>
-=======
     </div>
->>>>>>> b3f6051 ([update] e-class dataInChart 업데이트)
   );
 }
 

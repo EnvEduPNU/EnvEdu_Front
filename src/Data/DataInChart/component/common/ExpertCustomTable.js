@@ -12,15 +12,7 @@ import {
 } from '@mui/material';
 import { saveCustomTableApi } from '../../../apis/tables';
 import { customAxios } from '../../../../Common/CustomAxios';
-import html2canvas from 'html2canvas';
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  TextField,
-} from '@mui/material';
+import DataInChartPage from '../../Page/DataInChartPage';
 
 function ExpertCustomTable({ onAddPhoto, setSummary }) {
   const { data, title, setData, variables } = useGraphDataStore();
@@ -34,16 +26,24 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
   const [modeificationHeaders, setModeificationHeaders] = useState([]);
 
   useEffect(() => {
-    setModificationData(data.map((value) => [...value]));
-    setModeificationHeaders(data[0]);
+    if (data && data.length > 0) {
+      setModificationData(data.map((value) => [...value]));
+      setModeificationHeaders(data[0]);
+    }
+
+    // data가 없는 경우 DataInChartMainPage를 렌더링
+    if (!data || data.length === 0) {
+      return <DataInChartPage />;
+    }
   }, [data]);
 
   useEffect(() => {
-    if (modificationData.length !== 0)
+    if (modificationData.length > 0) {
       setModeificationHeaders(modificationData[0]);
+    }
   }, [modificationData]);
 
-  const headers = data[0];
+  const headers = data && data.length > 0 ? data[0] : [];
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -106,48 +106,6 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
       });
       return updatedData;
     });
-  };
-
-  // 테이블을 캡처하고 모달을 여는 함수
-  const handleCaptureTable = async () => {
-    if (tableRef.current) {
-      const tableElement = tableRef.current;
-
-      // 테이블의 크기를 동적으로 측정
-      const tableWidth = tableElement.scrollWidth;
-      const tableHeight = tableElement.scrollHeight;
-
-      // html2canvas로 캡처할 때 크기 설정
-      const canvas = await html2canvas(tableElement, {
-        width: tableWidth, // 테이블의 전체 너비
-        height: tableHeight, // 테이블의 전체 높이
-        windowWidth: tableWidth, // 캡처할 영역의 너비
-        windowHeight: tableHeight, // 캡처할 영역의 높이
-      });
-
-      // 캡처한 데이터를 이미지로 변환
-      const imgData = canvas.toDataURL('image/png');
-      setCapturedImage(imgData); // 캡처된 이미지를 상태에 저장
-      setOpenModal(true); // 모달 열기
-    }
-  };
-
-  // 모달 닫기 핸들러
-  const handleClose = () => {
-    setOpenModal(false);
-    setPhotoTitle(''); // 모달을 닫을 때 입력 필드 초기화
-  };
-
-  // 사진 제목 추가 핸들러
-  const handleAddPhoto = () => {
-    if (photoTitle.trim()) {
-      const newPhoto = {
-        title: photoTitle,
-        image: capturedImage,
-      };
-      onAddPhoto(newPhoto); // 상위 컴포넌트로 객체 하나만 전달
-      handleClose(); // 모달 닫기
-    }
   };
 
   const saveCustomTable = async () => {
@@ -273,10 +231,6 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
     return (
       <div>
         <table
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> db731a4 ([update] 이미 제출되어 저장된 사진 s3등 삭제)
           ref={tableRef}
           style={{
             width: '100%',
@@ -285,7 +239,6 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
             borderRadius: '8px',
             captionSide: 'top',
           }}
-<<<<<<< HEAD
         >
           <caption
             style={{
@@ -296,24 +249,6 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
               color: 'black',
             }}
           >
-=======
-          ref={tableRef} // 테이블을 캡처하기 위해 ref 연결
-          className="w-full border-solid border-[1px] border-[rgba(34, 36, 38, 0.15)] rounded-xl caption-top border-collapse"
-        >
-          <caption className="text-2xl font-semibold py-2 text-center text-black">
->>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
-=======
-        >
-          <caption
-            style={{
-              fontSize: '24px',
-              fontWeight: '600',
-              padding: '10px',
-              textAlign: 'center',
-              color: 'black',
-            }}
-          >
->>>>>>> db731a4 ([update] 이미 제출되어 저장된 사진 s3등 삭제)
             {title}
 
             <button
@@ -332,9 +267,6 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
             </button>
 
             <button
-<<<<<<< HEAD
-              onClick={handleCaptureTable}
-=======
               style={{
                 padding: '0.5rem 1rem',
                 fontSize: '16px',
@@ -356,7 +288,6 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
             </button>
             <button
               onClick={saveCustomTable}
->>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
               style={{
                 marginLeft: '15px',
                 backgroundColor: '#4a5568',
@@ -366,14 +297,11 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
                 cursor: 'pointer',
                 fontSize: '14px',
               }}
-<<<<<<< HEAD
-=======
               onMouseOver={(e) => (e.target.style.backgroundColor = '#3b3b3b')}
               onMouseOut={(e) => (e.target.style.backgroundColor = '#4a4a4a')}
               className="px-2 py-1 text-md ml-4 bg-gray-800 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50"
->>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
             >
-              테이블 캡쳐
+              저장하기
             </button>
           </caption>
           <thead>
@@ -429,13 +357,8 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
                 }}
               />
             )}
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
+
             {/* 사진 제목 입력 필드 */}
->>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
-=======
->>>>>>> db731a4 ([update] 이미 제출되어 저장된 사진 s3등 삭제)
             <TextField
               fullWidth
               label="사진 제목"

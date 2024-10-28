@@ -17,11 +17,7 @@ import Header from '../Header/Header';
 import DataInChartMainPage from './DataInChartMainPage';
 
 // 테이블 아니면 그래프 선택하는 탭 컴포넌트
-<<<<<<< HEAD
 function TableOrGraph({ setSummary, setPhoto, dataCategory }) {
-=======
-function TableOrGraph({ setSummary, dataCategory, setPhoto }) {
->>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
   const { tab } = useTabStore();
 
   const [pdfClick, setPdfClick] = useState(false);
@@ -48,8 +44,6 @@ function TableOrGraph({ setSummary, dataCategory, setPhoto }) {
       {/* tab의 default 는 'table' */}
       {tab === 'table' && (
         <Styled.CustomTableWrapper>
-<<<<<<< HEAD
-<<<<<<< HEAD
           <div style={{ display: 'flex', width: '100%' }}>
             <div style={{ marginTop: '8rem', marginRight: '3rem' }}>
               <Header />
@@ -66,11 +60,7 @@ function TableOrGraph({ setSummary, dataCategory, setPhoto }) {
               />
             </div>
           </div>
-=======
-=======
-          {dataCategory === '' && <DataInChartMainPage />}
 
->>>>>>> b3f6051 ([update] e-class dataInChart 업데이트)
           {dataCategory === 'MyData' && (
             <CustomTable tableSaveClick={tableSaveClick} />
           )}
@@ -90,7 +80,6 @@ function TableOrGraph({ setSummary, dataCategory, setPhoto }) {
               </div>
             </div>
           )}
->>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
         </Styled.CustomTableWrapper>
       )}
       {tab === 'graph' && (
@@ -108,7 +97,6 @@ function TableOrGraph({ setSummary, dataCategory, setPhoto }) {
           )} */}
 
           {dataCategory === 'ExpertData' && (
-<<<<<<< HEAD
             <div className="flex">
               <div className="mt-32 mr-12">
                 <Header />
@@ -118,23 +106,6 @@ function TableOrGraph({ setSummary, dataCategory, setPhoto }) {
                 <ExpertCustomGraph onAddPhoto={handleAddPhoto} />
               </div>
             </div>
-=======
-            <>
-              <div className="flex">
-                <div className="mt-32 mr-12">
-                  <Header />
-                </div>
-                <div>
-                  <ExpertCustomGraphHeader />
-                  <ExpertCustomGraph onAddPhoto={handleAddPhoto} />
-                </div>
-              </div>
-              <div>
-                <ExpertCustomGraphHeader />
-                <ExpertCustomGraph />
-              </div>
-            </>
->>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
           )}
         </>
       )}

@@ -9,12 +9,9 @@ import { useNavigate } from 'react-router-dom';
 import usePhotoStore from '../../../../Data/DataInChart/store/photoStore';
 import axios from 'axios';
 
-<<<<<<< HEAD
 import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-=======
->>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
 // Base64를 File로 변환하는 함수
 function base64ToFile(base64Data, filename) {
   const arr = base64Data.split(',');
@@ -29,24 +26,6 @@ function base64ToFile(base64Data, filename) {
 
   return new File([u8arr], filename, { type: mime });
 }
-<<<<<<< HEAD
-
-const handleDeleteFromS3 = async (imageUrl) => {
-  try {
-    await customAxios.delete('/api/images/delete', {
-      headers: {
-        'X-Previous-Image-URL': imageUrl, // 커스텀 헤더로 URL을 전달
-      },
-    });
-    console.log('이미지 삭제 성공:', imageUrl);
-    window.location.reload();
-  } catch (error) {
-    console.error('이미지 삭제 오류:', error);
-    throw error;
-  }
-};
-=======
->>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
 
 const handleDeleteFromS3 = async (imageUrl) => {
   try {
@@ -77,11 +56,8 @@ function StudentRenderAssign({
   const [data, setData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열기 상태 추가
   const navigate = useNavigate();
-<<<<<<< HEAD
   const [localStoredPhotoList, setLocalStoredPhotoList] = useState([]);
   const uploadedImagesState = useRef([]); // 업로드된 이미지 상태
-
-  const [imageUrlArray, setImageUrlArray] = useState([]);
 
   const [imageUrlArray, setImageUrlArray] = useState([]);
 
@@ -89,11 +65,6 @@ function StudentRenderAssign({
   const { getStorePhotoList, setStorePhotoList } = usePhotoStore();
 
   useEffect(() => {
-    console.log('데이터 확인 : ' + JSON.stringify(data, null, 2));
-  }, [data]);
-
-  useEffect(() => {
-<<<<<<< HEAD
     console.log('데이터 확인 : ' + JSON.stringify(data, null, 2));
   }, [data]);
 
@@ -107,40 +78,9 @@ function StudentRenderAssign({
   }, []);
 
   const handleNavigate = (uuid, username, contentName, stepNum, content) => {
-<<<<<<< HEAD
     const id = 'drawGraph';
     navigate(
       `/data-in-chart?id=${id}&uuid=${uuid}&username=${username}&contentName=${contentName}&stepNum=${stepNum}&content=${content.content}`,
-=======
-  const [storedPhotoList, setStoredPhotoList] = useState([]);
-
-  // Zustand store에서 getStorePhotoList 가져오기
-  const { getStorePhotoList } = usePhotoStore();
-
-  useEffect(() => {
-    console.log('사진 저장소 확인 : ', getStorePhotoList());
-    const photoList = getStorePhotoList();
-    setStoredPhotoList(photoList);
-=======
-    const photoList = getStorePhotoList();
-    if (photoList) {
-      console.log('사진 수 : ', getStorePhotoList().length);
-
-      setLocalStoredPhotoList(photoList);
-    }
->>>>>>> 240a8d3 ([update] 캡처 사진 크기 수정 중)
-  }, []);
-
-  const handleNavigate = (uuid, username, contentName, stepNum) => {
-    const id = 'drawGraph';
-    navigate(
-      `/data-in-chart?id=${id}&uuid=${uuid}&username=${username}&contentName=${contentName}&stepNum=${stepNum}`,
->>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
-=======
-    const id = 'drawGraph';
-    navigate(
-      `/data-in-chart?id=${id}&uuid=${uuid}&username=${username}&contentName=${contentName}&stepNum=${stepNum}&content=${content.content}`,
->>>>>>> 4019a00 ([update] 선생님 데이터 로직 개발)
     );
   };
 
@@ -238,10 +178,6 @@ function StudentRenderAssign({
     }
   };
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> db731a4 ([update] 이미 제출되어 저장된 사진 s3등 삭제)
   // 이미지 삭제 등으로 수정된 테이블 contents 교체 메서드
   const replaceContents = (tableData, data) => {
     // tableData의 각 항목을 순회하면서 contents를 교체
@@ -269,40 +205,22 @@ function StudentRenderAssign({
     return updatedTableData;
   };
 
-<<<<<<< HEAD
-=======
->>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
-=======
->>>>>>> db731a4 ([update] 이미 제출되어 저장된 사진 s3등 삭제)
   const handleSubmit = async () => {
     const studentName = localStorage.getItem('username');
     const dataToUse = latestTableData || tableData;
-
-    // 만약 이미지 삭제 등으로 contents 가 수정됐을때 업데이트
-    const updatedTableData = replaceContents(dataToUse, data);
-
     const stepCount = tableData[0].stepCount;
     const stepCheck = new Array(stepCount).fill(false);
     let flag = false;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
     const updatedTableData = replaceContents(dataToUse, data);
 
     const updatedDataPromises = updatedTableData.map(async (data) => ({
-=======
-    const updatedDataPromises = dataToUse.map(async (data) => ({
->>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
-=======
-    const updatedDataPromises = updatedTableData.map(async (data) => ({
->>>>>>> db731a4 ([update] 이미 제출되어 저장된 사진 s3등 삭제)
       uuid: data.uuid,
       timestamp: new Date().toISOString(),
       username: studentName,
       stepName: data.stepName,
       stepCount: data.stepCount,
       contents: await Promise.all(
-<<<<<<< HEAD
         data.contents.map(async (item) => {
           return {
             contentName: item.contentName,
@@ -364,100 +282,10 @@ function StudentRenderAssign({
             ),
           };
         }),
-=======
-        data.contents.map(async (item) => ({
-          contentName: item.contentName,
-          stepNum: item.stepNum,
-          contents: await Promise.all(
-            item.contents
-              .map(async (contentItem, index) => {
-                // textBox 처리
-                if (contentItem.type === 'textBox') {
-                  const updatedContent =
-                    textBoxValues[item.stepNum]?.[index] || contentItem.content;
-                  if (updatedContent && updatedContent.trim() !== '') {
-                    const stepIndex = item.stepNum - 1;
-                    if (stepIndex >= 0 && stepIndex < stepCount) {
-                      stepCheck[stepIndex] = true;
-                    }
-                  }
-                  return { ...contentItem, content: updatedContent };
-                }
-
-<<<<<<< HEAD
-              if (
-                contentItem.type === 'dataInChartButton' &&
-                storedPhotoList.length > 0
-              ) {
-<<<<<<< HEAD
-                const base64Image = storedPhotoList[0].image;
-                const filename = `image_${uuidv4()}.jpg`;
-                const imageFile = base64ToFile(base64Image, filename);
-                const contentUuid = uuidv4();
-                const imageUrl = await handleUpload(imageFile, contentUuid);
-                return {
-                  type: 'img',
-                  content: imageUrl,
-                  x: 300,
-                  y: 300,
-                };
-=======
-                // 1. dataInChartButton을 유지
-                const originalButton = { ...contentItem };
-=======
-                // dataInChartButton 처리
-                if (
-                  contentItem.type === 'dataInChartButton' &&
-                  localStoredPhotoList.length > 0
-                ) {
-                  const originalButton = { ...contentItem };
->>>>>>> db731a4 ([update] 이미 제출되어 저장된 사진 s3등 삭제)
-
-                  const imageUploadPromises = localStoredPhotoList.map(
-                    async (photo, idx) => {
-                      const base64Image = photo.image;
-                      const filename = `image_${uuidv4()}.jpg`;
-                      const imageFile = base64ToFile(base64Image, filename);
-                      const contentUuid = uuidv4();
-                      const imageUrl = await handleUpload(
-                        imageFile,
-                        contentUuid,
-                      );
-                      return {
-                        type: 'img',
-                        content: imageUrl,
-                        x: 600 + idx * 10, // 이미지 위치 조정
-                        y: 300 + idx * 10,
-                      };
-                    },
-                  );
-
-                  const uploadedImages = await Promise.all(imageUploadPromises);
-
-<<<<<<< HEAD
-                // dataInChartButton과 업로드된 이미지를 함께 반환
-                return [originalButton, ...uploadedImages];
->>>>>>> 240a8d3 ([update] 캡처 사진 크기 수정 중)
-              }
-
-              return contentItem;
-            }),
-=======
-                  return [originalButton, ...uploadedImages];
-                }
-
-                return contentItem;
-              })
-              .filter((contentItem) => contentItem !== null), // null인 객체를 제거
->>>>>>> db731a4 ([update] 이미 제출되어 저장된 사진 s3등 삭제)
-          ),
-        })),
->>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
       ),
     }));
 
     const updatedData = await Promise.all(updatedDataPromises);
-<<<<<<< HEAD
 
     // 이미지 상태를 dataInChartButton 아래에 추가하는 로직
     const finalUpdatedData = updatedData.map((dataItem) => ({
@@ -489,12 +317,6 @@ function StudentRenderAssign({
     console.log(
       '최종 제출 데이터 : ' + JSON.stringify(finalUpdatedData, null, 2),
     );
-=======
->>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
-
-    console.log(
-      '저장 하기 전 데이터 : ' + JSON.stringify(updatedData, null, 2),
-    );
 
     const requestData = {
       stepCheck: stepCheck,
@@ -523,39 +345,8 @@ function StudentRenderAssign({
           );
 
           await (assginmentCheck
-<<<<<<< HEAD
             ? customAxios.put('/api/assignment/update', finalUpdatedData)
             : customAxios.post('/api/assignment/save', finalUpdatedData));
-
-          // S3에서 이미지 삭제 처리
-          try {
-            await Promise.all(
-              imageUrlArray.map(async (imageUrl, index) => {
-                try {
-                  // S3에서 이미지 삭제 요청
-                  await handleDeleteFromS3(imageUrl);
-
-                  // 로컬 상태에서 이미지 삭제
-                  setStorePhotoList((prevList) =>
-                    prevList.filter((_, i) => i !== index),
-                  );
-                  setLocalStoredPhotoList((prevList) =>
-                    prevList.filter((_, i) => i !== index),
-                  );
-
-                  console.log('이미지 삭제 성공:', imageUrl);
-                } catch (error) {
-                  console.error('이미지 삭제 실패:', error);
-                }
-              }),
-            );
-          } catch (error) {
-            console.error('전체 이미지 삭제 처리 중 오류 발생:', error);
-          }
-=======
-            ? customAxios.put('/api/assignment/update', updatedData)
-            : customAxios.post('/api/assignment/save', updatedData));
->>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
 
           // S3에서 이미지 삭제 처리
           try {
@@ -641,19 +432,11 @@ function StudentRenderAssign({
                   index={idx}
                   onOpenModal={() => setIsModalOpen(true)}
                   onNavigate={handleNavigate}
-<<<<<<< HEAD
                   storedPhotoList={localStoredPhotoList}
                   stepData={stepData}
                   setStorePhotoList={setStorePhotoList}
                   setLocalStoredPhotoList={setLocalStoredPhotoList}
                   setImageUrlArray={setImageUrlArray}
-<<<<<<< HEAD
-=======
-                  storedPhotoList={storedPhotoList}
-                  stepData={stepData}
->>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
-=======
->>>>>>> db731a4 ([update] 이미 제출되어 저장된 사진 s3등 삭제)
                 />
               ))}
             </div>
@@ -690,15 +473,9 @@ function RenderContent({
   onNavigate,
   stepData,
   storedPhotoList,
-<<<<<<< HEAD
   setStorePhotoList,
   setLocalStoredPhotoList,
   setImageUrlArray,
-<<<<<<< HEAD
-=======
->>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
-=======
->>>>>>> db731a4 ([update] 이미 제출되어 저장된 사진 s3등 삭제)
 }) {
   const handleTextChange = (event) => {
     setTextBoxValue(index, event.target.value);
@@ -786,11 +563,7 @@ function RenderContent({
       );
     case 'dataInChartButton':
       return (
-<<<<<<< HEAD
         <div>
-=======
-        <>
->>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
           <Button
             onClick={() =>
               onNavigate(
@@ -798,10 +571,6 @@ function RenderContent({
                 stepData.username,
                 content.contentName,
                 content.stepNum,
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 4019a00 ([update] 선생님 데이터 로직 개발)
                 content,
               )
             }
@@ -820,18 +589,10 @@ function RenderContent({
                 backgroundColor: '#3700b3', // hover 시 배경색 (어두운 보라색)
               },
             }}
-=======
-              )
-            }
->>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
           >
             그래프 그리기
           </Button>
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 240a8d3 ([update] 캡처 사진 크기 수정 중)
           <div
             style={{
               marginTop: '10px',
@@ -851,29 +612,10 @@ function RenderContent({
                       textAlign: 'center',
                     }}
                   >
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-          <div style={{ marginTop: '10px' }}>
-            {storedPhotoList.length > 0 ? (
-              <ul style={{ listStyle: 'none', padding: 0 }}>
-                {storedPhotoList.map((photo, index) => (
-                  <li key={index} style={{ marginBottom: '20px' }}>
-                    <Typography variant="subtitle1">{photo.title}</Typography>
->>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
-=======
-                    {/* <Typography variant="subtitle1">{photo.title}</Typography> */}
->>>>>>> 240a8d3 ([update] 캡처 사진 크기 수정 중)
-=======
->>>>>>> db731a4 ([update] 이미 제출되어 저장된 사진 s3등 삭제)
                     <img
                       src={photo.image}
                       alt={photo.title}
                       style={{
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 240a8d3 ([update] 캡처 사진 크기 수정 중)
                         width: '100%', // 그리드 셀에 맞게 이미지 크기 조정
                         height: 'auto',
                         objectFit: 'cover',
@@ -894,26 +636,8 @@ function RenderContent({
                   </div>
                 ))
               : ''}
-<<<<<<< HEAD
           </div>
         </div>
-=======
-                        width: '300px',
-                        height: '300px',
-                        objectFit: 'cover',
-                      }}
-                    />
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <Typography>No photo list available.</Typography>
-            )}
-=======
->>>>>>> 240a8d3 ([update] 캡처 사진 크기 수정 중)
-          </div>
-        </>
->>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
       );
     case 'emptyBox':
       return (

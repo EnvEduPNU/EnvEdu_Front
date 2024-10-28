@@ -395,7 +395,6 @@ export const CreateLectureSourcePage = (props) => {
                 height: '3.5rem',
                 textAlign: 'center',
                 cursor: 'pointer',
-<<<<<<< HEAD
                 border: 'none',
                 color: 'white', // 글자색 설정
               }}
@@ -406,13 +405,6 @@ export const CreateLectureSourcePage = (props) => {
 
           <Divider sx={{ margin: '20px 0', borderWidth: '2px' }} />
 
-=======
-                margin: '20px 0 0 10px',
-              }}
-            >
-              {lectureName || '더블클릭하여 수업 자료 이름을 입력하세요.'}
-            </Typography>
-          )}
           {/* 수업자료 버튼 */}
           <Button
             variant="outlined"
@@ -436,7 +428,6 @@ export const CreateLectureSourcePage = (props) => {
           </Button>
         </div>
         <div>
->>>>>>> c44a297 ([update] DataInChart E-Class 통합 초기 개발 완료)
           {/* Stepper */}
           <div
             style={{
