@@ -34,7 +34,7 @@ function TableOrGraph({ setSummary, setPhoto, dataCategory }) {
   useEffect(() => {
     return setTableSaveClick(false);
   }, [tableSaveClick]);
-
+  console.log();
   return (
     <Styled.Wrapper>
       <div style={{ fontSize: '3vh', fontWeight: 'bold', marginLeft: '48px' }}>
@@ -60,26 +60,6 @@ function TableOrGraph({ setSummary, setPhoto, dataCategory }) {
               />
             </div>
           </div>
-
-          {dataCategory === 'MyData' && (
-            <CustomTable tableSaveClick={tableSaveClick} />
-          )}
-
-          {dataCategory === 'ExpertData' && (
-            <div className="flex w-full">
-              <div className="mt-32 mr-12">
-                <Header />
-              </div>
-              <div
-                style={{
-                  flexGrow: 1,
-                  borderTop: '1px solid rgba(34, 36, 38, 0.15)',
-                }}
-              >
-                <ExpertCustomTable onAddPhoto={handleAddPhoto} />
-              </div>
-            </div>
-          )}
         </Styled.CustomTableWrapper>
       )}
       {tab === 'graph' && (
@@ -96,17 +76,15 @@ function TableOrGraph({ setSummary, setPhoto, dataCategory }) {
             </>
           )} */}
 
-          {dataCategory === 'ExpertData' && (
-            <div className="flex">
-              <div className="mt-32 mr-12">
-                <Header />
-              </div>
-              <div>
-                <ExpertCustomGraphHeader />
-                <ExpertCustomGraph onAddPhoto={handleAddPhoto} />
-              </div>
+          <div className="flex">
+            <div className="mt-32 mr-12">
+              <Header />
             </div>
-          )}
+            <div>
+              <ExpertCustomGraphHeader />
+              <ExpertCustomGraph onAddPhoto={handleAddPhoto} />
+            </div>
+          </div>
         </>
       )}
     </Styled.Wrapper>

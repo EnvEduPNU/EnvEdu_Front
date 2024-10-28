@@ -327,7 +327,7 @@ function BarGraph() {
   const handleChangeXScaleValue = (event, newValue) => {
     setXScaleValue(newValue);
   };
-
+  console.log(variables, selectedYVariableIndexs, selctedXVariableIndex);
   return (
     <div
       style={{
