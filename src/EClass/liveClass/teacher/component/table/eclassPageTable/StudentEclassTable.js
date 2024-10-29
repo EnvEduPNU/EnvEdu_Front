@@ -242,7 +242,7 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
           data={rowData}
           components={VirtuosoTableComponents}
           itemContent={(index, row) => rowContent(index, row)}
-          style={{ height: '580px' }}
+          style={{ height: '400px' }}
         />
       </Paper>
     </div>

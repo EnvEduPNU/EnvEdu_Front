@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { TableVirtuoso } from "react-virtuoso";
-import { customAxios } from "../../../../../../Common/CustomAxios";
+import React, { useState, useEffect } from 'react';
+import { TableVirtuoso } from 'react-virtuoso';
+import { customAxios } from '../../../../../../Common/CustomAxios';
 import {
   Table,
   TableBody,
@@ -11,32 +11,15 @@ import {
   Paper,
   Typography,
   Button,
-  Modal,
-  Box,
-} from "@mui/material";
-import moment from "moment"; // 날짜 처리 라이브러리
+} from '@mui/material';
+import moment from 'moment';
 
 const columns = [
-  {
-    label: "번호",
-    dataKey: "Num",
-    width: "15%",
-  },
-  {
-    label: "이름",
-    dataKey: "Name",
-    width: "20%",
-  },
-  {
-    label: "소속",
-    dataKey: "LectureData",
-    width: "20%",
-  },
-  {
-    label: "참여일",
-    dataKey: "Status",
-    width: "20%",
-  },
+  { label: '번호', dataKey: 'Num', width: '20%' },
+  { label: '이름', dataKey: 'Name', width: '20%' },
+  { label: '소속', dataKey: 'LectureData', width: '20%' },
+  { label: '참여일', dataKey: 'Status', width: '20%' },
+  { label: '', dataKey: 'Action', width: '20%' },
 ];
 
 function createData(index, [Num, Name, LectureData, Status]) {
@@ -53,9 +36,7 @@ function fixedHeaderContent() {
             variant="head"
             align="center"
             style={{ width: column.width }}
-            sx={{
-              backgroundColor: "#dcdcdc",
-            }}
+            sx={{ backgroundColor: '#dcdcdc' }}
           >
             {column.label}
           </TableCell>
@@ -65,7 +46,19 @@ function fixedHeaderContent() {
   );
 }
 
-function rowContent(index, row, handleClick, selectedRow) {
+function rowContent(index, row, handleClick, handleDelete, selectedRow) {
+  const requestDelete = (studentId) => {
+    customAxios
+      .delete(`/api/eclass/student/delete?studentId=${studentId}`)
+      .then((response) => {
+        console.log('삭제 결과 : ' + JSON.stringify(response.data, null, 2));
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.error('Error fetching student list:', error);
+      });
+  };
+
   return (
     <React.Fragment>
       {columns.map((column) => (
@@ -74,39 +67,46 @@ function rowContent(index, row, handleClick, selectedRow) {
           align="center"
           style={{ width: column.width }}
           sx={{
-            padding: "12px", // 패딩을 줄이기 위해 추가
-            backgroundColor: selectedRow === row.id ? "#f0f0f0" : "inherit",
+            padding: '8px', // 패딩을 줄이기 위해 추가
+            backgroundColor: selectedRow === row.id ? '#f0f0f0' : 'inherit',
           }}
         >
-          <span
-            onClick={() =>
-              column.dataKey !== "Action" && handleClick(row.id, row)
-            }
-          >
-            {row[column.dataKey]}
-          </span>
+          {column.dataKey === 'Action' ? (
+            <Button
+              variant="outlined"
+              color="secondary"
+              style={{ width: column.width }}
+              onClick={(e) => {
+                e.stopPropagation(); // 이벤트 전파 방지
+                requestDelete(row.Num);
+                handleDelete(row.id);
+              }}
+            >
+              삭제
+            </Button>
+          ) : (
+            <span
+              onClick={() =>
+                column.dataKey !== 'Action' && handleClick(row.id, row)
+              }
+            >
+              {row[column.dataKey]}
+            </span>
+          )}
         </TableCell>
       ))}
     </React.Fragment>
   );
 }
 
-export default function StudentStudentList({ eclassUuid }) {
+export default function StudentStudentList({ eclassUuid, setRowDatatop }) {
   const [selectedRow, setSelectedRow] = useState(null);
   const [rowData, setRowData] = useState([]);
 
   useEffect(() => {
-    customAxios
-      .get("/api/eclass/student/allList")
-      .then((response) => {})
-      .catch((error) => {
-        console.error("Error fetching student list:", error);
-      });
-  }, []);
-
-  useEffect(() => {
-    if (Array.isArray(eclassUuid)) {
-      console.log("유유아이디 확인 : " + eclassUuid);
+    if (Array.isArray(eclassUuid) && eclassUuid.length > 0) {
+      setRowData([]); // 이전 데이터를 지우고 새로운 데이터를 받기 위한 초기화
+      console.log('유유아이디 확인 : ' + eclassUuid);
 
       eclassUuid.forEach((uuid) => {
         customAxios
@@ -114,25 +114,30 @@ export default function StudentStudentList({ eclassUuid }) {
           .then((response) => {
             const students = response.data;
 
-            // 학생 리스트를 rowData 형식으로 변환
+            console.log(
+              `EClass 참여학생 형식변환전 (UUID: ${uuid}) : ` +
+                JSON.stringify(students, null, 2),
+            );
+
             const newStudents = students.map((student, index) =>
-              createData(index + 1, [
+              createData(index, [
                 student.studentId,
                 student.studentName,
                 student.studentGroup,
-                moment(student.joinDate).format("YYYY-MM-DD"),
-              ])
+                moment(student.joinDate).format('YYYY-MM-DD'),
+              ]),
             );
 
             console.log(
               `EClass 참여학생 (UUID: ${uuid}) : ` +
-                JSON.stringify(newStudents, null, 2)
+                JSON.stringify(newStudents, null, 2),
             );
 
-            setRowData(newStudents);
+            setRowData((prevRowData) => [...prevRowData, ...newStudents]);
+            setRowDatatop(newStudents);
           })
           .catch((error) => {
-            console.error("Error fetching student list:", error);
+            console.error('Error fetching student list:', error);
           });
       });
     }
@@ -148,49 +153,44 @@ export default function StudentStudentList({ eclassUuid }) {
     console.log(`Row with id ${id} deleted`);
   };
 
-  const handleClickOutside = (event) => {
-    if (
-      !event.target.closest(".virtuoso-table") &&
-      !event.target.closest(".modal-table")
-    ) {
-      setSelectedRow(null);
-    }
-  };
-
   useEffect(() => {
-    document.addEventListener("click", handleClickOutside);
+    const handleClickOutside = (event) => {
+      if (
+        !event.target.closest('.virtuoso-table') &&
+        !event.target.closest('.modal-table')
+      ) {
+        setSelectedRow(null);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
     return () => {
-      document.removeEventListener("click", handleClickOutside);
+      document.removeEventListener('click', handleClickOutside);
     };
   }, []);
 
   return (
-    <div>
-      <Typography
-        variant="h5"
-        sx={{
-          margin: "38px 0 10px 0",
-          fontFamily: "'Montserrat', sans-serif", // 타이틀에 Montserrat 폰트 적용
-          fontWeight: "600", // 폰트 두께
-          fontSize: "1.5rem", // 폰트 크기
-        }}
-      >
-        {" 참여학생리스트 "}
-      </Typography>
+    <div style={{ height: '460px', width: '400px', overflow: 'auto' }}>
       <Paper
-        style={{ height: "100%", width: "100%", marginBottom: "5.6vh" }}
+        style={{ height: '450px', width: '400px' }}
         className="virtuoso-table"
       >
         <TableContainer component={Paper}>
           <Table stickyHeader>{fixedHeaderContent()}</Table>
         </TableContainer>
-        <TableVirtuoso
-          data={rowData}
-          itemContent={(index, row) =>
-            rowContent(index, row, handleRowClick, handleDelete, selectedRow)
-          }
-          style={{ height: 200 }}
-        />
+        {rowData.length > 0 ? (
+          <TableVirtuoso
+            data={rowData}
+            itemContent={(index, row) =>
+              rowContent(index, row, handleRowClick, handleDelete, selectedRow)
+            }
+            style={{ height: 400, overflow: 'auto' }}
+          />
+        ) : (
+          <Typography style={{ padding: '6rem' }}>
+            EClass를 선택해주세요.
+          </Typography>
+        )}
       </Paper>
     </div>
   );

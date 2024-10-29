@@ -8,15 +8,13 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { TableVirtuoso } from 'react-virtuoso';
-import { Button, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { customAxios } from '../../../../../Common/CustomAxios';
-import StudentReportModal from '../../modal/StudentReportModal';
-import ReportViewModal from '../../../teacher/modal/ReportViewModal';
 
 const columns = [
   {
-    width: '90%',
-    label: '단계이름',
+    width: '100%',
+    label: 'E-Class 리스트',
     dataKey: 'contentName',
   },
 ];
@@ -262,11 +260,14 @@ export default function StudentAssignmentTable(props) {
   };
 
   return (
-    <div>
+    <div style={{ width: '100%', height: '550px', overflow: 'auto' }}>
       <Typography variant="h5" sx={{ margin: '0 0 10px 0' }}>
         {`${tableData[0]?.Step || 'No Data'}`}
       </Typography>
-      <Paper style={{ width: '100%' }} className="virtuoso-table">
+      <Paper
+        style={{ width: '100%', height: '500px', overflow: 'auto' }}
+        className="virtuoso-table"
+      >
         <TableContainer component={Paper}>
           <Table stickyHeader>{fixedHeaderContent()}</Table>
         </TableContainer>
@@ -283,36 +284,9 @@ export default function StudentAssignmentTable(props) {
               isDataAvailable,
             )
           }
-          style={{ height: '20vh' }}
+          style={{ height: '100%' }}
         />
       </Paper>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleAssignmentReport}
-        style={{
-          width: '100%',
-          margin: '20px 0 0 0',
-          fontFamily: "'Asap', sans-serif", // 버튼에 Asap 폰트 적용
-          fontWeight: '600',
-          fontSize: '0.9rem',
-          color: 'grey',
-          backgroundColor: '#feecfe',
-          borderRadius: '2.469rem',
-          border: 'none',
-        }}
-      >
-        보고서
-      </Button>
-      <StudentReportModal
-        open={openModal}
-        onClose={handleCloseModal}
-        tableData={allTableData}
-        latestTableData={props.latestTableData}
-        assginmentCheck={props.assginmentCheck}
-        stepCount={props.stepCount}
-        eclassUuid={props.eclassUuid}
-      />
     </div>
   );
 }

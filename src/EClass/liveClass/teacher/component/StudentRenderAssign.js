@@ -417,7 +417,7 @@ function StudentRenderAssign({
               padding: 20,
               boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
               width: '100%',
-              minHeight: '61vh',
+              height: '66vh',
             }}
           >
             <div>
@@ -447,6 +447,7 @@ function StudentRenderAssign({
             onClick={() => handleSubmit(imageUrlArray)}
             style={{ marginTop: '10px' }}
             sx={{
+              width: '10rem',
               marginRight: 1,
               fontFamily: "'Asap', sans-serif",
               fontWeight: '600',

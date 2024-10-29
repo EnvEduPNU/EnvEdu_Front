@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Box, CircularProgress, Typography } from '@mui/material';
+import { Box, CircularProgress, Typography, Button } from '@mui/material';
 import StudentAssignmentTable from '../student/component/table/StudentAssignmentTable';
 import { StudentStepCompnent } from '../student/component/StudentStepCompnent';
 import { customAxios } from '../../../Common/CustomAxios';
@@ -10,6 +10,7 @@ import StudentReportTable from '../teacher/component/table/eclassPageTable/Stude
 
 import { Client } from '@stomp/stompjs';
 import { StudentScreenShareJitsi } from '../student/screenShare/StudentScreenShareJitsi';
+import StudentReportModal from '../student/modal/StudentReportModal';
 
 export const LiveStudentPage = () => {
   const sessionId = useRef('');
@@ -22,7 +23,8 @@ export const LiveStudentPage = () => {
   const [classProcess, setClassProcess] = useState(true);
   const [page, setPage] = useState('defaultPage');
   const [sharedScreenState, setSharedScreenState] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // 스피너 상태 관리
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmittedListVisible, setIsSubmittedListVisible] = useState(false);
 
   const [assginmentFetch, setAssginmentFetch] = useState(false);
 
@@ -35,15 +37,21 @@ export const LiveStudentPage = () => {
 
   const navigate = useNavigate();
 
-  const photoList = location.state?.photoList || []; // state가 없을 경우 빈 배열로 초기화
+  const photoList = location.state?.photoList || [];
+  const [openReportModal, setOpenReportModal] = useState(false);
+
+  const handleReportButtonClick = () => {
+    setOpenReportModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenReportModal(false);
+  };
 
   useEffect(() => {
-    // if (photoList.length > 0) {
     console.log('테이블/그래프 캡쳐 리스트 :', photoList);
-    // }
   }, [photoList]);
 
-  // stompClients 커넥션 생성 훅
   useEffect(() => {
     if (!stompClients.current) {
       const token = localStorage.getItem('access_token').replace('Bearer ', '');
@@ -54,7 +62,7 @@ export const LiveStudentPage = () => {
 
       stompClients.current.onConnect = (frame) => {
         console.log('학생 입장 소켓 연결 성공', frame);
-        sendMessage(true); // 연결 성공 후에만 sendMessage(true)를 실행
+        sendMessage(true);
       };
 
       stompClients.current.activate();
@@ -80,7 +88,7 @@ export const LiveStudentPage = () => {
 
       sendScreenShareStClient.current.onConnect = (frame) => {
         console.log('화면 상태 소켓 연결 성공', frame);
-        sendMessage(true); // 연결 성공 후에만 sendMessage(true)를 실행
+        sendMessage(true);
       };
 
       sendScreenShareStClient.current.activate();
@@ -114,7 +122,6 @@ export const LiveStudentPage = () => {
             console.log(
               '화면 공유 상태 : ' + JSON.stringify(parsedMessage, null, 2),
             );
-
             setTimeout(() => {
               setSharedScreenState(parsedMessage.screenShared);
             }, 1000);
@@ -135,16 +142,13 @@ export const LiveStudentPage = () => {
     };
   }, []);
 
-  // 각 학생의 E-Class에 대한 Session Id 생성 훅
   useEffect(() => {
     console.log(
       '[LiveStudentPage] 이클래스 UUID: ' + JSON.stringify(eClassUuid, null, 2),
     );
-
     const initializeSession = async () => {
       const newSessionId = uuidv4();
       const registeredSessionId = await registerSessionId(newSessionId);
-
       sessionId.current = registeredSessionId || newSessionId;
       setSessionIdState(sessionId.current);
       setFinished(true);
@@ -164,7 +168,6 @@ export const LiveStudentPage = () => {
     };
   }, []);
 
-  // 수업 종료 훅
   useEffect(() => {
     if (!classProcess) {
       alert('수업이 종료되었습니다!');
@@ -174,7 +177,6 @@ export const LiveStudentPage = () => {
     }
   }, [classProcess]);
 
-  // 화면 공유 아닐때 Default Page 설정 훅
   useEffect(() => {
     if (!sharedScreenState) {
       setPage('defaultPage');
@@ -193,9 +195,9 @@ export const LiveStudentPage = () => {
       stompClients.current.connected
     ) {
       await stompClients.current.publish({
-        destination: '/app/student-entered', // 메시지를 보낼 경로
-        body: JSON.stringify(message), // 메시지 본문
-        headers: {}, // 선택적 헤더
+        destination: '/app/student-entered',
+        body: JSON.stringify(message),
+        headers: {},
       });
     } else {
       console.error('STOMP 클라이언트가 연결되지 않았습니다.');
@@ -216,9 +218,9 @@ export const LiveStudentPage = () => {
       sendScreenShareStClient.current.connected
     ) {
       await sendScreenShareStClient.current.publish({
-        destination: '/app/assginment-status', // 메시지를 보낼 경로
-        body: JSON.stringify(shareState), // 메시지 본문
-        headers: {}, // 선택적 헤더
+        destination: '/app/assginment-status',
+        body: JSON.stringify(shareState),
+        headers: {},
       });
     } else {
       console.error('STOMP 클라이언트가 연결되지 않았습니다.');
@@ -228,13 +230,11 @@ export const LiveStudentPage = () => {
   const registerSessionId = async (sessionId) => {
     try {
       const userName = localStorage.getItem('username');
-
       const resp = await customAxios.post('/api/sessions/register-session', {
         eclassUuid: eClassUuid,
         sessionId: sessionId,
         userName: userName,
       });
-
       return resp.data;
     } catch (error) {
       console.error('세션 ID 등록 중 오류 발생:', error);
@@ -243,8 +243,8 @@ export const LiveStudentPage = () => {
   };
 
   return (
-    <div style={{ display: 'flex', margin: '0 20vh' }}>
-      <div style={{ display: 'inline-block', width: '100%', height: '100%' }}>
+    <div style={{ display: 'flex', margin: '0 20vh', height: '800px' }}>
+      <div style={{ display: 'inline-block', width: '100%', height: '800px' }}>
         <Typography variant="h4" sx={{ margin: '0 20px 0 20px' }}>
           {row.Name}
         </Typography>
@@ -264,7 +264,6 @@ export const LiveStudentPage = () => {
               setAssginmentFetch={setAssginmentFetch}
             />
           )}
-          {/* 스피너 표시 */}
           {isLoading && (
             <Box
               sx={{
@@ -280,29 +279,110 @@ export const LiveStudentPage = () => {
               <CircularProgress />
             </Box>
           )}
-
-          {/* 화면 공유 메서드 */}
           {sharedScreenState && (
             <StudentScreenShareJitsi
               sharedScreenState={sharedScreenState}
-              setIsLoading={setIsLoading} // setIsLoading을 props로 전달
+              setIsLoading={setIsLoading}
             />
           )}
         </div>
       </div>
 
-      <div style={{ width: '25%', marginRight: '30px' }}>
-        <StudentAssignmentTable
-          setCourseStep={setCourseStep}
-          setTableData={setTableData}
-          lectureDataUuid={lectureDataUuid}
-          setStepCount={setStepCount}
-          stepCount={stepCount}
-          reportTable={reportTable}
-          eclassUuid={eClassUuid}
-          assginmentFetch={assginmentFetch}
-        />
-        <StudentReportTable selectedEClassUuid={eClassUuid} />
+      <div style={{ width: '35%', height: '100%', marginRight: '30px' }}>
+        {isSubmittedListVisible ? (
+          <>
+            <Typography
+              variant="h5"
+              sx={{
+                margin: '0 0 10px 0',
+                fontFamily: "'Montserrat', sans-serif",
+                fontWeight: '600',
+                fontSize: '1.5rem',
+              }}
+            >
+              {' 친구들의 보고서 '}
+            </Typography>
+            <StudentReportTable selectedEClassUuid={eClassUuid} />
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => setIsSubmittedListVisible(!isSubmittedListVisible)}
+              style={{
+                width: '100%',
+                fontFamily: "'Asap', sans-serif",
+                fontWeight: '600',
+                fontSize: '0.9rem',
+                color: 'grey',
+                backgroundColor: '#feecfe',
+                borderRadius: '1.469rem',
+                border: 'none',
+              }}
+            >
+              {isSubmittedListVisible ? 'E-Class 리스트' : '친구들의 보고서'}
+            </Button>
+          </>
+        ) : (
+          <>
+            <StudentAssignmentTable
+              setCourseStep={setCourseStep}
+              setTableData={setTableData}
+              lectureDataUuid={lectureDataUuid}
+              setStepCount={setStepCount}
+              stepCount={stepCount}
+              reportTable={reportTable}
+              eclassUuid={eClassUuid}
+              assginmentFetch={assginmentFetch}
+              onReportButtonClick={handleReportButtonClick}
+            />
+            <div style={{ display: 'flex', gap: 10 }}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleReportButtonClick}
+                style={{
+                  width: '100%',
+                  fontFamily: "'Asap', sans-serif",
+                  fontWeight: '600',
+                  fontSize: '0.9rem',
+                  color: 'grey',
+                  backgroundColor: '#feecfe',
+                  borderRadius: '2.469rem',
+                  border: 'none',
+                }}
+              >
+                보고서
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() =>
+                  setIsSubmittedListVisible(!isSubmittedListVisible)
+                }
+                style={{
+                  width: '100%',
+                  fontFamily: "'Asap', sans-serif",
+                  fontWeight: '600',
+                  fontSize: '0.9rem',
+                  color: 'grey',
+                  backgroundColor: '#feecfe',
+                  borderRadius: '2.469rem',
+                  border: 'none',
+                }}
+              >
+                {isSubmittedListVisible ? 'E-Class 리스트' : '친구들의 보고서'}
+              </Button>
+            </div>
+            <StudentReportModal
+              open={openReportModal}
+              onClose={handleCloseModal}
+              tableData={tableData}
+              latestTableData={tableData}
+              assginmentCheck={assginmentFetch}
+              stepCount={stepCount}
+              eclassUuid={eClassUuid}
+            />
+          </>
+        )}
       </div>
     </div>
   );
