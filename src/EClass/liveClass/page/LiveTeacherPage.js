@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useLocation, useNavigate } from "react-router-dom";
-import { Typography } from "@mui/material";
-import { customAxios } from "../../../Common/CustomAxios";
-import TeacherAssignmentTable from "../teacher/component/table/myDataPageTable/TeacherAssignmentTable";
-import TeacherCourseStatusTable from "../teacher/component/table/myDataPageTable/TeacherCourseStatusTable";
-import { TeacherStepShareButton } from "../teacher/component/button/TeacherStepShareButton";
-import TeacherRenderAssign from "../teacher/component/TeacherRenderAssign";
-import { TeacherScreenShare } from "../teacher/component/screenShare/TeacherScreenShare";
-import SockJS from "sockjs-client";
-import Stomp from "stompjs";
-import { TeacherScreenShareJitsi } from "../teacher/component/screenShare/TeacherScreenShareJitsi";
+import React, { useState, useCallback, useEffect } from 'react';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import { Typography, CircularProgress, Box } from '@mui/material';
+import { customAxios } from '../../../Common/CustomAxios';
+import TeacherAssignmentTable from '../teacher/component/table/myDataPageTable/TeacherAssignmentTable';
+import TeacherCourseStatusTable from '../teacher/component/table/myDataPageTable/TeacherCourseStatusTable';
+import { TeacherStepShareButton } from '../teacher/component/button/TeacherStepShareButton';
+import TeacherRenderAssign from '../teacher/component/TeacherRenderAssign';
+import TeacherScreenShareJitsi from '../teacher/component/screenShare/TeacherScreenShareJitsi';
+import { StudentWebSocket } from '../teacher/component/screenShare/StudentWebSocket';
+import { ScreenShareWebSocket } from '../teacher/component/screenShare/ScreenShareWebSocket';
 
 export const LiveTeacherPage = () => {
   const [sharedScreenState, setSharedScreenState] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [tableData, setTableData] = useState([]);
   const [courseStep, setCourseStep] = useState();
   const [stepCount, setStepCount] = useState();
@@ -23,86 +23,60 @@ export const LiveTeacherPage = () => {
   const location = useLocation();
   const { lectureDataUuid, eClassName } = location.state || {};
 
-  let stompClients = null;
-
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchSessionIds = async () => {
-      const response = await customAxios.get("/api/sessions/get-session-ids");
-      const sessionIds = response.data;
-      setSessionIds(sessionIds);
-      console.log("참여한 학생 : ", JSON.stringify(sessionIds, null, 2));
-    };
-    fetchSessionIds();
-
-    if (!stompClients) {
-      const token = localStorage.getItem("access_token").replace("Bearer ", "");
-      const sock = new SockJS(
-        `${process.env.REACT_APP_API_URL}/ws?token=${token}`
-      );
-      stompClients = Stomp.over(sock);
-
-      stompClients.connect(
-        {},
-        () => {
-          stompClients.subscribe("/topic/student-entered", function (message) {
-            const parsedMessage = JSON.parse(message.body);
-            console.log(
-              "학생 상태 : " + JSON.stringify(parsedMessage, null, 2)
-            );
-            // if (parsedMessage.entered === false) {
-            // }
-
-            // 1초 지연 후 fetchSessionIds 호출
-            setTimeout(() => {
-              fetchSessionIds();
-            }, 1000);
-          });
-        },
-        onError
-      );
-    }
-
-    function onError(error) {
-      console.error("STOMP 연결 에러:", error);
-      alert(
-        "웹소켓 연결에 실패했습니다. 네트워크 설정을 확인하거나 관리자에게 문의하세요."
-      );
-    }
-
-    return () => {
-      if (stompClients) {
-        stompClients.disconnect(() => {
-          console.log("STOMP 연결 해제");
-        });
-      }
-    };
-  }, []);
 
   const closeEclass = async () => {
     await customAxios
       .patch(`/api/eclass/eclass-close?uuid=${eClassUuid}`)
       .then((response) => {
-        console.log("Eclass closed :", response.data);
-        alert("수업을 종료하였습니다!");
-        navigate("/");
+        console.log('Eclass closed :', response.data);
+        alert('수업을 종료하였습니다!');
+        navigate('/');
       })
       .catch((error) => {
-        console.error("Eclass 종료 에러:", error);
+        console.error('Eclass 종료 에러:', error);
       });
+  };
+
+  const handleScreenShare = useCallback(
+    (state) => {
+      setSharedScreenState(state); // 화면 공유 상태 변경
+    },
+    [sessionIds],
+  );
+
+  const spinnerBoxStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: '70vh',
+    margin: '20px 10px 0 0',
+    border: '1px solid grey',
+    zIndex: 1000,
+  };
+
+  const buttonStyle = {
+    margin: '10px 0',
+    width: '18%',
+    fontFamily: "'Asap', sans-serif",
+    fontWeight: '600',
+    fontSize: '0.9rem',
+    color: 'grey',
+    backgroundColor: '#feecfe',
+    borderRadius: '2.469rem',
+    border: 'none',
   };
 
   function DefaultPageComponent() {
     return (
       <div
         style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "65vh",
-          margin: "0 10px 0 0",
-          border: "1px solid grey",
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '70vh',
+          margin: '20px 10px 0 0',
+          border: '1px solid grey',
         }}
       >
         <Typography variant="h6">수업을 시작해주세요.</Typography>
@@ -111,30 +85,57 @@ export const LiveTeacherPage = () => {
   }
 
   return (
-    <div style={{ display: "flex", margin: "0 20vh" }}>
+    <div style={{ display: 'flex', margin: '0 10vh', height: '800px' }}>
+      <StudentWebSocket
+        setSessionIds={setSessionIds}
+        setAssginmentShareCheck={setAssginmentShareCheck}
+      />
+
+      <ScreenShareWebSocket
+        sessionIds={sessionIds}
+        sendMessage={handleScreenShare}
+        sharedScreenState={sharedScreenState}
+      />
+
       {/* [왼쪽 블럭] 화면 공유 블럭 */}
-      <div style={{ display: "inline-block", width: "100%", height: "100%" }}>
-        <Typography variant="h4" sx={{ margin: "0 0 10px 0" }}>
+      <div style={{ display: 'inline-block', width: '60%', height: '100%' }}>
+        <Typography variant="h4" sx={{ margin: '0 0 10px 0' }}>
           {eClassName}
         </Typography>
 
         <div>
           {stepCount && !sharedScreenState ? (
-            <>
-              <TeacherRenderAssign data={tableData} />
-            </>
+            <TeacherRenderAssign data={tableData} />
           ) : (
-            <>{!sharedScreenState && <DefaultPageComponent />}</>
+            !sharedScreenState && <DefaultPageComponent />
           )}
         </div>
-        {/* <TeacherScreenShare
-          eClassUuid={eClassUuid}
-          setSharedScreenState={setSharedScreenState}
-          sharedScreenState={sharedScreenState}
-          sessionIds={sessionIds}
-        /> */}
-        <TeacherScreenShareJitsi />
-        {/* 과제 공유/중지 버튼 */}
+
+        {isLoading && (
+          <Box sx={spinnerBoxStyle}>
+            <CircularProgress />
+          </Box>
+        )}
+
+        {sharedScreenState && (
+          <TeacherScreenShareJitsi
+            sharedScreenState={sharedScreenState}
+            setSharedScreenState={setSharedScreenState}
+            setIsLoading={setIsLoading}
+            eClassName={eClassName}
+          />
+        )}
+
+        <button onClick={() => handleScreenShare(true)} style={buttonStyle}>
+          화면 공유
+        </button>
+        <button
+          onClick={() => handleScreenShare(false)}
+          style={{ ...buttonStyle, marginLeft: '10px' }}
+        >
+          공유 중지
+        </button>
+
         <TeacherStepShareButton
           stepCount={stepCount}
           lectureDataUuid={lectureDataUuid}
@@ -144,25 +145,14 @@ export const LiveTeacherPage = () => {
         />
         <button
           onClick={closeEclass}
-          style={{
-            margin: "10px 0 0 10px ",
-            width: "18%",
-            marginRight: 1,
-            fontFamily: "'Asap', sans-serif",
-            fontWeight: "600",
-            fontSize: "0.9rem",
-            color: "grey",
-            backgroundColor: "#feecfe",
-            borderRadius: "2.469rem",
-            border: "none",
-          }}
+          style={{ ...buttonStyle, marginLeft: '10px' }}
         >
           수업 종료
         </button>
       </div>
 
       {/* [오른쪽 블럭] 수업 Step 테이블, 수업 상태 테이블 */}
-      <div style={{ width: "40%", marginRight: "30px", height: "65vh" }}>
+      <div style={{ width: '30%', marginRight: '30px', height: '100%' }}>
         <TeacherAssignmentTable
           setCourseStep={setCourseStep}
           setTableData={setTableData}

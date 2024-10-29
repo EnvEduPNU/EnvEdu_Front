@@ -1,8 +1,8 @@
-import { sampleDatas } from "./sampleDatas";
-import { useGraphDataStore } from "../store/graphStore";
-import * as Styled from "./Styled";
-import { useTabStore } from "../store/tabStore";
-import { useEffect, useState } from "react";
+import { sampleDatas } from './sampleDatas';
+import { useGraphDataStore } from '../store/graphStore';
+import * as Styled from './Styled';
+import { useTabStore } from '../store/tabStore';
+import { useEffect, useState } from 'react';
 
 function Dataset(props) {
   const { setData, setTitle } = useGraphDataStore();
@@ -11,17 +11,17 @@ function Dataset(props) {
 
   useEffect(() => {
     // 만약 그래프탭에서 바로 데이터를 바꾸면 테이블 탭으로 돌아가게 한다.
-    if (tab === "graph" && isFinished) {
-      changeTab("table");
+    if (tab === 'graph' && isFinished) {
+      changeTab('table');
     }
   }, [props, isFinished]);
 
   const onClickBtn = (key) => {
-    setData(sampleDatas[key]);
+    setData(sampleDatas[key], key, true);
     setTitle(key);
-    localStorage.setItem("data", JSON.stringify(sampleDatas[key]));
-    localStorage.setItem("title", JSON.stringify(key));
-    console.log("ExpertDataSet localStorage에 저장 완료!");
+    localStorage.setItem('data', JSON.stringify(sampleDatas[key]));
+    localStorage.setItem('title', JSON.stringify(key));
+    console.log('ExpertDataSet localStorage에 저장 완료!');
     props.setIsFinished(true);
     setIsFinished(true);
   };
@@ -30,7 +30,7 @@ function Dataset(props) {
     <Styled.Wrapper>
       <Styled.Box key="header">
         <Styled.Number>순서</Styled.Number>
-        <Styled.Data style={{ background: "#f9fafb" }}>
+        <Styled.Data style={{ background: '#f9fafb' }}>
           Dataset Name
         </Styled.Data>
       </Styled.Box>

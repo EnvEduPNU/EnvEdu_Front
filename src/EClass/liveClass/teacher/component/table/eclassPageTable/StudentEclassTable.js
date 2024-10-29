@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
-import { TableVirtuoso } from "react-virtuoso";
+import React, { useState, useEffect, useRef } from 'react';
+import { TableVirtuoso } from 'react-virtuoso';
 import {
   Table,
   TableBody,
@@ -9,19 +9,19 @@ import {
   TableRow,
   Paper,
   Button,
-} from "@mui/material";
-import { customAxios } from "../../../../../../Common/CustomAxios";
-import { useNavigate } from "react-router-dom";
-import SockJS from "sockjs-client";
-import Stomp from "stompjs";
+} from '@mui/material';
+import { customAxios } from '../../../../../../Common/CustomAxios';
+import { useNavigate } from 'react-router-dom';
+import SockJS from 'sockjs-client';
+import { Client } from '@stomp/stompjs';
 
 const columns = [
-  { label: "번호", dataKey: "Num", width: "10%" },
-  { label: "이름", dataKey: "Name", width: "15%" },
-  { label: "강사", dataKey: "Teacher", width: "15%" },
-  { label: "개설일", dataKey: "CreateEclassDate", width: "15%" },
-  { label: "수업자료", dataKey: "LectureDataName", width: "15%" },
-  { label: "", dataKey: "Action", width: "20%" },
+  { label: '번호', dataKey: 'Num', width: '10%' },
+  { label: '이름', dataKey: 'Name', width: '15%' },
+  { label: '강사', dataKey: 'Teacher', width: '15%' },
+  { label: '개설일', dataKey: 'CreateEclassDate', width: '15%' },
+  { label: '수업자료', dataKey: 'LectureDataName', width: '15%' },
+  { label: '', dataKey: 'Action', width: '20%' },
 ];
 
 const createData = (index, item) => ({
@@ -42,7 +42,7 @@ const VirtuosoTableComponents = {
   Table: (props) => (
     <Table
       {...props}
-      sx={{ borderCollapse: "separate", tableLayout: "fixed" }}
+      sx={{ borderCollapse: 'separate', tableLayout: 'fixed' }}
     />
   ),
   TableHead: (props) => <TableHead {...props} />,
@@ -62,7 +62,7 @@ function fixedHeaderContent() {
             variant="head"
             align="center"
             style={{ width: column.width }}
-            sx={{ backgroundColor: "#dcdcdc" }}
+            sx={{ backgroundColor: '#dcdcdc' }}
           >
             {column.label}
           </TableCell>
@@ -81,33 +81,35 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
 
   useEffect(() => {
     if (!stompClientRef.current) {
-      const token = localStorage.getItem("access_token").replace("Bearer ", "");
+      const token = localStorage.getItem('access_token').replace('Bearer ', '');
       const sock = new SockJS(
-        `${process.env.REACT_APP_API_URL}/ws?token=${token}`
+        `${process.env.REACT_APP_API_URL}/ws?token=${token}`,
       );
-      stompClientRef.current = Stomp.over(sock);
+      stompClientRef.current = new Client({ webSocketFactory: () => sock });
 
-      stompClientRef.current.connect(
+      stompClientRef.current.onConnect = (frame) => (
         {},
         () => {
-          console.log("STOMP 연결 성공");
+          console.log('STOMP 연결 성공');
         },
         onError
       );
+
+      stompClientRef.current.activate();
     }
 
     return () => {
       if (stompClientRef.current) {
-        stompClientRef.current.disconnect(() => {
-          console.log("STOMP 연결 해제");
+        stompClientRef.current.deactivate(() => {
+          console.log('STOMP 연결 해제');
         });
       }
     };
 
     function onError(error) {
-      console.error("STOMP 연결 에러:", error);
+      console.error('STOMP 연결 에러:', error);
       alert(
-        "웹소켓 연결에 실패했습니다. 네트워크 설정을 확인하거나 관리자에게 문의하세요."
+        '웹소켓 연결에 실패했습니다. 네트워크 설정을 확인하거나 관리자에게 문의하세요.',
       );
     }
   }, []);
@@ -116,30 +118,30 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
   useEffect(() => {
     const fetchEclassData = async () => {
       try {
-        const StudentName = localStorage.getItem("username");
+        const StudentName = localStorage.getItem('username');
 
-        const eclassListResponse = await customAxios.get("/api/eclass/list");
+        const eclassListResponse = await customAxios.get('/api/eclass/list');
         const eclassList = eclassListResponse.data;
 
         const studentEclassResponse = await customAxios.get(
-          `/api/eclass/student/eclassUuids?studentName=${StudentName}`
+          `/api/eclass/student/eclassUuids?studentName=${StudentName}`,
         );
         const uuidList = studentEclassResponse.data;
 
-        console.log("Eclass list :", eclassList);
-        console.log("uuid 리스트 : " + JSON.stringify(uuidList, null, 2));
+        console.log('Eclass list :', eclassList);
+        console.log('uuid 리스트 : ' + JSON.stringify(uuidList, null, 2));
 
         const filteredList = eclassList.filter((item) =>
-          uuidList.includes(item.eClassUuid)
+          uuidList.includes(item.eClassUuid),
         );
 
         const rows = await filteredList.map((item, index) =>
-          createData(index, item)
+          createData(index, item),
         );
 
         setRowData(rows);
       } catch (error) {
-        console.error("Eclass 리스트 조회 에러:", error);
+        console.error('Eclass 리스트 조회 에러:', error);
       }
     };
 
@@ -149,23 +151,23 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
   const handleRowClick = (id, row) => {
     setSelectedRow(id);
     setSelectedEClassUuid(row.eClassUuid);
-    console.log("Selected eClassUuid:", row.eClassUuid);
+    console.log('Selected eClassUuid:', row.eClassUuid);
   };
 
   const joinEclass = async (row) => {
     console.log(
-      "[studentEclassTable] row 값 : " + JSON.stringify(row, null, 2)
+      '[studentEclassTable] row 값 : ' + JSON.stringify(row, null, 2),
     );
 
     // 수업이 교사에 의해서 열렸는지 닫혔는지 확인
     try {
       const response = await customAxios.get(
-        `/api/eclass/status-check?uuid=${row.eClassUuid}`
+        `/api/eclass/status-check?uuid=${row.eClassUuid}`,
       );
       const eClassStatus = response.data;
 
       if (eClassStatus) {
-        console.log("[studentEclassTable] eclassUuid : " + row.eClassUuid);
+        console.log('[studentEclassTable] eclassUuid : ' + row.eClassUuid);
 
         navigate(`/LiveStudentPage/${row.eClassUuid}`, {
           state: {
@@ -175,10 +177,10 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
           },
         });
       } else {
-        alert("수업 시작을 기다려주세요!");
+        alert('수업 시작을 기다려주세요!');
       }
     } catch (error) {
-      console.error("Eclass 수업 존재 체크 에러:", error);
+      console.error('Eclass 수업 존재 체크 에러:', error);
     }
   };
 
@@ -191,15 +193,15 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
             align="center"
             style={{ width: column.width }}
             sx={{
-              backgroundColor: selectedRow === row.Num ? "#f0f0f0" : "inherit",
-              cursor: column.dataKey !== "Action" ? "pointer" : "default",
+              backgroundColor: selectedRow === row.Num ? '#f0f0f0' : 'inherit',
+              cursor: column.dataKey !== 'Action' ? 'pointer' : 'default',
             }}
             onClick={() =>
-              column.dataKey !== "Action" && handleRowClick(row.Num, row)
+              column.dataKey !== 'Action' && handleRowClick(row.Num, row)
             }
           >
-            {column.dataKey === "Action" ? (
-              <div style={{ display: "flex", justifyContent: "center" }}>
+            {column.dataKey === 'Action' ? (
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
                 <Button
                   variant="contained"
                   color="secondary"
@@ -207,12 +209,12 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
                   sx={{
                     marginRight: 1,
                     fontFamily: "'Asap', sans-serif",
-                    fontWeight: "600",
-                    fontSize: "0.9rem",
-                    color: "grey",
-                    backgroundColor: "#feecfe",
-                    borderRadius: "2.469rem",
-                    border: "none",
+                    fontWeight: '600',
+                    fontSize: '0.9rem',
+                    color: 'grey',
+                    backgroundColor: '#feecfe',
+                    borderRadius: '2.469rem',
+                    border: 'none',
                   }}
                 >
                   들어가기
@@ -230,7 +232,7 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
   return (
     <div>
       <Paper
-        style={{ height: "100%", width: "100%" }}
+        style={{ height: '100%', minWidth: '50rem' }}
         className="virtuoso-table"
       >
         <TableContainer component={Paper}>
@@ -240,7 +242,7 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
           data={rowData}
           components={VirtuosoTableComponents}
           itemContent={(index, row) => rowContent(index, row)}
-          style={{ height: "580px" }}
+          style={{ height: '400px' }}
         />
       </Paper>
     </div>

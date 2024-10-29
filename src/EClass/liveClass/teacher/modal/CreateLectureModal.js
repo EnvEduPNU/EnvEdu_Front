@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Modal,
   Box,
@@ -12,29 +12,28 @@ import {
   TableHead,
   TableRow,
   Paper,
-} from "@mui/material";
-import { customAxios } from "../../../../Common/CustomAxios";
-import axios from "axios";
-import { v4 as uuidv4 } from "uuid";
+} from '@mui/material';
+import { customAxios } from '../../../../Common/CustomAxios';
+import { v4 as uuidv4 } from 'uuid';
 
 const CreateLectureModal = ({ open, onClose, onCreate }) => {
-  const [lectureName, setLectureName] = useState("");
-  const [startDate, setStartDate] = useState("");
+  const [lectureName, setLectureName] = useState('');
+  const [startDate, setStartDate] = useState('');
   const [selectedMaterial, setSelectedMaterial] = useState(null);
   const [lectureDataUuid, setLectureDataUuid] = useState(null);
   const [lectureDataName, setLectureDataName] = useState(null);
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState('');
   const [lectureSummary, setLectureSummary] = useState([]);
   const [eClassAssginSubmitNum, setEClassAssginSubmitNum] = useState(0);
 
   useEffect(() => {
-    const TeacherName = localStorage.getItem("username");
+    const TeacherName = localStorage.getItem('username');
 
     customAxios
-      .get("/api/steps/getLectureContent")
+      .get('/api/steps/getLectureContent')
       .then((res) => {
         const filteredData = res.data.filter(
-          (data) => data.username === TeacherName
+          (data) => data.username === TeacherName,
         );
 
         const formattedData = filteredData.map((data) => ({
@@ -63,32 +62,24 @@ const CreateLectureModal = ({ open, onClose, onCreate }) => {
   }, []);
 
   useEffect(() => {
-    const storedUsername = localStorage.getItem("username");
+    const storedUsername = localStorage.getItem('username');
     setUsername(storedUsername);
 
-    const getSeoulTime = async () => {
-      try {
-        const response = await axios.get(
-          "http://worldtimeapi.org/api/timezone/Asia/Seoul"
-        );
-        const seoulDate = new Date(response.data.datetime);
-        const formattedDate = seoulDate.toISOString().split("T")[0];
-        setStartDate(formattedDate);
-      } catch (error) {
-        console.error("There was an error fetching the Seoul time:", error);
-      }
-    };
-
-    getSeoulTime();
+    // 현재 로컬 시간 기준으로 날짜를 가져옴
+    const currentDate = new Date();
+    const formattedDate = `${currentDate.getFullYear()}-${String(
+      currentDate.getMonth() + 1,
+    ).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+    setStartDate(formattedDate);
   }, [open]);
 
   const handleCreate = () => {
     if (!lectureName) {
-      alert("수업 이름을 입력해 주세요.");
+      alert('E-Class 실행 이름을 입력해 주세요.');
       return;
     }
     if (!selectedMaterial) {
-      alert("수업 자료를 선택해 주세요.");
+      alert('E-Class를 선택해 주세요.');
       return;
     }
 
@@ -104,17 +95,17 @@ const CreateLectureModal = ({ open, onClose, onCreate }) => {
       eClassAssginSubmitNum,
     };
 
-    console.log("body 확인 : " + JSON.stringify(lectureData, null, 2));
+    console.log('body 확인 : ' + JSON.stringify(lectureData, null, 2));
 
     customAxios
-      .post("/api/eclass/create", lectureData)
+      .post('/api/eclass/create', lectureData)
       .then((response) => {
-        console.log("Lecture created successfully:", response.data);
+        console.log('Lecture created successfully:', response.data);
         onCreate(response.data);
         onClose();
       })
       .catch((error) => {
-        console.error("There was an error creating the lecture:", error);
+        console.error('There was an error creating the lecture:', error);
       });
   };
 
@@ -128,43 +119,43 @@ const CreateLectureModal = ({ open, onClose, onCreate }) => {
     <Modal open={open} onClose={onClose}>
       <Box
         sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: 600, // 크기 키우기
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 600,
           height: 800,
-          bgcolor: "background.paper",
+          bgcolor: 'background.paper',
           boxShadow: 24,
           p: 4,
-          borderRadius: 2, // 모서리 둥글게
+          borderRadius: 2,
         }}
       >
         <Typography
           variant="h4"
           sx={{
-            textAlign: "center",
+            textAlign: 'center',
             marginBottom: 6,
-            fontWeight: "bold",
-            fontSize: "2rem",
+            fontWeight: 'bold',
+            fontSize: '2rem',
           }}
         >
-          E-Class 생성하기
+          E-Class 실행 생성
         </Typography>
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            flexDirection: "row",
+            display: 'flex',
+            justifyContent: 'space-between',
+            flexDirection: 'row',
             marginBottom: 3,
-            alignItems: "left", // 수직 정렬
+            alignItems: 'left',
           }}
         >
           <Typography
             variant="h5"
             sx={{
               marginBottom: 2,
-              fontWeight: "bold",
+              fontWeight: 'bold',
             }}
           >
             {startDate}
@@ -173,7 +164,7 @@ const CreateLectureModal = ({ open, onClose, onCreate }) => {
             variant="h5"
             sx={{
               marginBottom: 2,
-              fontWeight: "bold",
+              fontWeight: 'bold',
             }}
           >
             {username}
@@ -182,21 +173,21 @@ const CreateLectureModal = ({ open, onClose, onCreate }) => {
         <Typography
           variant="h6"
           sx={{
-            fontWeight: "bold",
+            fontWeight: 'bold',
           }}
         >
-          E-Class 이름
+          E-Class 실행 이름
         </Typography>
         <TextField
-          label="E-Class 이름"
+          label="E-Class 실행 이름"
           value={lectureName}
           onChange={(e) => setLectureName(e.target.value)}
           fullWidth
           margin="normal"
           sx={{
             marginBottom: 3,
-            ".MuiInputBase-root": {
-              borderRadius: 2, // 입력 필드 모서리 둥글게
+            '.MuiInputBase-root': {
+              borderRadius: 2,
             },
           }}
         />
@@ -207,10 +198,10 @@ const CreateLectureModal = ({ open, onClose, onCreate }) => {
           sx={{
             marginTop: 2,
             marginBottom: 2,
-            fontWeight: "bold",
+            fontWeight: 'bold',
           }}
         >
-          수업 자료 선택
+          E-Class 선택
         </Typography>
         <TableContainer
           component={Paper}
@@ -219,13 +210,13 @@ const CreateLectureModal = ({ open, onClose, onCreate }) => {
           <Table stickyHeader>
             <TableHead>
               <TableRow>
-                <TableCell sx={{ backgroundColor: "lightgray" }}>
+                <TableCell sx={{ backgroundColor: 'lightgray' }}>
                   날짜
                 </TableCell>
-                <TableCell sx={{ backgroundColor: "lightgray" }}>
-                  수업 자료 이름
+                <TableCell sx={{ backgroundColor: 'lightgray' }}>
+                  E-Class 실행 이름
                 </TableCell>
-                <TableCell sx={{ backgroundColor: "lightgray" }} align="center">
+                <TableCell sx={{ backgroundColor: 'lightgray' }} align="center">
                   선택
                 </TableCell>
               </TableRow>
@@ -235,32 +226,32 @@ const CreateLectureModal = ({ open, onClose, onCreate }) => {
                 .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
                 .map((item, index) => (
                   <TableRow key={index} hover>
-                    <TableCell>{item.timestamp.split("T")[0]}</TableCell>
+                    <TableCell>{item.timestamp.split('T')[0]}</TableCell>
                     <TableCell>{item.stepName}</TableCell>
                     <TableCell align="center">
                       <Button
                         variant={
                           selectedMaterial?.stepName === item.stepName
-                            ? "contained"
-                            : "outlined"
+                            ? 'contained'
+                            : 'outlined'
                         }
                         color="secondary"
                         onClick={() => lectureSelection(item)}
                         sx={{
-                          width: "60px",
-                          fontFamily: "'Asap', sans-serif", // 버튼에 Asap 폰트 적용
-                          fontWeight: "600",
-                          fontSize: "0.9rem",
+                          width: '60px',
+                          fontFamily: "'Asap', sans-serif",
+                          fontWeight: '600',
+                          fontSize: '0.9rem',
                           color:
                             selectedMaterial?.stepName === item.stepName
-                              ? "white"
-                              : "black", // contained일 때 텍스트 색상을 흰색으로 변경
+                              ? 'white'
+                              : 'black',
                           backgroundColor:
                             selectedMaterial?.stepName === item.stepName
-                              ? "#D1C4E9"
-                              : "transparent", // contained일 때 배경색을 #D1C4E9로 변경
-                          borderRadius: "2.469rem",
-                          border: "none",
+                              ? '#D1C4E9'
+                              : 'transparent',
+                          borderRadius: '2.469rem',
+                          border: 'none',
                         }}
                       >
                         선택
@@ -272,18 +263,18 @@ const CreateLectureModal = ({ open, onClose, onCreate }) => {
           </Table>
         </TableContainer>
 
-        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
           <Button
             onClick={onClose}
             sx={{
               marginRight: 1,
-              fontFamily: "'Asap', sans-serif", // 버튼에 Asap 폰트 적용
-              fontWeight: "600",
-              fontSize: "0.9rem",
-              color: "grey",
-              backgroundColor: "#feecfe",
-              borderRadius: "2.469rem",
-              border: "none",
+              fontFamily: "'Asap', sans-serif",
+              fontWeight: '600',
+              fontSize: '0.9rem',
+              color: 'grey',
+              backgroundColor: '#feecfe',
+              borderRadius: '2.469rem',
+              border: 'none',
             }}
           >
             취소
@@ -294,16 +285,16 @@ const CreateLectureModal = ({ open, onClose, onCreate }) => {
             onClick={handleCreate}
             sx={{
               marginRight: 1,
-              fontFamily: "'Asap', sans-serif", // 버튼에 Asap 폰트 적용
-              fontWeight: "600",
-              fontSize: "0.9rem",
-              color: "grey",
-              backgroundColor: "#feecfe",
-              borderRadius: "2.469rem",
-              border: "none",
+              fontFamily: "'Asap', sans-serif",
+              fontWeight: '600',
+              fontSize: '0.9rem',
+              color: 'grey',
+              backgroundColor: '#feecfe',
+              borderRadius: '2.469rem',
+              border: 'none',
             }}
           >
-            생성하기
+            실행 생성하기
           </Button>
         </Box>
       </Box>

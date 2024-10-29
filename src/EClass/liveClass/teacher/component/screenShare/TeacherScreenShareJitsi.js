@@ -1,27 +1,70 @@
-import React from "react";
-import { JitsiMeeting } from "@jitsi/react-sdk";
+import React, { useEffect, useRef } from 'react';
+import { JitsiMeeting } from '@jitsi/react-sdk';
 
-export const TeacherScreenShareJitsi = () => {
+const TeacherScreenShareJitsi = ({
+  sharedScreenState,
+  setSharedScreenState,
+  setIsLoading,
+  eClassName,
+}) => {
+  const jitsiApiRef = useRef(null); // Jitsi API 인스턴스 참조
+  const username = localStorage.getItem('username');
+
+  const handleApiReady = (api) => {
+    jitsiApiRef.current = api;
+    setIsLoading(false); // 화면 공유 시작 시 로딩 상태 설정
+
+    // API 이벤트 리스너 추가: 회의가 종료될 준비가 되었을 때
+    api.on('readyToClose', () => {
+      alert('회의가 종료되었습니다.');
+      setSharedScreenState(false); // 화면 공유 상태를 false로 설정
+    });
+  };
+
+  useEffect(() => {
+    setIsLoading(true); // 화면 공유 시작 시 로딩 상태 설정
+
+    if (jitsiApiRef.current && sharedScreenState == false) {
+      alert('화상 수업을 종료합니다!');
+      jitsiApiRef.current.dispose(); // JitsiMeeting 인스턴스 정리
+      jitsiApiRef.current = null;
+    }
+
+    // 컴포넌트가 언마운트되거나 sharedScreenState가 false일 때 연결 닫기
+    return () => {
+      if (jitsiApiRef.current) {
+        jitsiApiRef.current.dispose(); // JitsiMeeting 인스턴스 정리
+        jitsiApiRef.current = null;
+      }
+    };
+  }, [sharedScreenState]);
+
   return (
-    <JitsiMeeting
-      domain="meet.jit.si"
-      roomName="myCustomRoom"
-      configOverwrite={{
-        startWithAudioMuted: true,
-        disableModeratorIndicator: true,
-      }}
-      interfaceConfigOverwrite={{
-        DISABLE_JOIN_LEAVE_NOTIFICATIONS: true,
-      }}
-      userInfo={{
-        displayName: "사용자 이름",
-      }}
-      getIFrameRef={(iframeRef) => {
-        iframeRef.style.height = "500px";
-      }}
-      onApiReady={(externalApi) => {
-        console.log("Jitsi Meet API is ready", externalApi);
-      }}
-    />
+    <div style={{ margin: '20px 20px 0 0' }}>
+      {sharedScreenState && (
+        <JitsiMeeting
+          domain="meet.jit.si"
+          // 나중에 eClassName으로 바꾸고 학생도 바꿔주기
+          roomName="myCustomRoom"
+          configOverwrite={{
+            startWithAudioMuted: true,
+            disableModeratorIndicator: true,
+          }}
+          interfaceConfigOverwrite={{
+            DISABLE_JOIN_LEAVE_NOTIFICATIONS: true,
+          }}
+          userInfo={{
+            displayName: username,
+          }}
+          getIFrameRef={(iframeRef) => {
+            iframeRef.style.height = '600px';
+            iframeRef.style.width = '100%';
+          }}
+          onApiReady={handleApiReady}
+        />
+      )}
+    </div>
   );
 };
+
+export default TeacherScreenShareJitsi;
