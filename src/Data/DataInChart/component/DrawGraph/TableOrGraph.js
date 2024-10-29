@@ -60,6 +60,7 @@ function TableOrGraph({ setSummary, setPhoto, dataCategory }) {
               />
             </div>
           </div>
+
         </Styled.CustomTableWrapper>
       )}
       {tab === 'graph' && (

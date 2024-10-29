@@ -167,6 +167,7 @@ function ComboGraph() {
     if (isPostive && isNegitive) {
       // 양수, 음수 다 있을 때
       setYScaleMinMaxValue([
+
         minValue ===
         Math.ceil(
           minValue / Math.pow(10, minValue.toString().split('.')[0].length - 2),
@@ -209,11 +210,13 @@ function ComboGraph() {
               maxValue /
                 Math.pow(10, maxValue.toString().split('.')[0].length - 1),
             ) * Math.pow(10, maxValue.toString().split('.')[0].length - 1),
+
       ]);
     } else if (isPostive) {
       // 양수만 있을 때
       setYScaleMinMaxValue([
         0,
+
         maxValue ===
         Math.ceil(
           maxValue / Math.pow(10, maxValue.toString().split('.')[0].length - 1),
@@ -237,10 +240,12 @@ function ComboGraph() {
               maxValue /
                 Math.pow(10, maxValue.toString().split('.')[0].length - 1),
             ) * Math.pow(10, maxValue.toString().split('.')[0].length - 1),
+
       ]);
     } else if (isNegitive) {
       // 음수만 있을 때
       setYScaleMinMaxValue([
+
         minValue ===
         Math.ceil(
           minValue / Math.pow(10, minValue.toString().split('.')[0].length - 2),
@@ -264,6 +269,7 @@ function ComboGraph() {
               minValue /
                 Math.pow(10, minValue.toString().split('.')[0].length - 2),
             ) * Math.pow(10, minValue.toString().split('.')[0].length - 2),
+
         0,
       ]);
     }
@@ -295,6 +301,7 @@ function ComboGraph() {
     if (is2Postive && is2Negitive) {
       // 양수, 음수 다 있을 때
       setY2ScaleMinMaxValue([
+
         min2Value ===
         Math.ceil(
           min2Value /
@@ -341,11 +348,13 @@ function ComboGraph() {
               max2Value /
                 Math.pow(10, max2Value.toString().split('.')[0].length - 1),
             ) * Math.pow(10, max2Value.toString().split('.')[0].length - 1),
+
       ]);
     } else if (isPostive) {
       // 양수만 있을 때
       setY2ScaleMinMaxValue([
         0,
+
         max2Value ===
         Math.ceil(
           max2Value /
@@ -371,10 +380,12 @@ function ComboGraph() {
               max2Value /
                 Math.pow(10, max2Value.toString().split('.')[0].length - 1),
             ) * Math.pow(10, max2Value.toString().split('.')[0].length - 1),
+
       ]);
     } else if (is2Negitive) {
       // 음수만 있을 때
       setY2ScaleMinMaxValue([
+
         min2Value ===
         Math.ceil(
           min2Value /
@@ -400,6 +411,7 @@ function ComboGraph() {
               min2Value /
                 Math.pow(10, min2Value.toString().split('.')[0].length - 2),
             ) * Math.pow(10, min2Value.toString().split('.')[0].length - 2),
+
         0,
       ]);
     }
@@ -472,6 +484,9 @@ function ComboGraph() {
         selectXVariableIndex(findedXindex);
       }
     }
+
+    console.log(data);
+    console.log(firstYIndex, findedXindex);
   }, [data, graphIdx]);
 
   // 차트 데이터 업데이트
