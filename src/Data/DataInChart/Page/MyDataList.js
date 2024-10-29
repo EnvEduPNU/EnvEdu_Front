@@ -10,36 +10,40 @@ export default function MyDataList() {
 
   // 가장 최초 테이블 요청
   useEffect(() => {
-    customAxios
-      .get('/mydata/list')
-      .then((res) => {
-        console.log('My Data list : ' + JSON.stringify(res.data, null, 2));
+    const FetchData = async () => {
+      await customAxios
+        .get('/mydata/list')
+        .then((res) => {
+          console.log('My Data list : ' + JSON.stringify(res.data, null, 2));
 
-        const formattedData = res.data.map((data) => ({
-          ...data,
-          saveDate: data.saveDate.split('T')[0],
-          dataLabel:
-            data.dataLabel === 'AIRQUALITY'
-              ? '대기질 데이터'
-              : data.dataLabel === 'OCEANQUALITY'
-              ? '수질 데이터'
-              : data.dataLabel,
+          const formattedData = res.data.map((data) => ({
+            ...data,
+            saveDate: data.saveDate.split('T')[0],
+            dataLabel:
+              data.dataLabel === 'AIRQUALITY'
+                ? '대기질 데이터'
+                : data.dataLabel === 'OCEANQUALITY'
+                ? '수질 데이터'
+                : data.dataLabel,
+          }));
+          console.log(formattedData);
+          setSummary(formattedData);
+        })
+        .catch((err) => console.log(err));
+
+      await customAxios.get('/api/custom/list').then((res) => {
+        console.log(res.data);
+        const formattedData = res.data.map((table) => ({
+          saveDate: table.saveDate.split('T')[0],
+          dataLabel: 'CUSTOM',
+          dataUUID: table.dataUUID,
+          memo: table.memo,
         }));
-        console.log(formattedData);
-        setSummary(formattedData);
-      })
-      .catch((err) => console.log(err));
+        setSummary((prev) => [...prev, ...formattedData]);
+      });
+    };
 
-    customAxios.get('/api/custom/list').then((res) => {
-      console.log(res.data);
-      const formattedData = res.data.map((table) => ({
-        saveDate: table.saveDate.split('T')[0],
-        dataLabel: 'CUSTOM',
-        dataUUID: table.dataUUID,
-        memo: table.memo,
-      }));
-      setSummary((prev) => [...prev, ...formattedData]);
-    });
+    FetchData();
   }, []);
   console.log(summary);
   // 전체 데이터 리스트 가져온 것중에서 데이터 라벨에 따라 필터링해서 뽑아서 보내준다.
