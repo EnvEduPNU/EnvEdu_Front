@@ -495,19 +495,6 @@ function RenderContent({
     });
   };
 
-  // 로컬 이미지 삭제 핸들러
-  const handleDeleteLocalPhoto = async (index) => {
-    try {
-      // 로컬 상태에서 이미지 삭제
-      setStorePhotoList((prevList) => prevList.filter((_, i) => i !== index));
-      setLocalStoredPhotoList((prevList) =>
-        prevList.filter((_, i) => i !== index),
-      );
-    } catch (error) {
-      console.error('이미지 삭제 실패:', error);
-    }
-  };
-
   switch (content.type) {
     case 'title':
       return (
@@ -544,22 +531,11 @@ function RenderContent({
           }}
         >
           <img
+            crossOrigin="anonymous"
             src={content.content}
             alt="Assignment Content"
             style={{ width: content.x, height: content.y }}
           />
-          <IconButton
-            aria-label="delete"
-            style={{
-              position: 'absolute',
-              top: '10px',
-              right: '10px',
-              backgroundColor: 'rgba(255,255,255,0.7)',
-            }}
-            onClick={() => handleDeletePhoto(content.content)}
-          >
-            <DeleteIcon />
-          </IconButton>
         </div>
       );
     case 'dataInChartButton':
@@ -622,18 +598,6 @@ function RenderContent({
                         objectFit: 'cover',
                       }}
                     />
-                    <IconButton
-                      aria-label="delete"
-                      style={{
-                        position: 'absolute',
-                        top: '10px',
-                        right: '10px',
-                        backgroundColor: 'rgba(255,255,255,0.7)',
-                      }}
-                      onClick={() => handleDeleteLocalPhoto(index)}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
                   </div>
                 ))
               : ''}
