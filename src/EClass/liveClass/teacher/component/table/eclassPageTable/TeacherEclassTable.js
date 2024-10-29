@@ -242,7 +242,7 @@ export default function TeacherEclassTable({ setSelectedEClassUuid }) {
   return (
     <div>
       <Paper
-        style={{ height: '100%', width: '100%' }}
+        style={{ height: '100%', minWidth: '50rem' }}
         className="virtuoso-table"
       >
         <TableContainer component={Paper}>
@@ -252,7 +252,7 @@ export default function TeacherEclassTable({ setSelectedEClassUuid }) {
           data={rowData}
           components={VirtuosoTableComponents}
           itemContent={(index, row) => rowContent(index, row)}
-          style={{ height: '580px' }}
+          style={{ height: '400px' }}
         />
       </Paper>
     </div>

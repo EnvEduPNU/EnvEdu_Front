@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Button, Typography } from '@mui/material';
+import { Container, Button, Typography, IconButton, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import MyLectureList from './MyLectureList'; // 필터와 카드 리스트 컴포넌트
 import ExcelDataModal from './modal/ExcelDataModal'; // 분리된 엑셀 모달 컴포넌트
 import TextDataCardModal from './modal/TextDataCardModal'; // 분리된 텍스트 모달 컴포넌트
 import * as XLSX from 'xlsx';
 import { customAxios } from '../../Common/CustomAxios';
+import MenuIcon from '@mui/icons-material/Menu';
 
-const MultiTablePage = () => {
+const MultiTablePage = ({ handleMenuToggle }) => {
   const navigate = useNavigate();
   const [excelData, setExcelData] = useState([]);
   const [excelModalOpen, setExcelModalOpen] = useState(false);
@@ -68,6 +69,20 @@ const MultiTablePage = () => {
 
   return (
     <Container sx={{ minWidth: '50rem' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          margin: '20px 0',
+        }}
+      >
+        <Typography variant="h3">My Data</Typography>
+
+        {/* 메뉴 아이콘 버튼 */}
+        <IconButton onClick={handleMenuToggle}>
+          <MenuIcon fontSize="large" />
+        </IconButton>
+      </Box>
       {/* 첫 번째 섹션: 버튼 그룹 */}
       <div
         style={{

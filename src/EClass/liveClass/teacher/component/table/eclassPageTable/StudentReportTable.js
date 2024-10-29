@@ -217,19 +217,11 @@ export default function StudentReportTable({ selectedEClassUuid }) {
   }, [rows]);
 
   return (
-    <div>
-      <Typography
-        variant="h5"
-        sx={{
-          margin: '20px 0 10px 0',
-          fontFamily: "'Montserrat', sans-serif",
-          fontWeight: '600',
-          fontSize: '1.5rem',
-        }}
+    <div style={{ width: '100%', height: '510px', overflow: 'auto' }}>
+      <Paper
+        style={{ width: '100%', height: '500px', overflow: 'auto' }}
+        className="virtuoso-table"
       >
-        {' 보고서 제출 '}
-      </Typography>
-      <Paper style={{ height: 130, width: '100%' }} className="virtuoso-table">
         <TableContainer component={Paper}>
           <Table stickyHeader>{fixedHeaderContent()}</Table>
         </TableContainer>
@@ -239,6 +231,7 @@ export default function StudentReportTable({ selectedEClassUuid }) {
           itemContent={(index, row) =>
             rowContent(index, row, handleRowClick, selectedRow, handleOpenModal)
           }
+          style={{ height: '100%' }}
         />
       </Paper>
 

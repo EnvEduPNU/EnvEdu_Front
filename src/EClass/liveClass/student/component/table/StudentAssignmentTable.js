@@ -1,23 +1,21 @@
-import * as React from "react";
-import { useState, useEffect } from "react";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import { TableVirtuoso } from "react-virtuoso";
-import { Button, Typography } from "@mui/material";
-import { customAxios } from "../../../../../Common/CustomAxios";
-import StudentReportModal from "../../modal/StudentReportModal";
-import ReportViewModal from "../../../teacher/modal/ReportViewModal";
+import * as React from 'react';
+import { useState, useEffect } from 'react';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import { TableVirtuoso } from 'react-virtuoso';
+import { Typography } from '@mui/material';
+import { customAxios } from '../../../../../Common/CustomAxios';
 
 const columns = [
   {
-    width: "90%",
-    label: "단계이름",
-    dataKey: "contentName",
+    width: '100%',
+    label: 'E-Class 리스트',
+    dataKey: 'contentName',
   },
 ];
 
@@ -28,7 +26,7 @@ const VirtuosoTableComponents = {
   Table: (props) => (
     <Table
       {...props}
-      sx={{ borderCollapse: "separate", tableLayout: "fixed" }}
+      sx={{ borderCollapse: 'separate', tableLayout: 'fixed' }}
     />
   ),
   TableHead,
@@ -49,8 +47,8 @@ function fixedHeaderContent() {
             align="center"
             style={{ width: column.width }}
             sx={{
-              backgroundColor: "#dcdcdc",
-              textAlign: "center",
+              backgroundColor: '#dcdcdc',
+              textAlign: 'center',
             }}
           >
             {column.label}
@@ -72,11 +70,11 @@ function rowContent(_index, row, handleClick, selectedRow) {
             align="left"
             onClick={() => handleClick(row.id, row.Step, row.stepNum)}
             sx={{
-              backgroundColor: selectedRow === row.id ? "#f0f0f0" : "inherit",
-              cursor: "pointer",
-              textAlign: "left",
-              color: "inherit",
-              pointerEvents: "auto",
+              backgroundColor: selectedRow === row.id ? '#f0f0f0' : 'inherit',
+              cursor: 'pointer',
+              textAlign: 'left',
+              color: 'inherit',
+              pointerEvents: 'auto',
             }}
           >
             {row[column.dataKey]}
@@ -98,32 +96,38 @@ export default function StudentAssignmentTable(props) {
       try {
         const requestData = {
           eclassUuid: props.eclassUuid,
-          username: localStorage.getItem("username"),
+          username: localStorage.getItem('username'),
         };
 
         const assignmentUuidResp = await customAxios.post(
-          "/api/eclass/student/assginmentUuid/get",
-          requestData
+          '/api/eclass/student/assginmentUuid/get',
+          requestData,
         );
 
         // console.log(
-        //   "Assignmnet Uuid 잘 나오나 확인 : " +
-        //     JSON.stringify(assignmentUuidResp, null, 2)
+        //   'Assignmnet Uuid 잘 나오나 확인 : ' +
+        //     JSON.stringify(assignmentUuidResp, null, 2),
         // );
 
         const assignmentResponse = await customAxios.get(
-          `/api/assignment/getstep?uuid=${assignmentUuidResp.data}`
+          `/api/assignment/getstep?uuid=${assignmentUuidResp.data}`,
         );
+        // console.log(
+        //   '수업 정보 확인 : ' + JSON.stringify(assignmentResponse, null, 2),
+        // );
 
         if (assignmentResponse.data.length > 0) {
           const assignmentData = assignmentResponse.data;
 
           const lectureResponse = await customAxios.get(
-            "/api/steps/getLectureContent"
+            '/api/steps/getLectureContent',
           );
+          // console.log(
+          //   '수업 자료 확인 : ' + JSON.stringify(lectureResponse, null, 2),
+          // );
 
           const filteredData = lectureResponse.data.filter(
-            (data) => data.uuid === props.lectureDataUuid
+            (data) => data.uuid === props.lectureDataUuid,
           );
 
           const updatedData = filteredData.flatMap((data) =>
@@ -132,7 +136,7 @@ export default function StudentAssignmentTable(props) {
                 .flatMap((assignment) => assignment.contents)
                 .find(
                   (assignmentContent) =>
-                    assignmentContent.stepNum === content.stepNum
+                    assignmentContent.stepNum === content.stepNum,
                 );
 
               return matchingAssignment
@@ -150,7 +154,7 @@ export default function StudentAssignmentTable(props) {
                     Step: data.stepName,
                     contents: content.contents,
                   };
-            })
+            }),
           );
 
           const allMatchingAssignments = filteredData.flatMap((data) =>
@@ -159,9 +163,9 @@ export default function StudentAssignmentTable(props) {
                 .flatMap((assignment) => assignment.contents)
                 .find(
                   (assignmentContent) =>
-                    assignmentContent.stepNum === content.stepNum
-                )
-            )
+                    assignmentContent.stepNum === content.stepNum,
+                ),
+            ),
           );
 
           const updatedFilteredData = filteredData.map((data) => {
@@ -169,7 +173,7 @@ export default function StudentAssignmentTable(props) {
               const matchingAssignment = allMatchingAssignments.find(
                 (assignmentContent) =>
                   assignmentContent &&
-                  assignmentContent.stepNum === content.stepNum
+                  assignmentContent.stepNum === content.stepNum,
               );
 
               return matchingAssignment ? matchingAssignment : content;
@@ -189,16 +193,16 @@ export default function StudentAssignmentTable(props) {
           return;
         }
       } catch (err) {
-        console.error("Error in first request:", err);
+        console.error('Error in first request:', err);
       }
 
       try {
         const lectureResponse = await customAxios.get(
-          "/api/steps/getLectureContent"
+          '/api/steps/getLectureContent',
         );
 
         const filteredData = lectureResponse.data.filter(
-          (data) => data.uuid === props.lectureDataUuid
+          (data) => data.uuid === props.lectureDataUuid,
         );
 
         const formattedLectureData = filteredData.flatMap((data) =>
@@ -208,7 +212,7 @@ export default function StudentAssignmentTable(props) {
             id: `${data.uuid}-${content.stepNum}`,
             Step: data.stepName,
             contents: content.contents,
-          }))
+          })),
         );
 
         setTableData(formattedLectureData);
@@ -216,19 +220,19 @@ export default function StudentAssignmentTable(props) {
 
         props.setTableData(filteredData);
       } catch (err) {
-        console.error("Error in second request:", err);
+        console.error('Error in second request:', err);
       }
     };
 
-    if (!isDataAvailable) {
-      fetchData();
-    }
+    // if (!isDataAvailable) {
+    fetchData();
+    // }
   }, []);
 
   useEffect(() => {
-    document.addEventListener("click", handleClickOutside);
+    document.addEventListener('click', handleClickOutside);
     return () => {
-      document.removeEventListener("click", handleClickOutside);
+      document.removeEventListener('click', handleClickOutside);
     };
   }, []);
 
@@ -240,7 +244,7 @@ export default function StudentAssignmentTable(props) {
   };
 
   const handleClickOutside = (event) => {
-    if (!event.target.closest(".virtuoso-table")) {
+    if (!event.target.closest('.virtuoso-table')) {
       setSelectedRow(null);
     }
   };
@@ -248,7 +252,6 @@ export default function StudentAssignmentTable(props) {
   const [openModal, setOpenModal] = useState(false);
 
   const handleAssignmentReport = () => {
-    // console.log("Assignment data:", JSON.stringify(allTableData, null, 2));
     setOpenModal(true);
   };
 
@@ -257,11 +260,14 @@ export default function StudentAssignmentTable(props) {
   };
 
   return (
-    <div>
-      <Typography variant="h5" sx={{ margin: "0 0 10px 0" }}>
-        {`${tableData[0]?.Step || "No Data"}`}
+    <div style={{ width: '100%', height: '550px', overflow: 'auto' }}>
+      <Typography variant="h5" sx={{ margin: '0 0 10px 0' }}>
+        {`${tableData[0]?.Step || 'No Data'}`}
       </Typography>
-      <Paper style={{ width: "100%" }} className="virtuoso-table">
+      <Paper
+        style={{ width: '100%', height: '500px', overflow: 'auto' }}
+        className="virtuoso-table"
+      >
         <TableContainer component={Paper}>
           <Table stickyHeader>{fixedHeaderContent()}</Table>
         </TableContainer>
@@ -275,39 +281,12 @@ export default function StudentAssignmentTable(props) {
               handleRowClick,
               selectedRow,
               props.stepCount,
-              isDataAvailable
+              isDataAvailable,
             )
           }
-          style={{ height: "20vh" }}
+          style={{ height: '100%' }}
         />
       </Paper>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleAssignmentReport}
-        style={{
-          width: "100%",
-          margin: "20px 0 0 0",
-          fontFamily: "'Asap', sans-serif", // 버튼에 Asap 폰트 적용
-          fontWeight: "600",
-          fontSize: "0.9rem",
-          color: "grey",
-          backgroundColor: "#feecfe",
-          borderRadius: "2.469rem",
-          border: "none",
-        }}
-      >
-        보고서
-      </Button>
-      <StudentReportModal
-        open={openModal}
-        onClose={handleCloseModal}
-        tableData={allTableData}
-        latestTableData={props.latestTableData}
-        assginmentCheck={props.assginmentCheck}
-        stepCount={props.stepCount}
-        eclassUuid={props.eclassUuid}
-      />
     </div>
   );
 }

@@ -1,105 +1,105 @@
-import * as React from "react";
-import Modal from "@mui/material/Modal";
-import Box from "@mui/material/Box";
-import { customAxios } from "../../../Common/CustomAxios";
-import { useGraphDataStore } from "../store/graphStore";
-import { useState, useEffect } from "react";
-import { Typography } from "@mui/material";
-import Button from "../component/DrawGraph/PublicDataButton";
-import ButtonClose from "../component/DrawGraph/ButtonClose";
+import * as React from 'react';
+import Modal from '@mui/material/Modal';
+import Box from '@mui/material/Box';
+import { customAxios } from '../../../Common/CustomAxios';
+import { useGraphDataStore } from '../store/graphStore';
+import { useState, useEffect } from 'react';
+import { Typography } from '@mui/material';
+import ButtonClose from '../component/DrawGraph/ButtonClose';
 
-import { useTabStore } from "../store/tabStore";
+import { useTabStore } from '../store/tabStore';
+import { convertToNumber } from '../store/utils/convertToNumber';
 
 const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
   width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
   boxShadow: 24,
   p: 4,
   zIndex: 1000,
 };
 
 const summaryTableStyle = {
-  width: "100%",
-  borderCollapse: "collapse",
-  border: "1px solid #ddd",
+  width: '100%',
+  borderCollapse: 'collapse',
+  border: '1px solid #ddd',
 };
 
 const tableCellStyle = {
-  border: "1px solid #ddd",
-  padding: "8px",
-  textAlign: "center",
+  border: '1px solid #ddd',
+  padding: '8px',
+  textAlign: 'center',
 };
 
 const tableHeaderStyle = {
   ...tableCellStyle, // spread operator to inherit styles from tableCellStyle
-  backgroundColor: "#fdeecf",
+  backgroundColor: '#fdeecf',
 };
 
 const tableRowStyle = {
-  backgroundColor: "#f2f2f2",
-  cursor: "pointer",
+  backgroundColor: '#f2f2f2',
+  cursor: 'pointer',
 };
 
 const tableRowHoverStyle = {
-  backgroundColor: "#ccc",
-  cursor: "pointer",
+  backgroundColor: '#ccc',
+  cursor: 'pointer',
 };
 
 const tableRowHoverOutStyle = {
-  backgroundColor: "#FFF",
-  cursor: "pointer",
+  backgroundColor: '#FFF',
+  cursor: 'pointer',
 };
 
 //항목 이름 (한국어 -> 영어)
 const engToKor = (name) => {
   const kor = {
     //수질 데이터
-    PTNM: "조사지점명",
-    WMYR: "측정연도",
-    WMOD: "측정월",
-    ITEMTEMP: "수온(°C)",
-    ITEMPH: "pH",
-    ITEMDOC: "DO(㎎/L)",
-    ITEMBOD: "BOD(㎎/L)",
-    ITEMCOD: "COD(㎎/L)",
-    ITEMTN: "총질소(㎎/L)",
-    ITEMTP: "총인(㎎/L)",
-    ITEMTRANS: "투명도(㎎/L)",
-    ITEMCLOA: "클로로필-a(㎎/L)",
-    ITEMEC: "전기전도도(µS/㎝)",
-    ITEMTOC: "TOC(㎎/L)",
+    PTNM: '조사지점명',
+    WMYR: '측정연도',
+    WMOD: '측정월',
+    ITEMTEMP: '수온(°C)',
+    ITEMPH: 'pH',
+    ITEMDOC: 'DO(㎎/L)',
+    ITEMBOD: 'BOD(㎎/L)',
+    ITEMCOD: 'COD(㎎/L)',
+    ITEMTN: '총질소(㎎/L)',
+    ITEMTP: '총인(㎎/L)',
+    ITEMTRANS: '투명도(㎎/L)',
+    ITEMCLOA: '클로로필-a(㎎/L)',
+    ITEMEC: '전기전도도(µS/㎝)',
+    ITEMTOC: 'TOC(㎎/L)',
 
     //대기질 데이터
-    stationName: "조사지점명",
-    dataTime: "측정일",
-    so2Value: "아황산가스 농도(ppm)",
-    coValue: "일산화탄소 농도(ppm)",
-    o3Value: "오존 농도(ppm)",
-    no2Value: "이산화질소 농도(ppm)",
-    pm10Value: "미세먼지(PM10) 농도(㎍/㎥)",
-    pm25Value: "미세먼지(PM2.5)  농도(㎍/㎥)",
+    stationName: '조사지점명',
+    dataTime: '측정일',
+    so2Value: '아황산가스 농도(ppm)',
+    coValue: '일산화탄소 농도(ppm)',
+    o3Value: '오존 농도(ppm)',
+    no2Value: '이산화질소 농도(ppm)',
+    pm10Value: '미세먼지(PM10) 농도(㎍/㎥)',
+    pm25Value: '미세먼지(PM2.5)  농도(㎍/㎥)',
 
     //SEED 데이터
-    measuredDate: "측정 시간",
-    location: "측정 장소",
-    unit: "소속",
-    period: "저장 주기",
-    username: "사용자명",
-    hum: "습도",
-    temp: "기온",
-    tur: "탁도",
-    ph: "pH",
-    dust: "미세먼지",
-    dox: "용존산소량",
-    co2: "이산화탄소",
-    lux: "조도",
-    hum_EARTH: "토양 습도",
-    pre: "기압",
+    measuredDate: '측정 시간',
+    location: '측정 장소',
+    unit: '소속',
+    period: '저장 주기',
+    username: '사용자명',
+    hum: '습도',
+    temp: '기온',
+    tur: '탁도',
+    ph: 'pH',
+    dust: '미세먼지',
+    dox: '용존산소량',
+    co2: '이산화탄소',
+    lux: '조도',
+    hum_EARTH: '토양 습도',
+    pre: '기압',
   };
   return kor[name] || name;
 };
@@ -109,15 +109,13 @@ export default function ForderListModal(props) {
   const [open, setOpen] = useState(false);
   const [forderType, setforderType] = useState();
 
-  const { tab, changeTab } = useTabStore();
-
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
     props.setModalOpen(false);
   };
 
-  const { setData } = useGraphDataStore();
+  const { setData, setVariables } = useGraphDataStore();
 
   useEffect(() => {
     const ModalOpen = props.modalOpen;
@@ -126,11 +124,11 @@ export default function ForderListModal(props) {
     }
     const allCheck = props.filteredData[0].total;
     const noneCheck = props.filteredData[0].none;
-    if (allCheck === "전체") {
-      console.log("타이틀 확인 : " + allCheck);
+    if (allCheck === '전체') {
+      console.log('타이틀 확인 : ' + allCheck);
       setforderType(allCheck);
     } else if (noneCheck) {
-      console.log("타이틀 확인 : " + noneCheck);
+      console.log('타이틀 확인 : ' + noneCheck);
 
       setforderType(noneCheck);
     } else {
@@ -139,74 +137,131 @@ export default function ForderListModal(props) {
   }, [props]);
 
   const getTable = (type, id) => {
-    if (type === "CUSTOM") {
+    if (type === 'CUSTOM') {
       customAxios
-        .get(`/dataLiteracy/customData/download/${id}`)
+        .get(`api/custom/${id}`)
         .then((res) => {
           //수정 필요
-          let headers = res.data.properties; // ['a','b','c]
+          const title = '타이틀 추가 해야 함';
+          let rows = 0;
+          let columns = 0;
+          const headerSet = new Set();
+          res.data.numericFields.forEach((table) => {
+            const key = Object.keys(table)[0];
+            headerSet.add(key);
+          });
 
-          let values = res.data.data; // [[1,2,3], [4,5,6]]
+          res.data.stringFields.forEach((table) => {
+            const key = Object.keys(table)[0];
+            headerSet.add(key);
+          });
 
-          // 최종 결과 생성 (헤더 + 값)
-          const recombined = [headers, ...values];
+          columns = headerSet.size;
+          rows =
+            (res.data.numericFields.length + res.data.stringFields.length) /
+            columns;
+          const variables = Array(columns);
 
-          setData(recombined);
-          // localStorage.setItem("data", JSON.stringify(recombined));
-          // window.location.reload();
+          const data = Array(rows + 1)
+            .fill()
+            .map(() => Array(columns).fill(0));
+
+          res.data.numericFields.forEach((table) => {
+            const key = Object.keys(table)[0];
+            if (table[key].order < columns) {
+              data[0][table[key].order] = key;
+              variables[table[key].order] = {
+                name: key,
+                type: 'Numeric',
+                isSelected: false,
+                isMoreSelected: false,
+                variableIndex: table[key].order,
+              };
+            }
+
+            data[Math.floor(table[key].order / columns) + 1][
+              table[key].order % columns
+            ] = convertToNumber(table[key].value);
+          });
+
+          res.data.stringFields.forEach((table) => {
+            const key = Object.keys(table)[0];
+            if (table[key].order < columns) {
+              data[0][table[key].order] = key;
+              variables[table[key].order] = {
+                name: key,
+                type: 'Categorical',
+                isSelected: false,
+                isMoreSelected: false,
+                variableIndex: table[key].order,
+              };
+            }
+            data[Math.floor(table[key].order / columns) + 1][
+              table[key].order % columns
+            ] = convertToNumber(table[key].value);
+          });
+          console.log(data);
+          setData(data, title, true, variables);
+
+          localStorage.setItem('data', JSON.stringify(data));
+          localStorage.setItem('title', JSON.stringify(title));
         })
         .catch((err) => console.log(err));
     } else {
-      let path = "";
-      if (type === "수질 데이터") {
+      let path = '';
+      if (type === '수질 데이터') {
         path = `/ocean-quality/mine/chunk?dataUUID=${id}`;
-      } else if (type === "대기질 데이터") {
+      } else if (type === '대기질 데이터') {
         path = `/air-quality/mine/chunk?dataUUID=${id}`;
-      } else if (type === "SEED") {
+      } else if (type === 'SEED') {
         path = `/seed/mine/chunk?dataUUID=${id}`;
-      } else if (type === "데이터없음") {
-        console.log("데이터 없음");
+      } else if (type === '데이터없음') {
+        console.log('데이터 없음');
         return;
       }
 
       customAxios
         .get(path)
         .then((res) => {
+          console.log(res.data);
           let headers = Object.keys(res.data[0]).filter(
             (key) =>
-              key !== "id" &&
-              key !== "dataUUID" &&
-              key !== "saveDate" &&
-              key !== "dateString" &&
-              key !== "sessionid" &&
-              key !== "unit"
+              key !== 'id' &&
+              key !== 'dataUUID' &&
+              key !== 'saveDate' &&
+              key !== 'dateString' &&
+              key !== 'sessionid' &&
+              key !== 'memo' &&
+              key !== 'dataLabel',
           );
 
           const attributesToCheck = [
-            "co2",
-            "dox",
-            "dust",
-            "hum",
-            "hum_EARTH",
-            "lux",
-            "ph",
-            "pre",
-            "temp",
-            "tur",
+            'co2',
+            'dox',
+            'dust',
+            'hum',
+            'hum_EARTH',
+            'lux',
+            'ph',
+            'pre',
+            'temp',
+            'tur',
           ];
 
           const keysToExclude = [
-            "id",
-            "dataUUID",
-            "saveDate",
-            "dateString",
-            "sessionid",
-            "unit",
+            'id',
+            'dataUUID',
+            'saveDate',
+            'dateString',
+            'sessionid',
+            'unit',
+            'memo',
+            'dataLabel',
           ];
 
           for (const attribute of attributesToCheck) {
             const isAllNone = res.data.every(
-              (item) => item[attribute] === -99999.0
+              (item) => item[attribute] === -99999.0,
             );
             if (isAllNone) {
               // 해당 속성이 모두 -99999.0일 때, keysToExclude에 추가(헤더에 따른 values도 제거해줘야함)
@@ -225,27 +280,22 @@ export default function ForderListModal(props) {
             const filteredItem = Object.keys(item)
               .filter((key) => !keysToExclude.includes(key))
               .reduce((obj, key) => {
-                obj[key] = item[key];
+                obj[key] = convertToNumber(item[key]);
                 return obj;
               }, {});
 
             console.log(
-              "값들이 어떻게 필터 되나 : " + Object.values(filteredItem)
+              '값들이 어떻게 필터 되나 : ' + Object.values(filteredItem),
             );
             return Object.values(filteredItem);
           });
-
+          console.log(values);
           // 최종 결과 생성 (헤더 + 값)
           const recombined = [headers, ...values];
-
-          setData(recombined);
+          console.log(recombined);
+          setData(recombined, '없음', true);
           // localStorage.setItem("data", JSON.stringify(recombined));
           // window.location.reload();
-
-          // 만약 그래프탭에서 바로 데이터를 바꾸면 테이블 탭으로 돌아가게 한다.
-          if (tab === "graph") {
-            changeTab("table");
-          }
         })
         .catch((err) => console.log(err));
     }
@@ -262,7 +312,7 @@ export default function ForderListModal(props) {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <Typography style={{ padding: "1rem", fontSize: "2rem" }}>
+          <Typography style={{ padding: '1rem', fontSize: '2rem' }}>
             {forderType}
           </Typography>
           <table style={summaryTableStyle}>
@@ -296,7 +346,7 @@ export default function ForderListModal(props) {
               ))}
             </tbody>
           </table>
-          <ButtonClose buttonName={"닫기"} handleClose={handleClose} />
+          <ButtonClose buttonName={'닫기'} handleClose={handleClose} />
         </Box>
       </Modal>
     </div>

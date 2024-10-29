@@ -184,7 +184,7 @@ const MyDataSummaryTable = ({ summary, getTable }) => {
       )}
 
       {/* 테이블을 감싸는 div에 고정 높이와 스크롤 설정 */}
-      <div style={{ height: '500px', overflowY: 'auto' }}>
+      <div style={{ height: '450px', overflowY: 'auto' }}>
         <table
           style={{
             width: '100%',
@@ -211,6 +211,22 @@ const MyDataSummaryTable = ({ summary, getTable }) => {
                 }}
               >
                 저장일
+              </th>
+              <th
+                scope="col"
+                key="title"
+                style={{
+                  width: '20%',
+                  padding: '10px',
+                  textAlign: 'left',
+                  backgroundColor: '#f8f9fa',
+                  borderBottom: '1px solid #ddd',
+                  position: 'sticky',
+                  top: '0',
+                  zIndex: 1,
+                }}
+              >
+                제목
               </th>
               <th
                 scope="col"
@@ -286,6 +302,15 @@ const MyDataSummaryTable = ({ summary, getTable }) => {
                   }}
                 >
                   {item.saveDate}
+                </td>
+                <td
+                  style={{
+                    padding: '10px',
+                    textAlign: 'left',
+                    borderBottom: '1px solid #ddd',
+                  }}
+                >
+                  {item.title}
                 </td>
                 <td
                   style={{

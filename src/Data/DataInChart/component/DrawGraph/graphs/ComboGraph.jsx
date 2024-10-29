@@ -167,43 +167,109 @@ function ComboGraph() {
     if (isPostive && isNegitive) {
       // 양수, 음수 다 있을 때
       setYScaleMinMaxValue([
-        Math.ceil(minValue / Math.pow(10, minValue.toString().length - 1)) *
-          Math.pow(10, minValue.toString().length - 1),
-        Math.ceil(maxValue / Math.pow(10, maxValue.toString().length - 1)) *
-          Math.pow(10, maxValue.toString().length - 1),
+
+        minValue ===
+        Math.ceil(
+          minValue / Math.pow(10, minValue.toString().split('.')[0].length - 2),
+        ) *
+          Math.pow(10, minValue.toString().split('.')[0].length - 2)
+          ? minValue - 1
+          : Math.ceil(
+              minValue /
+                Math.pow(10, minValue.toString().split('.')[0].length - 2),
+            ) * Math.pow(10, minValue.toString().split('.')[0].length - 2),
+        maxValue ===
+        Math.ceil(
+          maxValue / Math.pow(10, maxValue.toString().split('.')[0].length - 1),
+        ) *
+          Math.pow(10, maxValue.toString().split('.')[0].length - 1)
+          ? maxValue + 1
+          : Math.ceil(
+              maxValue /
+                Math.pow(10, maxValue.toString().split('.')[0].length - 1),
+            ) * Math.pow(10, maxValue.toString().split('.')[0].length - 1),
       ]);
       setYScaleValue([
-        Math.ceil(minValue / Math.pow(10, minValue.toString().length - 1)) *
-          Math.pow(10, minValue.toString().length - 1),
-        Math.ceil(maxValue / Math.pow(10, maxValue.toString().length - 1)) *
-          Math.pow(10, maxValue.toString().length - 1),
+        minValue ===
+        Math.ceil(
+          minValue / Math.pow(10, minValue.toString().split('.')[0].length - 2),
+        ) *
+          Math.pow(10, minValue.toString().split('.')[0].length - 2)
+          ? minValue - 1
+          : Math.ceil(
+              minValue /
+                Math.pow(10, minValue.toString().split('.')[0].length - 2),
+            ) * Math.pow(10, minValue.toString().split('.')[0].length - 2),
+        maxValue ===
+        Math.ceil(
+          maxValue / Math.pow(10, maxValue.toString().split('.')[0].length - 1),
+        ) *
+          Math.pow(10, maxValue.toString().split('.')[0].length - 1)
+          ? maxValue + 1
+          : Math.ceil(
+              maxValue /
+                Math.pow(10, maxValue.toString().split('.')[0].length - 1),
+            ) * Math.pow(10, maxValue.toString().split('.')[0].length - 1),
+
       ]);
     } else if (isPostive) {
       // 양수만 있을 때
       setYScaleMinMaxValue([
         0,
+
+        maxValue ===
         Math.ceil(
-          minValue / Math.pow(10, minValue.toString().split('.')[0].length - 1),
-        ) * Math.pow(10, minValue.toString().split('.')[0].length - 1),
+          maxValue / Math.pow(10, maxValue.toString().split('.')[0].length - 1),
+        ) *
+          Math.pow(10, maxValue.toString().split('.')[0].length - 1)
+          ? maxValue + 1
+          : Math.ceil(
+              maxValue /
+                Math.pow(10, maxValue.toString().split('.')[0].length - 1),
+            ) * Math.pow(10, maxValue.toString().split('.')[0].length - 1),
       ]);
       setYScaleValue([
         0,
+        maxValue ===
         Math.ceil(
           maxValue / Math.pow(10, maxValue.toString().split('.')[0].length - 1),
-        ) * Math.pow(10, maxValue.toString().split('.')[0].length - 1),
+        ) *
+          Math.pow(10, maxValue.toString().split('.')[0].length - 1)
+          ? maxValue + 1
+          : Math.ceil(
+              maxValue /
+                Math.pow(10, maxValue.toString().split('.')[0].length - 1),
+            ) * Math.pow(10, maxValue.toString().split('.')[0].length - 1),
+
       ]);
     } else if (isNegitive) {
       // 음수만 있을 때
       setYScaleMinMaxValue([
+
+        minValue ===
         Math.ceil(
-          minValue / Math.pow(10, minValue.toString().split('.')[0].length - 1),
-        ) * Math.pow(10, minValue.toString().split('.')[0].length - 1),
+          minValue / Math.pow(10, minValue.toString().split('.')[0].length - 2),
+        ) *
+          Math.pow(10, minValue.toString().split('.')[0].length - 2)
+          ? minValue - 1
+          : Math.ceil(
+              minValue /
+                Math.pow(10, minValue.toString().split('.')[0].length - 2),
+            ) * Math.pow(10, minValue.toString().split('.')[0].length - 2),
         0,
       ]);
       setYScaleValue([
+        minValue ===
         Math.ceil(
-          minValue / Math.pow(10, minValue.toString().split('.')[0].length - 1),
-        ) * Math.pow(10, minValue.toString().split('.')[0].length - 1),
+          minValue / Math.pow(10, minValue.toString().split('.')[0].length - 2),
+        ) *
+          Math.pow(10, minValue.toString().split('.')[0].length - 2)
+          ? minValue - 1
+          : Math.ceil(
+              minValue /
+                Math.pow(10, minValue.toString().split('.')[0].length - 2),
+            ) * Math.pow(10, minValue.toString().split('.')[0].length - 2),
+
         0,
       ]);
     }
@@ -235,47 +301,117 @@ function ComboGraph() {
     if (is2Postive && is2Negitive) {
       // 양수, 음수 다 있을 때
       setY2ScaleMinMaxValue([
-        Math.ceil(min2Value / Math.pow(10, min2Value.toString().length - 1)) *
-          Math.pow(10, min2Value.toString().length - 1),
-        Math.ceil(max2Value / Math.pow(10, max2Value.toString().length - 1)) *
-          Math.pow(10, max2Value.toString().length - 1),
+
+        min2Value ===
+        Math.ceil(
+          min2Value /
+            Math.pow(10, min2Value.toString().split('.')[0].length - 2),
+        ) *
+          Math.pow(10, min2Value.toString().split('.')[0].length - 2)
+          ? min2Value - 1
+          : Math.ceil(
+              min2Value /
+                Math.pow(10, min2Value.toString().split('.')[0].length - 2),
+            ) * Math.pow(10, min2Value.toString().split('.')[0].length - 2),
+        max2Value ===
+        Math.ceil(
+          max2Value /
+            Math.pow(10, max2Value.toString().split('.')[0].length - 1),
+        ) *
+          Math.pow(10, max2Value.toString().split('.')[0].length - 1)
+          ? max2Value + 1
+          : Math.ceil(
+              max2Value /
+                Math.pow(10, max2Value.toString().split('.')[0].length - 1),
+            ) * Math.pow(10, max2Value.toString().split('.')[0].length - 1),
       ]);
       setY2ScaleValue([
-        Math.ceil(min2Value / Math.pow(10, min2Value.toString().length - 1)) *
-          Math.pow(10, min2Value.toString().length - 1),
-        Math.ceil(max2Value / Math.pow(10, max2Value.toString().length - 1)) *
-          Math.pow(10, max2Value.toString().length - 1),
+        min2Value ===
+        Math.ceil(
+          min2Value /
+            Math.pow(10, min2Value.toString().split('.')[0].length - 2),
+        ) *
+          Math.pow(10, min2Value.toString().split('.')[0].length - 2)
+          ? min2Value - 1
+          : Math.ceil(
+              min2Value /
+                Math.pow(10, min2Value.toString().split('.')[0].length - 2),
+            ) * Math.pow(10, min2Value.toString().split('.')[0].length - 2),
+        max2Value ===
+        Math.ceil(
+          max2Value /
+            Math.pow(10, max2Value.toString().split('.')[0].length - 1),
+        ) *
+          Math.pow(10, max2Value.toString().split('.')[0].length - 1)
+          ? max2Value + 1
+          : Math.ceil(
+              max2Value /
+                Math.pow(10, max2Value.toString().split('.')[0].length - 1),
+            ) * Math.pow(10, max2Value.toString().split('.')[0].length - 1),
+
       ]);
     } else if (isPostive) {
       // 양수만 있을 때
       setY2ScaleMinMaxValue([
         0,
-        Math.ceil(
-          min2Value /
-            Math.pow(10, min2Value.toString().split('.')[0].length - 1),
-        ) * Math.pow(10, min2Value.toString().split('.')[0].length - 1),
-      ]);
-      setY2ScaleValue([
-        0,
+
+        max2Value ===
         Math.ceil(
           max2Value /
             Math.pow(10, max2Value.toString().split('.')[0].length - 1),
-        ) * Math.pow(10, max2Value.toString().split('.')[0].length - 1),
+        ) *
+          Math.pow(10, max2Value.toString().split('.')[0].length - 1)
+          ? max2Value + 1
+          : Math.ceil(
+              max2Value /
+                Math.pow(10, max2Value.toString().split('.')[0].length - 1),
+            ) * Math.pow(10, max2Value.toString().split('.')[0].length - 1),
+      ]);
+      setY2ScaleValue([
+        0,
+        max2Value ===
+        Math.ceil(
+          max2Value /
+            Math.pow(10, max2Value.toString().split('.')[0].length - 1),
+        ) *
+          Math.pow(10, max2Value.toString().split('.')[0].length - 1)
+          ? max2Value + 1
+          : Math.ceil(
+              max2Value /
+                Math.pow(10, max2Value.toString().split('.')[0].length - 1),
+            ) * Math.pow(10, max2Value.toString().split('.')[0].length - 1),
+
       ]);
     } else if (is2Negitive) {
       // 음수만 있을 때
       setY2ScaleMinMaxValue([
+
+        min2Value ===
         Math.ceil(
           min2Value /
-            Math.pow(10, min2Value.toString().split('.')[0].length - 1),
-        ) * Math.pow(10, min2Value.toString().split('.')[0].length - 1),
+            Math.pow(10, min2Value.toString().split('.')[0].length - 2),
+        ) *
+          Math.pow(10, min2Value.toString().split('.')[0].length - 2)
+          ? min2Value - 1
+          : Math.ceil(
+              min2Value /
+                Math.pow(10, min2Value.toString().split('.')[0].length - 2),
+            ) * Math.pow(10, min2Value.toString().split('.')[0].length - 2),
         0,
       ]);
       setY2ScaleValue([
+        min2Value ===
         Math.ceil(
           min2Value /
-            Math.pow(10, min2Value.toString().split('.')[0].length - 1),
-        ) * Math.pow(10, min2Value.toString().split('.')[0].length - 1),
+            Math.pow(10, min2Value.toString().split('.')[0].length - 2),
+        ) *
+          Math.pow(10, min2Value.toString().split('.')[0].length - 2)
+          ? min2Value - 1
+          : Math.ceil(
+              min2Value /
+                Math.pow(10, min2Value.toString().split('.')[0].length - 2),
+            ) * Math.pow(10, min2Value.toString().split('.')[0].length - 2),
+
         0,
       ]);
     }
@@ -324,7 +460,7 @@ function ComboGraph() {
         addSelectedYVariableIndexs(firstYIndex);
       }
     }
-    console.log(firstYIndex);
+
     if (!selectedMoreYVariableIndexs.length === 0) {
       const firstMoreYIndex = variables.findIndex(
         (variable) =>
@@ -464,6 +600,11 @@ function ComboGraph() {
               bottom: 10, // 제목 아래 여백
             },
           },
+          ticks: {
+            font: {
+              size: 20, // y축 단위 글꼴 크기
+            },
+          },
         },
         y2: {
           position: 'right',
@@ -487,6 +628,11 @@ function ComboGraph() {
               bottom: 10, // 제목 아래 여백
             },
           },
+          ticks: {
+            font: {
+              size: 20, // y축 단위 글꼴 크기
+            },
+          },
         },
       },
     });
@@ -505,10 +651,12 @@ function ComboGraph() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
+    <div
+      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+    >
       <div
         style={{
-          margin: '0 0 20px 650px', // 위아래 간격 추가
+          margin: '0 0 20px 200px', // 위아래 간격 추가
           padding: '10px 20px', // 내부 여백 추가
           color: '#333', // 텍스트 색상
           fontSize: '24px', // 제목 크기
@@ -518,7 +666,7 @@ function ComboGraph() {
       >
         {title}
       </div>
-      <div className="flex" style={{ width: '1600px' }}>
+      <div style={{ display: 'flex', width: '1600px' }}>
         {/* Y축 Dropdown */}
         <div
           style={{

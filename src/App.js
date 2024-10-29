@@ -62,10 +62,10 @@ function App() {
   }, []);
 
   return (
-    <>
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Header />
 
-      <div className="wrap">
+      <div style={{ margin: '10rem 0 0 0 ' }}>
         <Routes>
           {/*home*/}
           <Route index element={<Home />} />
@@ -150,7 +150,7 @@ function App() {
       </div>
 
       <Footer />
-    </>
+    </div>
   );
 }
 

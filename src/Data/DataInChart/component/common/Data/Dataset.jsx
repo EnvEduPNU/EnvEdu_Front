@@ -3,18 +3,21 @@ import * as Styled from './Styled';
 import { useGraphDataStore } from '../../../store/graphStore';
 import { sampleDatas } from '../../../data/sampleDatas';
 
-function Dataset({ setModalOpen, setDataCategory }) {
+function Dataset({ setModalOpen }) {
   const { setData, setTitle } = useGraphDataStore();
 
   const onClickBtn = (key) => {
     setData(sampleDatas[key], key);
     setTitle(key);
+
     localStorage.setItem('data', JSON.stringify(sampleDatas[key]));
     localStorage.setItem('title', JSON.stringify(key));
     console.log('ExpertDataSet localStorage에 저장 완료!');
 
+    console.log('데이터 내용 : ' + JSON.stringify(sampleDatas, null, 2));
+    console.log('키는? : ' + JSON.stringify(key, null, 2));
+
     setModalOpen(false);
-    setDataCategory('ExpertData');
   };
 
   return (

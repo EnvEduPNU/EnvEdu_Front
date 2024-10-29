@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   Paper,
   Typography,
@@ -9,9 +9,11 @@ import {
   DialogContent,
   DialogTitle,
   Grid,
-} from "@mui/material";
-import { customAxios } from "../../../../Common/CustomAxios";
-import { v4 as uuidv4 } from "uuid";
+} from '@mui/material';
+import { customAxios } from '../../../../Common/CustomAxios';
+import { v4 as uuidv4 } from 'uuid';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 function StudentReportModal({
   open,
@@ -27,15 +29,14 @@ function StudentReportModal({
 
   useEffect(() => {
     const fetchStudentId = async () => {
-      const username = localStorage.getItem("username");
+      const username = localStorage.getItem('username');
       try {
         const response = await customAxios.get(
-          `/api/student/getStudentId?username=${username}&uuid=${eclassUuid}`
+          `/api/student/getStudentId?username=${username}&uuid=${eclassUuid}`,
         );
         setStudentId(response.data);
-        console.log("과제 포함되어 있는 테이블의 학생Id : " + response.data);
       } catch (error) {
-        console.error("Error fetching student ID:", error);
+        console.error('Error fetching student ID:', error);
       }
     };
     fetchStudentId();
@@ -45,7 +46,6 @@ function StudentReportModal({
     const allContents = latestTableData
       ? latestTableData.flatMap((data) => data.contents)
       : tableData.flatMap((data) => data.contents);
-
     setData(allContents);
   }, [latestTableData, tableData]);
 
@@ -60,11 +60,7 @@ function StudentReportModal({
   };
 
   const handleSubmit = async () => {
-    console.log(
-      "textBoxValues 확인 : " + JSON.stringify(textBoxValues, null, 2)
-    );
-
-    const studentName = localStorage.getItem("username");
+    const studentName = localStorage.getItem('username');
     const dataToUse = latestTableData || tableData;
     const reportUuid = uuidv4();
 
@@ -78,7 +74,7 @@ function StudentReportModal({
         contentName: item.contentName,
         stepNum: item.stepNum,
         contents: item.contents.map((contentItem, contentIndex) => {
-          if (contentItem.type === "textBox") {
+          if (contentItem.type === 'textBox') {
             return {
               ...contentItem,
               content:
@@ -91,39 +87,64 @@ function StudentReportModal({
       })),
     }));
 
-    console.log("Final Submit:", JSON.stringify(updatedData, null, 2));
-    console.log("과제테이블 : " + assginmentCheck);
-    console.log("과제 uuid : " + dataToUse[0].uuid);
-
-    if (window.confirm("제출하시겠습니까?")) {
+    if (window.confirm('제출하시겠습니까?')) {
       try {
         const requestData = {
           reportUuid: reportUuid,
           studentId: studentId,
         };
 
-        // 보고서 제출 테이블에 저장
         await customAxios.post(
-          "/api/eclass/student/assignment/report/save",
-          requestData
+          '/api/eclass/student/assignment/report/save',
+          requestData,
         );
-        alert("제출 완료했습니다!");
+        alert('제출 완료했습니다!');
 
-        // 원본 테이블에도 저장
         if (assginmentCheck) {
-          await customAxios.put("/api/report/update", updatedData);
-          console.log("수정 완료");
+          await customAxios.put('/api/report/update', updatedData);
         } else {
-          await customAxios.post("/api/report/save", updatedData);
-          console.log("새로 저장 완료");
+          await customAxios.post('/api/report/save', updatedData);
         }
 
         window.location.reload();
       } catch (error) {
-        console.error("오류가 발생했습니다: ", error);
-        alert("제출에 실패했습니다. 다시 시도해 주세요.");
+        console.error('오류가 발생했습니다: ', error);
+        alert('제출에 실패했습니다. 다시 시도해 주세요.');
       }
     }
+  };
+
+  const handleSavePDF = async () => {
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    let yOffset = 10;
+
+    // 타이틀과 이름을 먼저 캡처 및 추가
+    const titleElement = document.getElementById('title-section');
+    const titleCanvas = await html2canvas(titleElement, { scale: 2 });
+    const titleImgData = titleCanvas.toDataURL('image/png');
+    const imgWidth = 190;
+    const imgHeight = (titleCanvas.height * imgWidth) / titleCanvas.width;
+
+    pdf.addImage(titleImgData, 'PNG', 10, yOffset, imgWidth, imgHeight);
+    yOffset += imgHeight + 10;
+
+    for (let stepIndex = 0; stepIndex < data.length; stepIndex++) {
+      const stepElement = document.getElementById(`step-content-${stepIndex}`);
+      const canvas = await html2canvas(stepElement, {
+        scale: 2,
+        useCORS: true,
+      });
+      const imgData = canvas.toDataURL('image/png');
+      const stepImgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      if (yOffset + stepImgHeight > pdf.internal.pageSize.height) {
+        pdf.addPage();
+        yOffset = 10;
+      }
+      pdf.addImage(imgData, 'PNG', 10, yOffset, imgWidth, stepImgHeight);
+      yOffset += stepImgHeight + 10;
+    }
+    pdf.save('report.pdf');
   };
 
   return (
@@ -132,49 +153,53 @@ function StudentReportModal({
       <DialogContent
         dividers
         style={{
-          maxHeight: "80vh",
-          overflowY: "auto",
+          maxHeight: '80vh',
+          overflowY: 'auto',
         }}
       >
         <Paper
+          id="report-content"
           style={{
-            width: "100%",
-            padding: "20px",
-            backgroundColor: "white",
+            width: '100%',
+            padding: '20px',
+            backgroundColor: 'white',
           }}
         >
-          <Typography variant="h3" sx={{ marginBottom: "20px" }}>
-            {tableData[0]?.stepName}
-          </Typography>
-          <Typography
-            variant="h6"
-            sx={{ marginBottom: "40px", textAlign: "right" }}
-          >
-            {tableData[0]?.username}
-          </Typography>
+          <div id="title-section">
+            <Typography variant="h3" sx={{ marginBottom: '20px' }}>
+              {tableData[0]?.stepName}
+            </Typography>
+            <Typography
+              variant="h6"
+              sx={{ marginBottom: '40px', textAlign: 'right' }}
+            >
+              {tableData[0]?.username}
+            </Typography>
+          </div>
           <Grid container spacing={3}>
             {data.map((stepData, idx) => (
-              <Grid item xs={6} key={stepData.stepNum}>
+              <Grid item xs={12} key={stepData.stepNum}>
                 <Paper
+                  id={`step-content-${idx}`}
                   style={{
-                    padding: "20px",
-                    boxShadow: "none",
-                    marginBottom: "30px",
-                    backgroundColor: "#ffffff",
+                    padding: '20px',
+                    boxShadow: 'none',
+                    marginBottom: '10px', // 간격을 10px로 설정
+                    backgroundColor: '#ffffff',
                   }}
                 >
                   <div>
-                    {stepData.contents.map((content, idx) => (
+                    {stepData.contents.map((content, contentIdx) => (
                       <RenderContent
-                        key={`${stepData.stepNum}-${idx}`} // 고유한 키 추가
+                        key={`${stepData.stepNum}-${contentIdx}`}
                         content={content}
                         textBoxValue={
-                          textBoxValues[stepData.stepNum]?.[idx] || ""
+                          textBoxValues[stepData.stepNum]?.[contentIdx] || ''
                         }
                         setTextBoxValue={(id, text) =>
                           handleTextBoxSubmit(stepData.stepNum, id, text)
                         }
-                        index={idx}
+                        index={contentIdx}
                       />
                     ))}
                   </div>
@@ -185,37 +210,14 @@ function StudentReportModal({
         </Paper>
       </DialogContent>
       <DialogActions>
-        <Button
-          onClick={onClose}
-          color="secondary"
-          sx={{
-            marginRight: 1,
-            fontFamily: "'Asap', sans-serif",
-            fontWeight: "600",
-            fontSize: "0.9rem",
-            color: "grey",
-            backgroundColor: "#feecfe",
-            borderRadius: "2.469rem",
-            border: "none",
-          }}
-        >
+        <Button onClick={onClose} color="secondary">
           취소
         </Button>
-        <Button
-          onClick={handleSubmit}
-          color="primary"
-          sx={{
-            marginRight: 1,
-            fontFamily: "'Asap', sans-serif",
-            fontWeight: "600",
-            fontSize: "0.9rem",
-            color: "grey",
-            backgroundColor: "#feecfe",
-            borderRadius: "2.469rem",
-            border: "none",
-          }}
-        >
+        <Button onClick={handleSubmit} color="primary">
           제출
+        </Button>
+        <Button onClick={handleSavePDF} color="primary">
+          PDF 저장
         </Button>
       </DialogActions>
     </Dialog>
@@ -228,20 +230,20 @@ function RenderContent({ content, textBoxValue, setTextBoxValue, index }) {
   };
 
   switch (content.type) {
-    case "title":
+    case 'title':
       return (
         <Typography variant="h6" gutterBottom>
           {content.content}
         </Typography>
       );
-    case "html":
+    case 'html':
       return (
         <div
-          style={{ whiteSpace: "pre-wrap" }}
+          style={{ whiteSpace: 'pre-wrap' }}
           dangerouslySetInnerHTML={{ __html: content.content }}
         />
       );
-    case "textBox":
+    case 'textBox':
       return (
         <TextField
           value={textBoxValue || content.content}
@@ -251,32 +253,47 @@ function RenderContent({ content, textBoxValue, setTextBoxValue, index }) {
           multiline
           minRows={3}
           maxRows={5}
-          sx={{ marginBottom: "20px" }}
+          sx={{ marginBottom: '20px' }}
           InputProps={{
             readOnly: true,
           }}
         />
       );
-    case "img":
+    case 'img':
       return (
-        <div style={{ textAlign: "center", marginBottom: "20px" }}>
+        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
           <img
+            crossOrigin="anonymous"
             src={content.content}
             alt="Assignment Content"
-            style={{ width: content.x / 2, height: content.y / 2 }}
+            style={{ width: '100%' }}
           />
         </div>
       );
-    case "data":
+    case 'video':
+      return (
+        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+          <iframe
+            width="100%"
+            height="300"
+            src={content.content}
+            title="YouTube video player"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </div>
+      );
+    case 'data':
       return <div>{renderElement(content.content)}</div>;
-    case "emptyBox":
+    case 'emptyBox':
       return (
         <div
           style={{
-            border: "1px dashed #ddd",
-            padding: "10px",
-            textAlign: "center",
-            margin: "10px 0",
+            border: '1px dashed #ddd',
+            padding: '10px',
+            textAlign: 'center',
+            margin: '10px 0',
           }}
         >
           <Typography variant="h6" color="textSecondary">
@@ -290,7 +307,7 @@ function RenderContent({ content, textBoxValue, setTextBoxValue, index }) {
 }
 
 function renderElement(node) {
-  if (typeof node !== "object" || node === null) {
+  if (typeof node !== 'object' || node === null) {
     return node;
   }
 
@@ -302,7 +319,7 @@ function renderElement(node) {
     { ...props, key },
     Array.isArray(children)
       ? children.map(renderElement)
-      : renderElement(children)
+      : renderElement(children),
   );
 }
 

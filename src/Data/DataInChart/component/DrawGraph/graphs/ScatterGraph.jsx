@@ -79,6 +79,18 @@ function ScatterGraph() {
     scales: {
       y: {
         beginAtZero: true,
+        ticks: {
+          font: {
+            size: 20, // y축 단위 글꼴 크기
+          },
+        },
+      },
+      x: {
+        ticks: {
+          font: {
+            size: 20, // y축 단위 글꼴 크기
+          },
+        },
       },
       // 값 범위 조절 문제
       // x: {
@@ -184,12 +196,12 @@ function ScatterGraph() {
       style={{
         display: 'flex',
         flexDirection: 'column',
+        alignItems: 'center',
       }}
     >
       <div
         style={{
-          margin: '0 0 20px 650px', // 위아래 간격 추가
-          padding: '10px 20px', // 내부 여백 추가
+          margin: '0 0 20px 150px', // 위아래 간격 추가
           color: '#333', // 텍스트 색상
           fontSize: '24px', // 제목 크기
           fontWeight: 'bold', // 글씨 두껍게
@@ -198,7 +210,7 @@ function ScatterGraph() {
       >
         {title}
       </div>
-      <div className="flex" style={{ width: '1425px' }}>
+      <div style={{ display: 'flex', width: '1425px' }}>
         <div
           style={{
             display: 'flex',

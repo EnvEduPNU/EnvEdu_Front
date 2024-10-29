@@ -14,7 +14,7 @@ function EClassLivePage() {
   console.log(' 권한 : ' + role);
 
   return (
-    <div style={{ margin: '0 20vh 0 20vh' }}>
+    <div style={{ margin: '0 15vh 0 15vh' }}>
       {role === 'ROLE_EDUCATOR' && <TeacherClassroomPage />}
       {role === 'ROLE_STUDENT' && <StudentClassroomPage />}
     </div>

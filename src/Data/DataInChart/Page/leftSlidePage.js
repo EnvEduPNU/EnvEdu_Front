@@ -1,20 +1,32 @@
+import { Typography } from '@mui/material';
 import './leftSlidePage.scss';
-import Header from '../component/Header/Header';
-import MyDataDropdown from './MyDataDropdown';
-import ExpertDataButton from './ExpertDataButton';
+import ExpertDataList from './ExpertDataList';
+import MyDataList from './MyDataList';
 
 export default function LeftSlidePage({ setDataCategory }) {
   return (
-    <div className="e-class-mydata">
-      <div className="myData-left">
-        <div className="myData-summary">
-          <ExpertDataButton setDataCategory={setDataCategory} />
-          {/* <MyDataButton buttonName={"Assignmnet"} />
-          <MyDataButton buttonName={"Submitted"} /> */}
-          {/* DATA 드롭다운 */}
-          <MyDataDropdown />
-        </div>
+    <div style={{ margin: '0 5rem 0 3rem' }}>
+      <div>
+        <Typography
+          sx={{
+            fontSize: '3vh',
+            color: 'black',
+          }}
+        >
+          Example
+        </Typography>
+
+        <ExpertDataList setDataCategory={setDataCategory} />
       </div>
+      <Typography
+        sx={{
+          fontSize: '3vh',
+          color: 'black',
+        }}
+      >
+        My Data
+      </Typography>
+      <MyDataList />
     </div>
   );
 }

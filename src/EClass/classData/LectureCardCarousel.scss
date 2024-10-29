@@ -57,9 +57,13 @@
   background-color: transparent;
   color: #333;
   border: none;
-  position: absolute;
+  position: relative;
   top: 10%;
-  transform: translateY(-50%);
+}
+
+/* hover 상태에서 배경색 변화 없음 */
+.carousel-arrow:hover {
+  background-color: transparent;
 }
 
 .lecture-content {

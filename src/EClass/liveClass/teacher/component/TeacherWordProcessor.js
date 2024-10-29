@@ -9,6 +9,10 @@ import {
   Typography,
   TextField,
   IconButton,
+  Box,
+  Menu,
+  MenuItem,
+  Modal,
 } from '@mui/material';
 import { ImageActions } from '@xeger/quill-image-actions';
 import { ImageFormats } from '@xeger/quill-image-formats';
@@ -19,6 +23,10 @@ import { useCreateLectureSourceStore } from '../../store/CreateLectureSourceStor
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import './TeacherWordProcessor.scss';
+import { useNavigate } from 'react-router-dom';
+
+import * as XLSX from 'xlsx'; // 엑셀 파일 처리를 위한 라이브러리
+import ExcelDataModal from '../../../../Data/MyData/modal/ExcelDataModal';
 
 Quill.register('modules/imageActions', ImageActions);
 Quill.register('modules/imageFormats', ImageFormats);
@@ -106,24 +114,33 @@ export default function TeacherWordProcessor({
 
   const [isUpdated, setIsUpdated] = useState(false); // 첫 번째 useEffect 완료 상태
 
+  const [excelModalOpen, setExcelModalOpen] = useState(false); // 엑셀 모달 상태 추가
+  const [excelData, setExcelData] = useState([]); // 엑셀 데이터를 저장할 상태
+
   const quillRef = useRef(null);
+  const navigate = useNavigate();
+
+  const [modalOpen, setModalOpen] = useState(false); // 메뉴 대신 사용할 모달 상태
+
+  const handleModalOpen = () => setModalOpen(true);
+  const handleModalClose = () => setModalOpen(false);
 
   // 첫 번째 useEffect: stepperStepName 배열을 업데이트
   useEffect(() => {
-    if (stepperStepName && stepperStepName.length > 0) {
-      stepperStepName.forEach((step, index) => {
-        updateContent(index, step); // 각 step을 updateContent로 업데이트
-      });
+    // if (stepperStepName && stepperStepName.length > 0) {
+    //   stepperStepName.forEach((step, index) => {
+    //     updateContent(index, step); // 각 step을 updateContent로 업데이트
+    //   });
 
-      setIsUpdated(true); // 업데이트 완료 후 isUpdated를 true로 설정
-    }
-  }, [stepperStepName]);
+    setIsUpdated(true); // 업데이트 완료 후 isUpdated를 true로 설정
+    // }
+  }, []);
 
   useEffect(() => {
     if (stepperStepName && stepperStepName.length > 0) {
       setIsUpdated(true);
     }
-  }, [activeStep]);
+  }, [activeStep, stepperStepName]);
 
   // 두 번째 useEffect: isUpdated가 true일 때 실행
   useEffect(() => {
@@ -137,29 +154,40 @@ export default function TeacherWordProcessor({
 
       const stepNumbers = contents.map((contentss) => contentss.stepNum);
 
+      console.log('전체 스텝수: ' + stepCount);
       console.log('step 넘버들: ' + stepNumbers);
       console.log('activeStep : ' + activeStep);
 
+      let stepData = null;
+
       // store에서 현재 activeStep에 해당하는 내용을 로드
       if (stepNumbers.includes(activeStep)) {
-        let stepData = null;
+        // 현재 스토어에서 로드
+        contents.forEach((contentss) => {
+          if (contentss.stepNum === activeStep) {
+            stepData = contentss;
+          }
+        });
 
-        if (stepperStepName !== undefined) {
-          stepperStepName.forEach((contentss) => {
-            if (contentss.stepNum === activeStep) {
-              stepData = contentss;
-            }
-          });
-        } else {
-          contents.forEach((contentss) => {
-            if (contentss.stepNum === activeStep) {
-              stepData = contentss;
-            }
-          });
-        }
+        console.log(
+          '스토어에서 불러온 stepData : ' + JSON.stringify(stepData, null, 2),
+        );
+      } else if (stepperStepName.length > 0) {
+        // 이미 만들어진 E-Class에서 로드
+        stepperStepName.forEach((contentss) => {
+          if (contentss.stepNum === activeStep) {
+            stepData = contentss;
+          }
+        });
 
-        console.log('처음 stepData : ' + JSON.stringify(stepData, null, 2));
+        console.log(
+          '이전 스텝 저장소에서 불러온 stepData : ' +
+            JSON.stringify(stepData, null, 2),
+        );
+      }
 
+      // stepData 가 존재할 경우 처리
+      if (stepData) {
         const contentsArray = Array.isArray(stepData.contents)
           ? stepData.contents
           : [stepData.contents];
@@ -185,7 +213,49 @@ export default function TeacherWordProcessor({
 
       setIsUpdated(false);
     }
-  }, [isUpdated, activeStep]); // isUpdated와 activeStep 변경 시 실행
+  }, [isUpdated, activeStep, contents, stepperStepName]);
+
+  // isUpdated와 activeStep 변경 시 실행
+  // 엑셀 파일 업로드 및 데이터 처리 메서드
+  const handleExcelUpload = (event) => {
+    const file = event.target.files[0];
+    if (!file) return; // 파일이 선택되지 않으면 리턴
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+      const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+      // 엑셀 데이터를 상태로 저장하고 모달을 열기
+      setExcelData(jsonData);
+      setExcelModalOpen(true);
+    };
+    reader.readAsArrayBuffer(file);
+  };
+
+  // 엑셀 모달 닫기
+  const handleExcelModalClose = () => {
+    setExcelModalOpen(false);
+  };
+
+  // 컴퓨터에서 엑셀 파일 불러오기
+  const handleAddDataChartFromComputer = () => {
+    handleModalClose();
+    const fileInput = document.createElement('input');
+    fileInput.setAttribute('type', 'file');
+    fileInput.setAttribute('accept', '.xlsx, .xls');
+    fileInput.onchange = handleExcelUpload;
+    fileInput.click();
+  };
+
+  // MyData에서 불러오기
+  const handleAddDataChartFromMyData = () => {
+    handleModalClose();
+    alert('MyData에서 데이터를 불러옵니다.'); // 여기에서 실제 MyData 호출 처리
+    // MyData를 불러오는 로직을 추가할 수 있습니다.
+  };
 
   const handleChange = (content, delta, source, editor) => {
     setValue(content);
@@ -245,13 +315,55 @@ export default function TeacherWordProcessor({
     setValue('');
   };
 
-  const handleAddTitle = () => {
-    const newContents = localContents.filter((item) => item.type !== 'title');
-    setLocalContents([{ type: 'title', content: contentName }, ...newContents]); // title을 항상 맨 위에 추가
-  };
+  // const handleAddTitle = () => {
+  //   const newContents = localContents.filter((item) => item.type !== 'title');
+  //   setLocalContents([{ type: 'title', content: contentName }, ...newContents]); // title을 항상 맨 위에 추가
+  // };
 
   const handleAddTextBox = () => {
     setLocalContents([...localContents, { type: 'textBox', content: '' }]); // 새로운 빈 텍스트 박스를 추가
+  };
+
+  // 모달에서 데이터를 확정한 후 content에 넣기 위한 함수
+  const handleSaveExcelData = () => {
+    console.log('로컬 컨텐츠 확인 : ' + JSON.stringify(localContents, null, 2));
+    // 이미 'dataInChartButton'이 있는지 확인
+    const isChartButtonAdded = localContents.some(
+      (content) => content.type === 'dataInChartButton',
+    );
+
+    // 이미 추가된 경우 경고 메시지를 표시하고 추가를 중단
+    if (isChartButtonAdded) {
+      alert('그래프 그리기 버튼은 한 번만 추가할 수 있습니다.');
+      return;
+    }
+    setLocalContents([
+      ...localContents,
+      { type: 'dataInChartButton', content: '' }, // 엑셀 데이터를 content에 저장
+    ]);
+  };
+
+  // 모달에서 데이터를 확정한 후 content에 넣기 위한 함수
+  const handleAfterExcelData = (EclassTable) => {
+    console.log('원본 컨텐츠: ' + JSON.stringify(localContents, null, 2));
+    const updatedContents = [...localContents];
+    const lastIndex = updatedContents.length - 1;
+
+    console.log(
+      '테이블 저장 잘 됐나 확인 1: ' + JSON.stringify(EclassTable, null, 2),
+    );
+
+    // 마지막에 추가된 dataInChartButton에 데이터를 저장
+    if (updatedContents[lastIndex].type === 'dataInChartButton') {
+      updatedContents[lastIndex].content = EclassTable.dataUUID; // 테이블 데이터를 content에 저장
+    }
+
+    console.log(
+      '테이블 저장 잘 됐나 확인 2: ' + JSON.stringify(updatedContents, null, 2),
+    );
+
+    setLocalContents(updatedContents);
+    setExcelModalOpen(false); // 모달 닫기
   };
 
   const handleTextBoxChange = (index, event) => {
@@ -407,7 +519,7 @@ export default function TeacherWordProcessor({
     }
   };
 
-  const handleNext = async () => {
+  const handleNext = async (moveEclass) => {
     const stepData = {
       stepName: lectureName,
       stepNum: activeStep,
@@ -464,12 +576,8 @@ export default function TeacherWordProcessor({
           stepData.contents.push(item);
         }
 
-        // item은 localContent것이고 stepData는 store에 저장할 content이다.
-        // 따라서 현재 localContent에 있는 것을 stepData에 옮겨주는 작업 필요
-        // 그런데 문제는 위의 deleteImage 부분에서 stepData에 모두 저장을 해주어 file이 존재할텐데
-        // 아래의 최종 저장 Data쪽에서 이미지가 안나온다.
         if (item.type === 'file') {
-          console.log('이미지 이름 나와야할텐데 : ' + item.content.name);
+          console.log('이미지 이름 : ' + item.content.name);
           stepData.contents.push(item);
         }
       }
@@ -493,7 +601,7 @@ export default function TeacherWordProcessor({
           updateContent(activeStep, stepData);
         }
 
-        alert('Step 업데이트 완료 activeStep : ' + activeStep);
+        alert('Step 업데이트 완료');
         console.log('업데이트된 데이터:', stepData);
       } else {
         addContent(stepData);
@@ -502,7 +610,8 @@ export default function TeacherWordProcessor({
       }
     }
 
-    handleNextStep();
+    // 상위 컴포넌트의 저장 메서드
+    handleNextStep(moveEclass);
 
     setLocalContents([]);
     setContentName('');
@@ -765,9 +874,136 @@ export default function TeacherWordProcessor({
               <DeleteIcon />
             </IconButton>
           </div>
+        ) : item.type === 'dataInChartButton' ? (
+          <>
+            <div style={{ width: '100%' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  width: '100%',
+                }}
+              >
+                {/* 그래프 그리기 버튼 */}
+                <Button
+                  sx={{
+                    backgroundColor: '#6200ea',
+                    color: 'white',
+                    padding: '10px 20px',
+                    borderRadius: '20px',
+                    boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+                    fontWeight: 'bold',
+                    fontSize: '1rem',
+                    transition: 'background-color 0.3s ease',
+                    '&:hover': {
+                      backgroundColor: '#3700b3',
+                    },
+                  }}
+                  onClick={handleNavigate}
+                >
+                  그래프 그리기
+                </Button>
+
+                {/* 삭제 버튼 */}
+                <IconButton
+                  onClick={() => handleDeleteContent(index)}
+                  aria-label="delete"
+                  color="secondary"
+                  sx={{ width: '30px' }}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </div>
+
+              {/* 큰 박스 추가 */}
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  width: '100%',
+                  height: '300px',
+                  mt: 3,
+                  borderRadius: '15px',
+                  backgroundColor: '#f3f3f3',
+                  boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+                }}
+              >
+                {/* + 버튼 */}
+                <Button
+                  sx={{
+                    backgroundColor: '#6200ea',
+                    color: 'white',
+                    borderRadius: '50%',
+                    width: '60px',
+                    height: '60px',
+                    fontSize: '2rem',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+                    '&:hover': {
+                      backgroundColor: '#3700b3',
+                    },
+                  }}
+                  onClick={handleModalOpen}
+                >
+                  +
+                </Button>
+              </Box>
+
+              <Modal
+                open={modalOpen}
+                onClose={handleModalClose}
+                aria-labelledby="data-modal-title"
+                aria-describedby="data-modal-description"
+              >
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: 400,
+                    bgcolor: 'background.paper',
+                    border: '2px solid #000',
+                    boxShadow: 24,
+                    p: 4,
+                  }}
+                >
+                  <Typography id="data-modal-title" variant="h6" component="h2">
+                    데이터 추가
+                  </Typography>
+                  <Button onClick={handleAddDataChartFromComputer}>
+                    내 컴퓨터에서 불러오기
+                  </Button>
+                  <Button onClick={handleAddDataChartFromMyData}>
+                    MyData에서 불러오기
+                  </Button>
+                </Box>
+              </Modal>
+
+              {/* 엑셀 데이터를 처리하는 모달 */}
+              {excelModalOpen && (
+                <ExcelDataModal
+                  open={excelModalOpen}
+                  handleClose={handleExcelModalClose}
+                  data={excelData}
+                  eclassFlag={excelModalOpen}
+                  onSave={handleAfterExcelData} // 모달에서 저장된 데이터를 처리
+                />
+              )}
+            </div>
+          </>
         ) : null}
       </div>
     );
+  };
+
+  const handleNavigate = () => {
+    const id = 'drawGraph';
+    navigate(`/data-in-chart?id=${id}`); // 쿼리 파라미터로 id 전달
   };
 
   const moveItem = (dragIndex, hoverIndex) => {
@@ -780,107 +1016,106 @@ export default function TeacherWordProcessor({
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <Container>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            width: '70rem',
-            height: '36.5rem',
-          }}
-        >
-          {/* 왼쪽에 과제 만드는 미리보기란에 랜더링 되는 곳 */}
-          <Paper
-            style={{
-              padding: 20,
-              width: '100%',
-              height: '100%',
-              boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
-              overflowY: 'auto',
-            }}
-          >
-            {localContents.map((item, index) => (
-              <DraggableItem
-                key={index}
-                index={index}
-                item={item}
-                moveItem={moveItem}
-                handleDeleteContent={handleDeleteContent}
-                handleTextBoxChange={handleTextBoxChange}
+      <Container disableGutters sx={{ minHeight: '20rem' }}>
+        {stepCount >= activeStep ? (
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                width: '100%',
+                height: '36.5rem',
+              }}
+            >
+              {/* 왼쪽에 과제 만드는 미리보기란에 랜더링 되는 곳 */}
+              <Paper
+                style={{
+                  padding: 20,
+                  width: '100%',
+                  height: '100%',
+                  boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+                  overflowY: 'auto',
+                }}
+              >
+                {localContents.map((item, index) => (
+                  <DraggableItem
+                    key={index}
+                    index={index}
+                    item={item}
+                    moveItem={moveItem}
+                    handleDeleteContent={handleDeleteContent}
+                    handleTextBoxChange={handleTextBoxChange}
+                  />
+                ))}
+              </Paper>
+
+              {/* 오른쪽 WordProcessor 편집창 */}
+              <ReactQuill
+                ref={quillRef}
+                value={value}
+                style={{ width: '55%', height: '88%', margin: '0 0 0 10px' }}
+                onChange={handleChange}
+                modules={modules}
+                formats={formats}
+                placeholder="내용을 입력하세요..."
               />
-            ))}
-          </Paper>
+            </div>
 
-          {/* 오른쪽 WordProcessor 편집창 */}
-          <ReactQuill
-            ref={quillRef}
-            value={value}
-            style={{ width: '55%', height: '88%', margin: '0 0 0 10px' }}
-            onChange={handleChange}
-            modules={modules}
-            formats={formats}
-            placeholder="내용을 입력하세요..."
-          />
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            width: '100%',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'flex-start',
-              width: '100%',
-            }}
-          >
-            {/* 데이터 추가하기 버튼 */}
-            <DataTableButton
-              summary={summary}
-              onSelectData={handleSelectData}
-            />
-
-            <Button
-              variant="contained"
-              color="primary"
-              className="yellow-btn" // yellow-btn 클래스 적용
-              onClick={handleAddTextBox}
-              sx={{ margin: '20px 10px 0 0', width: '10rem' }}
+            <div
+              style={{
+                display: 'flex',
+                width: '100%',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+              }}
             >
-              답변 박스 추가
-            </Button>
-          </div>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-              margin: '20px 0 0 0',
-              width: '100%',
-            }}
-          >
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleSave}
-              sx={{ width: '10rem', marginRight: '1rem' }}
-            >
-              포함하기
-            </Button>
-
-            <>
-              {stepCount < activeStep ? (
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-start',
+                  width: '100%',
+                }}
+              >
+                {/* 데이터 추가하기 버튼 */}
+                <DataTableButton
+                  summary={summary}
+                  onSelectData={handleSelectData}
+                />
                 <Button
                   variant="contained"
-                  color="secondary"
-                  onClick={handleNext}
-                  sx={{ width: '10rem' }}
+                  color="primary"
+                  className="yellow-btn" // yellow-btn 클래스 적용
+                  onClick={handleAddTextBox}
+                  sx={{ margin: '20px 10px 0 0', width: '10rem' }}
                 >
-                  Finish
+                  답변 박스 추가
                 </Button>
-              ) : (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleSaveExcelData}
+                  sx={{ margin: '20px 10px 0 0', width: '10rem' }}
+                >
+                  그래프 그리기 추가
+                </Button>
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  margin: '20px 0 0 0',
+                  width: '100%',
+                }}
+              >
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleSave}
+                  sx={{ width: '10rem', marginRight: '1rem' }}
+                >
+                  포함하기
+                </Button>
+
                 <Button
                   variant="contained"
                   color="secondary"
@@ -889,10 +1124,67 @@ export default function TeacherWordProcessor({
                 >
                   다음 단계
                 </Button>
-              )}
-            </>
+              </div>
+            </div>
           </div>
-        </div>
+        ) : (
+          <>
+            {' '}
+            {/* 설명 및 버튼 박스 */}
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                border: '1px solid lightgray',
+                borderRadius: '8px',
+                padding: '20px',
+                marginTop: '20px',
+                height: '20rem',
+              }}
+            >
+              <Typography variant="h5">
+                Finish 버튼으로 E-Class 생성을 완료하세요.
+              </Typography>
+
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  width: '100%',
+                  maxWidth: '600px',
+                  marginTop: '20px',
+                }}
+              >
+                <Button
+                  variant="contained"
+                  color="primary"
+                  sx={{
+                    flexGrow: 1,
+                    marginRight: '10px',
+                    borderRadius: '8px',
+                  }}
+                  onClick={() => handleNext(true)}
+                >
+                  E-Class 바로 실행
+                </Button>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  sx={{
+                    flexGrow: 1.5,
+                    borderRadius: '8px',
+                  }}
+                  onClick={handleNext}
+                >
+                  Finish
+                </Button>
+              </Box>
+            </Box>
+          </>
+        )}
       </Container>
     </DndProvider>
   );

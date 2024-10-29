@@ -21,6 +21,7 @@ export function StudentStepCompnent(props) {
   const [studentId, setStudentId] = useState(null);
   const [assignmentCheckTime, setAssignmentCheckTime] = useState(false);
   const [sessionId, setSessionId] = useState();
+  const [assginmentFetch, setAssginmentFetch] = useState(false);
 
   const stompClient = useRef(null);
   const assginmentStompClient = useRef(null);
@@ -32,6 +33,11 @@ export function StudentStepCompnent(props) {
     setStepCount(props.stepCount);
     setSessionId(props.sessionIdState);
   }, [props]);
+
+  // 하위 스텝 제출을 하여 보고서가 생성 됐을 때, 보고서 버튼쪽에서 fetch 되게 할 boolean 상태 값
+  useEffect(() => {
+    props.setAssginmentFetch(assginmentFetch);
+  }, [assginmentFetch]);
 
   // WebSocket 연결 및 페이지 변경에 따른 처리
   useEffect(() => {
@@ -169,6 +175,7 @@ export function StudentStepCompnent(props) {
           studentId={studentId}
           sessionIdState={props.sessionIdState}
           eclassUuid={props.eclassUuid}
+          setAssginmentFetch={setAssginmentFetch}
         />
       ) : (
         <DefaultPageComponent />
