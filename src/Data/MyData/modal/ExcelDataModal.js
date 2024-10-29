@@ -86,13 +86,14 @@ const ExcelDataModal = ({ open, handleClose, data, eclassFlag, onSave }) => {
 
     // 각 열의 순서를 기록할 index
     let columnIndex = 0;
-
+    console.log(data);
     data.forEach((row) => {
       const numericFields = {};
       const stringFields = {};
 
       for (const key in row) {
         // 고정된 필드는 처리하지 않고 동적 필드만 처리
+        console.log(key);
         if (
           key !== 'dataUUID' &&
           key !== 'saveDate' &&
@@ -103,28 +104,32 @@ const ExcelDataModal = ({ open, handleClose, data, eclassFlag, onSave }) => {
           // 헤더에서 설정한 데이터 타입에 따라 저장할 필드 분리
           if (dataTypes[key] === 'Numeric') {
             // Numeric으로 설정된 필드는 숫자로 변환하여 numericFields에 저장
-            numericFields[key] = {
-              value: Number(row[key]), // 실제 값
-              order: columnIndex, // 순서
-            };
+            numericFieldsList.push({
+              [key]: {
+                value: Number(row[key]), // 실제 값
+                order: columnIndex, // 순서
+              },
+            });
           } else {
             // Categoric으로 설정된 필드는 문자열로 변환하여 stringFields에 저장
-            stringFields[key] = {
-              value: String(row[key]), // 실제 값
-              order: columnIndex, // 순서
-            };
+            stringFieldsList.push({
+              [key]: {
+                value: String(row[key]), // 실제 값
+                order: columnIndex, // 순서
+              },
+            });
           }
           columnIndex += 1; // 순서를 증가시킴
         }
       }
 
       // 각 행의 필드를 List에 추가
-      if (Object.keys(numericFields).length > 0) {
-        numericFieldsList.push(numericFields);
-      }
-      if (Object.keys(stringFields).length > 0) {
-        stringFieldsList.push(stringFields);
-      }
+      // if (Object.keys(numericFields).length > 0) {
+      //   numericFieldsList.push(numericFields);
+      // }
+      // if (Object.keys(stringFields).length > 0) {
+      //   stringFieldsList.push(stringFields);
+      // }
     });
 
     const jsonData = {
