@@ -116,17 +116,16 @@ function StudentReportModal({
 
   const handleSavePDF = async () => {
     const pdf = new jsPDF('p', 'mm', 'a4');
-    let yOffset = 10;
+    let yOffset = 20;
 
-    // 타이틀과 이름을 먼저 캡처 및 추가
     const titleElement = document.getElementById('title-section');
     const titleCanvas = await html2canvas(titleElement, { scale: 2 });
     const titleImgData = titleCanvas.toDataURL('image/png');
     const imgWidth = 190;
     const imgHeight = (titleCanvas.height * imgWidth) / titleCanvas.width;
 
-    pdf.addImage(titleImgData, 'PNG', 10, yOffset, imgWidth, imgHeight);
-    yOffset += imgHeight + 10;
+    pdf.addImage(titleImgData, 'PNG', 20, yOffset, imgWidth, imgHeight);
+    yOffset += imgHeight + 20;
 
     for (let stepIndex = 0; stepIndex < data.length; stepIndex++) {
       const stepElement = document.getElementById(`step-content-${stepIndex}`);
@@ -138,10 +137,44 @@ function StudentReportModal({
         pdf.addPage();
         yOffset = 10;
       }
-      pdf.addImage(imgData, 'PNG', 10, yOffset, imgWidth, stepImgHeight);
-      yOffset += stepImgHeight + 10;
+      pdf.addImage(imgData, 'PNG', 20, yOffset, imgWidth, stepImgHeight);
+      yOffset += stepImgHeight + 20;
     }
     pdf.save('report.pdf');
+  };
+  // PDF 저장 함수
+  const handleSavePDFWithImageId = async () => {
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    let yOffset = 20;
+    const imgWidth = 190;
+
+    for (let index = 0; index < data.length; index++) {
+      const elementId = `capture-image-${index}`;
+      const imgElement = document.getElementById(elementId);
+
+      // 이미지가 렌더링된 경우 캡처
+      if (imgElement) {
+        try {
+          const canvas = await html2canvas(imgElement, {
+            scale: 1, // 해상도 조정
+          });
+          const imgData = canvas.toDataURL('image/jpeg', 0.7); // JPEG로 용량 최적화
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+          if (yOffset + imgHeight > pdf.internal.pageSize.height) {
+            pdf.addPage();
+            yOffset = 10;
+          }
+
+          pdf.addImage(imgData, 'JPEG', 10, yOffset, imgWidth, imgHeight);
+          yOffset += imgHeight + 10;
+        } catch (error) {
+          console.error('Error capturing image for PDF:', error);
+        }
+      }
+    }
+
+    pdf.save('selected_images_report.pdf');
   };
 
   return (
@@ -181,7 +214,7 @@ function StudentReportModal({
                   style={{
                     padding: '20px',
                     boxShadow: 'none',
-                    marginBottom: '10px', // 간격을 10px로 설정
+                    marginBottom: '10px',
                     backgroundColor: '#ffffff',
                   }}
                 >
@@ -215,6 +248,9 @@ function StudentReportModal({
         </Button>
         <Button onClick={handleSavePDF} color="primary">
           PDF 저장
+        </Button>
+        <Button onClick={handleSavePDFWithImageId} color="primary">
+          이미지 PDF 저장
         </Button>
       </DialogActions>
     </Dialog>
@@ -258,7 +294,10 @@ function RenderContent({ content, textBoxValue, setTextBoxValue, index }) {
       );
     case 'img':
       return (
-        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+        <div
+          id={`capture-image-${index}`} // 이미지에 고유한 ID 추가
+          style={{ textAlign: 'center', marginBottom: '20px' }}
+        >
           <img
             src={content.content}
             alt="Assignment Content"
