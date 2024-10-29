@@ -32,9 +32,9 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
     }
 
     // data가 없는 경우 DataInChartMainPage를 렌더링
-    if (!data || data.length === 0) {
-      return <DataInChartPage />;
-    }
+    // if (!data || data.length === 0) {
+    //   return <DataInChartPage />;
+    // }
   }, [data]);
 
   useEffect(() => {
@@ -445,71 +445,130 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
         </caption>
         <thead>
           <tr>
-            {['', ...modeificationHeaders].map((header, headerIndex) => (
-              <th
-                key={headerIndex}
-                style={{
-                  border: '1px solid rgba(34, 36, 38, 0.15)',
-                  boxShadow: '0 8px 5px -5px rgba(0,0,0,0.3)',
-                  zIndex: 30,
-                  padding: '0.75rem 0.5rem',
-                  textAlign: 'center',
-                  position: 'relative',
-                }}
-              >
-                <div
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                  }}
-                >
-                  <div className="inline-flex items-center space-x-2">
-                    <span className="text-xl">{header}</span>
-
-                    {/* 열 삭제 버튼 (휴지통 아이콘) */}
-                    <button
-                      className="ml-2 px-2 py-1 text-gray-700 bg-gray-100 rounded hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400"
-                      onClick={() => handleDeleteColumn(headerIndex)}
-                    >
-                      <AiOutlineDelete
-                        size={16}
-                        className="text-black font-bold"
-                      />
-                    </button>
-                  </div>
-
-                  <button
-                    onClick={() => handleDeleteColumn(headerIndex)}
+            {['', ...modeificationHeaders].map((header, headerIndex) => {
+              if (headerIndex !== 0)
+                return (
+                  <th
+                    key={headerIndex}
                     style={{
-                      marginLeft: '0.5rem',
-                      padding: '0.25rem 0.5rem',
-                      color: '#4a4a4a',
-                      backgroundColor: '#f5f5f5',
-                      borderRadius: '0.375rem',
-                      cursor: 'pointer',
-                      border: 'none',
-                      outline: 'none',
+                      border: '1px solid rgba(34, 36, 38, 0.15)',
+                      boxShadow: '0 8px 5px -5px rgba(0,0,0,0.3)',
+                      zIndex: 30,
+                      padding: '0.75rem 0.5rem',
+                      textAlign: 'center',
+                      position: 'relative',
                     }}
-                    onMouseOver={(e) =>
-                      (e.target.style.backgroundColor = '#e0e0e0')
-                    }
-                    onMouseOut={(e) =>
-                      (e.target.style.backgroundColor = '#f5f5f5')
-                    }
                   >
-                    <AiOutlineDelete size={16} />
-                  </button>
-                </div>
+                    <div
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                      }}
+                    >
+                      <span style={{ fontSize: '1.25rem' }}>{header}</span>
 
-                <button
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 px-2 py-1 text-sm text-gray-700 bg-gray-100 rounded hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400"
-                  onClick={() => handleMoveColumnRight(headerIndex)}
-                >
-                  ▶
-                </button>
-              </th>
-            ))}
+                      <button
+                        onClick={() => handleDeleteColumn(headerIndex)}
+                        style={{
+                          marginLeft: '0.5rem',
+                          padding: '0.25rem 0.5rem',
+                          color: '#4a4a4a',
+                          backgroundColor: '#f5f5f5',
+                          borderRadius: '0.375rem',
+                          cursor: 'pointer',
+                          border: 'none',
+                          outline: 'none',
+                        }}
+                        onMouseOver={(e) =>
+                          (e.target.style.backgroundColor = '#e0e0e0')
+                        }
+                        onMouseOut={(e) =>
+                          (e.target.style.backgroundColor = '#f5f5f5')
+                        }
+                      >
+                        <AiOutlineDelete size={16} />
+                      </button>
+                    </div>
+
+                    <button
+                      onClick={() => handleMoveColumnLeft(headerIndex)}
+                      style={{
+                        position: 'absolute',
+                        left: '1rem',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        padding: '0.25rem 0.5rem',
+                        fontSize: '0.875rem',
+                        color: '#4a4a4a',
+                        backgroundColor: '#f5f5f5',
+                        borderRadius: '0.375rem',
+                        cursor: 'pointer',
+                        border: 'none',
+                        outline: 'none',
+                      }}
+                      onMouseOver={(e) =>
+                        (e.target.style.backgroundColor = '#e0e0e0')
+                      }
+                      onMouseOut={(e) =>
+                        (e.target.style.backgroundColor = '#f5f5f5')
+                      }
+                    >
+                      ◀
+                    </button>
+
+                    <button
+                      onClick={() => handleMoveColumnRight(headerIndex)}
+                      style={{
+                        position: 'absolute',
+                        right: '1rem',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        padding: '0.25rem 0.5rem',
+                        fontSize: '0.875rem',
+                        color: '#4a4a4a',
+                        backgroundColor: '#f5f5f5',
+                        borderRadius: '0.375rem',
+                        cursor: 'pointer',
+                        border: 'none',
+                        outline: 'none',
+                      }}
+                      onMouseOver={(e) =>
+                        (e.target.style.backgroundColor = '#e0e0e0')
+                      }
+                      onMouseOut={(e) =>
+                        (e.target.style.backgroundColor = '#f5f5f5')
+                      }
+                    >
+                      ▶
+                    </button>
+                  </th>
+                );
+              else
+                return (
+                  <th
+                    key={headerIndex}
+                    style={{
+                      border: '1px solid rgba(34, 36, 38, 0.15)',
+                      boxShadow: '0 8px 5px -5px rgba(0,0,0,0.3)',
+                      zIndex: 30,
+                      padding: '0.75rem 0.5rem',
+                      textAlign: 'center',
+                      position: 'relative',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                      }}
+                    >
+                      <span style={{ fontSize: '1.25rem' }}>{header}</span>
+                    </div>
+                  </th>
+                );
+            })}
           </tr>
         </thead>
         <tbody>
