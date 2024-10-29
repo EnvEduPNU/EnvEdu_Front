@@ -876,49 +876,82 @@ export default function TeacherWordProcessor({
           </div>
         ) : item.type === 'dataInChartButton' ? (
           <>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                width: '100%',
-              }}
-            >
-              <Button
-                sx={{
-                  backgroundColor: '#6200ea', // 버튼 배경색 (보라색)
-                  color: 'white', // 텍스트 색상
-                  padding: '10px 20px', // 패딩
-                  borderRadius: '20px', // 버튼의 모서리를 둥글게
-                  boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', // 그림자 효과
-                  fontWeight: 'bold', // 글씨 굵기
-                  fontSize: '1rem', // 글씨 크기
-                  transition: 'background-color 0.3s ease', // 배경색 전환 효과
-                  '&:hover': {
-                    backgroundColor: '#3700b3', // hover 시 배경색 (어두운 보라색)
-                  },
+            <div style={{ width: '100%' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  width: '100%',
                 }}
-                onClick={handleNavigate}
               >
-                그래프 그리기
-              </Button>
-              <Button
+                {/* 그래프 그리기 버튼 */}
+                <Button
+                  sx={{
+                    backgroundColor: '#6200ea',
+                    color: 'white',
+                    padding: '10px 20px',
+                    borderRadius: '20px',
+                    boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+                    fontWeight: 'bold',
+                    fontSize: '1rem',
+                    transition: 'background-color 0.3s ease',
+                    '&:hover': {
+                      backgroundColor: '#3700b3',
+                    },
+                  }}
+                  onClick={handleNavigate}
+                >
+                  그래프 그리기
+                </Button>
+
+                {/* 삭제 버튼 */}
+                <IconButton
+                  aria-label="delete"
+                  color="secondary"
+                  sx={{ width: '30px' }}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </div>
+
+              {/* 큰 박스 추가 */}
+              <Box
                 sx={{
-                  backgroundColor: '#6200ea', // 버튼 배경색 (보라색)
-                  color: 'white', // 텍스트 색상
-                  borderRadius: '10rem', // 버튼의 모서리를 둥글게
-                  boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', // 그림자 효과
-                  fontWeight: 'bold', // 글씨 굵기
-                  fontSize: '1rem', // 글씨 크기
-                  transition: 'background-color 0.3s ease', // 배경색 전환 효과
-                  '&:hover': {
-                    backgroundColor: '#3700b3', // hover 시 배경색 (어두운 보라색)
-                  },
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  width: '100%',
+                  height: '300px',
+                  mt: 3,
+                  borderRadius: '15px',
+                  backgroundColor: '#f3f3f3',
+                  boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
                 }}
-                onClick={handleModalOpen} // 버튼 클릭 시 메뉴 열기
               >
-                +
-              </Button>
+                {/* + 버튼 */}
+                <Button
+                  sx={{
+                    backgroundColor: '#6200ea',
+                    color: 'white',
+                    borderRadius: '50%',
+                    width: '60px',
+                    height: '60px',
+                    fontSize: '2rem',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+                    '&:hover': {
+                      backgroundColor: '#3700b3',
+                    },
+                  }}
+                  onClick={handleModalOpen}
+                >
+                  +
+                </Button>
+              </Box>
+
               <Modal
                 open={modalOpen}
                 onClose={handleModalClose}
@@ -960,14 +993,6 @@ export default function TeacherWordProcessor({
                   onSave={handleAfterExcelData} // 모달에서 저장된 데이터를 처리
                 />
               )}
-              <IconButton
-                onClick={() => handleDeleteContent(index)}
-                aria-label="delete"
-                color="secondary"
-                sx={{ width: '30px' }}
-              >
-                <DeleteIcon />
-              </IconButton>
             </div>
           </>
         ) : null}
