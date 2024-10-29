@@ -45,6 +45,7 @@ const NumericTypes = new Set([
   '조도',
   '토양 습도',
   '기압',
+
 ]);
 
 const CategoricalTypes = new Set([
@@ -59,6 +60,7 @@ const CategoricalTypes = new Set([
   '측정월',
   '측정일',
   '소속',
+
 ]);
 
 export const selectVariableType = (name) => {

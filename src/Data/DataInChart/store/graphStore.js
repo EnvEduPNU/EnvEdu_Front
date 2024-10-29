@@ -49,6 +49,7 @@ export const useGraphDataStore = create((set, get) => ({
               isSelected: false,
               isMoreSelected: false,
               variableIndex: index,
+
             })),
             title,
             selectedYVariableIndexs: [],
@@ -56,6 +57,7 @@ export const useGraphDataStore = create((set, get) => ({
             selctedXVariableIndex: -1,
           };
       }
+
 
       return {
         ...state,

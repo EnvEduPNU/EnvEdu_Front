@@ -131,6 +131,9 @@ function ScatterGraph() {
         selectXVariableIndex(findedXindex);
       }
     }
+
+    console.log(data);
+    console.log(findedYindex, findedXindex);
   }, [data, graphIdx]);
 
   // 새로운 Dropdown을 추가하는 함수

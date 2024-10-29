@@ -137,6 +137,7 @@ function LineGraph() {
     if (isPostive && isNegitive) {
       // 양수, 음수 다 있을 때
       setYScaleMinMaxValue([
+
         minValue ===
         Math.ceil(
           minValue / Math.pow(10, minValue.toString().split('.')[0].length - 2),
@@ -179,11 +180,13 @@ function LineGraph() {
               maxValue /
                 Math.pow(10, maxValue.toString().split('.')[0].length - 1),
             ) * Math.pow(10, maxValue.toString().split('.')[0].length - 1),
+
       ]);
     } else if (isPostive) {
       // 양수만 있을 때
       setYScaleMinMaxValue([
         0,
+
         maxValue ===
         Math.ceil(
           maxValue / Math.pow(10, maxValue.toString().split('.')[0].length - 1),
@@ -207,10 +210,12 @@ function LineGraph() {
               maxValue /
                 Math.pow(10, maxValue.toString().split('.')[0].length - 1),
             ) * Math.pow(10, maxValue.toString().split('.')[0].length - 1),
+
       ]);
     } else if (isNegitive) {
       // 음수만 있을 때
       setYScaleMinMaxValue([
+
         minValue ===
         Math.ceil(
           minValue / Math.pow(10, minValue.toString().split('.')[0].length - 2),
@@ -234,6 +239,7 @@ function LineGraph() {
               minValue /
                 Math.pow(10, minValue.toString().split('.')[0].length - 2),
             ) * Math.pow(10, minValue.toString().split('.')[0].length - 2),
+
         0,
       ]);
     }
