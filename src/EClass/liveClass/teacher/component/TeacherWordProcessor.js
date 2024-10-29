@@ -907,6 +907,7 @@ export default function TeacherWordProcessor({
 
                 {/* 삭제 버튼 */}
                 <IconButton
+                  onClick={() => handleDeleteContent(index)}
                   aria-label="delete"
                   color="secondary"
                   sx={{ width: '30px' }}
