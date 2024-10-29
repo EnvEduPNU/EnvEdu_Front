@@ -3,13 +3,14 @@ import { customAxios } from '../../Common/CustomAxios';
 import { engToKor } from './engToKor';
 import * as XLSX from 'xlsx';
 import { useNavigate } from 'react-router-dom';
+import { IconButton, Button, Typography } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
 
-const DataTable = ({ type, id }) => {
+const DataTable = ({ type, id, handleMenuToggle }) => {
   const [details, setDetails] = useState([]); // 초기 값을 빈 배열로 설정
   const [headers, setHeaders] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [isFull, setIsFull] = useState(false);
-  const [isCustom, setIsCustom] = useState(false);
 
   const navigate = useNavigate();
 
@@ -30,7 +31,6 @@ const DataTable = ({ type, id }) => {
           );
 
           setDetails(normalizedData); // 유효한 배열을 설정
-          setIsCustom(true); // 커스텀 데이터 플래그 설정
 
           // `numericFields`와 `stringFields`를 order에 따라 정렬 후, 테이블 헤더로 추가
           const orderedFields = [];
@@ -166,40 +166,59 @@ const DataTable = ({ type, id }) => {
   return (
     <>
       {details.length !== 0 ? (
-        <div style={{ position: 'relative' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div>
+          <Typography variant="h3">My Data</Typography>
+
+          <div>
+            {/* 메뉴 아이콘 버튼 */}
+            <IconButton onClick={handleMenuToggle}>
+              <MenuIcon fontSize="large" />
+            </IconButton>
             {/* 엑셀 다운로드 버튼 */}
-            <button
+            <Button
               className="excel-download"
               onClick={handleDownload}
               style={{ fontSize: '12px', padding: '5px 10px' }}
             >
               엑셀 파일로 저장
-            </button>
-            {/* <button
+            </Button>
+            <button
               className="excel-download"
               onClick={() => navigate(-1)} // 뒤로가기 기능
               style={{ fontSize: '12px', padding: '5px 10px' }}
             >
               뒤로가기
-            </button> */}
+            </button>
           </div>
           <table
             border="1"
             className="myData-detail"
-            style={{ tableLayout: 'fixed', width: '100%' }}
+            style={{
+              tableLayout: 'fixed',
+              width: '100%',
+              borderCollapse: 'collapse',
+              margin: '10px 0',
+            }}
           >
             <thead>
               <tr>
                 {headers.map((header) => (
                   <th
                     key={header}
-                    style={{ width: `${100 / headers.length}%` }}
+                    style={{
+                      width: `${100 / headers.length}%`,
+                      padding: '8px',
+                      backgroundColor: '#f4f6f8',
+                      color: '#333',
+                      fontWeight: 'bold',
+                      textAlign: 'center',
+                      borderBottom: '2px solid #e0e0e0',
+                    }}
                   >
                     {engToKor(header)}
                   </th>
                 ))}
-                <th style={{ width: '50px' }}>
+                <th style={{ width: '50px', textAlign: 'center' }}>
                   <input
                     type="checkbox"
                     onChange={handleFullCheck}
@@ -210,86 +229,45 @@ const DataTable = ({ type, id }) => {
             </thead>
             <tbody>
               {details.map((row, rowIndex) => {
-                const totalFields = [];
-
-                headers.forEach((header) => {
-                  // numericFields의 값을 개별 셀에 넣음
-                  row.numericFields
-                    ?.map((field) => field[header])
-                    .filter(Boolean)
-                    .forEach((field) => {
-                      totalFields.push({
-                        value: field.value || '',
-                        order: field.order,
-                      });
-                    });
-
-                  // stringFields의 값을 개별 셀에 넣음
-                  row.stringFields
-                    ?.map((field) => field[header])
-                    .filter(Boolean)
-                    .forEach((field) => {
-                      totalFields.push({
-                        value: field.value || '',
-                        order: field.order,
-                      });
-                    });
-
-                  // 직접 할당된 값이 있으면 그 값도 추가
-                  if (row[header]) {
-                    totalFields.push({ value: row[header], order: -1 }); // order: -1로 직접 할당된 값을 구분
-                  }
-                });
-
-                // totalFields를 order 순으로 정렬
-                totalFields.sort((a, b) => a.order - b.order);
-
                 const rows = [];
                 let currentRow = [];
 
-                // totalFields 배열을 헤더의 수에 맞게 나누어 각 tr 생성
-                totalFields.forEach((field, fieldIndex) => {
+                headers.forEach((header) => {
                   currentRow.push(
-                    <td key={`cell-${rowIndex}-${fieldIndex}`}>
-                      {field.value}
+                    <td
+                      key={`${rowIndex}-${header}`}
+                      style={{
+                        padding: '8px',
+                        textAlign: 'center',
+                        color: '#555',
+                        borderBottom: '1px solid #ddd',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {row[header] || ''}
                     </td>,
                   );
-
-                  // 헤더 수에 맞게 각 tr을 생성
-                  if (currentRow.length === headers.length) {
-                    rows.push(
-                      <tr key={`row-${rowIndex}-${fieldIndex}`}>
-                        {currentRow}
-                        {/* 각 tr에 체크박스 추가 */}
-                        <td>
-                          <input
-                            type="checkbox"
-                            checked={selectedItems.includes(row)}
-                            onChange={() => handleViewCheckBoxChange(row)}
-                          />
-                        </td>
-                      </tr>,
-                    );
-                    currentRow = []; // 새로운 행을 위해 초기화
-                  }
                 });
 
-                // 마지막에 남은 값들이 있으면 그들을 위한 tr 추가
-                if (currentRow.length > 0) {
-                  rows.push(
-                    <tr key={`row-${rowIndex}-remaining`}>
-                      {currentRow}
-                      {/* 각 tr에 체크박스 추가 */}
-                      <td>
-                        <input
-                          type="checkbox"
-                          checked={selectedItems.includes(row)}
-                          onChange={() => handleViewCheckBoxChange(row)}
-                        />
-                      </td>
-                    </tr>,
-                  );
-                }
+                rows.push(
+                  <tr
+                    key={`row-${rowIndex}`}
+                    style={{
+                      backgroundColor: rowIndex % 2 === 0 ? '#f9f9f9' : '#fff',
+                    }}
+                  >
+                    {currentRow}
+                    <td style={{ textAlign: 'center', padding: '8px' }}>
+                      <input
+                        type="checkbox"
+                        checked={selectedItems.includes(row)}
+                        onChange={() => handleViewCheckBoxChange(row)}
+                      />
+                    </td>
+                  </tr>,
+                );
 
                 return rows;
               })}

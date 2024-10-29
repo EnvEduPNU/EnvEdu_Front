@@ -20,18 +20,21 @@ import {
 import { v4 as uuidv4 } from 'uuid'; // uuid 라이브러리에서 v4 임포트
 import { customAxios } from '../../../Common/CustomAxios'; // Axios import
 
-const ExcelDataModal = ({ open, handleClose, data, eclassFlag, onSave }) => {
+const ExcelDataModal = ({ open, handleClose, data, eclassFlag }) => {
   const [dataTypes, setDataTypes] = useState(
     Object.keys(data[0]).reduce((acc, key, index) => {
-      acc[key] = 'Categoric'; // 기본값은 Categorical로 설정
+      acc[key] = 'Categoric';
       return acc;
     }, {}),
   );
 
   const [editingCell, setEditingCell] = useState(null);
   const [editedValue, setEditedValue] = useState('');
-  const [editedRowIndex, setEditedRowIndex] = useState(null); // 어떤 행을 편집하는지 추적
-  const [originalValue, setOriginalValue] = useState(''); // 원래 값 저장
+  const [editedRowIndex, setEditedRowIndex] = useState(null);
+  const [originalValue, setOriginalValue] = useState('');
+  const [title, setTitle] = useState(''); // title 상태 추가
+  const [memo, setMemo] = useState(''); // memo 상태 추가
+  const [showSaveForm, setShowSaveForm] = useState(false); // 저장 폼 표시 여부
 
   // 데이터 타입 변경 핸들러
   const handleDataTypeChange = (key, value) => {
@@ -41,11 +44,10 @@ const ExcelDataModal = ({ open, handleClose, data, eclassFlag, onSave }) => {
           alert(
             `"${key}" 열의 값 중 비숫자 값이 존재합니다. "${row[key]}"는 유효하지 않습니다.`,
           );
-          return; // 유효하지 않은 값이 있는 경우 변경을 거부
+          return;
         }
       }
     }
-
     setDataTypes((prev) => ({
       ...prev,
       [key]: value,
@@ -55,45 +57,37 @@ const ExcelDataModal = ({ open, handleClose, data, eclassFlag, onSave }) => {
   // 셀 클릭 시 편집 상태로 전환
   const handleCellClick = (key, value, rowIndex) => {
     setEditingCell(key);
-    setOriginalValue(value); // 현재 값을 원래 값으로 저장
-    setEditedValue(value); // 현재 값을 편집 필드에 설정
-    setEditedRowIndex(rowIndex); // 편집 중인 행의 인덱스를 설정
+    setOriginalValue(value);
+    setEditedValue(value);
+    setEditedRowIndex(rowIndex);
   };
 
-  // 수정된 값 저장
   const handleValueChange = (e) => {
     setEditedValue(e.target.value);
   };
 
-  // 수정 완료
   const handleCellSave = (key) => {
     if (dataTypes[key] === 'Numeric' && isNaN(editedValue)) {
       alert(`"${key}" 열에 비숫자 값이 존재합니다.`);
-      data[editedRowIndex][key] = originalValue; // 원래 값으로 되돌리기
-      return; // 숫자 형식이 아닌 값이 있는 경우 종료
+      data[editedRowIndex][key] = originalValue;
+      return;
     }
-
-    // 기존 데이터 수정
-    data[editedRowIndex][key] = editedValue; // 수정된 값으로 업데이트
-    setEditingCell(null); // 편집 모드 종료
-    setEditedRowIndex(null); // 편집 중인 행 인덱스 초기화
+    data[editedRowIndex][key] = editedValue;
+    setEditingCell(null);
+    setEditedRowIndex(null);
   };
 
-  // 테이블 설정 또는 저장하기 버튼 클릭 시 실행되는 함수
-  const handleSave = async () => {
+  const handleSaveClick = () => {
+    setShowSaveForm(true); // 저장 폼 표시
+  };
+
+  const handleFinalSave = async () => {
     const numericFieldsList = [];
     const stringFieldsList = [];
-
-    // 각 열의 순서를 기록할 index
     let columnIndex = 0;
-    console.log(data);
-    data.forEach((row) => {
-      const numericFields = {};
-      const stringFields = {};
 
+    data.forEach((row) => {
       for (const key in row) {
-        // 고정된 필드는 처리하지 않고 동적 필드만 처리
-        console.log(key);
         if (
           key !== 'dataUUID' &&
           key !== 'saveDate' &&
@@ -101,57 +95,48 @@ const ExcelDataModal = ({ open, handleClose, data, eclassFlag, onSave }) => {
           key !== 'dataLabel' &&
           key !== 'userName'
         ) {
-          // 헤더에서 설정한 데이터 타입에 따라 저장할 필드 분리
           if (dataTypes[key] === 'Numeric') {
-            // Numeric으로 설정된 필드는 숫자로 변환하여 numericFields에 저장
             numericFieldsList.push({
               [key]: {
-                value: Number(row[key]), // 실제 값
-                order: columnIndex, // 순서
+                value: Number(row[key]),
+                order: columnIndex,
               },
             });
           } else {
-            // Categoric으로 설정된 필드는 문자열로 변환하여 stringFields에 저장
             stringFieldsList.push({
               [key]: {
-                value: String(row[key]), // 실제 값
-                order: columnIndex, // 순서
+                value: String(row[key]),
+                order: columnIndex,
               },
             });
           }
-          columnIndex += 1; // 순서를 증가시킴
+          columnIndex += 1;
         }
       }
-
-      // 각 행의 필드를 List에 추가
-      // if (Object.keys(numericFields).length > 0) {
-      //   numericFieldsList.push(numericFields);
-      // }
-      // if (Object.keys(stringFields).length > 0) {
-      //   stringFieldsList.push(stringFields);
-      // }
     });
 
     const jsonData = {
-      dataUUID: uuidv4(), // UUID 생성
-      saveDate: new Date().toISOString(), // 현재 날짜
-      memo: null, // 메모 기본값 null
-      dataLabel: 'CUSTOM', // 기본 데이터 라벨
+      dataUUID: uuidv4(),
+      saveDate: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
+      title: title || '',
+      memo, // memo 상태값 추가
+      dataLabel: 'CUSTOM', // title 상태값 추가
       userName: localStorage.getItem('username'),
-      numericFields: numericFieldsList, // 모든 row의 numericFields를 담은 리스트
-      stringFields: stringFieldsList, // 모든 row의 stringFields를 담은 리스트
+      numericFields: numericFieldsList,
+      stringFields: stringFieldsList,
     };
 
-    // 서버에 저장 요청 (일반 저장용)
     try {
       const response = await customAxios.post('/api/custom/save', jsonData);
       console.log('데이터가 성공적으로 저장되었습니다:', response.data);
-
-      onSave(jsonData); // 저장 후 부모 컴포넌트로 데이터를 전달
+      alert('데이터가 저장되었습니다.');
+      window.location.reload();
     } catch (error) {
       console.error('데이터 저장 중 오류 발생:', error);
+      alert('데이터 저장 오류!');
     }
 
+    setShowSaveForm(false); // 저장 폼 닫기
     handleClose(); // 모달 닫기
   };
 
@@ -176,7 +161,7 @@ const ExcelDataModal = ({ open, handleClose, data, eclassFlag, onSave }) => {
           <Table>
             <TableHead>
               <TableRow>
-                {Object.keys(data[0]).map((key, index) => (
+                {Object.keys(data[0]).map((key) => (
                   <TableCell
                     key={key}
                     align="center"
@@ -198,7 +183,7 @@ const ExcelDataModal = ({ open, handleClose, data, eclassFlag, onSave }) => {
                         <MenuItem value="Categoric">Categoric</MenuItem>
                       </Select>
                     </FormControl>
-                    <Typography variant="body1" sx={{ margin: '20px 0 0 0' }}>
+                    <Typography variant="body1" sx={{ marginTop: 2 }}>
                       {key}
                     </Typography>
                   </TableCell>
@@ -212,17 +197,15 @@ const ExcelDataModal = ({ open, handleClose, data, eclassFlag, onSave }) => {
                     <TableCell
                       key={key}
                       align="center"
-                      onClick={() => handleCellClick(key, row[key], rowIndex)} // 클릭 시 편집 모드로 전환
+                      onClick={() => handleCellClick(key, row[key], rowIndex)}
                     >
                       {editingCell === key && editedRowIndex === rowIndex ? (
                         <TextField
                           value={editedValue}
                           onChange={handleValueChange}
-                          onBlur={() => handleCellSave(key)} // 블러 시 저장
+                          onBlur={() => handleCellSave(key)}
                           onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                              handleCellSave(key); // 엔터키로 저장
-                            }
+                            if (e.key === 'Enter') handleCellSave(key);
                           }}
                           autoFocus
                         />
@@ -236,14 +219,39 @@ const ExcelDataModal = ({ open, handleClose, data, eclassFlag, onSave }) => {
             </TableBody>
           </Table>
         </TableContainer>
+        {showSaveForm && (
+          <Box sx={{ marginBottom: 2 }}>
+            <TextField
+              label="Title"
+              variant="outlined"
+              fullWidth
+              sx={{ marginBottom: 2 }}
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+            <TextField
+              label="Memo"
+              variant="outlined"
+              fullWidth
+              multiline
+              rows={3}
+              value={memo}
+              onChange={(e) => setMemo(e.target.value)}
+            />
+          </Box>
+        )}
         <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
           <Button
             variant="contained"
             color="primary"
             sx={{ marginRight: 2 }}
-            onClick={handleSave}
+            onClick={showSaveForm ? handleFinalSave : handleSaveClick}
           >
-            {eclassFlag ? '저장 및 테이블 설정' : '저장하기'}
+            {showSaveForm
+              ? '저장'
+              : eclassFlag
+              ? '저장 및 테이블 설정'
+              : '저장하기'}
           </Button>
           <Button variant="outlined" onClick={handleClose}>
             취소
