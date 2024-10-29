@@ -13,7 +13,7 @@ export default function MyDataList() {
     customAxios
       .get('/mydata/list')
       .then((res) => {
-        // console.log("My Data list : " + JSON.stringify(res.data, null, 2));
+        console.log('My Data list : ' + JSON.stringify(res.data, null, 2));
 
         const formattedData = res.data.map((data) => ({
           ...data,
@@ -25,11 +25,23 @@ export default function MyDataList() {
               ? '수질 데이터'
               : data.dataLabel,
         }));
+        console.log(formattedData);
         setSummary(formattedData);
       })
       .catch((err) => console.log(err));
-  }, []);
 
+    customAxios.get('/api/custom/list').then((res) => {
+      console.log(res.data);
+      const formattedData = res.data.map((table) => ({
+        saveDate: table.saveDate.split('T')[0],
+        dataLabel: 'CUSTOM',
+        dataUUID: table.dataUUID,
+        memo: table.memo,
+      }));
+      setSummary((prev) => [...prev, ...formattedData]);
+    });
+  }, []);
+  console.log(summary);
   // 전체 데이터 리스트 가져온 것중에서 데이터 라벨에 따라 필터링해서 뽑아서 보내준다.
   const [filteredData, setFilteredData] = useState([]);
   const selectFolder = (type) => {
