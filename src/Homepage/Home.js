@@ -1,18 +1,18 @@
-import React, { useEffect } from "react";
-import "./Home.scss";
-import Carousel from "react-bootstrap/Carousel";
-import styled from "styled-components";
-import { Link } from "react-router-dom";
+import React, { useEffect } from 'react';
+import './Home.scss';
+import Carousel from 'react-bootstrap/Carousel';
+import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 
-import cardImg1 from "./Image/card1.jpg";
-import cardImg2 from "./Image/card2.jpg";
-import cardImg3 from "./Image/card3.jpg";
-import cardImg4 from "./Image/card4.jpg";
+import cardImg1 from './Image/card1.jpg';
+import cardImg2 from './Image/card2.jpg';
+import cardImg3 from './Image/card3.jpg';
+import cardImg4 from './Image/card4.jpg';
 
-import { IoHardwareChip } from "react-icons/io5";
-import { IoDocumentTextOutline } from "react-icons/io5";
-import { FaChalkboardTeacher } from "react-icons/fa";
-import { GiArchiveResearch } from "react-icons/gi";
+import { IoHardwareChip } from 'react-icons/io5';
+import { IoDocumentTextOutline } from 'react-icons/io5';
+import { FaChalkboardTeacher } from 'react-icons/fa';
+import { GiArchiveResearch } from 'react-icons/gi';
 
 const CustomCard = styled.div`
   display: flex;
@@ -60,12 +60,12 @@ export default function Home() {
             <h2>SEEd는 어떤 플랫폼인가요?</h2>
             <div className="typing-container">
               SEEd는 환경 데이터 측정 및 그래프 그리기, 온라인 클래스 생성을
-              지원하는 플랫폼이에요.{" "}
+              지원하는 플랫폼이에요.{' '}
             </div>
             <Link to="/">
               <button
                 className="detail-button"
-                style={{ animationDelay: "5s" }}
+                style={{ animationDelay: '5s' }}
               >
                 자세히 보기
               </button>
@@ -84,7 +84,7 @@ export default function Home() {
             <Link to="/what">
               <button
                 className="detail-button"
-                style={{ animationDelay: "1.5s" }}
+                style={{ animationDelay: '1.5s' }}
               >
                 자세히 보기
               </button>
@@ -103,10 +103,10 @@ export default function Home() {
           </span>
           <div
             style={{
-              display: "flex",
-              justifyContent: "end",
-              width: "80%",
-              marginTop: "1rem",
+              display: 'flex',
+              justifyContent: 'end',
+              width: '80%',
+              marginTop: '1rem',
             }}
           >
             <Link to="/socket">
@@ -123,10 +123,10 @@ export default function Home() {
           </span>
           <div
             style={{
-              display: "flex",
-              justifyContent: "end",
-              width: "80%",
-              marginTop: "1rem",
+              display: 'flex',
+              justifyContent: 'end',
+              width: '80%',
+              marginTop: '1rem',
             }}
           >
             <Link to="/data-in-chart">
@@ -141,19 +141,19 @@ export default function Home() {
           <span>환경 데이터 수업을 설계하고 수강할 수 있어요.</span>
           <div
             style={{
-              display: "flex",
-              justifyContent: "end",
-              width: "80%",
-              marginTop: "1rem",
+              display: 'flex',
+              justifyContent: 'end',
+              width: '80%',
+              marginTop: '1rem',
             }}
           >
-            <Link to="/E-classes">
+            <Link to="/EClassLivePage">
               <StartButton>START</StartButton>
             </Link>
           </div>
         </CustomCard>
 
-        <CustomCard>
+        {/* <CustomCard>
           <img src={cardImg4} />
           <h4>Data Literacy</h4>
           <span>
@@ -171,7 +171,7 @@ export default function Home() {
               <StartButton>START</StartButton>
             </Link>
           </div>
-        </CustomCard>
+        </CustomCard> */}
       </div>
 
       <div className="info-container">

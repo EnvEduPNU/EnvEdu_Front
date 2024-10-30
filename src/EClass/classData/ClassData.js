@@ -130,18 +130,6 @@ function ClassData() {
         marginBottom: '2rem',
       }}
     >
-      {/* {showLectureList && (
-        <div className="myData-left">
-          <LectureList
-            lectureSummary={lectureSummary}
-            getLectureDataTable={getLectureDataTable}
-            handleDeleteLecture={handleDeleteLecture}
-            handleCreateLecture={handleCreateLecture}
-            handleMainPageClick={handleMainPageClick}
-          />
-        </div>
-      )} */}
-
       <div>
         {!showLectureList && !stepName && (
           <div
@@ -162,27 +150,47 @@ function ClassData() {
             >
               E-Class 생성
             </Typography>
-            <LectureCardCarousel
-              lectureSummary={lectureSummary}
-              getLectureDataTable={getLectureDataTable}
-              handleDeleteLecture={handleDeleteLecture}
-            />
-            <button
-              style={{
-                width: '30rem',
-                border: 'none',
-                fontWeight: '600',
-                fontSize: '20px',
-                borderRadius: '0.625rem',
-                marginTop: '20px',
-                padding: '10px 20px',
-                backgroundColor: '#f3b634',
-                cursor: 'pointer',
-              }}
-              onClick={handleCreateLecture}
-            >
-              E-Class 만들기
-            </button>
+            {lectureSummary.length > 0 ? (
+              <LectureCardCarousel
+                lectureSummary={lectureSummary}
+                getLectureDataTable={getLectureDataTable}
+                handleDeleteLecture={handleDeleteLecture}
+              />
+            ) : (
+              <div
+                style={{
+                  width: '30rem',
+                  borderRadius: '0.625rem',
+                  padding: '20px',
+                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+                  backgroundColor: '#f7f7f7',
+                  textAlign: 'center',
+                }}
+              >
+                <Typography variant="h5" sx={{ marginBottom: '1rem' }}>
+                  E-Class를 생성해주세요.
+                </Typography>
+                <Typography variant="body1" sx={{ marginBottom: '1.5rem' }}>
+                  E-Class를 생성하면 이곳에 목록이 표시됩니다. 새 E-Class를
+                  만들려면 아래 버튼을 클릭하세요.
+                </Typography>
+                <button
+                  style={{
+                    width: '100%',
+                    border: 'none',
+                    fontWeight: '600',
+                    fontSize: '16px',
+                    borderRadius: '0.625rem',
+                    padding: '10px 20px',
+                    backgroundColor: '#f3b634',
+                    cursor: 'pointer',
+                  }}
+                  onClick={handleCreateLecture}
+                >
+                  E-Class 만들기
+                </button>
+              </div>
+            )}
           </div>
         )}
 

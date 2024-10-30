@@ -25,6 +25,8 @@ const MyData = () => {
   }, []);
 
   useEffect(() => {
+    const username = localStorage.getItem('username');
+
     const fetchData = async () => {
       try {
         if (!isLoading) {
@@ -40,7 +42,10 @@ const MyData = () => {
                 : data.dataLabel,
           }));
 
-          const customDataResponse = await customAxios.get('/api/custom/list');
+          const customDataResponse = await customAxios.get(
+            `/api/custom/list?username=${username}`,
+          );
+
           const customDataFormatted = customDataResponse.data.map((data) => ({
             ...data,
             saveDate: data.saveDate.split('T')[0],
