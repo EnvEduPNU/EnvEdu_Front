@@ -15,7 +15,7 @@ import {
   TextField,
 } from '@mui/material';
 
-function ExpertCustomGraph({ onAddPhoto }) {
+function ExpertCustomGraph({ onAddPhoto, isDrawGraph }) {
   // onAddPhoto prop을 받아서 상위 컴포넌트로 데이터 전달
   const { graphIdx } = useGraphDataStore();
   const [capturedImage, setCapturedImage] = useState(null); // 캡쳐된 이미지를 저장할 상태
@@ -54,27 +54,29 @@ function ExpertCustomGraph({ onAddPhoto }) {
   return (
     <div>
       {/* 캡쳐하기 버튼 */}
-      <button
-        onClick={handleCapture}
-        style={{
-          padding: '10px 15px',
-          marginLeft: '15px',
-          backgroundColor: '#4a5568',
-          color: 'white',
-          borderRadius: '5px',
-          cursor: 'pointer',
-          fontSize: '16px',
-          display: 'inline-block', // 버튼 크기를 확실히 차지하도록 설정
-        }}
-        onMouseEnter={(e) => {
-          e.target.style.backgroundColor = '#2d3748'; // hover 시 색상 변경
-        }}
-        onMouseLeave={(e) => {
-          e.target.style.backgroundColor = '#4a5568'; // 기본 색상으로 복구
-        }}
-      >
-        그래프 캡쳐
-      </button>
+      {isDrawGraph && (
+        <button
+          onClick={handleCapture}
+          style={{
+            padding: '10px 15px',
+            marginLeft: '15px',
+            backgroundColor: '#4a5568',
+            color: 'white',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            fontSize: '16px',
+            display: 'inline-block', // 버튼 크기를 확실히 차지하도록 설정
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.backgroundColor = '#2d3748'; // hover 시 색상 변경
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.backgroundColor = '#4a5568'; // 기본 색상으로 복구
+          }}
+        >
+          그래프 캡쳐
+        </button>
+      )}
 
       {/* 그래프 영역 */}
 
