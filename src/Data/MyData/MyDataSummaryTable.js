@@ -31,7 +31,7 @@ const MyDataSummaryTable = ({ summary, getTable }) => {
   };
 
   // 삭제 요청 메서드
-  const handleDelete = (id, type) => {
+  const handleDelete = async (id, type) => {
     if (window.confirm('이 항목을 삭제하시겠습니까?')) {
       let deleteUrl = '';
 
@@ -45,7 +45,7 @@ const MyDataSummaryTable = ({ summary, getTable }) => {
         deleteUrl = `/api/data/${id}`;
       }
 
-      customAxios
+      await customAxios
         .delete(deleteUrl)
         .then((response) => {
           alert('데이터가 성공적으로 삭제되었습니다.');

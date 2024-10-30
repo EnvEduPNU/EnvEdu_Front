@@ -10,12 +10,13 @@ export default function MyDataList() {
 
   // 가장 최초 테이블 요청
   useEffect(() => {
+    const username = localStorage.getItem('username');
+
     const FetchData = async () => {
       await customAxios
         .get('/mydata/list')
         .then((res) => {
           console.log('My Data list : ' + JSON.stringify(res.data, null, 2));
-
           const formattedData = res.data.map((data) => ({
             ...data,
             saveDate: data.saveDate.split('T')[0],
@@ -31,16 +32,18 @@ export default function MyDataList() {
         })
         .catch((err) => console.log(err));
 
-      await customAxios.get('/api/custom/list').then((res) => {
-        console.log(res.data);
-        const formattedData = res.data.map((table) => ({
-          saveDate: table.saveDate.split('T')[0],
-          dataLabel: 'CUSTOM',
-          dataUUID: table.dataUUID,
-          memo: table.memo,
-        }));
-        setSummary((prev) => [...prev, ...formattedData]);
-      });
+      await customAxios
+        .get(`/api/custom/list?username=${username}`)
+        .then((res) => {
+          console.log(res.data);
+          const formattedData = res.data.map((table) => ({
+            saveDate: table.saveDate.split('T')[0],
+            dataLabel: 'CUSTOM',
+            dataUUID: table.dataUUID,
+            memo: table.memo,
+          }));
+          setSummary((prev) => [...prev, ...formattedData]);
+        });
     };
 
     FetchData();
@@ -73,12 +76,6 @@ export default function MyDataList() {
       setModalOpen(true);
       console.log('데이터리스트에서 모달 true');
     }
-  };
-
-  const [selectedFolderId, setSelectedFolderId] = useState(null);
-
-  const handleFolderSelect = (folderId) => {
-    setSelectedFolderId(folderId);
   };
 
   return (
