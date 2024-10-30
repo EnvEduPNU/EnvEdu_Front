@@ -22,7 +22,6 @@ function RegisterForm() {
 
     const registrationData = { ...data, role: role };
 
-    console.log('가입 전 확인 : ' + JSON.stringify(registrationData, null, 2));
     await customAxios
       .post('/api/user/register', registrationData)
       .then(() => {
@@ -30,8 +29,8 @@ function RegisterForm() {
         navigate('/');
       })
       .catch((error) => {
-        console.error('가입 오류:', error);
-        alert('가입 중 문제가 발생했습니다.');
+        console.error(error.response.data);
+        alert(`${error.response.data}이 이미 존재합니다.`);
       });
   }
 

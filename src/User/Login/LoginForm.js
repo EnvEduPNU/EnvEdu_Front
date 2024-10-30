@@ -88,13 +88,13 @@ function LoginForm() {
               Sign in
             </a> */}
             <br />
-            <span>Forgot your ID or PW?</span>
+            {/* <span>Forgot your ID or PW?</span>
             <a
               href="/Find"
               style={{ fontWeight: 'bold', marginLeft: '0.3rem' }}
             >
               아이디 / 비밀번호 찾기
-            </a>
+            </a> */}
           </div>
         </fieldset>
       </form>
