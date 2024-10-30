@@ -17,7 +17,7 @@ import Header from '../Header/Header';
 import DataInChartMainPage from './DataInChartMainPage';
 
 // 테이블 아니면 그래프 선택하는 탭 컴포넌트
-function TableOrGraph({ setSummary, setPhoto, dataCategory }) {
+function TableOrGraph({ setSummary, setPhoto, isDrawGraph }) {
   const { tab } = useTabStore();
 
   const [pdfClick, setPdfClick] = useState(false);
@@ -57,33 +57,24 @@ function TableOrGraph({ setSummary, setPhoto, dataCategory }) {
               <ExpertCustomTable
                 setSummary={setSummary}
                 onAddPhoto={handleAddPhoto}
+                isDrawGraph={isDrawGraph}
               />
             </div>
           </div>
-
         </Styled.CustomTableWrapper>
       )}
       {tab === 'graph' && (
         <>
-          {/* {dataCategory === 'MyData' && (
-            <>
-              <CustomTableHeader />
-              <GraphAndEditor pdfClick={pdfClick} />
-              <div style={{ display: 'flex', flexDirection: 'row' }}>
-                <GraphSaveButton buttonName={'그래프 저장'} />
-                <GraphSelector />
-                <PdfButton buttonName={'PDF 보기'} setPdfClick={setPdfClick} />
-              </div>
-            </>
-          )} */}
-
           <div className="flex">
             <div className="mt-32 mr-12">
               <Header />
             </div>
             <div>
               <ExpertCustomGraphHeader />
-              <ExpertCustomGraph onAddPhoto={handleAddPhoto} />
+              <ExpertCustomGraph
+                onAddPhoto={handleAddPhoto}
+                isDrawGraph={isDrawGraph}
+              />
             </div>
           </div>
         </>
