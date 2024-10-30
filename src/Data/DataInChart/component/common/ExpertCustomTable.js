@@ -1,4 +1,3 @@
-
 import { useRef, useEffect, useState } from 'react';
 import { useGraphDataStore } from '../../store/graphStore';
 import { AiOutlineDelete } from 'react-icons/ai';
@@ -22,7 +21,6 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
   const [photoTitle, setPhotoTitle] = useState(''); // 사진 제목 상태
   const [capturedImage, setCapturedImage] = useState(null); // 캡처된 이미지 상태
   const tableRef = useRef(null); // 테이블을 캡처하기 위한 ref 생성
-
 
   const [modificationData, setModificationData] = useState([]);
   const [modeificationHeaders, setModeificationHeaders] = useState([]);
@@ -385,129 +383,6 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
       </div>
     );
 
-  const handleEdit = () => {
-    setIsEditing(true);
-  };
-
-  const handleEditComplete = () => {
-    setData(modificationData, title + '수정본');
-    setIsEditing(false);
-  };
-
-  const handleEditCancel = () => {
-    setIsEditing(false);
-    // 편집 데이터 초기화
-    setModificationData(data.map((value) => [...value]));
-  };
-
-  const handleMoveColumnLeft = (headerIndex) => {
-    if (headerIndex === 1) {
-      alert('더 이상 이동할 수 없습니다.');
-      return;
-    }
-
-    setModificationData((prev) => {
-      // 각 행에서 headerIndex와 headerIndex-1의 열을 교환
-      const updatedData = prev.map((row) => {
-        const newRow = [...row];
-        // headerIndex와 headerIndex-1의 값을 스왑
-        [newRow[headerIndex - 2], newRow[headerIndex - 1]] = [
-          newRow[headerIndex - 1],
-          newRow[headerIndex - 2],
-        ];
-        return newRow;
-      });
-      return updatedData;
-    });
-  };
-
-  const handleMoveColumnRight = (headerIndex) => {
-    if (headerIndex === headers.length) {
-      alert('더 이상 이동할 수 없습니다.');
-      return;
-    }
-
-    setModificationData((prev) => {
-      // 각 행에서 headerIndex와 headerIndex-1의 열을 교환
-      const updatedData = prev.map((row) => {
-        const newRow = [...row];
-        // headerIndex와 headerIndex-1의 값을 스왑
-        [newRow[headerIndex], newRow[headerIndex - 1]] = [
-          newRow[headerIndex - 1],
-          newRow[headerIndex],
-        ];
-        return newRow;
-      });
-      return updatedData;
-    });
-  };
-
-  const handleDeleteColumn = (headerIndex) => {
-    setModificationData((prev) => {
-      // 각 행에서 headerIndex+1에 해당하는 열을 삭제
-      const updatedData = prev.map((row) => {
-        const newRow = [...row];
-        newRow.splice(headerIndex - 1, 1); // headerIndex+1번째 열 삭제
-        return newRow;
-      });
-      console.log(updatedData);
-      return updatedData;
-    });
-  };
-  if (!isEditing)
-    return (
-      <div>
-        <table className="w-full border-solid border-[1px] border-[rgba(34, 36, 38, 0.15)] rounded-xl caption-top border-collapse">
-          <caption className="text-2xl font-semibold py-2 text-center text-black">
-            {title}
-
-            <button
-              className="px-2 py-1 text-md ml-4 bg-gray-800 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50"
-              onClick={handleEdit}
-              style={{ fontSize: '16px' }}
-            >
-              수정하기
-            </button>
-
-            <button
-              className="px-2 py-1 text-md ml-4 bg-gray-800 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50"
-              // onClick={}
-              style={{ fontSize: '16px' }}
-            >
-              저장하기
-            </button>
-          </caption>
-          <thead>
-            <tr>
-              {['', ...headers].map((header, headerIndex) => {
-                return (
-                  <th
-                    className="border-[1px] border-[rgba(34, 36, 38, 0.15)]  shadow-[0_8px_5px_-5px_rgba(0,0,0,0.3)] z-30 leading-[20px] py-3 px-2 text-center"
-                    key={headerIndex}
-                  >
-                    <span className="text-xl">{header}</span>
-                  </th>
-                );
-              })}
-            </tr>
-          </thead>
-          <tbody>
-            {data.slice(1).map((row, rowIndex) => (
-              <tr>
-                {[rowIndex, ...row].map((value, valueIndex) => {
-                  return (
-                    <td className="border-[1px] border-[rgba(34, 36, 38, 0.15)] text-center py-2">
-                      <span className="text-md">{value}</span>
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    );
-
   return (
     <div>
       <table
@@ -530,7 +405,6 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
         >
           {title}
           <button
-
             onClick={handleEditComplete}
             style={{
               padding: '0.5rem 1rem',
@@ -546,7 +420,6 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
             }}
             onMouseOver={(e) => (e.target.style.backgroundColor = '#3b3b3b')}
             onMouseOut={(e) => (e.target.style.backgroundColor = '#4a4a4a')}
-
           >
             완료
           </button>
@@ -566,7 +439,6 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
             }}
             onMouseOver={(e) => (e.target.style.backgroundColor = '#3b3b3b')}
             onMouseOut={(e) => (e.target.style.backgroundColor = '#4a4a4a')}
-
           >
             취소
           </button>
@@ -574,7 +446,6 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
         <thead>
           <tr>
             {['', ...modeificationHeaders].map((header, headerIndex) => {
-
               if (headerIndex !== 0)
                 return (
                   <th
@@ -697,13 +568,11 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
                     </div>
                   </th>
                 );
-
             })}
           </tr>
         </thead>
         <tbody>
           {modificationData.slice(1).map((row, rowIndex) => (
-
             <tr key={rowIndex}>
               {[rowIndex, ...row].map((value, valueIndex) => (
                 <td
@@ -721,13 +590,11 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
                       type="text"
                       value={value}
                       placeholder="Enter text"
-
                       onChange={(e) => {
                         setModificationData((prev) => {
                           const copiedModificationData = prev.map((value) => [
                             ...value,
                           ]);
-
                           copiedModificationData[rowIndex + 1][valueIndex - 1] =
                             e.target.value;
                           return copiedModificationData;
@@ -747,7 +614,6 @@ function ExpertCustomTable({ onAddPhoto, setSummary }) {
                   )}
                 </td>
               ))}
-
             </tr>
           ))}
         </tbody>
