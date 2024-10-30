@@ -88,19 +88,10 @@ function Header() {
             ) : (
               <>
                 <Nav.Link onClick={() => handleNavLinkClick('/login')}>
-                  LOGIN
+                  로그인
                 </Nav.Link>
-                <Nav.Link
-                  onClick={() => handleNavLinkClick('/auth')}
-                  state={{ role: 'ROLE_STUDENT' }}
-                >
-                  JOIN US(student)
-                </Nav.Link>
-                <Nav.Link
-                  onClick={() => handleNavLinkClick('/auth')}
-                  state={{ role: 'ROLE_EDUCATOR' }}
-                >
-                  JOIN US(educator)
+                <Nav.Link onClick={() => handleNavLinkClick('/register')}>
+                  회원가입
                 </Nav.Link>
               </>
             )}
