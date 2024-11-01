@@ -24,6 +24,7 @@ import AdminLogin from './Admin/Login/AdminLogin';
 import DeviceList from './Admin/Device/DeviceList';
 import ContactUs from './Contact/ContactUs/ContactUs';
 import OpenApi from './Data/OpenAPIData/OpenApi';
+import OpenApi2 from './Data/OpenAPIData/OpenApi2';
 import OpenApiPast from './Data/OpenAPIData/openAPIPast';
 import Search from './Data/OpenAPIData/search';
 import MyData from './Data/MyData/myData';
@@ -113,6 +114,7 @@ function App() {
             element={<DataInChartPage />}
           />{' '}
           <Route path="/openAPI" exact={true} element={<OpenApi />} />{' '}
+          <Route path="/openAPI2" exact={true} element={<OpenApi2 />} />{' '}
           <Route path="/resources" exact={true} element={<Resource />} />{' '}
           {/* --------------------------------------------------- E-Class------------------------------------------------------ */}
           <Route

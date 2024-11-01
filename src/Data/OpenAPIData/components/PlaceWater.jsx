@@ -141,6 +141,7 @@ function PlaceWater() {
   const [locations, setLocations] = useState(locationsData);
   const [searchLocation, setSearchLocation] = useState([]);
   const [waterlistData, setWaterlistData] = useState([]);
+  console.log(waterlistData);
 
   return (
     <div>
@@ -361,7 +362,49 @@ function PlaceWater() {
                 },
               );
               console.log(filteredItemList);
-              setWaterlistData(filteredItemList.map((item) => ({})));
+              setWaterlistData(
+                filteredItemList.map((item) => ({
+                  ptnm: item.PT_NM, //측정 장소
+                  date: item.WMCYMD, // 년.월.일
+                  wmwk: item.WMWK, //회차
+                  wmdep:
+                    item.WMDEP === null
+                      ? '측정 안됨'
+                      : Number(item.WMDEP.trim()),
+                  temp:
+                    item.ITEM_TEMP === null
+                      ? '측정 안됨'
+                      : Number(item.ITEM_TEMP.trim()),
+                  do:
+                    item.ITEM_COD === null
+                      ? '측정 안됨'
+                      : Number(item.ITEM_COD.trim()),
+                  bod:
+                    item.ITEM_BOD === null
+                      ? '측정 안됨'
+                      : Number(item.ITEM_BOD.trim()),
+                  cod:
+                    item.ITEM_COD === null
+                      ? '측정 안됨'
+                      : Number(item.ITEM_COD.trim()),
+                  ss:
+                    item.ITEM_SS === null
+                      ? '측정 안됨'
+                      : Number(item.ITEM_SS.trim()),
+                  tn:
+                    item.ITEM_TN === null
+                      ? '측정 안됨'
+                      : Number(item.ITEM_TN.trim()),
+                  tp:
+                    item.ITEM_TP === null
+                      ? '측정 안됨'
+                      : Number(item.ITEM_TP.trim()),
+                  toc:
+                    item.ITEM_TOC === null
+                      ? '측정 안됨'
+                      : Number(item.ITEM_TOC.trim()),
+                })),
+              );
             }}
             style={{
               display: 'flex',
@@ -393,7 +436,7 @@ function PlaceWater() {
           </button>
         </div>
       </div>
-      <PlaceWaterDataList />
+      <PlaceWaterDataList waterlistData={waterlistData} />
     </div>
   );
 }
