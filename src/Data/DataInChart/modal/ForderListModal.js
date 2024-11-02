@@ -117,7 +117,8 @@ export default function ForderListModal({
         .get(`api/custom/${id}`)
         .then((res) => {
           //수정 필요
-          const title = '타이틀 추가 해야 함';
+          console.log(res.data.title);
+          const title = res.data.title;
           let rows = 0;
           let columns = 0;
           const headerSet = new Set();
@@ -178,8 +179,8 @@ export default function ForderListModal({
           console.log(data);
           setData(data, title, true, variables);
 
-          localStorage.setItem('data', JSON.stringify(data));
-          localStorage.setItem('title', JSON.stringify(title));
+          // localStorage.setItem('data', JSON.stringify(data));
+          // localStorage.setItem('title', JSON.stringify(title));
 
           setModalOpen(false);
         })

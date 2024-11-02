@@ -10,9 +10,9 @@ function Dataset({ setModalOpen }) {
     setData(sampleDatas[key], key);
     setTitle(key);
 
-    localStorage.setItem('data', JSON.stringify(sampleDatas[key]));
-    localStorage.setItem('title', JSON.stringify(key));
-    console.log('ExpertDataSet localStorage에 저장 완료!');
+    // localStorage.setItem('data', JSON.stringify(sampleDatas[key]));
+    // localStorage.setItem('title', JSON.stringify(key));
+    // console.log('ExpertDataSet localStorage에 저장 완료!');
 
     console.log('데이터 내용 : ' + JSON.stringify(sampleDatas, null, 2));
     console.log('키는? : ' + JSON.stringify(key, null, 2));

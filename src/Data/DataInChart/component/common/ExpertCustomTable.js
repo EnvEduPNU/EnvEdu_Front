@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import { saveCustomTableApi } from '../../../apis/tables';
 import { customAxios } from '../../../../Common/CustomAxios';
-import DataInChartPage from '../../Page/DataInChartPage';
+import TitleInputModal from '../../modal/TitleInputModal';
 
 function ExpertCustomTable({ onAddPhoto, setSummary, isDrawGraph }) {
   const { data, title, setData, variables } = useGraphDataStore();
@@ -109,81 +109,83 @@ function ExpertCustomTable({ onAddPhoto, setSummary, isDrawGraph }) {
   };
 
   const saveCustomTable = async () => {
-    try {
-      const date = new Date();
-      console.log(data);
-      console.log(variables);
+    setModalOpen(true);
+    // try {
+    //   const date = new Date();
+    //   console.log(data);
+    //   console.log(variables);
 
-      const stringFields = [];
-      const numericFields = [];
-      let order = 0;
-      for (let i = 1; i < data.length; i++) {
-        for (let j = 0; j < data[0].length; j++) {
-          const value = data[i][j];
-          if (variables[j].type === 'Categorical') {
-            stringFields.push({
-              [variables[j].name]: {
-                value,
-                order,
-              },
-            });
-          } else {
-            numericFields.push({
-              [variables[j].name]: {
-                value,
-                order,
-              },
-            });
-          }
-          order++;
-        }
-      }
+    //   const stringFields = [];
+    //   const numericFields = [];
+    //   let order = 0;
+    //   for (let i = 1; i < data.length; i++) {
+    //     for (let j = 0; j < data[0].length; j++) {
+    //       const value = data[i][j];
+    //       if (variables[j].type === 'Categorical') {
+    //         stringFields.push({
+    //           [variables[j].name]: {
+    //             value,
+    //             order,
+    //           },
+    //         });
+    //       } else {
+    //         numericFields.push({
+    //           [variables[j].name]: {
+    //             value,
+    //             order,
+    //           },
+    //         });
+    //       }
+    //       order++;
+    //     }
+    //   }
 
-      const payload = {
-        dataUUID: crypto.randomUUID(),
-        saveDate: new Date(date.getTime() + 9 * 60 * 60 * 1000).toISOString(),
-        memo: '메모',
-        dataLabel: 'CUSTOM',
-        userName: localStorage.getItem('username'),
-        numericFields,
-        stringFields,
-      };
+    //   const payload = {
+    //     dataUUID: crypto.randomUUID(),
+    //     saveDate: new Date(date.getTime() + 9 * 60 * 60 * 1000).toISOString(),
+    //     memo: '메모',
+    //     dataLabel: 'CUSTOM',
+    //     userName: localStorage.getItem('username'),
+    //     numericFields,
+    //     stringFields,
+    //     title: '타이틀',
+    //   };
 
-      const response = await saveCustomTableApi(payload);
+    //   const response = await saveCustomTableApi(payload);
 
-      await customAxios
-        .get('/mydata/list')
-        .then((res) => {
-          console.log('My Data list : ' + JSON.stringify(res.data, null, 2));
+    //   await customAxios
+    //     .get('/mydata/list')
+    //     .then((res) => {
+    //       console.log('My Data list : ' + JSON.stringify(res.data, null, 2));
 
-          const formattedData = res.data.map((data) => ({
-            ...data,
-            saveDate: data.saveDate.split('T')[0],
-            dataLabel:
-              data.dataLabel === 'AIRQUALITY'
-                ? '대기질 데이터'
-                : data.dataLabel === 'OCEANQUALITY'
-                ? '수질 데이터'
-                : data.dataLabel,
-          }));
+    //       const formattedData = res.data.map((data) => ({
+    //         ...data,
+    //         saveDate: data.saveDate.split('T')[0],
+    //         dataLabel:
+    //           data.dataLabel === 'AIRQUALITY'
+    //             ? '대기질 데이터'
+    //             : data.dataLabel === 'OCEANQUALITY'
+    //             ? '수질 데이터'
+    //             : data.dataLabel,
+    //       }));
 
-          setSummary((prev) => [...prev, formattedData]);
-        })
-        .catch((err) => console.log(err));
+    //       setSummary((prev) => [...prev, formattedData]);
+    //     })
+    //     .catch((err) => console.log(err));
 
-      await customAxios.get('/api/custom/list').then((res) => {
-        console.log(res.data);
-        const formattedData = res.data.map((table) => ({
-          saveDate: table.saveDate.split('T')[0],
-          dataLabel: 'CUSTOM',
-          dataUUID: table.dataUUID,
-          memo: table.memo,
-        }));
-        setSummary((prev) => [...prev, ...formattedData]);
-      });
-    } catch (e) {
-      console.log(e);
-    }
+    //   await customAxios.get('/api/custom/list').then((res) => {
+    //     console.log(res.data);
+    //     const formattedData = res.data.map((table) => ({
+    //       saveDate: table.saveDate.split('T')[0],
+    //       dataLabel: 'CUSTOM',
+    //       dataUUID: table.dataUUID,
+    //       memo: table.memo,
+    //     }));
+    //     setSummary((prev) => [...prev, ...formattedData]);
+    //   });
+    // } catch (e) {
+    //   console.log(e);
+    // }
   };
   // 테이블을 캡처하고 모달을 여는 함수
   const handleCaptureTable = async () => {
@@ -227,9 +229,19 @@ function ExpertCustomTable({ onAddPhoto, setSummary, isDrawGraph }) {
     }
   };
 
+  const [tableTitle, setTableTitle] = useState('');
+  const [modalOpen, setModalOpen] = useState(false);
+
   if (!isEditing)
     return (
       <div>
+        <TitleInputModal
+          isOpen={modalOpen}
+          setIsOpen={setModalOpen}
+          title={tableTitle}
+          setTitle={setTableTitle}
+          setSummary={setSummary}
+        />
         <table
           ref={tableRef}
           style={{
@@ -303,7 +315,6 @@ function ExpertCustomTable({ onAddPhoto, setSummary, isDrawGraph }) {
               }}
               onMouseOver={(e) => (e.target.style.backgroundColor = '#3b3b3b')}
               onMouseOut={(e) => (e.target.style.backgroundColor = '#4a4a4a')}
-              className="px-2 py-1 text-md ml-4 bg-gray-800 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50"
             >
               저장하기
             </button>

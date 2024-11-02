@@ -3,9 +3,13 @@ import './leftSlidePage.scss';
 import ExpertDataList from './ExpertDataList';
 import MyDataList from './MyDataList';
 
-export default function LeftSlidePage({ setDataCategory }) {
+export default function LeftSlidePage({
+  setDataCategory,
+  summary,
+  setSummary,
+}) {
   return (
-    <div style={{ margin: '0 5rem 4rem 3rem' }}>
+    <div style={{ margin: '0 5rem 8rem 3rem' }}>
       <div>
         <Typography
           sx={{
@@ -26,7 +30,7 @@ export default function LeftSlidePage({ setDataCategory }) {
       >
         My Data
       </Typography>
-      <MyDataList />
+      <MyDataList summary={summary} setSummary={setSummary} />
     </div>
   );
 }

@@ -19,9 +19,9 @@ function Dataset(props) {
   const onClickBtn = (key) => {
     setData(sampleDatas[key], key, true);
     setTitle(key);
-    localStorage.setItem('data', JSON.stringify(sampleDatas[key]));
-    localStorage.setItem('title', JSON.stringify(key));
-    console.log('ExpertDataSet localStorage에 저장 완료!');
+    // localStorage.setItem('data', JSON.stringify(sampleDatas[key]));
+    // localStorage.setItem('title', JSON.stringify(key));
+    // console.log('ExpertDataSet localStorage에 저장 완료!');
     props.setIsFinished(true);
     setIsFinished(true);
   };
