@@ -8,6 +8,7 @@ export default function MyDataList() {
   const [summary, setSummary] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
 
+  console.log(modalOpen);
   // 가장 최초 테이블 요청
   useEffect(() => {
     const username = localStorage.getItem('username');
@@ -37,6 +38,7 @@ export default function MyDataList() {
         .then((res) => {
           console.log(res.data);
           const formattedData = res.data.map((table) => ({
+            title: table.title,
             saveDate: table.saveDate.split('T')[0],
             dataLabel: 'CUSTOM',
             dataUUID: table.dataUUID,

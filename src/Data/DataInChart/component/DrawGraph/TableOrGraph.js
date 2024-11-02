@@ -34,7 +34,7 @@ function TableOrGraph({ setSummary, setPhoto, isDrawGraph }) {
   useEffect(() => {
     return setTableSaveClick(false);
   }, [tableSaveClick]);
-  console.log();
+
   return (
     <Styled.Wrapper>
       <div style={{ fontSize: '3vh', fontWeight: 'bold', marginLeft: '48px' }}>
@@ -45,7 +45,12 @@ function TableOrGraph({ setSummary, setPhoto, isDrawGraph }) {
       {tab === 'table' && (
         <Styled.CustomTableWrapper>
           <div style={{ display: 'flex', width: '100%' }}>
-            <div style={{ marginTop: '8rem', marginRight: '3rem' }}>
+            <div
+              style={{
+                marginTop: '8rem',
+                marginRight: '3rem',
+              }}
+            >
               <Header />
             </div>
             <div

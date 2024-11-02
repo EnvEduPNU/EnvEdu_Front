@@ -5,7 +5,7 @@ import MyDataList from './MyDataList';
 
 export default function LeftSlidePage({ setDataCategory }) {
   return (
-    <div style={{ margin: '0 5rem 0 3rem' }}>
+    <div style={{ margin: '0 5rem 4rem 3rem' }}>
       <div>
         <Typography
           sx={{

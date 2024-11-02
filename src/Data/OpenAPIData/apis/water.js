@@ -18,9 +18,11 @@ export const getWaterByPlace = (
   }
 
   if (startYear === endYear) {
-    for (let i = startMonth; i <= endMonth; i++) {
+    for (let i = Number(startMonth); i <= Number(endMonth); i++) {
+      console.log('123');
       if (i < 10) wmodList.push(`0${i}`);
       else wmodList.push(i);
+      console.log(wmodList);
     }
   } else if (endYear - startYear > 1) {
     for (let i = 1; i <= 12; i++) {
@@ -28,17 +30,16 @@ export const getWaterByPlace = (
       else wmodList.push(i);
     }
   } else {
-    for (let i = startMonth; i <= 12; i++) {
+    for (let i = Number(startMonth); i <= 12; i++) {
       if (i < 10) wmodList.push(`0${i}`);
       else wmodList.push(i);
     }
 
-    for (let i = 1; i <= endMonth; i++) {
+    for (let i = 1; i <= Number(endMonth); i++) {
       if (i < 10) wmodList.push(`0${i}`);
       else wmodList.push(i);
     }
   }
-
   return axios.get(
     `https://apis.data.go.kr/1480523/WaterQualityService/getWaterMeasuringList`,
     {
