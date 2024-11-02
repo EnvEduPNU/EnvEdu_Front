@@ -40,6 +40,7 @@ function DataInChartPage() {
   const contentName = searchParams.get('contentName');
   const stepNum = searchParams.get('stepNum');
   const content = searchParams.get('content');
+  const [summary, setSummary] = useState([]);
 
   useEffect(() => {
     console.log(
@@ -136,6 +137,7 @@ function DataInChartPage() {
         display: 'flex',
         padding: '0',
         width: '100%',
+        marginBottom: '140px',
       }}
     >
       <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -177,7 +179,11 @@ function DataInChartPage() {
             />
           </>
         ) : (
-          <LeftSlidePage setDataCategory={setDataCategory} />
+          <LeftSlidePage
+            setDataCategory={setDataCategory}
+            summary={summary}
+            setSummary={setSummary}
+          />
         )}
 
         {/* 사진 저장 리스트 */}
@@ -277,6 +283,8 @@ function DataInChartPage() {
         dataCategory={dataCategory}
         setPhoto={handleAddPhoto}
         isDrawGraph={isDrawGraph}
+        setSummary={setSummary}
+        summary={summary}
       />
 
       {/* ---------------------------------------- 모달 -------------------------------------------------------*/}

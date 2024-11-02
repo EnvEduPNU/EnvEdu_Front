@@ -46,7 +46,7 @@ function RegisterForm() {
         <div
           style={{
             width: '400px',
-            marginTop: '10rem',
+            marginTop: '0rem',
             padding: '20px',
             borderRadius: '8px',
             backgroundColor: '#ffffff',

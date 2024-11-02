@@ -4,8 +4,7 @@ import './leftSlidePage.scss';
 import ForderListModal from '../modal/ForderListModal';
 
 // DATA 드롭다운 리스트
-export default function MyDataList() {
-  const [summary, setSummary] = useState([]);
+export default function MyDataList({ summary, setSummary }) {
   const [modalOpen, setModalOpen] = useState(false);
 
   console.log(modalOpen);
@@ -27,6 +26,7 @@ export default function MyDataList() {
                 : data.dataLabel === 'OCEANQUALITY'
                 ? '수질 데이터'
                 : data.dataLabel,
+            title: data.title,
           }));
           console.log(formattedData);
           setSummary(formattedData);

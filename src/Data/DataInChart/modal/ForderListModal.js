@@ -8,13 +8,14 @@ import ButtonClose from '../component/DrawGraph/ButtonClose';
 import { useTabStore } from '../store/tabStore';
 import { convertToNumber } from '../store/utils/convertToNumber';
 import ReactModal from 'react-modal';
+import zIndex from '@mui/material/styles/zIndex';
 
 const customModalStyles = {
   overlay: {
     backgroundColor: 'rgba(0, 0, 0, 0.4)',
     width: '100%',
     height: '100vh',
-    zIndex: '10',
+    zIndex: '9999',
     position: 'fixed',
     top: '0',
     left: '0',
@@ -117,7 +118,8 @@ export default function ForderListModal({
         .get(`api/custom/${id}`)
         .then((res) => {
           //수정 필요
-          const title = '타이틀 추가 해야 함';
+          console.log(res.data.title);
+          const title = res.data.title;
           let rows = 0;
           let columns = 0;
           const headerSet = new Set();
@@ -178,8 +180,8 @@ export default function ForderListModal({
           console.log(data);
           setData(data, title, true, variables);
 
-          localStorage.setItem('data', JSON.stringify(data));
-          localStorage.setItem('title', JSON.stringify(title));
+          // localStorage.setItem('data', JSON.stringify(data));
+          // localStorage.setItem('title', JSON.stringify(title));
 
           setModalOpen(false);
         })

@@ -58,14 +58,15 @@ function ExpertCustomGraph({ onAddPhoto, isDrawGraph }) {
         <button
           onClick={handleCapture}
           style={{
+            position: 'absolute',
             padding: '10px 15px',
-            marginLeft: '15px',
             backgroundColor: '#4a5568',
             color: 'white',
             borderRadius: '5px',
             cursor: 'pointer',
             fontSize: '16px',
             display: 'inline-block', // 버튼 크기를 확실히 차지하도록 설정
+            marginLeft: '20px',
           }}
           onMouseEnter={(e) => {
             e.target.style.backgroundColor = '#2d3748'; // hover 시 색상 변경

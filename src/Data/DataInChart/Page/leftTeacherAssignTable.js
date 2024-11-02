@@ -32,7 +32,7 @@ export default function LeftTeacherAssignTable({ content, setDataCategory }) {
     // console.log('TeacherDataSet localStorage에 저장 완료!');
 
     //수정 필요
-    const title = '타이틀 추가 해야 함';
+    const title = res.data.title;
     let rows = 0;
     let columns = 0;
     const headerSet = new Set();
@@ -93,8 +93,8 @@ export default function LeftTeacherAssignTable({ content, setDataCategory }) {
     console.log(data);
     setData(data, title, true, variables);
 
-    localStorage.setItem('data', JSON.stringify(data));
-    localStorage.setItem('title', JSON.stringify(title));
+    // localStorage.setItem('data', JSON.stringify(data));
+    // localStorage.setItem('title', JSON.stringify(title));
 
     setDataCategory('ExpertData');
   };
