@@ -256,6 +256,7 @@ function DoughnutGraph() {
       style={{
         display: 'flex',
         flexDirection: 'column',
+        alignItems: 'start',
       }}
     >
       <div

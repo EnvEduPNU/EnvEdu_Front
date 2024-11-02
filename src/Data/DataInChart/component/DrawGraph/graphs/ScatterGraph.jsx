@@ -196,11 +196,13 @@ function ScatterGraph() {
       style={{
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
+        alignItems: 'start',
       }}
     >
       <div
         style={{
+          width: '800px',
+          textAlign: 'center',
           margin: '0 0 20px 150px', // 위아래 간격 추가
           color: '#333', // 텍스트 색상
           fontSize: '24px', // 제목 크기
@@ -210,7 +212,7 @@ function ScatterGraph() {
       >
         {title}
       </div>
-      <div style={{ display: 'flex', width: '1425px' }}>
+      <div style={{ display: 'flex', minWidth: '1000px' }}>
         <div
           style={{
             display: 'flex',
@@ -275,7 +277,7 @@ function ScatterGraph() {
             onChange={handleChangeXScaleValue}
           />
         </div> */}
-        <div style={{ width: '1200px', marginLeft: '25px' }}>
+        <div style={{ minWidth: '800px', marginLeft: '25px' }}>
           <Scatter data={barDatas} options={barOptions} />
         </div>
       </div>
@@ -286,7 +288,7 @@ function ScatterGraph() {
       </div> */}
       <div
         style={{
-          width: '1375px',
+          width: '1000px',
           textAlign: 'right',
           marginBottom: '20px',
           marginTop: '10px',
