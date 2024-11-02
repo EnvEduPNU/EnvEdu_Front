@@ -86,6 +86,7 @@ const MyData = () => {
         display: 'flex',
         flexDirection: 'column',
         height: '1000px',
+        alignItems: 'center',
       }}
     >
       {/* 슬라이드 메뉴 */}
@@ -124,7 +125,7 @@ const MyData = () => {
       )}
 
       {/* 메인 컨텐츠 */}
-      <section className="myData-right" style={{ marginLeft: '260px' }}>
+      <section className="myData-right" style={{}}>
         {myDataTable && dataType && dataId ? (
           <DataTable
             type={dataType}

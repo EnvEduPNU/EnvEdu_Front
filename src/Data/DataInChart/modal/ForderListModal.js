@@ -8,13 +8,14 @@ import ButtonClose from '../component/DrawGraph/ButtonClose';
 import { useTabStore } from '../store/tabStore';
 import { convertToNumber } from '../store/utils/convertToNumber';
 import ReactModal from 'react-modal';
+import zIndex from '@mui/material/styles/zIndex';
 
 const customModalStyles = {
   overlay: {
     backgroundColor: 'rgba(0, 0, 0, 0.4)',
     width: '100%',
     height: '100vh',
-    zIndex: '10',
+    zIndex: '9999',
     position: 'fixed',
     top: '0',
     left: '0',

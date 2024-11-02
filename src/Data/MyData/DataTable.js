@@ -5,13 +5,15 @@ import * as XLSX from 'xlsx';
 import { useNavigate } from 'react-router-dom';
 import { IconButton, Button, Typography } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import { convertToNumber } from '../DataInChart/store/utils/convertToNumber';
 
 const DataTable = ({ type, id, handleMenuToggle }) => {
   const [details, setDetails] = useState([]); // 초기 값을 빈 배열로 설정
   const [headers, setHeaders] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [isFull, setIsFull] = useState(false);
-
+  const [data, setData] = useState([]);
+  const [title, setTitle] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,42 +22,102 @@ const DataTable = ({ type, id, handleMenuToggle }) => {
     if (type === '커스텀 데이터') {
       const fetchCustomData = async () => {
         try {
-          const response = await customAxios.get(`/api/custom/${id}`);
-          let data = response.data;
+          const res = await customAxios.get(`/api/custom/${id}`);
 
-          // 데이터가 배열이 아닌 경우 배열로 감싸기
-          let normalizedData = Array.isArray(data) ? data : [data];
-
-          console.log(
-            '커스텀 데이터 조회 : ' + JSON.stringify(normalizedData, null, 2),
-          );
-
-          setDetails(normalizedData); // 유효한 배열을 설정
-
-          // `numericFields`와 `stringFields`를 order에 따라 정렬 후, 테이블 헤더로 추가
-          const orderedFields = [];
-
-          normalizedData.forEach((item) => {
-            item.numericFields.forEach((field) => {
-              Object.keys(field).forEach((key) => {
-                orderedFields.push({ key, order: field[key].order });
-              });
-            });
-            item.stringFields.forEach((field) => {
-              Object.keys(field).forEach((key) => {
-                orderedFields.push({ key, order: field[key].order });
-              });
-            });
+          setTitle(res.data.title);
+          let rows = 0;
+          let columns = 0;
+          const headerSet = new Set();
+          res.data.numericFields.forEach((table) => {
+            const key = Object.keys(table)[0];
+            headerSet.add(key);
           });
 
-          // order 기준으로 정렬된 헤더 생성
-          const sortedHeaders = orderedFields
-            .sort((a, b) => a.order - b.order)
-            .map((field) => field.key);
+          res.data.stringFields.forEach((table) => {
+            const key = Object.keys(table)[0];
+            headerSet.add(key);
+          });
 
-          // 중복 제거 후 헤더 설정
-          const uniqueHeaders = [...new Set(sortedHeaders)];
-          setHeaders(uniqueHeaders); // 헤더 설정
+          columns = headerSet.size;
+          rows =
+            (res.data.numericFields.length + res.data.stringFields.length) /
+            columns;
+          const variables = Array(columns);
+
+          const data = Array(rows + 1)
+            .fill()
+            .map(() => Array(columns).fill(0));
+
+          res.data.numericFields.forEach((table) => {
+            const key = Object.keys(table)[0];
+
+            if (table[key].order < columns) {
+              data[0][table[key].order] = key;
+              variables[table[key].order] = {
+                name: key,
+                type: 'Numeric',
+                isSelected: false,
+                isMoreSelected: false,
+                variableIndex: table[key].order,
+              };
+            }
+
+            data[Math.floor(table[key].order / columns) + 1][
+              table[key].order % columns
+            ] = convertToNumber(table[key].value);
+          });
+
+          res.data.stringFields.forEach((table) => {
+            const key = Object.keys(table)[0];
+            if (table[key].order < columns) {
+              data[0][table[key].order] = key;
+              variables[table[key].order] = {
+                name: key,
+                type: 'Categorical',
+                isSelected: false,
+                isMoreSelected: false,
+                variableIndex: table[key].order,
+              };
+            }
+            data[Math.floor(table[key].order / columns) + 1][
+              table[key].order % columns
+            ] = convertToNumber(table[key].value);
+          });
+          console.log(data);
+          setData(data);
+          // // 데이터가 배열이 아닌 경우 배열로 감싸기
+          // let normalizedData = Array.isArray(data) ? data : [data];
+
+          // console.log(
+          //   '커스텀 데이터 조회 : ' + JSON.stringify(normalizedData, null, 2),
+          // );
+
+          // setDetails(normalizedData); // 유효한 배열을 설정
+
+          // // `numericFields`와 `stringFields`를 order에 따라 정렬 후, 테이블 헤더로 추가
+          // const orderedFields = [];
+
+          // normalizedData.forEach((item) => {
+          //   item.numericFields.forEach((field) => {
+          //     Object.keys(field).forEach((key) => {
+          //       orderedFields.push({ key, order: field[key].order });
+          //     });
+          //   });
+          //   item.stringFields.forEach((field) => {
+          //     Object.keys(field).forEach((key) => {
+          //       orderedFields.push({ key, order: field[key].order });
+          //     });
+          //   });
+          // });
+
+          // // order 기준으로 정렬된 헤더 생성
+          // const sortedHeaders = orderedFields
+          //   .sort((a, b) => a.order - b.order)
+          //   .map((field) => field.key);
+
+          // // 중복 제거 후 헤더 설정
+          // const uniqueHeaders = [...new Set(sortedHeaders)];
+          // setHeaders(uniqueHeaders); // 헤더 설정
         } catch (error) {
           console.log('데이터 가져오기 중 오류:', error);
           setDetails([]); // 오류 발생 시 빈 배열로 설정
@@ -165,7 +227,7 @@ const DataTable = ({ type, id, handleMenuToggle }) => {
 
   return (
     <>
-      {details.length !== 0 ? (
+      {data.length !== 0 ? (
         <div>
           <Typography variant="h3">My Data</Typography>
 
@@ -191,86 +253,59 @@ const DataTable = ({ type, id, handleMenuToggle }) => {
             </button>
           </div>
           <table
-            border="1"
-            className="myData-detail"
             style={{
-              tableLayout: 'fixed',
               width: '100%',
+              border: '1px solid rgba(34, 36, 38, 0.15)',
               borderCollapse: 'collapse',
-              margin: '10px 0',
+              borderRadius: '8px',
+              captionSide: 'top',
             }}
           >
+            <caption
+              style={{
+                fontSize: '24px',
+                fontWeight: '600',
+                padding: '10px',
+                textAlign: 'center',
+                color: 'black',
+              }}
+            >
+              {title}
+            </caption>
             <thead>
               <tr>
-                {headers.map((header) => (
+                {['', ...data[0]].map((header, headerIndex) => (
                   <th
-                    key={header}
+                    key={headerIndex}
                     style={{
-                      width: `${100 / headers.length}%`,
-                      padding: '8px',
-                      backgroundColor: '#f4f6f8',
-                      color: '#333',
-                      fontWeight: 'bold',
+                      border: '1px solid rgba(34, 36, 38, 0.15)',
+                      padding: '10px',
                       textAlign: 'center',
-                      borderBottom: '2px solid #e0e0e0',
+                      fontSize: '18px',
                     }}
                   >
-                    {engToKor(header)}
+                    {header}
                   </th>
                 ))}
-                <th style={{ width: '50px', textAlign: 'center' }}>
-                  <input
-                    type="checkbox"
-                    onChange={handleFullCheck}
-                    checked={isFull}
-                  />
-                </th>
               </tr>
             </thead>
             <tbody>
-              {details.map((row, rowIndex) => {
-                const rows = [];
-                let currentRow = [];
-
-                headers.forEach((header) => {
-                  currentRow.push(
+              {data.slice(1).map((row, rowIndex) => (
+                <tr key={rowIndex}>
+                  {[rowIndex, ...row].map((value, valueIndex) => (
                     <td
-                      key={`${rowIndex}-${header}`}
+                      key={valueIndex}
                       style={{
-                        padding: '8px',
+                        border: '1px solid rgba(34, 36, 38, 0.15)',
                         textAlign: 'center',
-                        color: '#555',
-                        borderBottom: '1px solid #ddd',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
+                        padding: '0.5rem',
                       }}
                     >
-                      {row[header] || ''}
-                    </td>,
-                  );
-                });
-
-                rows.push(
-                  <tr
-                    key={`row-${rowIndex}`}
-                    style={{
-                      backgroundColor: rowIndex % 2 === 0 ? '#f9f9f9' : '#fff',
-                    }}
-                  >
-                    {currentRow}
-                    <td style={{ textAlign: 'center', padding: '8px' }}>
-                      <input
-                        type="checkbox"
-                        checked={selectedItems.includes(row)}
-                        onChange={() => handleViewCheckBoxChange(row)}
-                      />
+                      <span style={{ fontSize: '1rem' }}>{value}</span>
                     </td>
-                  </tr>,
-                );
-
-                return rows;
-              })}
+                  ))}
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

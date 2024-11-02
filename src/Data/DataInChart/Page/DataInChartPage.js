@@ -137,6 +137,7 @@ function DataInChartPage() {
         display: 'flex',
         padding: '0',
         width: '100%',
+        marginBottom: '140px',
       }}
     >
       <div style={{ display: 'flex', flexDirection: 'column' }}>

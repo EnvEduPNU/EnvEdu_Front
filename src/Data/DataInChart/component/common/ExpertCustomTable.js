@@ -267,46 +267,23 @@ function ExpertCustomTable({ onAddPhoto, setSummary, isDrawGraph }) {
               onClick={handleEdit}
               style={{
                 marginLeft: '15px',
-                backgroundColor: '#4a5568',
+                backgroundColor: '#4a4a4a',
                 color: 'white',
                 borderRadius: '5px',
                 padding: '8px 12px',
                 cursor: 'pointer',
                 fontSize: '14px',
               }}
+              onMouseOver={(e) => (e.target.style.backgroundColor = '#3b3b3b')}
+              onMouseOut={(e) => (e.target.style.backgroundColor = '#4a4a4a')}
             >
               수정하기
             </button>
-            {isDrawGraph && (
-              <button
-                style={{
-                  padding: '0.5rem 1rem',
-                  fontSize: '16px',
-                  marginLeft: '1rem',
-                  backgroundColor: '#4a4a4a',
-                  color: 'white',
-                  borderRadius: '0.375rem',
-                  cursor: 'pointer',
-                  border: 'none',
-                  outline: 'none',
-                  transition: 'background-color 0.2s',
-                }}
-                onMouseOver={(e) =>
-                  (e.target.style.backgroundColor = '#3b3b3b')
-                }
-                onMouseOut={(e) => (e.target.style.backgroundColor = '#4a4a4a')}
-                className="px-2 py-1 text-md ml-4 bg-gray-800 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50"
-                onClick={handleCaptureTable} // 테이블 캡처 버튼
-              >
-                테이블 캡쳐
-              </button>
-            )}
-
             <button
               onClick={saveCustomTable}
               style={{
                 marginLeft: '15px',
-                backgroundColor: '#4a5568',
+                backgroundColor: '#4a4a4a',
                 color: 'white',
                 borderRadius: '5px',
                 padding: '8px 12px',
@@ -318,6 +295,26 @@ function ExpertCustomTable({ onAddPhoto, setSummary, isDrawGraph }) {
             >
               저장하기
             </button>
+            {isDrawGraph && (
+              <button
+                style={{
+                  marginLeft: '15px',
+                  backgroundColor: '#4a4a4a',
+                  color: 'white',
+                  borderRadius: '5px',
+                  padding: '8px 12px',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                }}
+                onMouseOver={(e) =>
+                  (e.target.style.backgroundColor = '#3b3b3b')
+                }
+                onMouseOut={(e) => (e.target.style.backgroundColor = '#4a4a4a')}
+                onClick={handleCaptureTable} // 테이블 캡처 버튼
+              >
+                테이블 캡쳐
+              </button>
+            )}
           </caption>
           <thead>
             <tr>

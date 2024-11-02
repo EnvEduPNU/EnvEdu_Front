@@ -26,7 +26,13 @@ function LoginForm() {
   }
 
   return (
-    <div className="login">
+    <div
+      className="login"
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+      }}
+    >
       <form onSubmit={handleSubmit(onSubmit)}>
         <fieldset
           style={{

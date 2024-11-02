@@ -1,21 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactModal from 'react-modal';
 import { useGraphDataStore } from '../store/graphStore';
 import { saveCustomTableApi } from '../../apis/tables';
 import { customAxios } from '../../../Common/CustomAxios';
+import { Box, TextField, Typography } from '@mui/material';
+import { AiOutlineClose } from 'react-icons/ai';
 
 const customModalStyles = {
   content: {
     width: '400px',
-    height: '200px',
+    height: '320px',
     margin: 'auto',
     borderRadius: '8px',
-    border: '1px solid #ccc',
+    border: 'none',
     boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+    backgroundColor: '#f0f2f5', // 밝은 회색 배경
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'center',
     alignItems: 'center',
+    padding: '20px',
   },
   overlay: {
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -24,10 +27,7 @@ const customModalStyles = {
 
 function TitleInputModal({ isOpen, setIsOpen, title, setTitle, setSummary }) {
   const { data, variables } = useGraphDataStore();
-
-  const handleTitleChange = (e) => {
-    setTitle(e.target.value);
-  };
+  const [memo, setMemo] = useState('');
 
   const handleCloseModal = () => {
     setIsOpen(false);
@@ -69,7 +69,7 @@ function TitleInputModal({ isOpen, setIsOpen, title, setTitle, setSummary }) {
       const payload = {
         dataUUID: crypto.randomUUID(),
         saveDate: new Date(date.getTime() + 9 * 60 * 60 * 1000).toISOString(),
-        memo: '메모',
+        memo: memo,
         dataLabel: 'CUSTOM',
         userName: localStorage.getItem('username'),
         numericFields,
@@ -115,6 +115,7 @@ function TitleInputModal({ isOpen, setIsOpen, title, setTitle, setSummary }) {
         });
 
       setTitle('');
+      setMemo('');
     } catch (e) {
       console.log(e);
     }
@@ -126,49 +127,93 @@ function TitleInputModal({ isOpen, setIsOpen, title, setTitle, setSummary }) {
       style={customModalStyles}
       onRequestClose={handleCloseModal}
     >
-      <h2 style={{ marginBottom: '16px' }}>테이블 제목을 입력해주세요.</h2>
-      <input
-        type="text"
-        value={title}
-        onChange={handleTitleChange}
-        placeholder="Enter your title"
+      <button
+        onClick={handleCloseModal}
         style={{
+          position: 'absolute',
+          top: 10,
+          right: 10,
+          color: '#555',
+          backgroundColor: 'transparent',
+          border: 'none',
+          cursor: 'pointer',
+          fontSize: '18px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           padding: '8px',
-          width: '100%',
-          marginBottom: '16px',
-          borderRadius: '4px',
-          border: '1px solid #ccc',
-          fontSize: '16px',
+          borderRadius: '50%',
+          transition: 'background-color 0.3s ease',
         }}
-      />
-      <div style={{ display: 'flex', gap: '20px' }}>
-        <button
-          onClick={handleSaveModal}
-          style={{
-            padding: '8px 16px',
-            backgroundColor: '#4CAF50',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-          }}
+        onMouseEnter={(e) =>
+          (e.currentTarget.style.backgroundColor = '#e0e0e0')
+        }
+        onMouseLeave={(e) =>
+          (e.currentTarget.style.backgroundColor = 'transparent')
+        }
+      >
+        <AiOutlineClose />
+      </button>
+
+      <Box sx={{ width: '100%', textAlign: 'center' }}>
+        <Typography
+          variant="h6"
+          gutterBottom
+          sx={{ fontWeight: 'bold', color: '#333' }}
         >
-          Save
-        </button>
-        <button
-          onClick={handleCloseModal}
-          style={{
-            padding: '8px 16px',
-            backgroundColor: '#f44336', // 취소 버튼 배경색 (빨간색)
-            color: '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
+          테이블 정보 입력
+        </Typography>
+        <TextField
+          label="Title"
+          variant="outlined"
+          fullWidth
+          sx={{
+            marginBottom: 2,
+            backgroundColor: '#fff',
+            borderRadius: 1,
+            boxShadow: '0px 2px 5px rgba(0,0,0,0.1)',
           }}
-        >
-          Cancel
-        </button>
-      </div>
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+        <TextField
+          label="Memo"
+          variant="outlined"
+          fullWidth
+          multiline
+          rows={3}
+          sx={{
+            backgroundColor: '#fff',
+            borderRadius: 1,
+            boxShadow: '0px 2px 5px rgba(0,0,0,0.1)',
+          }}
+          value={memo}
+          onChange={(e) => setMemo(e.target.value)}
+        />
+      </Box>
+      <button
+        onClick={handleSaveModal}
+        style={{
+          marginTop: '20px',
+          padding: '10px 20px',
+          backgroundColor: '#4CAF50',
+          color: '#fff',
+          border: 'none',
+          borderRadius: '8px',
+          cursor: 'pointer',
+          fontSize: '16px',
+          fontWeight: 'bold',
+          transition: 'background-color 0.3s ease',
+        }}
+        onMouseEnter={(e) =>
+          (e.currentTarget.style.backgroundColor = '#45a049')
+        }
+        onMouseLeave={(e) =>
+          (e.currentTarget.style.backgroundColor = '#4CAF50')
+        }
+      >
+        저장 하기
+      </button>
     </ReactModal>
   );
 }
