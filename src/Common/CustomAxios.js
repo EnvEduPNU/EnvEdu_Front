@@ -43,7 +43,7 @@ customAxios.interceptors.response.use(
   },
   function (error) {
     if (error.response.request.status === RESPONSE_UNAUTHORIZED) {
-      alert('아이디/비밀번호를 확인해주세요.');
+      alert('오류가 있어요!');
     } else if (error.response.request.status === RESPONSE_FORBIDDEN) {
       alert('권한이 없습니다');
     } else if (error.response.request.status === RESPONSE_BAD_REQ) {

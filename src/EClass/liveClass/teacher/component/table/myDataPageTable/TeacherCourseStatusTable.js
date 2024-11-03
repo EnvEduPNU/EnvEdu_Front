@@ -308,11 +308,11 @@ export default function TeacherCourseStatusTable({
   };
 
   return (
-    <div style={{ margin: '2rem 0 0 0' }}>
+    <div style={{ margin: '1.5rem 0 0 0' }}>
       <Typography variant="h5" sx={{ marginBottom: '10px' }}>
         {' 수업 상태 '}
       </Typography>
-      <TableContainer component={Paper} sx={{ height: '15.5rem' }}>
+      <TableContainer component={Paper} sx={{ height: '510px' }}>
         <Table aria-label="collapsible table" size="small">
           <TableHead sx={{ backgroundColor: '#dcdcdc' }}>
             <TableRow sx={{ height: 50 }}>
