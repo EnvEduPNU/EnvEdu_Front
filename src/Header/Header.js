@@ -214,11 +214,7 @@ function Header() {
                           >
                             Research
                           </Nav.Link>
-                          <Nav.Link
-                            onClick={() => handleNavLinkClick('/training')}
-                          >
-                            Training
-                          </Nav.Link>
+
                           <Nav.Link
                             onClick={() =>
                               handleNavLinkClick('/implementation')
@@ -236,16 +232,11 @@ function Header() {
                           >
                             Contact us
                           </Nav.Link>
-                          <Nav.Link
+                          {/* <Nav.Link
                             onClick={() => handleNavLinkClick('/notice')}
                           >
                             Announcement
-                          </Nav.Link>
-                          <Nav.Link
-                            onClick={() => handleNavLinkClick('/board')}
-                          >
-                            Board
-                          </Nav.Link>
+                          </Nav.Link> */}
                         </>
                       );
                     default:

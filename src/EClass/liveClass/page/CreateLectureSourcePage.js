@@ -405,29 +405,6 @@ export const CreateLectureSourcePage = (props) => {
 
           <Divider sx={{ margin: '20px 0', borderWidth: '2px' }} />
 
-          {/* 수업자료 버튼 */}
-          <Button
-            variant="outlined"
-            onClick={handleBackClick}
-            style={{
-              fontWeight: '800',
-              fontSize: '1rem',
-              background: '#f3b634',
-              padding: '0.5rem', // 단위 추가
-              borderRadius: '0.3125rem',
-              margin: '0.5rem 0 0.5rem 0',
-              width: '20%',
-              height: '3.5rem',
-              textAlign: 'center',
-              cursor: 'pointer',
-              border: 'none',
-              color: 'white', // 글자색 설정
-            }}
-          >
-            돌아가기
-          </Button>
-        </div>
-        <div>
           {/* Stepper */}
           <div
             style={{

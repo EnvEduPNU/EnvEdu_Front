@@ -25,6 +25,8 @@ const MyData = () => {
   }, []);
 
   useEffect(() => {
+    const username = localStorage.getItem('username');
+
     const fetchData = async () => {
       try {
         if (!isLoading) {
@@ -40,7 +42,10 @@ const MyData = () => {
                 : data.dataLabel,
           }));
 
-          const customDataResponse = await customAxios.get('/api/custom/list');
+          const customDataResponse = await customAxios.get(
+            `/api/custom/list?username=${username}`,
+          );
+
           const customDataFormatted = customDataResponse.data.map((data) => ({
             ...data,
             saveDate: data.saveDate.split('T')[0],
@@ -81,6 +86,7 @@ const MyData = () => {
         display: 'flex',
         flexDirection: 'column',
         height: '1000px',
+        alignItems: 'center',
       }}
     >
       {/* 슬라이드 메뉴 */}
@@ -119,7 +125,7 @@ const MyData = () => {
       )}
 
       {/* 메인 컨텐츠 */}
-      <section className="myData-right" style={{ marginLeft: '260px' }}>
+      <section className="myData-right" style={{}}>
         {myDataTable && dataType && dataId ? (
           <DataTable
             type={dataType}

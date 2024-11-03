@@ -167,7 +167,6 @@ function ComboGraph() {
     if (isPostive && isNegitive) {
       // 양수, 음수 다 있을 때
       setYScaleMinMaxValue([
-
         minValue ===
         Math.ceil(
           minValue / Math.pow(10, minValue.toString().split('.')[0].length - 2),
@@ -210,7 +209,6 @@ function ComboGraph() {
               maxValue /
                 Math.pow(10, maxValue.toString().split('.')[0].length - 1),
             ) * Math.pow(10, maxValue.toString().split('.')[0].length - 1),
-
       ]);
     } else if (isPostive) {
       // 양수만 있을 때
@@ -240,12 +238,10 @@ function ComboGraph() {
               maxValue /
                 Math.pow(10, maxValue.toString().split('.')[0].length - 1),
             ) * Math.pow(10, maxValue.toString().split('.')[0].length - 1),
-
       ]);
     } else if (isNegitive) {
       // 음수만 있을 때
       setYScaleMinMaxValue([
-
         minValue ===
         Math.ceil(
           minValue / Math.pow(10, minValue.toString().split('.')[0].length - 2),
@@ -301,7 +297,6 @@ function ComboGraph() {
     if (is2Postive && is2Negitive) {
       // 양수, 음수 다 있을 때
       setY2ScaleMinMaxValue([
-
         min2Value ===
         Math.ceil(
           min2Value /
@@ -348,7 +343,6 @@ function ComboGraph() {
               max2Value /
                 Math.pow(10, max2Value.toString().split('.')[0].length - 1),
             ) * Math.pow(10, max2Value.toString().split('.')[0].length - 1),
-
       ]);
     } else if (isPostive) {
       // 양수만 있을 때
@@ -380,12 +374,10 @@ function ComboGraph() {
               max2Value /
                 Math.pow(10, max2Value.toString().split('.')[0].length - 1),
             ) * Math.pow(10, max2Value.toString().split('.')[0].length - 1),
-
       ]);
     } else if (is2Negitive) {
       // 음수만 있을 때
       setY2ScaleMinMaxValue([
-
         min2Value ===
         Math.ceil(
           min2Value /
@@ -652,10 +644,12 @@ function ComboGraph() {
 
   return (
     <div
-      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+      style={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}
     >
       <div
         style={{
+          width: '800px',
+          textAlign: 'center',
           margin: '0 0 20px 200px', // 위아래 간격 추가
           padding: '10px 20px', // 내부 여백 추가
           color: '#333', // 텍스트 색상
@@ -689,6 +683,7 @@ function ComboGraph() {
             +
           </button>
         </div>
+
         <div
           style={{
             display: 'flex',
@@ -698,41 +693,96 @@ function ComboGraph() {
         >
           <div
             style={{
-              width: '50px',
-              height: '400px',
+              padding: '20px', // 패딩 통합
+              borderRadius: '20px', // 둥근 모서리
+              textAlign: 'center', // 텍스트 가운데 정렬
+              width: '70px', // 슬라이더 주변의 폭을 조정
             }}
           >
-            <Slider
-              orientation="vertical"
-              valueLabelDisplay="auto"
-              value={yScaleValue}
-              min={yScaleMinMaxValue[0]}
-              max={yScaleMinMaxValue[1]}
-              onChange={handleChangeYScaleValue}
-              sx={{
-                color: '#1976d2', // 슬라이더의 트랙 및 thumb 색상
-                '& .MuiSlider-thumb': {
-                  backgroundColor: '#fff', // thumb의 배경색
-                  border: '2px solid #1976d2', // thumb의 테두리 색상
-                },
-                '& .MuiSlider-track': {
-                  backgroundColor: '#1976d2', // 슬라이더 트랙 색상
-                },
-                '& .MuiSlider-rail': {
-                  backgroundColor: '#ddd', // 슬라이더 레일 색상
-                },
-                '& .MuiSlider-valueLabel': {
-                  backgroundColor: '#1976d2', // value label 색상
-                  color: '#fff',
-                },
-              }}
-            />
+            <div>
+              {/* 최대값 및 최소값 표시 */}
+              <div
+                style={{
+                  marginBottom: '15px',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  color: '#1976d2',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  lineHeight: '16px',
+                }}
+              >
+                Max
+                <span style={{}}>{yScaleValue[1]}</span>
+              </div>
+              <div
+                style={{
+                  height: '200px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Slider
+                  orientation="vertical"
+                  valueLabelDisplay="auto"
+                  value={yScaleValue}
+                  min={yScaleMinMaxValue[0]}
+                  max={yScaleMinMaxValue[1]}
+                  onChange={handleChangeYScaleValue}
+                  sx={{
+                    color: '#1976d2', // 슬라이더의 트랙 및 thumb 색상
+                    '& .MuiSlider-thumb': {
+                      backgroundColor: '#fff', // thumb 배경색
+                      border: '2px solid #1976d2', // thumb 테두리 색상
+                      width: '20px', // thumb 크기
+                      height: '20px', // thumb 크기
+                      '&:hover': {
+                        boxShadow: '0 0 0 8px rgba(25, 118, 210, 0.16)', // hover 시 그림자
+                      },
+                    },
+                    '& .MuiSlider-track': {
+                      backgroundColor: '#1976d2', // 트랙 색상
+                      width: '8px', // 트랙 너비 (세로 슬라이더에서 width로 설정)
+                    },
+                    '& .MuiSlider-rail': {
+                      backgroundColor: '#ddd', // 레일 색상
+                      width: '8px', // 레일 너비 (세로 슬라이더에서 width로 설정)
+                    },
+                    '& .MuiSlider-valueLabel': {
+                      backgroundColor: '#1976d2', // value label 배경색
+                      color: '#fff', // value label 텍스트 색상
+                      fontSize: '14px', // value label 글자 크기
+                    },
+                  }}
+                />
+              </div>
+              <div
+                style={{
+                  marginTop: '15px',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  color: '#1976d2',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  lineHeight: '16px',
+                }}
+              >
+                Min
+                <span>{yScaleValue[0]}</span>
+              </div>
+            </div>
           </div>
         </div>
         {/* 차트 */}
-        <div style={{ width: '1200px' }}>
+        <div style={{ minWidth: '800px' }}>
           <canvas ref={chartRef} id="myChart"></canvas>
         </div>
+
         <div
           style={{
             display: 'flex',
@@ -742,35 +792,93 @@ function ComboGraph() {
         >
           <div
             style={{
-              width: '50px',
-              height: '400px',
+              padding: '20px', // 패딩 통합
+              borderRadius: '20px', // 둥근 모서리
+              textAlign: 'center', // 텍스트 가운데 정렬
+              width: '70px', // 슬라이더 주변의 폭을 조정
             }}
           >
-            <Slider
-              orientation="vertical"
-              valueLabelDisplay="auto"
-              value={y2ScaleValue}
-              min={y2ScaleMinMaxValue[0]}
-              max={y2ScaleMinMaxValue[1]}
-              onChange={handleChangeY2ScaleValue}
-              sx={{
-                color: '#1976d2', // 슬라이더의 트랙 및 thumb 색상
-                '& .MuiSlider-thumb': {
-                  backgroundColor: '#fff', // thumb의 배경색
-                  border: '2px solid #1976d2', // thumb의 테두리 색상
-                },
-                '& .MuiSlider-track': {
-                  backgroundColor: '#1976d2', // 슬라이더 트랙 색상
-                },
-                '& .MuiSlider-rail': {
-                  backgroundColor: '#ddd', // 슬라이더 레일 색상
-                },
-                '& .MuiSlider-valueLabel': {
-                  backgroundColor: '#1976d2', // value label 색상
-                  color: '#fff',
-                },
-              }}
-            />
+            <div>
+              {/* 최대값 및 최소값 표시 */}
+              <div
+                style={{
+                  marginBottom: '15px',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  color: '#1976d2',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  lineHeight: '16px',
+                }}
+              >
+                Max
+                <span style={{}}>
+                  {y2ScaleValue[1] === -Infinity
+                    ? '선택 안됨'
+                    : y2ScaleValue[1]}
+                </span>
+              </div>
+              <div
+                style={{
+                  height: '200px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Slider
+                  orientation="vertical"
+                  valueLabelDisplay="auto"
+                  value={y2ScaleValue}
+                  min={y2ScaleMinMaxValue[0]}
+                  max={y2ScaleMinMaxValue[1]}
+                  onChange={handleChangeY2ScaleValue}
+                  sx={{
+                    color: '#1976d2', // 슬라이더의 트랙 및 thumb 색상
+                    '& .MuiSlider-thumb': {
+                      backgroundColor: '#fff', // thumb 배경색
+                      border: '2px solid #1976d2', // thumb 테두리 색상
+                      width: '20px', // thumb 크기
+                      height: '20px', // thumb 크기
+                      '&:hover': {
+                        boxShadow: '0 0 0 8px rgba(25, 118, 210, 0.16)', // hover 시 그림자
+                      },
+                    },
+                    '& .MuiSlider-track': {
+                      backgroundColor: '#1976d2', // 트랙 색상
+                      width: '8px', // 트랙 너비 (세로 슬라이더에서 width로 설정)
+                    },
+                    '& .MuiSlider-rail': {
+                      backgroundColor: '#ddd', // 레일 색상
+                      width: '8px', // 레일 너비 (세로 슬라이더에서 width로 설정)
+                    },
+                    '& .MuiSlider-valueLabel': {
+                      backgroundColor: '#1976d2', // value label 배경색
+                      color: '#fff', // value label 텍스트 색상
+                      fontSize: '14px', // value label 글자 크기
+                    },
+                  }}
+                />
+              </div>
+              <div
+                style={{
+                  marginTop: '15px',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  color: '#1976d2',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  lineHeight: '16px',
+                }}
+              >
+                Min
+                <span>{y2ScaleValue[0]}</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -787,7 +895,7 @@ function ComboGraph() {
           {selectedMoreYVariableIndexs.map((variableIndex) => (
             <div
               key={variableIndex}
-              style={{ width: '150px', textAlign: 'center' }}
+              style={{ minWidth: '150px', textAlign: 'center' }}
             >
               <ComboDropdown type="y" selectedIndex={variableIndex} />
             </div>
@@ -797,45 +905,101 @@ function ComboGraph() {
           </button>
         </div>
       </div>
+
       <div
-        style={{ width: '1200px', textAlign: 'center', marginLeft: '200px' }}
+        style={{
+          minWidth: '700px',
+          textAlign: 'center', // 텍스트 가운데 정렬
+          width: '580px',
+          marginLeft: '270px',
+          padding: '10px',
+        }}
       >
         <div
           style={{
-            width: '400px',
-            margin: '0 auto',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
           }}
         >
-          <Slider
-            valueLabelDisplay="auto"
-            value={xScaleValue}
-            min={xScaleMinMaxValue[0]}
-            max={xScaleMinMaxValue[1]}
-            onChange={handleChangeXScaleValue}
-            sx={{
-              color: '#1976d2', // 슬라이더의 트랙 및 thumb 색상
-              '& .MuiSlider-thumb': {
-                backgroundColor: '#fff', // thumb의 배경색
-                border: '2px solid #1976d2', // thumb의 테두리 색상
-              },
-              '& .MuiSlider-track': {
-                backgroundColor: '#1976d2', // 슬라이더 트랙 색상
-              },
-              '& .MuiSlider-rail': {
-                backgroundColor: '#ddd', // 슬라이더 레일 색상
-              },
-              '& .MuiSlider-valueLabel': {
-                backgroundColor: '#1976d2', // value label 색상
-                color: '#fff',
-              },
+          <div
+            style={{
+              fontSize: '16px',
+              fontWeight: 'bold',
+              color: '#1976d2',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginLeft: '15px',
+              marginRight: '15px',
             }}
-          />
+          >
+            Min
+            <span>
+              {data?.[xScaleValue[0] + 1]?.[selctedXVariableIndex] ?? -1}
+            </span>
+          </div>
+          <div
+            style={{
+              width: '400px',
+            }}
+          >
+            <Slider
+              valueLabelDisplay="auto"
+              value={xScaleValue}
+              min={xScaleMinMaxValue[0]}
+              max={xScaleMinMaxValue[1]}
+              onChange={handleChangeXScaleValue}
+              sx={{
+                color: '#1976d2', // 슬라이더의 트랙 및 thumb 색상
+                '& .MuiSlider-thumb': {
+                  backgroundColor: '#fff', // thumb 배경색
+                  border: '2px solid #1976d2', // thumb 테두리 색상
+                  width: '20px', // thumb 크기
+                  height: '20px', // thumb 크기
+                  '&:hover': {
+                    boxShadow: '0 0 0 8px rgba(25, 118, 210, 0.16)', // hover 시 그림자
+                  },
+                },
+                '& .MuiSlider-track': {
+                  backgroundColor: '#1976d2', // 트랙 색상
+                  height: '8px', // 트랙 높이
+                },
+                '& .MuiSlider-rail': {
+                  backgroundColor: '#ddd', // 레일 색상
+                  height: '8px', // 레일 높이
+                },
+                '& .MuiSlider-valueLabel': {
+                  backgroundColor: '#1976d2', // value label 배경색
+                  color: '#fff', // value label 텍스트 색상
+                  fontSize: '14px', // value label 글자 크기
+                },
+              }}
+            />
+          </div>
+          <div
+            style={{
+              fontSize: '16px',
+              fontWeight: 'bold',
+              color: '#1976d2',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginLeft: '15px',
+              marginRight: '15px',
+            }}
+          >
+            Max
+            <span>
+              {data?.[xScaleValue[1] + 1]?.[selctedXVariableIndex] ?? -1}
+            </span>
+          </div>
         </div>
       </div>
       {/* X축 Dropdown */}
       <div
         style={{
-          width: '1375px',
+          width: '1000px',
           textAlign: 'right',
           marginBottom: '20px',
           marginTop: '10px',

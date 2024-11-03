@@ -8,7 +8,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { TableVirtuoso } from 'react-virtuoso';
-import { Typography } from '@mui/material';
+import { Typography, CircularProgress, Box } from '@mui/material';
 import { customAxios } from '../../../../../../Common/CustomAxios';
 
 const columns = [
@@ -62,7 +62,7 @@ function fixedHeaderContent() {
 function rowContent(index, row, handleClick, selectedRow) {
   return columns.map((column) => (
     <TableCell
-      key={`${row.id}-${column.dataKey}`} // 고유한 key 설정
+      key={`${row.id}-${column.dataKey}`}
       align="left"
       onClick={() => handleClick(row.id, row.Step, row.stepNum)}
       sx={{
@@ -80,8 +80,10 @@ export default function TeacherAssignmentTable(props) {
   const [selectedRow, setSelectedRow] = useState(null);
   const [tableData, setTableData] = useState([]);
   const [allTableData, setAllTableData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true); // 로딩 상태 추가
 
   useEffect(() => {
+    setIsLoading(true); // 로딩 시작
     customAxios
       .get('/api/steps/getLectureContent')
       .then((res) => {
@@ -102,14 +104,8 @@ export default function TeacherAssignmentTable(props) {
         setAllTableData(filteredData);
         props.setTableData(filteredData);
       })
-      .catch((err) => console.log(err));
-  }, []);
-
-  useEffect(() => {
-    document.addEventListener('click', handleClickOutside);
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
+      .catch((err) => console.log(err))
+      .finally(() => setIsLoading(false)); // 로딩 완료
   }, []);
 
   const handleRowClick = (id, Step, stepNum) => {
@@ -133,30 +129,47 @@ export default function TeacherAssignmentTable(props) {
     props.setAssginmentShareCheck(null);
   };
 
-  const handleClickOutside = (event) => {
-    if (!event.target.closest('.virtuoso-table')) {
-      setSelectedRow(null);
-    }
-  };
-
   return (
-    <div>
-      <Typography variant="h5" sx={{ margin: '20px 0 10px 0' }}>
-        {`${tableData[0]?.Step || '수업자료가 없어요'}`}
-      </Typography>
-      <Paper style={{ height: 260, width: '100%' }} className="virtuoso-table">
-        <TableContainer component={Paper}>
-          <Table stickyHeader>{fixedHeaderContent()}</Table>
-        </TableContainer>
-        <TableVirtuoso
-          data={tableData}
-          components={VirtuosoTableComponents}
-          itemContent={(index, row) =>
-            rowContent(index, row, handleRowClick, selectedRow)
-          }
-          style={{ height: 210 }}
-        />
-      </Paper>
+    <div style={{ position: 'relative' }}>
+      {isLoading && (
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 1000,
+            backgroundColor: 'rgba(255, 255, 255, 0.7)', // 배경을 블러 처리하는 느낌 추가
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      )}
+      <div style={{ filter: isLoading ? 'blur(4px)' : 'none' }}>
+        <Typography variant="h5" sx={{ margin: '20px 0 10px 0' }}>
+          {`${tableData[0]?.Step || '수업자료가 없어요'}`}
+        </Typography>
+        <Paper
+          style={{ height: 510, width: '100%' }}
+          className="virtuoso-table"
+        >
+          <TableContainer component={Paper}>
+            <Table stickyHeader>{fixedHeaderContent()}</Table>
+          </TableContainer>
+          <TableVirtuoso
+            data={tableData}
+            components={VirtuosoTableComponents}
+            itemContent={(index, row) =>
+              rowContent(index, row, handleRowClick, selectedRow)
+            }
+            style={{ height: 460 }}
+          />
+        </Paper>
+      </div>
     </div>
   );
 }

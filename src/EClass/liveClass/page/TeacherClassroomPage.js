@@ -102,42 +102,53 @@ export function TeacherClassroomPage() {
   return (
     <div style={{ display: 'flex' }}>
       <div style={{ width: '100%', height: '700px' }}>
-        <Typography
-          variant="h4"
-          sx={{
-            margin: '10px 0 10px 0',
-            fontWeight: 600,
-            fontSize: '3rem',
-            letterSpacing: '0.013rem',
-            fontFamily: "'Montserrat', sans-serif",
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'end',
           }}
         >
-          {' E-Class '}
-        </Typography>
+          <Typography
+            variant="h4"
+            sx={{
+              margin: '10px 0 10px 0',
+              fontWeight: 600,
+              fontSize: '3rem',
+              letterSpacing: '0.013rem',
+              fontFamily: "'Montserrat', sans-serif",
+            }}
+          >
+            {' E-Class '}
+          </Typography>
+          <Button
+            onClick={() => setModalOpen(true)}
+            sx={{
+              margin: '10px 0',
+              width: '20%',
+              cursor: 'pointer',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              fontSize: '0.9rem',
+              fontWeight: 600,
+              color: 'black',
+              backgroundColor: '#feecfe',
+              // borderRadius: '1.469rem',
+              border: 'none',
+              height: '1.75rem',
+              fontFamily: "'Asap', sans-serif",
+              '&:hover': {
+                backgroundColor: '#d9a527', // hover 시 밝은 색상
+              },
+            }}
+          >
+            {' E-Class 실행 생성 '}
+          </Button>
+        </div>
         <div>
           <TeacherEclassTable setSelectedEClassUuid={setSelectedEClassUuid} />
         </div>
-
-        <button
-          onClick={() => setModalOpen(true)}
-          style={{
-            margin: '10px 0',
-            width: '20%',
-            cursor: 'pointer',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            fontSize: '0.9rem',
-            fontWeight: 600,
-            backgroundColor: '#feecfe',
-            borderRadius: '2.469rem',
-            border: 'none',
-            height: '1.75rem',
-            fontFamily: "'Asap', sans-serif",
-          }}
-        >
-          {' E-Class 실행 생성 '}
-        </button>
         <CreateLectureModal
           open={isModalOpen}
           onClose={() => setModalOpen(false)}

@@ -1,6 +1,4 @@
 import * as React from 'react';
-import Modal from '@mui/material/Modal';
-import Box from '@mui/material/Box';
 import { customAxios } from '../../../Common/CustomAxios';
 import { useGraphDataStore } from '../store/graphStore';
 import { useState, useEffect } from 'react';
@@ -9,50 +7,33 @@ import ButtonClose from '../component/DrawGraph/ButtonClose';
 
 import { useTabStore } from '../store/tabStore';
 import { convertToNumber } from '../store/utils/convertToNumber';
+import ReactModal from 'react-modal';
+import zIndex from '@mui/material/styles/zIndex';
 
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-  zIndex: 1000,
-};
-
-const summaryTableStyle = {
-  width: '100%',
-  borderCollapse: 'collapse',
-  border: '1px solid #ddd',
-};
-
-const tableCellStyle = {
-  border: '1px solid #ddd',
-  padding: '8px',
-  textAlign: 'center',
-};
-
-const tableHeaderStyle = {
-  ...tableCellStyle, // spread operator to inherit styles from tableCellStyle
-  backgroundColor: '#fdeecf',
-};
-
-const tableRowStyle = {
-  backgroundColor: '#f2f2f2',
-  cursor: 'pointer',
-};
-
-const tableRowHoverStyle = {
-  backgroundColor: '#ccc',
-  cursor: 'pointer',
-};
-
-const tableRowHoverOutStyle = {
-  backgroundColor: '#FFF',
-  cursor: 'pointer',
+const customModalStyles = {
+  overlay: {
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    width: '100%',
+    height: '100vh',
+    zIndex: '9999',
+    position: 'fixed',
+    top: '0',
+    left: '0',
+  },
+  content: {
+    width: '600px',
+    height: '620px',
+    zIndex: '150',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    borderRadius: '10px',
+    boxShadow: '2px 2px 2px rgba(0, 0, 0, 0.25)',
+    backgroundColor: 'white',
+    padding: '20px',
+    overflow: 'auto',
+  },
 };
 
 //항목 이름 (한국어 -> 영어)
@@ -105,25 +86,20 @@ const engToKor = (name) => {
 };
 
 // Data&Chart 안의 테이블에 들어가는 데이터들을 다루는 컴포넌트 및 모달
-export default function ForderListModal(props) {
-  const [open, setOpen] = useState(false);
+export default function ForderListModal({
+  filteredData,
+  modalOpen,
+  setModalOpen,
+}) {
   const [forderType, setforderType] = useState();
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => {
-    setOpen(false);
-    props.setModalOpen(false);
-  };
+  console.log(modalOpen);
 
-  const { setData, setVariables } = useGraphDataStore();
+  const { setData } = useGraphDataStore();
 
   useEffect(() => {
-    const ModalOpen = props.modalOpen;
-    if (ModalOpen) {
-      handleOpen();
-    }
-    const allCheck = props.filteredData[0].total;
-    const noneCheck = props.filteredData[0].none;
+    const allCheck = filteredData[0].total;
+    const noneCheck = filteredData[0].none;
     if (allCheck === '전체') {
       console.log('타이틀 확인 : ' + allCheck);
       setforderType(allCheck);
@@ -132,9 +108,9 @@ export default function ForderListModal(props) {
 
       setforderType(noneCheck);
     } else {
-      setforderType(props.filteredData[0].dataLabel);
+      setforderType(filteredData[0].dataLabel);
     }
-  }, [props]);
+  }, []);
 
   const getTable = (type, id) => {
     if (type === 'CUSTOM') {
@@ -142,7 +118,8 @@ export default function ForderListModal(props) {
         .get(`api/custom/${id}`)
         .then((res) => {
           //수정 필요
-          const title = '타이틀 추가 해야 함';
+          console.log(res.data.title);
+          const title = res.data.title;
           let rows = 0;
           let columns = 0;
           const headerSet = new Set();
@@ -203,8 +180,10 @@ export default function ForderListModal(props) {
           console.log(data);
           setData(data, title, true, variables);
 
-          localStorage.setItem('data', JSON.stringify(data));
-          localStorage.setItem('title', JSON.stringify(title));
+          // localStorage.setItem('data', JSON.stringify(data));
+          // localStorage.setItem('title', JSON.stringify(title));
+
+          setModalOpen(false);
         })
         .catch((err) => console.log(err));
     } else {
@@ -300,55 +279,190 @@ export default function ForderListModal(props) {
         .catch((err) => console.log(err));
     }
   };
-
-  const [hoverIndex, setHoverIndex] = useState(null);
-
+  console.log(filteredData);
   return (
-    <div>
-      <Modal
-        open={open}
-        onClick={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
+    <ReactModal
+      isOpen={modalOpen}
+      onRequestClose={() => setModalOpen(false)} // 모달 외부를 클릭하거나 ESC 키로 닫기
+      style={customModalStyles}
+    >
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
       >
-        <Box sx={style}>
-          <Typography style={{ padding: '1rem', fontSize: '2rem' }}>
-            {forderType}
-          </Typography>
-          <table style={summaryTableStyle}>
-            <thead style={tableHeaderStyle}>
+        <h2
+          style={{
+            fontWeight: 'bold',
+            fontSize: '1.5rem', // 2xl 크기
+            margin: '8px 0',
+          }}
+        >
+          {forderType} 데이터
+        </h2>
+
+        <div
+          style={{
+            height: '500px',
+            overflow: 'auto',
+            marginTop: '8px',
+            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+            border: '1px solid #ddd', // 테이블 전체 테두리 추가
+          }}
+        >
+          <table
+            style={{
+              width: '100%',
+              borderCollapse: 'collapse',
+            }}
+          >
+            <thead
+              style={{
+                backgroundColor: '#f0f4f8',
+                color: '#333',
+                textAlign: 'left',
+                borderBottom: '2px solid #ddd',
+              }}
+            >
               <tr>
-                <th key="saveDate">저장 일시</th>
-                <th key="dataLabel">데이터 종류</th>
-                <th key="memo">메모</th>
+                <th
+                  style={{
+                    padding: '10px 0px',
+                    border: '1px solid #ddd',
+                    textAlign: 'center',
+                  }}
+                  key="dataLabel"
+                >
+                  데이터 종류
+                </th>
+                <th
+                  style={{
+                    padding: '10px 15px',
+                    border: '1px solid #ddd',
+                    textAlign: 'center',
+                  }}
+                  key="title"
+                >
+                  제목
+                </th>
+                <th
+                  style={{
+                    padding: '10px 15px',
+                    border: '1px solid #ddd',
+                    textAlign: 'center',
+                  }}
+                  key="memo"
+                >
+                  메모
+                </th>
+                <th
+                  style={{
+                    padding: '10px 15px',
+                    border: '1px solid #ddd',
+                    textAlign: 'center',
+                  }}
+                  key="saveDate"
+                >
+                  저장 일시
+                </th>
               </tr>
             </thead>
             <tbody>
-              {props.filteredData.map((item, index) => (
+              {filteredData.map((item, index) => (
                 <tr
                   key={index}
-                  onClick={() => {
-                    getTable(item.dataLabel, item.dataUUID);
+                  onClick={() => getTable(item.dataLabel, item.dataUUID)}
+                  style={{
+                    backgroundColor: index % 2 === 0 ? '#ffffff' : '#f9fafb',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.3s ease',
                   }}
-                  style={
-                    (tableRowStyle,
-                    hoverIndex === index
-                      ? tableRowHoverStyle
-                      : tableRowHoverOutStyle)
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.backgroundColor = '#eaf3ff')
                   }
-                  onMouseEnter={() => setHoverIndex(index)}
-                  onMouseLeave={() => setHoverIndex(null)}
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.backgroundColor =
+                      index % 2 === 0 ? '#ffffff' : '#f9fafb')
+                  }
                 >
-                  <td>{item.saveDate}</td>
-                  <td>{item.dataLabel}</td>
-                  <td>{item.memo}</td>
+                  <td
+                    style={{
+                      padding: '10px 15px',
+                      textAlign: 'left',
+                      border: '1px solid #ddd',
+                    }}
+                  >
+                    {item.dataLabel}
+                  </td>
+                  <td
+                    style={{
+                      padding: '10px 15px',
+                      textAlign: 'left',
+                      border: '1px solid #ddd',
+                    }}
+                  >
+                    {item.title}
+                  </td>
+                  <td
+                    style={{
+                      padding: '10px 15px',
+                      textAlign: 'left',
+                      border: '1px solid #ddd',
+                    }}
+                  >
+                    {item.memo}
+                  </td>
+                  <td
+                    style={{
+                      padding: '10px 15px',
+                      textAlign: 'left',
+                      border: '1px solid #ddd',
+                    }}
+                  >
+                    {item.saveDate}
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
-          <ButtonClose buttonName={'닫기'} handleClose={handleClose} />
-        </Box>
-      </Modal>
-    </div>
+        </div>
+
+        <button
+          onClick={() => setModalOpen(false)}
+          style={{
+            position: 'absolute',
+            top: '10px',
+            right: '10px',
+            width: '32px',
+            height: '32px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: '#e53e3e',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '50%',
+            boxShadow: '0 2px 6px rgba(0, 0, 0, 0.15)',
+            cursor: 'pointer',
+            transition: 'background-color 0.3s, transform 0.2s',
+            fontSize: '16px',
+            fontWeight: 'bold',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#c53030';
+            e.currentTarget.style.transform = 'scale(1.1)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = '#e53e3e';
+            e.currentTarget.style.transform = 'scale(1)';
+          }}
+        >
+          ×
+        </button>
+      </div>
+    </ReactModal>
   );
 }

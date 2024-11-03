@@ -68,7 +68,11 @@ const MyLectureList = ({ cards, handleOpenModal }) => {
         <Button
           variant="contained"
           onClick={() => setShowFilter(!showFilter)}
-          sx={{ marginBottom: '20px' }}
+          sx={{
+            margin: '0 0 20px 30px',
+            backgroundColor: 'lightgray',
+            color: 'black',
+          }}
         >
           필터
         </Button>

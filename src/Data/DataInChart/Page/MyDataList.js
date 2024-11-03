@@ -4,18 +4,19 @@ import './leftSlidePage.scss';
 import ForderListModal from '../modal/ForderListModal';
 
 // DATA 드롭다운 리스트
-export default function MyDataList() {
-  const [summary, setSummary] = useState([]);
+export default function MyDataList({ summary, setSummary }) {
   const [modalOpen, setModalOpen] = useState(false);
 
+  console.log(modalOpen);
   // 가장 최초 테이블 요청
   useEffect(() => {
+    const username = localStorage.getItem('username');
+
     const FetchData = async () => {
       await customAxios
         .get('/mydata/list')
         .then((res) => {
           console.log('My Data list : ' + JSON.stringify(res.data, null, 2));
-
           const formattedData = res.data.map((data) => ({
             ...data,
             saveDate: data.saveDate.split('T')[0],
@@ -25,22 +26,26 @@ export default function MyDataList() {
                 : data.dataLabel === 'OCEANQUALITY'
                 ? '수질 데이터'
                 : data.dataLabel,
+            title: data.title,
           }));
           console.log(formattedData);
           setSummary(formattedData);
         })
         .catch((err) => console.log(err));
 
-      await customAxios.get('/api/custom/list').then((res) => {
-        console.log(res.data);
-        const formattedData = res.data.map((table) => ({
-          saveDate: table.saveDate.split('T')[0],
-          dataLabel: 'CUSTOM',
-          dataUUID: table.dataUUID,
-          memo: table.memo,
-        }));
-        setSummary((prev) => [...prev, ...formattedData]);
-      });
+      await customAxios
+        .get(`/api/custom/list?username=${username}`)
+        .then((res) => {
+          console.log(res.data);
+          const formattedData = res.data.map((table) => ({
+            title: table.title,
+            saveDate: table.saveDate.split('T')[0],
+            dataLabel: 'CUSTOM',
+            dataUUID: table.dataUUID,
+            memo: table.memo,
+          }));
+          setSummary((prev) => [...prev, ...formattedData]);
+        });
     };
 
     FetchData();
@@ -65,20 +70,16 @@ export default function MyDataList() {
 
     if (filtered == '') {
       filtered.unshift({ none: type });
+      console.log(filtered);
       setFilteredData(filtered);
       setModalOpen(true);
       console.log('데이터 없음');
     } else {
+      console.log(filtered);
       setFilteredData(filtered);
       setModalOpen(true);
       console.log('데이터리스트에서 모달 true');
     }
-  };
-
-  const [selectedFolderId, setSelectedFolderId] = useState(null);
-
-  const handleFolderSelect = (folderId) => {
-    setSelectedFolderId(folderId);
   };
 
   return (

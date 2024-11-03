@@ -152,80 +152,107 @@ const ExcelDataModal = ({ open, handleClose, data, eclassFlag }) => {
           bgcolor: 'background.paper',
           boxShadow: 24,
           p: 4,
+          borderRadius: '30px',
         }}
       >
-        <Typography variant="h6" sx={{ marginBottom: 2 }}>
+        <Typography variant="h6" sx={{ marginBottom: 2, textAlign: 'center' }}>
           내 컴퓨터에서 불러오기
         </Typography>
-        <TableContainer component={Paper} sx={{ marginBottom: '20px' }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                {Object.keys(data[0]).map((key) => (
-                  <TableCell
-                    key={key}
-                    align="center"
-                    sx={{ backgroundColor: '#f0f0f0' }}
-                  >
-                    <FormControl
-                      variant="outlined"
-                      sx={{ minWidth: 120, marginTop: 1 }}
-                    >
-                      <InputLabel id={`dataType-label-${key}`}></InputLabel>
-                      <Select
-                        labelId={`dataType-label-${key}`}
-                        value={dataTypes[key]}
-                        onChange={(e) =>
-                          handleDataTypeChange(key, e.target.value)
-                        }
-                      >
-                        <MenuItem value="Numeric">Numeric</MenuItem>
-                        <MenuItem value="Categoric">Categoric</MenuItem>
-                      </Select>
-                    </FormControl>
-                    <Typography variant="body1" sx={{ marginTop: 2 }}>
-                      {key}
-                    </Typography>
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data.map((row, rowIndex) => (
-                <TableRow key={rowIndex}>
-                  {Object.keys(row).map((key) => (
+        {showSaveForm ? null : (
+          <TableContainer component={Paper} sx={{ marginBottom: '20px' }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  {Object.keys(data[0]).map((key) => (
                     <TableCell
                       key={key}
                       align="center"
-                      onClick={() => handleCellClick(key, row[key], rowIndex)}
+                      sx={{ backgroundColor: '#f0f0f0' }}
                     >
-                      {editingCell === key && editedRowIndex === rowIndex ? (
-                        <TextField
-                          value={editedValue}
-                          onChange={handleValueChange}
-                          onBlur={() => handleCellSave(key)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') handleCellSave(key);
-                          }}
-                          autoFocus
-                        />
-                      ) : (
-                        row[key]
-                      )}
+                      <FormControl
+                        variant="outlined"
+                        sx={{ minWidth: 120, marginTop: 1 }}
+                      >
+                        <InputLabel id={`dataType-label-${key}`}></InputLabel>
+                        <Select
+                          labelId={`dataType-label-${key}`}
+                          value={dataTypes[key]}
+                          onChange={(e) =>
+                            handleDataTypeChange(key, e.target.value)
+                          }
+                        >
+                          <MenuItem value="Numeric">Numeric</MenuItem>
+                          <MenuItem value="Categoric">Categoric</MenuItem>
+                        </Select>
+                      </FormControl>
+                      <Typography variant="body1" sx={{ marginTop: 2 }}>
+                        {key}
+                      </Typography>
                     </TableCell>
                   ))}
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableHead>
+              <TableBody>
+                {data.map((row, rowIndex) => (
+                  <TableRow key={rowIndex}>
+                    {Object.keys(row).map((key) => (
+                      <TableCell
+                        key={key}
+                        align="center"
+                        onClick={() => handleCellClick(key, row[key], rowIndex)}
+                      >
+                        {editingCell === key && editedRowIndex === rowIndex ? (
+                          <TextField
+                            value={editedValue}
+                            onChange={handleValueChange}
+                            onBlur={() => handleCellSave(key)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') handleCellSave(key);
+                            }}
+                            autoFocus
+                          />
+                        ) : (
+                          row[key]
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
+
         {showSaveForm && (
-          <Box sx={{ marginBottom: 2 }}>
+          <Box
+            sx={{
+              p: 3,
+              boxShadow: 3,
+              borderRadius: 2,
+              backgroundColor: '#f7f8fc',
+              marginBottom: 2,
+              maxWidth: '400px',
+              margin: '0 auto',
+            }}
+          >
+            <Typography
+              variant="h6"
+              gutterBottom
+              sx={{ fontWeight: 'bold', color: '#333' }}
+            >
+              테이블 정보 입력
+            </Typography>
             <TextField
               label="Title"
               variant="outlined"
               fullWidth
-              sx={{ marginBottom: 2 }}
+              sx={{
+                marginBottom: 2,
+                width: '100%',
+                backgroundColor: '#fff',
+                borderRadius: 1,
+                boxShadow: '0px 2px 5px rgba(0,0,0,0.1)',
+              }}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
@@ -235,6 +262,11 @@ const ExcelDataModal = ({ open, handleClose, data, eclassFlag }) => {
               fullWidth
               multiline
               rows={3}
+              sx={{
+                backgroundColor: '#fff',
+                borderRadius: 1,
+                boxShadow: '0px 2px 5px rgba(0,0,0,0.1)',
+              }}
               value={memo}
               onChange={(e) => setMemo(e.target.value)}
             />
