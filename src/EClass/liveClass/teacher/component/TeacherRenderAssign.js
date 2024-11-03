@@ -46,8 +46,7 @@ function TeacherRenderAssign({ data }) {
           style={{
             padding: 30,
             margin: '20px 20px 10px 0',
-            minHeight: '70vh',
-            maxHeight: '70vh', // 최대 높이를 설정하여 높이를 제한합니다.
+            height: '510px',
             boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
             overflow: 'auto', // 넘칠 경우 스크롤을 생성합니다.
           }}
@@ -112,9 +111,10 @@ function RenderContent({
       return (
         <div style={{ textAlign: 'center', marginBottom: '20px' }}>
           <img
+            crossOrigin="anonymous"
             src={content.content}
             alt="Assignment Content"
-            style={{ width: '300px', height: '300px', objectFit: 'cover' }} // 크기를 300px로 증가
+            style={{ width: content.x, height: content.y }}
           />
         </div>
       );
@@ -152,27 +152,37 @@ function RenderContent({
           </Button>
 
           {/* 버튼 아래에 storedPhotoList 출력 */}
-          <div style={{ marginTop: '10px' }}>
-            {storedPhotoList.length > 0 ? (
-              <ul style={{ listStyle: 'none', padding: 0 }}>
-                {storedPhotoList.map((photo, index) => (
-                  <li key={index} style={{ marginBottom: '20px' }}>
-                    <Typography variant="subtitle1">{photo.title}</Typography>
+          <div
+            style={{
+              marginTop: '10px',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(600px, 1fr))', // auto-fit을 사용하고 minmax 값 조정
+              gap: '10px',
+              justifyContent: 'center',
+            }}
+          >
+            {storedPhotoList.length > 0
+              ? storedPhotoList.map((photo, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      marginBottom: '20px',
+                      position: 'relative',
+                      textAlign: 'center',
+                    }}
+                  >
                     <img
                       src={photo.image}
                       alt={photo.title}
                       style={{
-                        width: '300px', // 크기를 300px로 증가
-                        height: '300px', // 크기를 300px로 증가
+                        width: '100%', // 그리드 셀에 맞게 이미지 크기 조정
+                        height: 'auto',
                         objectFit: 'cover',
                       }}
                     />
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <Typography></Typography>
-            )}
+                  </div>
+                ))
+              : ''}
           </div>
         </>
       ); // 버튼 클릭 시 onNavigate 실행 후 storedPhotoList 출력

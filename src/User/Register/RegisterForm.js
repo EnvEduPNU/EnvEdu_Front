@@ -13,6 +13,7 @@ function RegisterForm() {
   const navigate = useNavigate();
   const [passwordCheck, setPasswordCheck] = useState('');
   const [role, setRole] = useState('');
+  const [studentGroup, setStudentGroup] = useState('');
 
   async function onSubmit(data) {
     if (data.password !== passwordCheck) {
@@ -194,6 +195,34 @@ function RegisterForm() {
             {!role && (
               <span style={{ color: 'red', fontSize: '12px' }}>
                 직업을 선택하세요.
+              </span>
+            )}
+          </div>
+
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{ display: 'block', fontWeight: 'bold' }}>
+              학교 선택
+            </label>
+            <select
+              style={{
+                width: '100%',
+                padding: '10px',
+                borderRadius: '4px',
+                border: '1px solid #ccc',
+                marginTop: '4px',
+                color: role ? '#000' : '#999',
+              }}
+              value={studentGroup}
+              onChange={(e) => setStudentGroup(e.target.value)}
+            >
+              <option value="">클릭하세요</option>
+              <option value="부산중">부산중</option>
+              <option value="광안중">광안중</option>
+              <option value="부산고">부산고</option>
+            </select>
+            {!studentGroup && (
+              <span style={{ color: 'red', fontSize: '12px' }}>
+                학교를 선택하세요.
               </span>
             )}
           </div>
