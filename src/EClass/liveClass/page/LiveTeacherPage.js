@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import { Typography, CircularProgress, Box } from '@mui/material';
+import { Typography, CircularProgress, Box, Button } from '@mui/material';
 import { customAxios } from '../../../Common/CustomAxios';
 import TeacherAssignmentTable from '../teacher/component/table/myDataPageTable/TeacherAssignmentTable';
 import TeacherCourseStatusTable from '../teacher/component/table/myDataPageTable/TeacherCourseStatusTable';
@@ -18,6 +18,7 @@ export const LiveTeacherPage = () => {
   const [stepCount, setStepCount] = useState();
   const [sessionIds, setSessionIds] = useState([]);
   const [assginmentShareCheck, setAssginmentShareCheck] = useState([]);
+  const [showAssignmentTable, setShowAssignmentTable] = useState(true); // 상태 추가
 
   const { eClassUuid } = useParams();
   const location = useLocation();
@@ -31,7 +32,7 @@ export const LiveTeacherPage = () => {
       .then((response) => {
         console.log('Eclass closed :', response.data);
         alert('수업을 종료하였습니다!');
-        navigate('/');
+        navigate(-1);
       })
       .catch((error) => {
         console.error('Eclass 종료 에러:', error);
@@ -40,10 +41,14 @@ export const LiveTeacherPage = () => {
 
   const handleScreenShare = useCallback(
     (state) => {
-      setSharedScreenState(state); // 화면 공유 상태 변경
+      setSharedScreenState(state);
     },
     [sessionIds],
   );
+
+  const toggleTableView = () => {
+    setShowAssignmentTable((prev) => !prev); // 테이블 전환 상태 업데이트
+  };
 
   const spinnerBoxStyle = {
     display: 'flex',
@@ -74,8 +79,8 @@ export const LiveTeacherPage = () => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          minHeight: '70vh',
-          margin: '20px 10px 0 0',
+          height: 520,
+          margin: '10px 10px 0 0',
           border: '1px solid grey',
         }}
       >
@@ -99,9 +104,18 @@ export const LiveTeacherPage = () => {
 
       {/* [왼쪽 블럭] 화면 공유 블럭 */}
       <div style={{ display: 'inline-block', width: '60%', height: '100%' }}>
-        <Typography variant="h4" sx={{ margin: '0 0 10px 0' }}>
-          {eClassName}
-        </Typography>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Typography variant="h4" sx={{ margin: '0 0 10px 0' }}>
+            {eClassName}
+          </Typography>
+
+          <button
+            onClick={closeEclass}
+            style={{ ...buttonStyle, margin: '10px 20px 0 0' }}
+          >
+            수업 종료
+          </button>
+        </div>
 
         <div>
           {stepCount && !sharedScreenState ? (
@@ -126,46 +140,66 @@ export const LiveTeacherPage = () => {
           />
         )}
 
-        <button onClick={() => handleScreenShare(true)} style={buttonStyle}>
-          화면 공유
-        </button>
-        <button
-          onClick={() => handleScreenShare(false)}
-          style={{ ...buttonStyle, marginLeft: '10px' }}
-        >
-          공유 중지
-        </button>
-
-        <TeacherStepShareButton
-          stepCount={stepCount}
-          lectureDataUuid={lectureDataUuid}
-          sharedScreenState={sharedScreenState}
-          assginmentShareCheck={assginmentShareCheck}
-          setAssginmentShareCheck={setAssginmentShareCheck}
-        />
-        <button
-          onClick={closeEclass}
-          style={{ ...buttonStyle, marginLeft: '10px' }}
-        >
-          수업 종료
-        </button>
+        {/* 버튼 렌더링 조건 */}
+        {!sharedScreenState ? (
+          <>
+            <button onClick={() => handleScreenShare(true)} style={buttonStyle}>
+              화면 공유
+            </button>
+            <TeacherStepShareButton
+              stepCount={stepCount}
+              lectureDataUuid={lectureDataUuid}
+              sharedScreenState={sharedScreenState}
+              assginmentShareCheck={assginmentShareCheck}
+              setAssginmentShareCheck={setAssginmentShareCheck}
+            />
+          </>
+        ) : (
+          <button
+            onClick={() => handleScreenShare(false)}
+            style={{ ...buttonStyle, marginLeft: '10px' }}
+          >
+            공유 중지
+          </button>
+        )}
       </div>
 
       {/* [오른쪽 블럭] 수업 Step 테이블, 수업 상태 테이블 */}
       <div style={{ width: '30%', marginRight: '30px', height: '100%' }}>
-        <TeacherAssignmentTable
-          setCourseStep={setCourseStep}
-          setTableData={setTableData}
-          lectureDataUuid={lectureDataUuid}
-          setStepCount={setStepCount}
-          setAssginmentShareCheck={setAssginmentShareCheck}
-        />
-        <TeacherCourseStatusTable
-          stepCount={stepCount}
-          eclassUuid={eClassUuid}
-          sessionIds={sessionIds}
-          assginmentShareCheck={assginmentShareCheck}
-        />
+        {showAssignmentTable ? (
+          <TeacherAssignmentTable
+            setCourseStep={setCourseStep}
+            setTableData={setTableData}
+            lectureDataUuid={lectureDataUuid}
+            setStepCount={setStepCount}
+            setAssginmentShareCheck={setAssginmentShareCheck}
+          />
+        ) : (
+          <TeacherCourseStatusTable
+            stepCount={stepCount}
+            eclassUuid={eClassUuid}
+            sessionIds={sessionIds}
+            assginmentShareCheck={assginmentShareCheck}
+          />
+        )}
+
+        <Button
+          variant="contained"
+          onClick={toggleTableView}
+          style={{
+            marginTop: '20px',
+            width: '30%',
+            fontFamily: "'Asap', sans-serif",
+            fontWeight: '600',
+            fontSize: '0.9rem',
+            color: 'grey',
+            backgroundColor: '#feecfe',
+            borderRadius: '2.469rem',
+            border: 'none',
+          }}
+        >
+          {showAssignmentTable ? '수업 상태 보기' : '과제 보기'}
+        </Button>
       </div>
     </div>
   );
