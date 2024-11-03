@@ -13,6 +13,8 @@ import {
 import { saveCustomTableApi } from '../../../apis/tables';
 import { customAxios } from '../../../../Common/CustomAxios';
 import TitleInputModal from '../../modal/TitleInputModal';
+import table from '../../../../assets/img/table.jpg';
+import graph from '../../../../assets/img/graph.jpg';
 
 function ExpertCustomTable({ onAddPhoto, setSummary, isDrawGraph }) {
   const { data, title, setData, variables } = useGraphDataStore();
@@ -110,82 +112,6 @@ function ExpertCustomTable({ onAddPhoto, setSummary, isDrawGraph }) {
 
   const saveCustomTable = async () => {
     setModalOpen(true);
-    // try {
-    //   const date = new Date();
-    //   console.log(data);
-    //   console.log(variables);
-
-    //   const stringFields = [];
-    //   const numericFields = [];
-    //   let order = 0;
-    //   for (let i = 1; i < data.length; i++) {
-    //     for (let j = 0; j < data[0].length; j++) {
-    //       const value = data[i][j];
-    //       if (variables[j].type === 'Categorical') {
-    //         stringFields.push({
-    //           [variables[j].name]: {
-    //             value,
-    //             order,
-    //           },
-    //         });
-    //       } else {
-    //         numericFields.push({
-    //           [variables[j].name]: {
-    //             value,
-    //             order,
-    //           },
-    //         });
-    //       }
-    //       order++;
-    //     }
-    //   }
-
-    //   const payload = {
-    //     dataUUID: crypto.randomUUID(),
-    //     saveDate: new Date(date.getTime() + 9 * 60 * 60 * 1000).toISOString(),
-    //     memo: '메모',
-    //     dataLabel: 'CUSTOM',
-    //     userName: localStorage.getItem('username'),
-    //     numericFields,
-    //     stringFields,
-    //     title: '타이틀',
-    //   };
-
-    //   const response = await saveCustomTableApi(payload);
-
-    //   await customAxios
-    //     .get('/mydata/list')
-    //     .then((res) => {
-    //       console.log('My Data list : ' + JSON.stringify(res.data, null, 2));
-
-    //       const formattedData = res.data.map((data) => ({
-    //         ...data,
-    //         saveDate: data.saveDate.split('T')[0],
-    //         dataLabel:
-    //           data.dataLabel === 'AIRQUALITY'
-    //             ? '대기질 데이터'
-    //             : data.dataLabel === 'OCEANQUALITY'
-    //             ? '수질 데이터'
-    //             : data.dataLabel,
-    //       }));
-
-    //       setSummary((prev) => [...prev, formattedData]);
-    //     })
-    //     .catch((err) => console.log(err));
-
-    //   await customAxios.get('/api/custom/list').then((res) => {
-    //     console.log(res.data);
-    //     const formattedData = res.data.map((table) => ({
-    //       saveDate: table.saveDate.split('T')[0],
-    //       dataLabel: 'CUSTOM',
-    //       dataUUID: table.dataUUID,
-    //       memo: table.memo,
-    //     }));
-    //     setSummary((prev) => [...prev, ...formattedData]);
-    //   });
-    // } catch (e) {
-    //   console.log(e);
-    // }
   };
   // 테이블을 캡처하고 모달을 여는 함수
   const handleCaptureTable = async () => {
@@ -232,6 +158,104 @@ function ExpertCustomTable({ onAddPhoto, setSummary, isDrawGraph }) {
   const [tableTitle, setTableTitle] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
 
+  if (data.length === 0)
+    return (
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          padding: '20px',
+          fontFamily: 'Arial, sans-serif',
+          backgroundColor: '#f5f5f5',
+          height: '100vh',
+        }}
+      >
+        <h1
+          style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '10px' }}
+        >
+          Data & Chart에 오신 것을 환영합니다!
+        </h1>
+        <p
+          style={{
+            fontSize: '16px',
+            color: '#555',
+            textAlign: 'center',
+            maxWidth: '600px',
+            marginBottom: '0px',
+          }}
+        >
+          차트 생성을 시작하려면 왼쪽 테이블 선택 리스트에서 시각화할 데이터를
+          선택하세요.
+        </p>
+
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            width: '100%',
+            marginTop: '30px',
+          }}
+        >
+          {/* 이미지와 설명이 들어가는 부분 */}
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-around',
+              alignItems: 'flex-start',
+              width: '90%',
+              gap: '20px',
+            }}
+          >
+            {/* 1번 이미지와 설명 */}
+            <div style={{ textAlign: 'center', width: '45%' }}>
+              <img
+                src={table}
+                alt="테이블 조작 화면"
+                style={{
+                  width: '100%',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                  marginBottom: '10px',
+                }}
+              />
+              <h3
+                style={{ fontSize: '18px', fontWeight: 'bold', color: '#333' }}
+              >
+                테이블 조작 화면
+              </h3>
+              <p style={{ fontSize: '14px', color: '#555' }}>
+                데이터 테이블을 자유롭게 조작하여 시각화에 사용할 데이터를
+                선택하세요.
+              </p>
+            </div>
+
+            {/* 2번 이미지와 설명 */}
+            <div style={{ textAlign: 'center', width: '45%' }}>
+              <img
+                src={graph}
+                alt="그래프 그린 화면"
+                style={{
+                  width: '100%',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                  marginBottom: '10px',
+                }}
+              />
+              <h3
+                style={{ fontSize: '18px', fontWeight: 'bold', color: '#333' }}
+              >
+                그래프 생성 화면
+              </h3>
+              <p style={{ fontSize: '14px', color: '#555' }}>
+                선택한 데이터를 바탕으로 다양한 차트를 생성하고 분석해보세요.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   if (!isEditing)
     return (
       <div>
