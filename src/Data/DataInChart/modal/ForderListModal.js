@@ -279,7 +279,7 @@ export default function ForderListModal({
         .catch((err) => console.log(err));
     }
   };
-
+  console.log(filteredData);
   return (
     <ReactModal
       isOpen={modalOpen}

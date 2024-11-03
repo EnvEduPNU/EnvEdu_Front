@@ -70,10 +70,12 @@ export default function MyDataList({ summary, setSummary }) {
 
     if (filtered == '') {
       filtered.unshift({ none: type });
+      console.log(filtered);
       setFilteredData(filtered);
       setModalOpen(true);
       console.log('데이터 없음');
     } else {
+      console.log(filtered);
       setFilteredData(filtered);
       setModalOpen(true);
       console.log('데이터리스트에서 모달 true');
