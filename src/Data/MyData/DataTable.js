@@ -246,7 +246,7 @@ const DataTable = ({ type, id, handleMenuToggle }) => {
             </Button>
             <button
               className="excel-download"
-              onClick={() => navigate(-1)} // 뒤로가기 기능
+              onClick={() => window.location.reload()} // 뒤로가기 기능
               style={{ fontSize: '12px', padding: '5px 10px' }}
             >
               뒤로가기
