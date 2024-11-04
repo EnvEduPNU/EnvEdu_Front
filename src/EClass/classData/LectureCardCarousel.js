@@ -46,9 +46,8 @@ function LectureCardCarousel({
           .slice(currentIndex, currentIndex + 4)
           .map((lecture, index) => {
             // 이미지가 있는지 확인
-            const imgContent = lecture.contents
-              .flatMap((content) => content.contents) // 중첩된 contents 배열 탐색
-              .find((innerContent) => innerContent.type === 'img');
+
+            const imgContent = lecture.thumbImg;
 
             return (
               <div key={index} className="lecture-card">
@@ -82,7 +81,7 @@ function LectureCardCarousel({
                 >
                   {imgContent ? (
                     <img
-                      src={imgContent.content}
+                      src={imgContent}
                       alt={lecture.stepName}
                       className="lecture-image"
                     />

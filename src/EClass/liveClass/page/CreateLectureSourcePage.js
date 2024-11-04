@@ -26,7 +26,7 @@ export const CreateLectureSourcePage = (props) => {
   const [lectureName, setLectureName] = useState(initialLectureName || '');
   const [stepperStepName, setStepperStepName] = useState(stepContents || []);
   const [isEditingLectureName, setIsEditingLectureName] = useState(false); // 수정 모드 상태
-  const { contents } = useCreateLectureSourceStore();
+  const { contents, getThumbImgUrl } = useCreateLectureSourceStore();
 
   const navigate = useNavigate();
 
@@ -182,6 +182,7 @@ export const CreateLectureSourcePage = (props) => {
                 .format('YYYY-MM-DDTHH:mm:ssZ'),
               stepName: lectureName + '_copy',
               stepCount: stepCount - 1,
+              thumbImg: getThumbImgUrl(),
               contents: contents.map((content) => ({
                 stepNum: content.stepNum,
                 contentName: content.contentName,
@@ -233,6 +234,7 @@ export const CreateLectureSourcePage = (props) => {
                 .format('YYYY-MM-DDTHH:mm:ssZ'),
               stepName: lectureName,
               stepCount: stepCount,
+              thumbImg: getThumbImgUrl(),
               contents: contents.map((content) => ({
                 stepNum: content.stepNum,
                 contentName: content.contentName,

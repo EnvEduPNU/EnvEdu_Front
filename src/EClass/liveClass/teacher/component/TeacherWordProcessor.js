@@ -24,6 +24,8 @@ import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import './TeacherWordProcessor.scss';
 import { useNavigate } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid'; // UUID 생성 함수
+import axios from 'axios';
 
 import * as XLSX from 'xlsx'; // 엑셀 파일 처리를 위한 라이브러리
 import ExcelDataModal from '../../../../Data/MyData/modal/ExcelDataModal';
@@ -98,16 +100,15 @@ export default function TeacherWordProcessor({
   summary,
   lectureName,
   handleNextStep,
-  onLectureNameChange,
   activeStep,
   stepCount,
   stepperStepName,
-  setStepperStepName,
+  setThumbNailImage,
 }) {
   const [value, setValue] = useState();
   const [localContents, setLocalContents] = useState([]);
   const [contentName, setContentName] = useState('');
-  const { contents, addContent, updateContent, clearContents } =
+  const { contents, addContent, updateContent, clearContents, setThumbImgUrl } =
     useCreateLectureSourceStore();
   const [isEditing, setIsEditing] = useState(false);
   const [addTableFlag, setAddTableFlag] = useState(false);
@@ -124,6 +125,14 @@ export default function TeacherWordProcessor({
 
   const handleModalOpen = () => setModalOpen(true);
   const handleModalClose = () => setModalOpen(false);
+
+  const [thumbnailImage, setThumbnailImage] = useState(null); // 썸네일 이미지 상태 추가
+  const [thumnailImgUrl, setThumbnailImageUrl] = useState('');
+
+  const [thumbnailModalOpen, setThumbnailModalOpen] = useState(false); // 모달 상태
+
+  const handleThumbnailModalOpen = () => setThumbnailModalOpen(true);
+  const handleThumbnailModalClose = () => setThumbnailModalOpen(false);
 
   // 첫 번째 useEffect: stepperStepName 배열을 업데이트
   useEffect(() => {
@@ -274,7 +283,7 @@ export default function TeacherWordProcessor({
   // 이미지 파일 저장하는 메서드
   // 포함하기 버튼에서 작동
   const handleSave = () => {
-    const contentHtml = value; // ReactQuill의 value
+    const contentHtml = value;
     const quillEditor = quillRef.current.getEditor();
     const imageElements = quillEditor.root.querySelectorAll('img');
 
@@ -282,23 +291,17 @@ export default function TeacherWordProcessor({
     let imgY = null;
 
     imageElements.forEach((img) => {
-      if (img.complete) {
-        // 이미지가 이미 로드된 경우
-        console.log(`Image size: ${img.width}x${img.height}`);
+      img.onload = () => {
         imgX = img.width;
         imgY = img.height;
-      } else {
-        // 이미지가 아직 로드되지 않은 경우
-        img.onload = () => {
-          console.log(`Image size: ${img.width}x${img.height}`);
-        };
-      }
+      };
     });
 
     console.log('포함된 html : ' + JSON.stringify(contentHtml, null, 2));
 
     if (imageFile) {
-      console.log('이미지파일 확인 : ' + imageFile.name);
+      // 이미지 파일 객체가 있을 때 파일 형식으로 추가
+      console.log('이미지 파일 확인: ' + imageFile.name);
       setLocalContents([
         ...localContents,
         { type: 'html', content: contentHtml },
@@ -311,7 +314,7 @@ export default function TeacherWordProcessor({
       ]);
     }
 
-    imageFile = null;
+    imageFile = null; // 추가 후 초기화
     setValue('');
   };
 
@@ -505,6 +508,34 @@ export default function TeacherWordProcessor({
     }
   };
 
+  // 이미지 파일 업로드 메서드
+  const handleUpload = async (file, contentUuid) => {
+    try {
+      // Pre-signed URL을 가져오는 요청
+      const response = await customAxios.get('/api/images/presigned-url', {
+        params: { fileName: contentUuid },
+      });
+
+      const { preSignedUrl, imageUrl } = response.data;
+      const contentType = file.type; // 파일의 MIME 타입을 사용
+
+      //S3로 이미지 업로드
+      await axios.put(preSignedUrl, file, {
+        headers: {
+          'Content-Type': contentType,
+        },
+      });
+
+      console.log('이미지 업로드 성공');
+      alert('이미지 업로드 성공');
+
+      return imageUrl; // S3에 업로드된 이미지 URL 반환
+    } catch (error) {
+      console.error('파일 업로드 오류:', error);
+      throw error;
+    }
+  };
+
   // 이미지 삭제 요청 함수
   const deleteImage = async (imageUrl) => {
     try {
@@ -526,9 +557,14 @@ export default function TeacherWordProcessor({
       contentName,
       contents: [],
     };
-    let newLocalContents = [...localContents];
 
-    console.log('타입 확인용 : ' + JSON.stringify(localContents, null, 2));
+    if (thumnailImgUrl) {
+      const result = await handleUpload(thumnailImgUrl, uuidv4());
+      setThumbImgUrl(result);
+      console.log('썸네일 Url : ' + JSON.stringify(result, null, 2));
+    }
+
+    let newLocalContents = [...localContents];
 
     for (const item of localContents) {
       if (item.type === 'deleteImage') {
@@ -583,10 +619,11 @@ export default function TeacherWordProcessor({
       }
     }
 
+    // console.log('최종 저장 stepData : ' + JSON.stringify(stepData, null, 2));
+
     if (stepCount >= activeStep) {
       console.log('스텝 카운트 : ' + stepCount);
       console.log('액티브 스텝 : ' + activeStep);
-      console.log('최종 저장 stepData : ' + JSON.stringify(stepData, null, 2));
       stepData.contents.forEach((content) => {
         if (content.type === 'file') {
           console.log('step 저장전 이미지 확인2222 : ' + content.content.name);
@@ -601,6 +638,10 @@ export default function TeacherWordProcessor({
           updateContent(activeStep, stepData);
         }
 
+        console.log(
+          '최종 저장 stepData : ' + JSON.stringify(stepData, null, 2),
+        );
+
         alert('Step 업데이트 완료');
         console.log('업데이트된 데이터:', stepData);
       } else {
@@ -610,12 +651,12 @@ export default function TeacherWordProcessor({
       }
     }
 
-    // 상위 컴포넌트의 저장 메서드
-    handleNextStep(moveEclass);
-
     setLocalContents([]);
     setContentName('');
     setIsEditing(false);
+
+    // 상위 컴포넌트의 저장 메서드
+    handleNextStep(moveEclass);
   };
 
   const createElementFromJson = (json) => {
@@ -1014,6 +1055,24 @@ export default function TeacherWordProcessor({
     setLocalContents(newContents);
   };
 
+  // 썸네일 이미지 업로드 핸들러
+  const handleAddThumbnailImage = async (event) => {
+    const file = event.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      // 이미지 파일만 허용
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64Image = reader.result; // Base64로 변환된 이미지 데이터
+        setThumbnailImage(base64Image); // Base64 이미지를 썸네일 상태에 저장
+      };
+      reader.readAsDataURL(file); // 파일을 Base64로 읽기
+    } else {
+      alert('이미지 파일을 선택해 주세요.');
+    }
+
+    setThumbnailImageUrl(file);
+  };
+
   return (
     <DndProvider backend={HTML5Backend}>
       <Container disableGutters sx={{ minHeight: '20rem' }}>
@@ -1129,8 +1188,6 @@ export default function TeacherWordProcessor({
           </div>
         ) : (
           <>
-            {' '}
-            {/* 설명 및 버튼 박스 */}
             <Box
               sx={{
                 display: 'flex',
@@ -1144,6 +1201,67 @@ export default function TeacherWordProcessor({
                 height: '20rem',
               }}
             >
+              {/* 썸네일 미리보기 추가 */}
+              {/* 썸네일 미리보기 버튼 */}
+              {thumbnailImage && (
+                <Box sx={{ textAlign: 'center', marginTop: '20px' }}>
+                  <Button variant="outlined" onClick={handleThumbnailModalOpen}>
+                    썸네일 미리보기
+                  </Button>
+                </Box>
+              )}
+
+              {/* 썸네일 미리보기 모달 */}
+              <Modal
+                open={thumbnailModalOpen}
+                onClose={handleThumbnailModalClose}
+                aria-labelledby="thumbnail-preview-title"
+                aria-describedby="thumbnail-preview-description"
+              >
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: '80%',
+                    maxWidth: 600,
+                    bgcolor: 'background.paper',
+                    borderRadius: 2,
+                    boxShadow: 24,
+                    p: 4,
+                    outline: 'none',
+                  }}
+                >
+                  <Typography
+                    id="thumbnail-preview-title"
+                    variant="h6"
+                    textAlign="center"
+                  >
+                    썸네일 미리보기
+                  </Typography>
+                  {thumbnailImage && (
+                    <img
+                      src={thumbnailImage}
+                      alt="Thumbnail Preview"
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        height: 'auto',
+                        marginTop: '20px',
+                        borderRadius: '8px',
+                      }}
+                    />
+                  )}
+                  <Box
+                    sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}
+                  >
+                    <Button onClick={handleThumbnailModalClose}>닫기</Button>
+                  </Box>
+                </Box>
+              </Modal>
+              {/* 설명 및 버튼 박스 */}
+
               <Typography variant="h5">
                 Finish 버튼으로 E-Class 생성을 완료하세요.
               </Typography>
@@ -1169,6 +1287,23 @@ export default function TeacherWordProcessor({
                   onClick={() => handleNext(true)}
                 >
                   E-Class 바로 실행
+                </Button>
+                {/* 추가된 썸네일 이미지 업로드 버튼 */}
+                <Button
+                  variant="contained"
+                  component="label"
+                  sx={{
+                    flexGrow: 1,
+                    marginRight: '10px',
+                    borderRadius: '8px',
+                  }}
+                >
+                  썸네일 이미지 추가
+                  <input
+                    type="file"
+                    hidden
+                    onChange={handleAddThumbnailImage}
+                  />
                 </Button>
                 <Button
                   variant="contained"

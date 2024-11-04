@@ -21,7 +21,11 @@ function RegisterForm() {
       return;
     }
 
-    const registrationData = { ...data, role: role };
+    const registrationData = {
+      ...data,
+      role: role,
+      studentGroup: studentGroup,
+    };
 
     await customAxios
       .post('/api/user/register', registrationData)
