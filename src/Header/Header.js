@@ -156,7 +156,9 @@ function Header() {
                       return (
                         <>
                           <Nav.Link
-                            onClick={() => handleNavLinkClick('/data-in-chart')}
+                            onClick={() =>
+                              handleNavLinkClick('/data-in-chart-tutorial')
+                            }
                           >
                             Tutorial
                           </Nav.Link>
