@@ -39,6 +39,7 @@ import ClassData from './EClass/classData/ClassData';
 import { LiveTeacherPage } from './EClass/liveClass/page/LiveTeacherPage';
 import { LiveStudentPage } from './EClass/liveClass/page/LiveStudentPage';
 import Resource from './EducationResources/Resource';
+import DataInChartTutorialPage from './Data/DataInChart/Page/DataInChartTutorialPage';
 
 function App() {
   const navigate = useNavigate();
@@ -109,10 +110,15 @@ function App() {
           <Route path="/search" exact={true} element={<Search />} />
           {/* ------------------------------------------------ Data&Chart ------------------------------------------------- */}
           <Route
+            path="/data-in-chart-tutorial"
+            exact={true}
+            element={<DataInChartTutorialPage />}
+          />
+          <Route
             path="/data-in-chart"
             exact={true}
             element={<DataInChartPage />}
-          />{' '}
+          />
           <Route path="/openAPI" exact={true} element={<OpenApi />} />{' '}
           <Route path="/openAPI2" exact={true} element={<OpenApi2 />} />{' '}
           <Route path="/resources" exact={true} element={<Resource />} />{' '}
