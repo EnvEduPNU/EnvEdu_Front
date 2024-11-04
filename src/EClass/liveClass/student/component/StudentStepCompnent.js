@@ -191,7 +191,7 @@ function DefaultPageComponent() {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        minHeight: '66vh',
+        height: '510px',
         margin: '0 10px 10vh 0',
         border: '1px solid grey',
       }}
