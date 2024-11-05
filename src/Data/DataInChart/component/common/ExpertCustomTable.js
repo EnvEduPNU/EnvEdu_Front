@@ -269,7 +269,7 @@ function ExpertCustomTable({ onAddPhoto, setSummary, isDrawGraph }) {
         <table
           ref={tableRef}
           style={{
-            width: '100%',
+            width: '1400px',
             border: '1px solid rgba(34, 36, 38, 0.15)',
             borderCollapse: 'collapse',
             borderRadius: '8px',

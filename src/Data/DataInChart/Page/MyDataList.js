@@ -6,6 +6,7 @@ import ForderListModal from '../modal/ForderListModal';
 // DATA 드롭다운 리스트
 export default function MyDataList({ summary, setSummary }) {
   const [modalOpen, setModalOpen] = useState(false);
+  const [dataType, setDataType] = useState('');
 
   console.log(modalOpen);
   // 가장 최초 테이블 요청
@@ -44,38 +45,54 @@ export default function MyDataList({ summary, setSummary }) {
             dataUUID: table.dataUUID,
             memo: table.memo,
           }));
+          console.log(formattedData);
           setSummary((prev) => [...prev, ...formattedData]);
         });
     };
 
     FetchData();
   }, []);
-  console.log(summary);
+
   // 전체 데이터 리스트 가져온 것중에서 데이터 라벨에 따라 필터링해서 뽑아서 보내준다.
   const [filteredData, setFilteredData] = useState([]);
   const selectFolder = (type) => {
     let filtered = [];
     if (type === '전체') {
-      filtered = summary;
-      summary.unshift({ total: '전체' });
+      filtered = summary.map((item) => ({
+        dataLabel: item.dataLabel,
+        dataUUID: item.dataUUID,
+        memo: item.memo,
+        saveDate: item.saveDate,
+        title: item.title,
+      }));
+      setDataType('전체 데이터');
     } else if (type == '대기질') {
       filtered = summary.filter((data) => data.dataLabel === '대기질 데이터');
+      setDataType('대기질 데이터');
     } else if (type == '수질') {
       filtered = summary.filter((data) => data.dataLabel === '수질 데이터');
+      setDataType('수질 데이터');
     } else if (type == 'SEED') {
       filtered = summary.filter((data) => data.dataLabel === 'SEED');
+      setDataType('SEED 데이터');
     } else if (type == 'CUSTOM') {
       filtered = summary.filter((data) => data.dataLabel === 'CUSTOM');
+      setDataType('CUSTOM 데이터');
     }
 
-    if (filtered == '') {
-      filtered.unshift({ none: type });
-      console.log(filtered);
-      setFilteredData(filtered);
+    if (filtered.length === 0) {
+      setFilteredData([
+        // {
+        //   dataLabel: '대기질 데이터',
+        //   dataUUID: 1,
+        //   memo: 'ㅁㅁ',
+        //   saveDate: '2019-24-44',
+        //   title: '제목',
+        // },
+      ]);
       setModalOpen(true);
       console.log('데이터 없음');
     } else {
-      console.log(filtered);
       setFilteredData(filtered);
       setModalOpen(true);
       console.log('데이터리스트에서 모달 true');
@@ -167,13 +184,13 @@ export default function MyDataList({ summary, setSummary }) {
       </div>
 
       {/* 해당 row 모달 */}
-      {filteredData.length > 0 && (
-        <ForderListModal
-          filteredData={filteredData}
-          modalOpen={modalOpen}
-          setModalOpen={setModalOpen}
-        />
-      )}
+
+      <ForderListModal
+        filteredData={filteredData}
+        modalOpen={modalOpen}
+        setModalOpen={setModalOpen}
+        dataType={dataType}
+      />
     </div>
   );
 }

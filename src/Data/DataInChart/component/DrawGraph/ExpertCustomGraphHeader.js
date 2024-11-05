@@ -10,11 +10,11 @@ import scatter from './../../images/scatter.png';
 
 function ExpertCustomGraphHeader() {
   const { graphIdx, changeGraphIndex } = useGraphDataStore();
-  const { ref } = useComponentPosition();
+  // const { ref } = useComponentPosition();
 
   return (
     <div>
-      <Styled.TableHeaderWrapper ref={ref}></Styled.TableHeaderWrapper>
+      {/* <Styled.TableHeaderWrapper ref={ref}></Styled.TableHeaderWrapper> */}
       <div
         style={{
           display: 'flex',

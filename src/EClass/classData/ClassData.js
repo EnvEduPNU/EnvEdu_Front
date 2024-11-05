@@ -63,11 +63,12 @@ function ClassData() {
   }, []);
 
   useEffect(() => {
-    setIsLoading(true); // 로딩 시작
-    customAxios
-      .get('/mydata/list')
-      .then((res) => {
-        const formattedData = res.data.map((data) => ({
+    const username = localStorage.getItem('username');
+
+    const fetchData = async () => {
+      try {
+        const myDataResponse = await customAxios.get('/mydata/list');
+        const myDataFormatted = myDataResponse.data.map((data) => ({
           ...data,
           saveDate: data.saveDate.split('T')[0],
           dataLabel:
@@ -77,10 +78,27 @@ function ClassData() {
               ? '수질 데이터'
               : data.dataLabel,
         }));
-        setSummary(formattedData);
-      })
-      .catch((err) => console.log(err))
-      .finally(() => setIsLoading(false)); // 로딩 완료
+
+        const customDataResponse = await customAxios.get(
+          `/api/custom/list?username=${username}`,
+        );
+
+        const customDataFormatted = customDataResponse.data.map((data) => ({
+          ...data,
+          saveDate: data.saveDate.split('T')[0],
+          dataLabel:
+            data.dataLabel === 'CUSTOM' ? '커스텀 데이터' : data.dataLabel,
+          dynamicFields: data.dynamicFields || {},
+        }));
+
+        const combinedData = [...myDataFormatted, ...customDataFormatted];
+        setSummary(combinedData);
+      } catch (error) {
+        console.error('데이터 가져오기 중 오류:', error);
+      }
+    };
+
+    fetchData();
   }, []);
 
   const getLectureDataTable = (
