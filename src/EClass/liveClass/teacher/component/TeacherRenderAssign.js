@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Paper, TextField, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import usePhotoStore from '../../../../Data/DataInChart/store/photoStore'; // Zustand store import
+import { customAxios } from '../../../../Common/CustomAxios';
 
 // TeacherRenderAssign 컴포넌트는 데이터 배열을 받아 각 항목을 Paper에 렌더링합니다.
 function TeacherRenderAssign({ data }) {
@@ -81,6 +82,24 @@ function RenderContent({
   contentItem,
   storedPhotoList,
 }) {
+  const [tableData, setTableData] = useState(null);
+
+  const handleSelectData = async (id) => {
+    try {
+      const response = await customAxios.get(`api/custom/${id}`);
+      const fetchedData = response.data;
+
+      const formattedData = fetchedData.numericFields.map((field, index) => ({
+        ...fetchedData.stringFields[index],
+        ...field,
+      }));
+
+      setTableData(formattedData); // 테이블 데이터를 상태에 저장
+    } catch (error) {
+      console.error('데이터 가져오기 실패:', error);
+    }
+  };
+
   switch (content.type) {
     case 'title':
       return (
@@ -114,7 +133,7 @@ function RenderContent({
             crossOrigin="anonymous"
             src={content.content}
             alt="Assignment Content"
-            style={{ width: content.x, height: content.y }}
+            style={{ width: '500px', height: '300px' }}
           />
         </div>
       );
@@ -123,33 +142,106 @@ function RenderContent({
     case 'dataInChartButton':
       return (
         <>
-          <Button
-            onClick={() =>
-              onNavigate(
-                item.uuid,
-                item.username,
-                contentItem.contentName,
-                contentItem.stepNum,
-              )
-            }
-            variant="contained"
-            color="primary"
-            sx={{
-              backgroundColor: '#6200ea', // 버튼 배경색 (보라색)
-              color: 'white', // 텍스트 색상
-              padding: '10px 20px', // 패딩
-              borderRadius: '20px', // 버튼의 모서리를 둥글게
-              boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', // 그림자 효과
-              fontWeight: 'bold', // 글씨 굵기
-              fontSize: '1rem', // 글씨 크기
-              transition: 'background-color 0.3s ease', // 배경색 전환 효과
-              '&:hover': {
-                backgroundColor: '#3700b3', // hover 시 배경색 (어두운 보라색)
-              },
-            }}
-          >
-            그래프 그리기
-          </Button>
+          <div style={{ display: 'flex' }}>
+            <Button
+              onClick={() =>
+                onNavigate(
+                  item.uuid,
+                  item.username,
+                  contentItem.contentName,
+                  contentItem.stepNum,
+                )
+              }
+              variant="contained"
+              color="primary"
+              sx={{
+                backgroundColor: '#6200ea', // 버튼 배경색 (보라색)
+                color: 'white', // 텍스트 색상
+                padding: '10px 20px', // 패딩
+                borderRadius: '20px', // 버튼의 모서리를 둥글게
+                boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', // 그림자 효과
+                fontWeight: 'bold', // 글씨 굵기
+                fontSize: '1rem', // 글씨 크기
+                transition: 'background-color 0.3s ease', // 배경색 전환 효과
+                '&:hover': {
+                  backgroundColor: '#3700b3', // hover 시 배경색 (어두운 보라색)
+                },
+              }}
+            >
+              그래프 그리기
+            </Button>
+            {/* 데이터 가져오기 버튼 */}
+            <Button
+              onClick={() => handleSelectData(content.content)}
+              variant="contained"
+              color="secondary"
+              sx={{
+                backgroundColor: '#6200ea',
+                color: 'white',
+                padding: '10px 20px',
+                marginLeft: '10px',
+                borderRadius: '20px',
+                boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+                fontWeight: 'bold',
+                fontSize: '1rem',
+                transition: 'background-color 0.3s ease',
+                '&:hover': {
+                  backgroundColor: '#3700b3',
+                },
+              }}
+            >
+              테이블 보기
+            </Button>
+          </div>
+
+          {/* 테이블 렌더링 */}
+          {tableData && (
+            <div style={{ overflowX: 'auto', marginTop: '20px' }}>
+              <table
+                style={{
+                  width: '100%',
+                  borderCollapse: 'collapse',
+                  marginTop: '10px',
+                }}
+              >
+                <thead>
+                  <tr>
+                    {Object.keys(tableData[0]).map((header, index) => (
+                      <th
+                        key={index}
+                        style={{
+                          border: '1px solid #ddd',
+                          padding: '8px',
+                          backgroundColor: '#f2f2f2',
+                          textAlign: 'center',
+                        }}
+                      >
+                        {header}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {tableData.map((row, rowIndex) => (
+                    <tr key={rowIndex}>
+                      {Object.values(row).map((cell, cellIndex) => (
+                        <td
+                          key={cellIndex}
+                          style={{
+                            border: '1px solid #ddd',
+                            padding: '8px',
+                            textAlign: 'center',
+                          }}
+                        >
+                          {cell.value || cell}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
 
           {/* 버튼 아래에 storedPhotoList 출력 */}
           <div
