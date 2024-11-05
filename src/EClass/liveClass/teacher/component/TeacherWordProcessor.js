@@ -30,6 +30,8 @@ import axios from 'axios';
 import * as XLSX from 'xlsx'; // 엑셀 파일 처리를 위한 라이브러리
 import ExcelDataModal from '../../../../Data/MyData/modal/ExcelDataModal';
 import { convertToNumber } from '../../../../Data/DataInChart/store/utils/convertToNumber';
+import ExcelDataTable from './table/\bExcelDataTable';
+import TeacherExcelDataModal from './TeacherExcelDataModal';
 
 Quill.register('modules/imageActions', ImageActions);
 Quill.register('modules/imageFormats', ImageFormats);
@@ -222,6 +224,8 @@ export default function TeacherWordProcessor({
       }
 
       setIsUpdated(false);
+      // 엑셀 데이터 초기화
+      setExcelData([]);
     }
   }, [isUpdated, activeStep, contents, stepperStepName]);
 
@@ -1098,42 +1102,50 @@ export default function TeacherWordProcessor({
                 </IconButton>
               </div>
 
-              {/* 큰 박스 추가 */}
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  width: '100%',
-                  height: '300px',
-                  mt: 3,
-                  borderRadius: '15px',
-                  backgroundColor: '#f3f3f3',
-                  boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
-                }}
-              >
-                {/* + 버튼 */}
-                <Button
-                  sx={{
-                    backgroundColor: '#6200ea',
-                    color: 'white',
-                    borderRadius: '50%',
-                    width: '60px',
-                    height: '60px',
-                    fontSize: '2rem',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
-                    '&:hover': {
-                      backgroundColor: '#3700b3',
-                    },
-                  }}
-                  onClick={handleModalOpen}
-                >
-                  +
-                </Button>
-              </Box>
+              {excelData.length > 0 ? (
+                <>
+                  <ExcelDataTable data={excelData} />
+                </>
+              ) : (
+                <>
+                  {/* 큰 박스 추가 */}
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      width: '100%',
+                      height: '300px',
+                      mt: 3,
+                      borderRadius: '15px',
+                      backgroundColor: '#f3f3f3',
+                      boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+                    }}
+                  >
+                    {/* + 버튼 */}
+                    <Button
+                      sx={{
+                        backgroundColor: '#6200ea',
+                        color: 'white',
+                        borderRadius: '50%',
+                        width: '60px',
+                        height: '60px',
+                        fontSize: '2rem',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+                        '&:hover': {
+                          backgroundColor: '#3700b3',
+                        },
+                      }}
+                      onClick={handleModalOpen}
+                    >
+                      +
+                    </Button>
+                  </Box>
+                </>
+              )}
 
               <Modal
                 open={modalOpen}
@@ -1168,7 +1180,7 @@ export default function TeacherWordProcessor({
 
               {/* 엑셀 데이터를 처리하는 모달 */}
               {excelModalOpen && (
-                <ExcelDataModal
+                <TeacherExcelDataModal
                   open={excelModalOpen}
                   handleClose={handleExcelModalClose}
                   data={excelData}
