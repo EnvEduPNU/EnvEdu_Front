@@ -475,24 +475,56 @@ function RenderContent({
   onNavigate,
   stepData,
   storedPhotoList,
-  setStorePhotoList,
+  setStoredPhotoList,
   setLocalStoredPhotoList,
   setImageUrlArray,
 }) {
+  const [tableData, setTableData] = useState(null);
+
   const handleTextChange = (event) => {
     setTextBoxValue(index, event.target.value);
   };
 
-  // 이미지 삭제 핸들러
-  const handleDeletePhoto = (contentUrl) => {
-    console.log('삭제할 이미지 url : ' + JSON.stringify(contentUrl, null, 2));
+  const handleSelectData = async (id) => {
+    try {
+      const response = await customAxios.get(`api/custom/${id}`);
+      const fetchedData = response.data;
 
-    // 배열에 새로운 URL이 존재하지 않는 경우에만 추가
+      const formattedData = fetchedData.numericFields.map((field, index) => ({
+        ...fetchedData.stringFields[index],
+        ...field,
+      }));
+
+      setTableData(formattedData); // 테이블 데이터를 상태에 저장
+    } catch (error) {
+      console.error('데이터 가져오기 실패:', error);
+    }
+  };
+
+  function tableRender(content) {
+    if (typeof content === 'string' || typeof content === 'number') {
+      return content;
+    }
+
+    const { type, props } = content;
+
+    return React.createElement(
+      type,
+      { ...props, key: props.key || null, ref: props.ref || null },
+      props.children
+        ? Array.isArray(props.children)
+          ? props.children.map((child) => tableRender(child))
+          : tableRender(props.children)
+        : null,
+    );
+  }
+
+  const handleDeletePhoto = (contentUrl) => {
     setImageUrlArray((prevUrls) => {
       if (!prevUrls.includes(contentUrl)) {
-        return [...prevUrls, contentUrl]; // 중복되지 않으면 추가
+        return [...prevUrls, contentUrl];
       }
-      return prevUrls; // 이미 존재하면 배열 그대로 반환
+      return prevUrls;
     });
   };
 
@@ -535,73 +567,149 @@ function RenderContent({
             crossOrigin="anonymous"
             src={content.content}
             alt="Assignment Content"
-            style={{ width: content.x, height: content.y }}
+            style={{ width: 500, height: 300 }}
           />
         </div>
       );
     case 'dataInChartButton':
       return (
         <div>
-          <Button
-            onClick={() =>
-              onNavigate(
-                stepData.uuid,
-                stepData.username,
-                content.contentName,
-                content.stepNum,
-                content,
-              )
-            }
-            variant="contained"
-            color="primary"
-            sx={{
-              backgroundColor: '#6200ea', // 버튼 배경색 (보라색)
-              color: 'white', // 텍스트 색상
-              padding: '10px 20px', // 패딩
-              borderRadius: '20px', // 버튼의 모서리를 둥글게
-              boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', // 그림자 효과
-              fontWeight: 'bold', // 글씨 굵기
-              fontSize: '1rem', // 글씨 크기
-              transition: 'background-color 0.3s ease', // 배경색 전환 효과
-              '&:hover': {
-                backgroundColor: '#3700b3', // hover 시 배경색 (어두운 보라색)
-              },
-            }}
-          >
-            그래프 그리기
-          </Button>
+          <div style={{ display: 'flex' }}>
+            <Button
+              onClick={() =>
+                onNavigate(
+                  stepData.uuid,
+                  stepData.username,
+                  content.contentName,
+                  content.stepNum,
+                  content,
+                )
+              }
+              variant="contained"
+              color="primary"
+              sx={{
+                backgroundColor: '#6200ea',
+                color: 'white',
+                padding: '10px 20px',
+                borderRadius: '20px',
+                boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+                fontWeight: 'bold',
+                fontSize: '1rem',
+                transition: 'background-color 0.3s ease',
+                '&:hover': {
+                  backgroundColor: '#3700b3',
+                },
+              }}
+            >
+              그래프 그리기
+            </Button>
+
+            {/* 데이터 가져오기 버튼 */}
+            <Button
+              onClick={() => handleSelectData(content.content)}
+              variant="contained"
+              color="secondary"
+              sx={{
+                backgroundColor: '#6200ea',
+                color: 'white',
+                padding: '10px 20px',
+                marginLeft: '10px',
+                borderRadius: '20px',
+                boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+                fontWeight: 'bold',
+                fontSize: '1rem',
+                transition: 'background-color 0.3s ease',
+                '&:hover': {
+                  backgroundColor: '#3700b3',
+                },
+              }}
+            >
+              테이블 보기
+            </Button>
+          </div>
+
+          {/* 테이블 렌더링 */}
+          {tableData && (
+            <div style={{ overflowX: 'auto', marginTop: '20px' }}>
+              <table
+                style={{
+                  width: '100%',
+                  borderCollapse: 'collapse',
+                  marginTop: '10px',
+                }}
+              >
+                <thead>
+                  <tr>
+                    {Object.keys(tableData[0]).map((header, index) => (
+                      <th
+                        key={index}
+                        style={{
+                          border: '1px solid #ddd',
+                          padding: '8px',
+                          backgroundColor: '#f2f2f2',
+                          textAlign: 'center',
+                        }}
+                      >
+                        {header}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {tableData.map((row, rowIndex) => (
+                    <tr key={rowIndex}>
+                      {Object.values(row).map((cell, cellIndex) => (
+                        <td
+                          key={cellIndex}
+                          style={{
+                            border: '1px solid #ddd',
+                            padding: '8px',
+                            textAlign: 'center',
+                          }}
+                        >
+                          {cell.value || cell}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
 
           <div
             style={{
               marginTop: '10px',
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(600px, 1fr))', // auto-fit을 사용하고 minmax 값 조정
+              gridTemplateColumns: 'repeat(auto-fit, minmax(600px, 1fr))',
               gap: '10px',
               justifyContent: 'center',
             }}
           >
-            {storedPhotoList.length > 0
-              ? storedPhotoList.map((photo, index) => (
-                  <div
-                    key={index}
+            {storedPhotoList.length > 0 ? (
+              storedPhotoList.map((photo, index) => (
+                <div
+                  key={index}
+                  style={{
+                    marginBottom: '20px',
+                    position: 'relative',
+                    textAlign: 'center',
+                  }}
+                >
+                  <img
+                    src={photo.image}
+                    alt={photo.title}
                     style={{
-                      marginBottom: '20px',
-                      position: 'relative',
-                      textAlign: 'center',
+                      width: '100%',
+                      height: 'auto',
+                      objectFit: 'cover',
                     }}
-                  >
-                    <img
-                      src={photo.image}
-                      alt={photo.title}
-                      style={{
-                        width: '100%', // 그리드 셀에 맞게 이미지 크기 조정
-                        height: 'auto',
-                        objectFit: 'cover',
-                      }}
-                    />
-                  </div>
-                ))
-              : ''}
+                  />
+                </div>
+              ))
+            ) : (
+              <></>
+            )}
           </div>
         </div>
       );
@@ -620,6 +728,9 @@ function RenderContent({
           </Typography>
         </div>
       );
+
+    case 'data':
+      return <div>{tableRender(content.content)}</div>;
     default:
       return null;
   }

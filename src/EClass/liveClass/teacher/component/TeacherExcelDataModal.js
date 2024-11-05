@@ -18,9 +18,15 @@ import {
   TextField,
 } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid'; // uuid 라이브러리에서 v4 임포트
-import { customAxios } from '../../../Common/CustomAxios'; // Axios import
+import { customAxios } from '../../../../Common/CustomAxios';
 
-const ExcelDataModal = ({ open, handleClose, data, eclassFlag, onSave }) => {
+const TeacherExcelDataModal = ({
+  open,
+  handleClose,
+  data,
+  eclassFlag,
+  onSave,
+}) => {
   const [dataTypes, setDataTypes] = useState(
     Object.keys(data[0]).reduce((acc, key) => {
       acc[key] = 'Categoric';
@@ -129,14 +135,12 @@ const ExcelDataModal = ({ open, handleClose, data, eclassFlag, onSave }) => {
     try {
       const response = await customAxios.post('/api/custom/save', jsonData);
       console.log('데이터가 성공적으로 저장되었습니다:', response.data);
-      alert('데이터가 저장되었습니다.');
 
       // onSave 호출로 상위 컴포넌트에 dataUUID 및 저장된 데이터 전달
       onSave({ dataUUID: jsonData.dataUUID, data: jsonData });
 
       setShowSaveForm(false); // 저장 폼 닫기
       handleClose(); // 모달 닫기
-      window.location.reload();
     } catch (error) {
       console.error('데이터 저장 중 오류 발생:', error);
       alert('데이터 저장 오류!');
@@ -297,4 +301,4 @@ const ExcelDataModal = ({ open, handleClose, data, eclassFlag, onSave }) => {
   );
 };
 
-export default ExcelDataModal;
+export default TeacherExcelDataModal;
