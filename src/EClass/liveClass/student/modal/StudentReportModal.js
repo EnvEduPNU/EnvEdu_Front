@@ -266,7 +266,7 @@ function RenderContent({ content, textBoxValue, setTextBoxValue, index }) {
             crossOrigin="anonymous"
             src={content.content}
             alt="Assignment Content"
-            style={{ width: '100%' }}
+            style={{ width: '500px', height: '300px' }}
           />
         </div>
       );
