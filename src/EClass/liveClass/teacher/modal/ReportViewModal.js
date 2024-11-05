@@ -141,7 +141,7 @@ function RenderContent({ content, setTextBoxValue, index }) {
           <img
             src={content.content}
             alt="Assignment Content"
-            style={{ width: content.x / 2, height: content.y / 2 }}
+            style={{ width: '500px', height: '300px' }}
           />
         </div>
       ) : (
