@@ -31,10 +31,10 @@
 }
 
 .lecture-image {
-  width: 90%; /* 이미지의 너비를 90%로 설정 */
+  width: 100%;
   height: 180px;
   object-fit: cover;
-  margin-bottom: 15px; /* 이미지와 텍스트 사이에 여백 추가 */
+  margin-bottom: 15px;
   border: 1px solid #ddd;
   border-radius: 8px; /* 이미지에 약간의 둥근 모서리 */
 }
