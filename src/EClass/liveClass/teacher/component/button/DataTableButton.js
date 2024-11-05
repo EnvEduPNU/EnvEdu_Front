@@ -53,9 +53,9 @@ export default function DataTableButton({ summary, onSelectData }) {
     handleClose();
   };
 
-  // useEffect(() => {
-  //   console.log("summary 체크 : " + JSON.stringify(summary, null, 2));
-  // }, []);
+  useEffect(() => {
+    console.log('summary 체크 : ' + JSON.stringify(summary, null, 2));
+  }, []);
 
   return (
     <>

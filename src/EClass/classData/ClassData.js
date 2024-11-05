@@ -63,6 +63,7 @@ function ClassData() {
   }, []);
 
   useEffect(() => {
+
     const username = localStorage.getItem('username');
 
     const fetchData = async () => {
@@ -138,10 +139,6 @@ function ClassData() {
       console.error('Error deleting lecture:', error);
       alert('E-Class 삭제 중 오류가 발생했습니다.');
     }
-  };
-
-  const handleMainPageClick = () => {
-    window.location.reload();
   };
 
   return (
