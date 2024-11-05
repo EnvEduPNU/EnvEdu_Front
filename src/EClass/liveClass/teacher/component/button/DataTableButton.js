@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   Modal,
   Box,
@@ -6,37 +6,37 @@ import {
   Typography,
   Container,
   Paper,
-} from "@mui/material";
+} from '@mui/material';
 
-import "../TeacherWordProcessor.scss";
+import '../TeacherWordProcessor.scss';
 
 const modalStyle = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
   width: 800,
-  bgcolor: "background.paper",
+  bgcolor: 'background.paper',
   boxShadow: 24,
   p: 4,
   zIndex: 1300,
 };
 
 const tableStyle = {
-  width: "100%",
-  borderCollapse: "collapse",
-  "& th": {
-    backgroundColor: "#f5f5f5",
-    borderBottom: "1px solid #ccc",
-    padding: "8px",
+  width: '100%',
+  borderCollapse: 'collapse',
+  '& th': {
+    backgroundColor: '#f5f5f5',
+    borderBottom: '1px solid #ccc',
+    padding: '8px',
   },
-  "& td": {
-    borderBottom: "1px solid #ccc",
-    padding: "8px",
+  '& td': {
+    borderBottom: '1px solid #ccc',
+    padding: '8px',
   },
-  "& tbody tr:hover": {
-    backgroundColor: "#f0f0f0",
-    cursor: "pointer",
+  '& tbody tr:hover': {
+    backgroundColor: '#f0f0f0',
+    cursor: 'pointer',
   },
 };
 
@@ -53,9 +53,9 @@ export default function DataTableButton({ summary, onSelectData }) {
     handleClose();
   };
 
-  // useEffect(() => {
-  //   console.log("summary 체크 : " + JSON.stringify(summary, null, 2));
-  // }, []);
+  useEffect(() => {
+    console.log('summary 체크 : ' + JSON.stringify(summary, null, 2));
+  }, []);
 
   return (
     <>
@@ -64,7 +64,7 @@ export default function DataTableButton({ summary, onSelectData }) {
         color="primary"
         className="yellow-btn" // yellow-btn 클래스 적용
         onClick={handleOpen}
-        sx={{ margin: "20px 10px 0 0", width: "10rem" }}
+        sx={{ margin: '20px 10px 0 0', width: '10rem' }}
       >
         데이터 추가하기
       </Button>
@@ -83,7 +83,7 @@ export default function DataTableButton({ summary, onSelectData }) {
           >
             데이터 요약
           </Typography>
-          <Paper sx={{ marginTop: 2, overflowX: "auto" }}>
+          <Paper sx={{ marginTop: 2, overflowX: 'auto' }}>
             <Box component="table" className="summary-table" sx={tableStyle}>
               <thead>
                 <tr>

@@ -64,23 +64,48 @@ function ClassData() {
 
   useEffect(() => {
     setIsLoading(true); // 로딩 시작
-    customAxios
-      .get('/mydata/list')
-      .then((res) => {
-        const formattedData = res.data.map((data) => ({
-          ...data,
-          saveDate: data.saveDate.split('T')[0],
-          dataLabel:
-            data.dataLabel === 'AIRQUALITY'
-              ? '대기질 데이터'
-              : data.dataLabel === 'OCEANQUALITY'
-              ? '수질 데이터'
-              : data.dataLabel,
-        }));
-        setSummary(formattedData);
-      })
-      .catch((err) => console.log(err))
-      .finally(() => setIsLoading(false)); // 로딩 완료
+
+    const username = localStorage.getItem('username');
+
+    const FetchData = async () => {
+      await customAxios
+        .get('/mydata/list')
+        .then((res) => {
+          console.log('My Data list : ' + JSON.stringify(res.data, null, 2));
+          const formattedData = res.data.map((data) => ({
+            ...data,
+            saveDate: data.saveDate.split('T')[0],
+            dataLabel:
+              data.dataLabel === 'AIRQUALITY'
+                ? '대기질 데이터'
+                : data.dataLabel === 'OCEANQUALITY'
+                ? '수질 데이터'
+                : data.dataLabel,
+            title: data.title,
+          }));
+          console.log(formattedData);
+          setSummary(formattedData);
+        })
+        .catch((err) => console.log(err));
+
+      await customAxios
+        .get(`/api/custom/list?username=${username}`)
+        .then((res) => {
+          console.log(res.data);
+          const formattedData = res.data.map((table) => ({
+            title: table.title,
+            saveDate: table.saveDate.split('T')[0],
+            dataLabel: 'CUSTOM',
+            dataUUID: table.dataUUID,
+            memo: table.memo,
+          }));
+          setSummary((prev) => [...prev, ...formattedData]);
+        });
+
+      setIsLoading(false); // 로딩 완료
+    };
+
+    FetchData();
   }, []);
 
   const getLectureDataTable = (
@@ -120,10 +145,6 @@ function ClassData() {
       console.error('Error deleting lecture:', error);
       alert('E-Class 삭제 중 오류가 발생했습니다.');
     }
-  };
-
-  const handleMainPageClick = () => {
-    window.location.reload();
   };
 
   return (

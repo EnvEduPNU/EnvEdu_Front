@@ -20,9 +20,9 @@ import {
 import { v4 as uuidv4 } from 'uuid'; // uuid 라이브러리에서 v4 임포트
 import { customAxios } from '../../../Common/CustomAxios'; // Axios import
 
-const ExcelDataModal = ({ open, handleClose, data, eclassFlag }) => {
+const ExcelDataModal = ({ open, handleClose, data, eclassFlag, onSave }) => {
   const [dataTypes, setDataTypes] = useState(
-    Object.keys(data[0]).reduce((acc, key, index) => {
+    Object.keys(data[0]).reduce((acc, key) => {
       acc[key] = 'Categoric';
       return acc;
     }, {}),
@@ -120,7 +120,7 @@ const ExcelDataModal = ({ open, handleClose, data, eclassFlag }) => {
       saveDate: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
       title: title || '',
       memo, // memo 상태값 추가
-      dataLabel: 'CUSTOM', // title 상태값 추가
+      dataLabel: 'CUSTOM',
       userName: localStorage.getItem('username'),
       numericFields: numericFieldsList,
       stringFields: stringFieldsList,
@@ -130,14 +130,16 @@ const ExcelDataModal = ({ open, handleClose, data, eclassFlag }) => {
       const response = await customAxios.post('/api/custom/save', jsonData);
       console.log('데이터가 성공적으로 저장되었습니다:', response.data);
       alert('데이터가 저장되었습니다.');
-      window.location.reload();
+
+      // onSave 호출로 상위 컴포넌트에 dataUUID 및 저장된 데이터 전달
+      onSave({ dataUUID: jsonData.dataUUID, data: jsonData });
+
+      setShowSaveForm(false); // 저장 폼 닫기
+      handleClose(); // 모달 닫기
     } catch (error) {
       console.error('데이터 저장 중 오류 발생:', error);
       alert('데이터 저장 오류!');
     }
-
-    setShowSaveForm(false); // 저장 폼 닫기
-    handleClose(); // 모달 닫기
   };
 
   return (
