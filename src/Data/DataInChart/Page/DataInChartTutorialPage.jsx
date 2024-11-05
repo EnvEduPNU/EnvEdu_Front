@@ -57,7 +57,8 @@ function DataInChartTutorialPage() {
           display: 'flex',
           gap: '20px',
           flexWrap: 'wrap',
-          justifyContent: 'left',
+          justifyContent: 'center',
+          marginTop: '20px',
         }}
       >
         {videos.map((video, index) => (

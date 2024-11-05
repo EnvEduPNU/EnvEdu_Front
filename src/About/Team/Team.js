@@ -1,44 +1,44 @@
-import "./Team.scss";
-import { AiOutlineTeam } from "react-icons/ai";
-import { MdOutlineEmail } from "react-icons/md";
-import { FaPhoneAlt } from "react-icons/fa";
-import About1 from "./Image/About1.png";
-import About2 from "./Image/About2.jpg";
-import About3 from "./Image/About3.jpg";
-import About4 from "./Image/About4.jpeg";
+import './Team.scss';
+import { AiOutlineTeam } from 'react-icons/ai';
+import { MdOutlineEmail } from 'react-icons/md';
+import { FaPhoneAlt } from 'react-icons/fa';
+import About1 from './Image/About1.png';
+import About2 from './Image/About2.jpg';
+import About3 from './Image/About3.jpg';
+import About4 from './Image/About4.jpeg';
 
 const Card = ({ img, name, position, profile, email, call }) => {
   return (
     <div class="card">
       <div class="card-front">
-        <div style={{ marginBottom: "1rem" }}>
+        <div style={{ marginBottom: '1rem' }}>
           <img src={img} />
         </div>
 
-        <h4 style={{ fontWeight: "bold" }}>{name}</h4>
-        <span style={{ color: "#1f1f1f99" }}>{position}</span>
+        <h4 style={{ fontWeight: 'bold' }}>{name}</h4>
+        <span style={{ color: '#1f1f1f99' }}>{position}</span>
 
         <div
-          style={{ color: "#1f1f1f99", marginTop: "2rem", fontSize: "0.75em" }}
+          style={{ color: '#1f1f1f99', marginTop: '2rem', fontSize: '0.75em' }}
         >
           <MdOutlineEmail
             size="15"
             color="#5e2ced"
-            style={{ marginRight: "0.5rem" }}
+            style={{ marginRight: '0.5rem' }}
           />
           {email}
         </div>
         <div
           style={{
-            color: "#1f1f1f99",
-            fontSize: "0.75em",
-            marginTop: "0.3rem",
+            color: '#1f1f1f99',
+            fontSize: '0.75em',
+            marginTop: '0.3rem',
           }}
         >
           <FaPhoneAlt
             size="12"
             color="#5e2ced"
-            style={{ marginRight: "0.5rem" }}
+            style={{ marginRight: '0.5rem' }}
           />
           {call}
         </div>
@@ -52,9 +52,9 @@ export default function Team() {
     <>
       <div
         style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
         }}
       >
         <div className="team-circle">
@@ -62,16 +62,23 @@ export default function Team() {
         </div>
         <h2
           style={{
-            fontFamily: "Poppins",
-            fontWeight: "bold",
-            margin: "1rem 0 5rem 0",
+            fontFamily: 'Poppins',
+            fontWeight: 'bold',
+            margin: '1rem 0 0 0',
           }}
         >
           Our Team
         </h2>
       </div>
 
-      <div className="team">
+      <div
+        className="team"
+        style={{
+          margin: '2rem auto',
+          display: 'flex',
+          justifyContent: 'center',
+        }}
+      >
         <Card
           img={About1}
           name="남윤경"

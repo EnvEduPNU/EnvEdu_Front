@@ -90,27 +90,11 @@ export default function ForderListModal({
   filteredData,
   modalOpen,
   setModalOpen,
+  dataType,
 }) {
-  const [forderType, setforderType] = useState();
-
-  console.log(modalOpen);
+  console.log(filteredData);
 
   const { setData } = useGraphDataStore();
-
-  useEffect(() => {
-    const allCheck = filteredData[0].total;
-    const noneCheck = filteredData[0].none;
-    if (allCheck === '전체') {
-      console.log('타이틀 확인 : ' + allCheck);
-      setforderType(allCheck);
-    } else if (noneCheck) {
-      console.log('타이틀 확인 : ' + noneCheck);
-
-      setforderType(noneCheck);
-    } else {
-      setforderType(filteredData[0].dataLabel);
-    }
-  }, []);
 
   const getTable = (type, id) => {
     if (type === 'CUSTOM') {
@@ -301,7 +285,7 @@ export default function ForderListModal({
             margin: '8px 0',
           }}
         >
-          {forderType} 데이터
+          {dataType}
         </h2>
 
         <div

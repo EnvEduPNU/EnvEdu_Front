@@ -29,6 +29,7 @@ import axios from 'axios';
 
 import * as XLSX from 'xlsx'; // 엑셀 파일 처리를 위한 라이브러리
 import ExcelDataModal from '../../../../Data/MyData/modal/ExcelDataModal';
+import { convertToNumber } from '../../../../Data/DataInChart/store/utils/convertToNumber';
 
 Quill.register('modules/imageActions', ImageActions);
 Quill.register('modules/imageFormats', ImageFormats);
@@ -393,116 +394,256 @@ export default function TeacherWordProcessor({
   const handleSelectData = async (type, id) => {
     try {
       let path = '';
-      if (type === '수질 데이터') {
-        path = `/ocean-quality/mine/chunk?dataUUID=${id}`;
-      } else if (type === '대기질 데이터') {
-        path = `/air-quality/mine/chunk?dataUUID=${id}`;
-      } else if (type === 'SEED') {
-        path = `/seed/mine/chunk?dataUUID=${id}`;
-      } else if (type === 'CUSTOM') {
-        path = `/dataLiteracy/customData/download/${id}`;
-      }
+      let dataContent;
+      console.log(type);
+      if (type === '커스텀 데이터') {
+        customAxios
+          .get(`api/custom/${id}`)
+          .then((res) => {
+            //수정 필요
+            console.log(res.data.title);
+            const title = res.data.title;
+            let rows = 0;
+            let columns = 0;
+            const headerSet = new Set();
+            res.data.numericFields.forEach((table) => {
+              const key = Object.keys(table)[0];
+              headerSet.add(key);
+            });
 
-      const response = await customAxios.get(path);
-      const dataContent = response.data; // JSON 형식의 데이터를 가져옴
+            res.data.stringFields.forEach((table) => {
+              const key = Object.keys(table)[0];
+              headerSet.add(key);
+            });
 
-      // JSON 데이터를 테이블 형식으로 변환하여 contents에 추가
-      let headers = Object.keys(dataContent[0]).filter(
-        (key) =>
-          key !== 'id' &&
-          key !== 'dataUUID' &&
-          key !== 'saveDate' &&
-          key !== 'dateString' &&
-          key !== 'sessionid' &&
-          key !== 'unit',
-      );
+            columns = headerSet.size;
+            rows =
+              (res.data.numericFields.length + res.data.stringFields.length) /
+              columns;
+            const variables = Array(columns);
 
-      const attributesToCheck = [
-        'co2',
-        'dox',
-        'dust',
-        'hum',
-        'hum_EARTH',
-        'lux',
-        'ph',
-        'pre',
-        'temp',
-        'tur',
-      ];
+            const data = Array(rows + 1)
+              .fill()
+              .map(() => Array(columns).fill(0));
 
-      for (const attribute of attributesToCheck) {
-        const isAllZero = response.data.every(
-          (item) => item[attribute] === -99999,
-        );
-        if (isAllZero) {
-          headers = headers.filter((header) => header !== attribute);
+            res.data.numericFields.forEach((table) => {
+              const key = Object.keys(table)[0];
+              if (table[key].order < columns) {
+                data[0][table[key].order] = key;
+                variables[table[key].order] = {
+                  name: key,
+                  type: 'Numeric',
+                  isSelected: false,
+                  isMoreSelected: false,
+                  variableIndex: table[key].order,
+                };
+              }
+
+              data[Math.floor(table[key].order / columns) + 1][
+                table[key].order % columns
+              ] = convertToNumber(table[key].value);
+            });
+
+            res.data.stringFields.forEach((table) => {
+              const key = Object.keys(table)[0];
+              if (table[key].order < columns) {
+                data[0][table[key].order] = key;
+                variables[table[key].order] = {
+                  name: key,
+                  type: 'Categorical',
+                  isSelected: false,
+                  isMoreSelected: false,
+                  variableIndex: table[key].order,
+                };
+              }
+              data[Math.floor(table[key].order / columns) + 1][
+                table[key].order % columns
+              ] = convertToNumber(table[key].value);
+            });
+            console.log(data);
+            dataContent = data;
+
+            // localStorage.setItem('data', JSON.stringify(data));
+            // localStorage.setItem('title', JSON.stringify(title));
+
+            setModalOpen(false);
+
+            // JSON 데이터를 테이블 형식으로 변환하여 contents에 추가
+            let headers = dataContent[0];
+
+            const tableContent = (
+              <div style={{ width: 'auto', overflowX: 'auto' }}>
+                <div
+                  style={{
+                    transform: 'scale(1)',
+                    transformOrigin: 'top left',
+                  }}
+                >
+                  <table
+                    style={{
+                      width: '100%',
+                      marginTop: '10px',
+                      borderCollapse: 'collapse',
+                      tableLayout: 'fixed', // 테이블 셀 너비를 고정
+                    }}
+                  >
+                    <thead>
+                      <tr>
+                        {headers.map((header) => (
+                          <th
+                            key={header}
+                            style={{
+                              border: '1px solid #ddd',
+                              padding: '8px',
+                              backgroundColor: '#f2f2f2',
+                              wordWrap: 'break-word', // 긴 단어를 줄바꿈
+                              fontSize: '10px', // 테이블 길이에 맞춰서 size 조절 수정해야함
+                            }}
+                          >
+                            {header}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {dataContent.map((row, rowIndex) => (
+                        <tr
+                          key={rowIndex}
+                          style={{ borderBottom: '1px solid #ddd' }}
+                        >
+                          {row.map((item) => (
+                            <td
+                              key={`${rowIndex}-${item}`}
+                              style={{
+                                border: '1px solid #ddd',
+                                padding: '8px',
+                                wordWrap: 'break-word', // 긴 단어를 줄바꿈
+                                fontSize: '10px', // 테이블 길이에 맞춰서 size 조절 수정해야함
+                              }}
+                            >
+                              {item}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+
+            setLocalContents([
+              ...localContents,
+              { type: 'data', content: tableContent },
+            ]);
+
+            setAddTableFlag(true);
+          })
+          .catch((err) => console.log(err));
+      } else {
+        if (type === '수질 데이터') {
+          path = `/ocean-quality/mine/chunk?dataUUID=${id}`;
+        } else if (type === '대기질 데이터') {
+          path = `/air-quality/mine/chunk?dataUUID=${id}`;
+        } else if (type === 'SEED') {
+          path = `/seed/mine/chunk?dataUUID=${id}`;
         }
-      }
+        const response = await customAxios.get(path);
+        dataContent = response.data; // JSON 형식의 데이터를 가져옴'
+        console.log(dataContent);
 
-      const tableContent = (
-        <div style={{ width: 'auto', overflowX: 'auto' }}>
-          <div
-            style={{
-              transform: 'scale(1)',
-              transformOrigin: 'top left',
-            }}
-          >
-            <table
+        // JSON 데이터를 테이블 형식으로 변환하여 contents에 추가
+        let headers = Object.keys(dataContent[0]).filter(
+          (key) =>
+            key !== 'id' &&
+            key !== 'dataUUID' &&
+            key !== 'saveDate' &&
+            key !== 'dateString' &&
+            key !== 'sessionid' &&
+            key !== 'unit',
+        );
+
+        const attributesToCheck = [
+          'co2',
+          'dox',
+          'dust',
+          'hum',
+          'hum_EARTH',
+          'lux',
+          'ph',
+          'pre',
+          'temp',
+          'tur',
+        ];
+
+        const tableContent = (
+          <div style={{ width: 'auto', overflowX: 'auto' }}>
+            <div
               style={{
-                width: '100%',
-                marginTop: '10px',
-                borderCollapse: 'collapse',
-                tableLayout: 'fixed', // 테이블 셀 너비를 고정
+                transform: 'scale(1)',
+                transformOrigin: 'top left',
               }}
             >
-              <thead>
-                <tr>
-                  {headers.map((header) => (
-                    <th
-                      key={header}
-                      style={{
-                        border: '1px solid #ddd',
-                        padding: '8px',
-                        backgroundColor: '#f2f2f2',
-                        wordWrap: 'break-word', // 긴 단어를 줄바꿈
-                        fontSize: '10px', // 테이블 길이에 맞춰서 size 조절 수정해야함
-                      }}
-                    >
-                      {header}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {dataContent.map((row, rowIndex) => (
-                  <tr key={rowIndex} style={{ borderBottom: '1px solid #ddd' }}>
+              <table
+                style={{
+                  width: '100%',
+                  marginTop: '10px',
+                  borderCollapse: 'collapse',
+                  tableLayout: 'fixed', // 테이블 셀 너비를 고정
+                }}
+              >
+                <thead>
+                  <tr>
                     {headers.map((header) => (
-                      <td
-                        key={`${rowIndex}-${header}`}
+                      <th
+                        key={header}
                         style={{
                           border: '1px solid #ddd',
                           padding: '8px',
+                          backgroundColor: '#f2f2f2',
                           wordWrap: 'break-word', // 긴 단어를 줄바꿈
                           fontSize: '10px', // 테이블 길이에 맞춰서 size 조절 수정해야함
                         }}
                       >
-                        {row[header]}
-                      </td>
+                        {header}
+                      </th>
                     ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {dataContent.map((row, rowIndex) => (
+                    <tr
+                      key={rowIndex}
+                      style={{ borderBottom: '1px solid #ddd' }}
+                    >
+                      {headers.map((header) => (
+                        <td
+                          key={`${rowIndex}-${header}`}
+                          style={{
+                            border: '1px solid #ddd',
+                            padding: '8px',
+                            wordWrap: 'break-word', // 긴 단어를 줄바꿈
+                            fontSize: '10px', // 테이블 길이에 맞춰서 size 조절 수정해야함
+                          }}
+                        >
+                          {row[header]}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
-      );
+        );
 
-      setLocalContents([
-        ...localContents,
-        { type: 'data', content: tableContent },
-      ]);
+        setLocalContents([
+          ...localContents,
+          { type: 'data', content: tableContent },
+        ]);
 
-      setAddTableFlag(true);
+        setAddTableFlag(true);
+      }
     } catch (error) {
       console.error('Error fetching data:', error);
     }

@@ -63,49 +63,43 @@ function ClassData() {
   }, []);
 
   useEffect(() => {
-    setIsLoading(true); // 로딩 시작
 
     const username = localStorage.getItem('username');
 
-    const FetchData = async () => {
-      await customAxios
-        .get('/mydata/list')
-        .then((res) => {
-          console.log('My Data list : ' + JSON.stringify(res.data, null, 2));
-          const formattedData = res.data.map((data) => ({
-            ...data,
-            saveDate: data.saveDate.split('T')[0],
-            dataLabel:
-              data.dataLabel === 'AIRQUALITY'
-                ? '대기질 데이터'
-                : data.dataLabel === 'OCEANQUALITY'
-                ? '수질 데이터'
-                : data.dataLabel,
-            title: data.title,
-          }));
-          console.log(formattedData);
-          setSummary(formattedData);
-        })
-        .catch((err) => console.log(err));
+    const fetchData = async () => {
+      try {
+        const myDataResponse = await customAxios.get('/mydata/list');
+        const myDataFormatted = myDataResponse.data.map((data) => ({
+          ...data,
+          saveDate: data.saveDate.split('T')[0],
+          dataLabel:
+            data.dataLabel === 'AIRQUALITY'
+              ? '대기질 데이터'
+              : data.dataLabel === 'OCEANQUALITY'
+              ? '수질 데이터'
+              : data.dataLabel,
+        }));
 
-      await customAxios
-        .get(`/api/custom/list?username=${username}`)
-        .then((res) => {
-          console.log(res.data);
-          const formattedData = res.data.map((table) => ({
-            title: table.title,
-            saveDate: table.saveDate.split('T')[0],
-            dataLabel: 'CUSTOM',
-            dataUUID: table.dataUUID,
-            memo: table.memo,
-          }));
-          setSummary((prev) => [...prev, ...formattedData]);
-        });
+        const customDataResponse = await customAxios.get(
+          `/api/custom/list?username=${username}`,
+        );
 
-      setIsLoading(false); // 로딩 완료
+        const customDataFormatted = customDataResponse.data.map((data) => ({
+          ...data,
+          saveDate: data.saveDate.split('T')[0],
+          dataLabel:
+            data.dataLabel === 'CUSTOM' ? '커스텀 데이터' : data.dataLabel,
+          dynamicFields: data.dynamicFields || {},
+        }));
+
+        const combinedData = [...myDataFormatted, ...customDataFormatted];
+        setSummary(combinedData);
+      } catch (error) {
+        console.error('데이터 가져오기 중 오류:', error);
+      }
     };
 
-    FetchData();
+    fetchData();
   }, []);
 
   const getLectureDataTable = (
