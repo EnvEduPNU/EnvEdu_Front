@@ -36,8 +36,16 @@ function TableOrGraph({ setSummary, setPhoto, isDrawGraph }) {
   }, [tableSaveClick]);
 
   return (
-    <Styled.Wrapper>
-      <div style={{ fontSize: '3vh', fontWeight: 'bold', marginLeft: '48px' }}>
+    <div
+      style={{
+        position: 'relative',
+        height: '1200px',
+        padding: '10px',
+      }}
+    >
+      <div
+        style={{ fontSize: '2.5rem', fontWeight: 'bold', marginLeft: '4rem' }}
+      >
         Data & Chart
       </div>
 
@@ -48,7 +56,6 @@ function TableOrGraph({ setSummary, setPhoto, isDrawGraph }) {
             <div
               style={{
                 marginTop: '8rem',
-                marginRight: '3rem',
               }}
             >
               <Header />
@@ -57,6 +64,7 @@ function TableOrGraph({ setSummary, setPhoto, isDrawGraph }) {
               style={{
                 flexGrow: 1,
                 borderTop: '1px solid rgba(34, 36, 38, 0.15)',
+                marginLeft: '6rem',
               }}
             >
               <ExpertCustomTable
@@ -70,11 +78,14 @@ function TableOrGraph({ setSummary, setPhoto, isDrawGraph }) {
       )}
       {tab === 'graph' && (
         <>
+          <Header />
           <div className="flex">
-            <div className="mt-32 mr-12">
-              <Header />
-            </div>
-            <div>
+            <div
+              style={{
+                marginLeft: '6rem',
+                borderTop: '1px solid rgba(34, 36, 38, 0.15)',
+              }}
+            >
               <ExpertCustomGraphHeader />
               <ExpertCustomGraph
                 onAddPhoto={handleAddPhoto}
@@ -84,7 +95,7 @@ function TableOrGraph({ setSummary, setPhoto, isDrawGraph }) {
           </div>
         </>
       )}
-    </Styled.Wrapper>
+    </div>
   );
 }
 
