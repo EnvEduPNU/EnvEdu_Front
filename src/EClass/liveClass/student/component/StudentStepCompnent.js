@@ -125,10 +125,17 @@ export function StudentStepCompnent(props) {
 
   // 과제 공유 성공시 응답 소켓 메서드
   const assginmentCheckStompClient = async (state) => {
+    let assignSharedLocal = false;
+
+    if (page !== 'stop') {
+      assignSharedLocal = true;
+      setPage('newPage');
+    }
+
     const message = {
       assginmentStatus: state,
       sessionId: props.sessionIdState,
-      assginmentShared: true,
+      assginmentShared: assignSharedLocal,
       timestamp: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
     };
 

@@ -119,7 +119,7 @@ export const LiveTeacherPage = () => {
         </div>
 
         <div>
-          {stepCount && !sharedScreenState && !assginmentShareStop ? (
+          {stepCount && !sharedScreenState ? (
             <TeacherRenderAssign data={tableData} />
           ) : (
             !sharedScreenState && <DefaultPageComponent />
@@ -154,6 +154,7 @@ export const LiveTeacherPage = () => {
               assginmentShareCheck={assginmentShareCheck}
               setAssginmentShareCheck={setAssginmentShareCheck}
               setAssginmentShareStop={setAssginmentShareStop}
+              setStepCount={setStepCount}
             />
           </>
         ) : (
@@ -168,7 +169,14 @@ export const LiveTeacherPage = () => {
 
       {/* [오른쪽 블럭] 수업 Step 테이블, 수업 상태 테이블 */}
       <div style={{ width: '30%', marginRight: '30px', height: '100%' }}>
-        {showAssignmentTable ? (
+        <TeacherAssignmentTable
+          setCourseStep={setCourseStep}
+          setTableData={setTableData}
+          lectureDataUuid={lectureDataUuid}
+          setStepCount={setStepCount}
+          setAssginmentShareCheck={setAssginmentShareCheck}
+        />
+        {/* {showAssignmentTable ? (
           <TeacherAssignmentTable
             setCourseStep={setCourseStep}
             setTableData={setTableData}
@@ -182,6 +190,7 @@ export const LiveTeacherPage = () => {
             eclassUuid={eClassUuid}
             sessionIds={sessionIds}
             assginmentShareCheck={assginmentShareCheck}
+            assginmentShareStop={assginmentShareStop}
           />
         )}
 
@@ -201,7 +210,7 @@ export const LiveTeacherPage = () => {
           }}
         >
           {showAssignmentTable ? '수업 상태 보기' : '과제 보기'}
-        </Button>
+        </Button> */}
       </div>
     </div>
   );
