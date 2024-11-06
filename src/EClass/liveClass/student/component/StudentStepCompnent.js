@@ -56,6 +56,11 @@ export function StudentStepCompnent(props) {
         stompClient.current.subscribe('/topic/switchPage', function (message) {
           const parsedMessage = JSON.parse(message.body);
 
+          console.log(
+            '과제 공유 메시지 : ',
+            JSON.stringify(parsedMessage, null, 2),
+          );
+
           setPage(parsedMessage.page);
           props.setPage(parsedMessage.page);
           setStepCount(parsedMessage.stepCount);
@@ -167,7 +172,9 @@ export function StudentStepCompnent(props) {
 
   return (
     <div>
-      {page === 'newPage' || props.uuid === socketEclassUuid || stepCount ? (
+      {(page === 'newPage' && page !== 'stop') ||
+      props.uuid === socketEclassUuid ||
+      stepCount ? (
         <StudentRenderAssign
           tableData={tableData}
           assginmentCheck={assginmentCheck}
