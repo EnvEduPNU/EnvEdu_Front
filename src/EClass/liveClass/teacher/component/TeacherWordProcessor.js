@@ -1050,7 +1050,10 @@ export default function TeacherWordProcessor({
               width: '100%',
             }}
           >
-            <img src={item.content} style={{ width: item.x, height: item.y }} />
+            <img
+              src={item.content}
+              style={{ width: '500px', height: '300px' }}
+            />
             <IconButton
               onClick={() => handleDeleteContent(index, item.content)}
               aria-label="delete"
