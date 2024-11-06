@@ -19,6 +19,7 @@ export const LiveTeacherPage = () => {
   const [sessionIds, setSessionIds] = useState([]);
   const [assginmentShareCheck, setAssginmentShareCheck] = useState([]);
   const [showAssignmentTable, setShowAssignmentTable] = useState(true); // 상태 추가
+  const [assginmentShareStop, setAssginmentShareStop] = useState(false);
 
   const { eClassUuid } = useParams();
   const location = useLocation();
@@ -118,7 +119,7 @@ export const LiveTeacherPage = () => {
         </div>
 
         <div>
-          {stepCount && !sharedScreenState ? (
+          {stepCount && !sharedScreenState && !assginmentShareStop ? (
             <TeacherRenderAssign data={tableData} />
           ) : (
             !sharedScreenState && <DefaultPageComponent />
@@ -152,6 +153,7 @@ export const LiveTeacherPage = () => {
               sharedScreenState={sharedScreenState}
               assginmentShareCheck={assginmentShareCheck}
               setAssginmentShareCheck={setAssginmentShareCheck}
+              setAssginmentShareStop={setAssginmentShareStop}
             />
           </>
         ) : (

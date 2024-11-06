@@ -9,6 +9,7 @@ export function TeacherStepShareButton({
   sharedScreenState,
   assginmentShareCheck,
   setAssginmentShareCheck,
+  setAssginmentShareStop,
 }) {
   const stompClientRef = useRef(null); // 소켓 연결을 참조하는 상태
   const [sessionId, setSessionId] = useState();
@@ -149,6 +150,7 @@ export function TeacherStepShareButton({
         body: JSON.stringify(message), // 메시지 본문
         headers: {}, // (선택 사항) 헤더
       });
+      setAssginmentShareStop(true);
     }
 
     if (sharedScreenState) {
