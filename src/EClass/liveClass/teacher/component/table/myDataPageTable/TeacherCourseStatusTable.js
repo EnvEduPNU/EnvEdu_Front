@@ -47,6 +47,7 @@ export default function TeacherCourseStatusTable({
   eclassUuid,
   sessionIds,
   assginmentShareCheck,
+  assginmentShareStop,
 }) {
   const sessionData = sessionIds.map((sessionId) => ({
     id: sessionId,
@@ -224,8 +225,10 @@ export default function TeacherCourseStatusTable({
             <CancelIcon sx={{ color: 'red' }} />
           )}
         </TableCell>
+        {/* 여기가 과제 공유 쪽 */}
         <TableCell align="center">
-          {assginmentShareCheck?.some(
+          {!assginmentShareStop &&
+          assginmentShareCheck?.some(
             (assign) =>
               assign.sessionId === row.sessionId &&
               assign.assginmentShared === true,

@@ -10,6 +10,7 @@ export function TeacherStepShareButton({
   assginmentShareCheck,
   setAssginmentShareCheck,
   setAssginmentShareStop,
+  setStepCount,
 }) {
   const stompClientRef = useRef(null); // 소켓 연결을 참조하는 상태
   const [sessionId, setSessionId] = useState();
@@ -47,7 +48,7 @@ export function TeacherStepShareButton({
 
             setSessionId(parsedMessage.sessionId);
             setShared(parsedMessage.shared);
-            setAssignShared(parsedMessage.assginmentStatus);
+            setAssignShared(parsedMessage.assginmentShared);
             setAssginmentSubmit(parsedMessage.assginmentSubmit);
             setReportSubmit(parsedMessage.reportSubmit);
 
@@ -138,6 +139,8 @@ export function TeacherStepShareButton({
 
   // 과제 중지 소켓 전달
   const sendStopMessage = () => {
+    setAssignShared(false);
+
     if (stompClientRef.current && !sharedScreenState) {
       // 과제 공유 상태 업데이트
       updateShareStatus(sessionId, shared, false);
@@ -151,6 +154,7 @@ export function TeacherStepShareButton({
         headers: {}, // (선택 사항) 헤더
       });
       setAssginmentShareStop(true);
+      setStepCount(null);
     }
 
     if (sharedScreenState) {
