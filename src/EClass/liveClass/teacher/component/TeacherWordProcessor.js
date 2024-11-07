@@ -30,7 +30,7 @@ import axios from 'axios';
 import * as XLSX from 'xlsx'; // 엑셀 파일 처리를 위한 라이브러리
 import ExcelDataModal from '../../../../Data/MyData/modal/ExcelDataModal';
 import { convertToNumber } from '../../../../Data/DataInChart/store/utils/convertToNumber';
-import ExcelDataTable from './table/\bExcelDataTable';
+import ExcelDataTable from './table/ExcelDataTable';
 import TeacherExcelDataModal from './TeacherExcelDataModal';
 
 Quill.register('modules/imageActions', ImageActions);
