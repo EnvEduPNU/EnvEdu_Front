@@ -62,9 +62,13 @@ export function TeacherStepShareButton({
               reportSubmit: parsedMessage.reportSubmit,
             };
 
+            console.log(
+              '확인해보자1!@#!@#!@# : ' + JSON.stringify(shareState, null, 2),
+            );
+
             // 상태 업데이트
-            const addAssginmentShareCheck = (shareState) => {
-              setAssginmentShareCheck((prevState) => {
+            const addAssginmentShareCheck = async (shareState) => {
+              await setAssginmentShareCheck((prevState) => {
                 // prevState가 null 또는 undefined이면 빈 배열로 초기화
                 const validPrevState = prevState || [];
 
@@ -139,8 +143,6 @@ export function TeacherStepShareButton({
 
   // 과제 중지 소켓 전달
   const sendStopMessage = () => {
-    setAssignShared(false);
-
     if (stompClientRef.current && !sharedScreenState) {
       // 과제 공유 상태 업데이트
       updateShareStatus(sessionId, shared, false);
