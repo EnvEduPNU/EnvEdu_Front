@@ -125,25 +125,34 @@ export function StudentStepCompnent(props) {
 
   // 과제 공유 성공시 응답 소켓 메서드
   const assginmentCheckStompClient = async (state) => {
-    let assignSharedLocal = false;
+    let message = null;
 
-    if (page !== 'stop') {
-      assignSharedLocal = true;
-      setPage('newPage');
+    if (page === 'stop') {
+      message = {
+        assginmentStatus: state,
+        sessionId: props.sessionIdState,
+        assginmentShared: false,
+        timestamp: new Date().toLocaleString('ko-KR', {
+          timeZone: 'Asia/Seoul',
+        }),
+      };
     }
-
-    const message = {
-      assginmentStatus: state,
-      sessionId: props.sessionIdState,
-      assginmentShared: assignSharedLocal,
-      timestamp: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
-    };
+    if (page === 'newPage') {
+      message = {
+        assginmentStatus: state,
+        sessionId: props.sessionIdState,
+        assginmentShared: true,
+        timestamp: new Date().toLocaleString('ko-KR', {
+          timeZone: 'Asia/Seoul',
+        }),
+      };
+    }
 
     if (
       assginmentStompClient.current &&
       assginmentStompClient.current.connected
     ) {
-      console.log('공유 성공 보내기 : ' + JSON.stringify(message, null, 2));
+      console.log('공유 상태 보내기 : ' + JSON.stringify(message, null, 2));
       await assginmentStompClient.current.publish({
         destination: '/app/assginment-status', // 메시지를 보낼 경로
         body: JSON.stringify(message), // 메시지 본문
@@ -184,18 +193,18 @@ export function StudentStepCompnent(props) {
 
   return (
     <div>
-      {(page === 'newPage' && page !== 'stop') ||
-      props.uuid === socketEclassUuid ||
-      stepCount ? (
-        <StudentRenderAssign
-          tableData={tableData}
-          assginmentCheck={assginmentCheck}
-          stepCount={stepCount}
-          studentId={studentId}
-          sessionIdState={props.sessionIdState}
-          eclassUuid={props.eclassUuid}
-          setAssginmentFetch={setAssginmentFetch}
-        />
+      {page === 'newPage' || props.uuid === socketEclassUuid || stepCount ? (
+        <>
+          <StudentRenderAssign
+            tableData={tableData}
+            assginmentCheck={assginmentCheck}
+            stepCount={stepCount}
+            studentId={studentId}
+            sessionIdState={props.sessionIdState}
+            eclassUuid={props.eclassUuid}
+            setAssginmentFetch={setAssginmentFetch}
+          />
+        </>
       ) : (
         <DefaultPageComponent />
       )}
