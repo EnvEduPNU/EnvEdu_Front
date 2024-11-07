@@ -163,6 +163,11 @@ export function StudentStepCompnent(props) {
 
     const fetchStudentId = async () => {
       try {
+        console.log(
+          '이클래스 유유아이디 어떤데 : ' +
+            JSON.stringify(props.eclassUuid, null, 2),
+        );
+
         const response = await customAxios.get(
           `/api/student/getStudentId?username=${username}&uuid=${props.eclassUuid}`,
         );

@@ -144,14 +144,6 @@ function RenderContent({
         <>
           <div style={{ display: 'flex' }}>
             <Button
-              onClick={() =>
-                onNavigate(
-                  item.uuid,
-                  item.username,
-                  contentItem.contentName,
-                  contentItem.stepNum,
-                )
-              }
               variant="contained"
               color="primary"
               sx={{
