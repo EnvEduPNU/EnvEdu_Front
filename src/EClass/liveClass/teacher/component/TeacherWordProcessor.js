@@ -838,10 +838,6 @@ export default function TeacherWordProcessor({
       }
     };
 
-    {
-      console.log('테이블은? : ' + JSON.stringify(content, null, 2));
-    }
-
     console.log(' 플래그 : ' + addTableFlag);
 
     let parseContentData = null;
@@ -853,15 +849,27 @@ export default function TeacherWordProcessor({
     }
     // 수정하는 테이블 뷰
     else {
+      console.log('첫번째가 아닌 테이블');
       parseContentData = parseContent(content);
     }
 
+    // if (
+    //   !parseContentData ||
+    //   !parseContentData.props ||
+    //   !parseContentData.props.children
+    // ) {
+    //   return <div>Invalid content</div>;
+    // }
+
+    // 현재 테이블 구조를 key value 형식으로 json 형태로 저장해서 사용하고 있음
+    // 그런데 store에 저장된 테이블 구조가 다시 가져올때 망가지는 경우가 생겨서 제대로 안뜨는 현상이 있었는데
+    // 이는 데이터의 이중문자열화에 대한 문제라 JSON.parse() 를 통해서 사용해야 된다.
     if (
       !parseContentData ||
       !parseContentData.props ||
       !parseContentData.props.children
     ) {
-      return <div>Invalid content</div>;
+      parseContentData = parseContent(content);
     }
 
     const dataContent =
