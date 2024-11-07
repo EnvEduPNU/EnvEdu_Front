@@ -339,6 +339,10 @@ function StudentRenderAssign({
             assignmentUuidRegistData,
           );
 
+          console.log(
+            '뭐야 보내는데 없는거야 : ' + JSON.stringify(requestData, null, 2),
+          );
+
           await customAxios.post(
             '/api/eclass/student/assignment/stepCheck',
             requestData,
