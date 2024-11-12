@@ -120,6 +120,7 @@ export default function TeacherWordProcessor({
 
   const [excelModalOpen, setExcelModalOpen] = useState(false); // 엑셀 모달 상태 추가
   const [excelData, setExcelData] = useState([]); // 엑셀 데이터를 저장할 상태
+  const [localContentsUpdate, setLocalContentsUpdate] = useState(false);
 
   const quillRef = useRef(null);
   const navigate = useNavigate();
@@ -136,6 +137,110 @@ export default function TeacherWordProcessor({
 
   const handleThumbnailModalOpen = () => setThumbnailModalOpen(true);
   const handleThumbnailModalClose = () => setThumbnailModalOpen(false);
+  console.log(contents);
+  useEffect(() => {
+    const fetchData = async () => {
+      const stepData = {
+        stepName: lectureName,
+        stepNum: activeStep,
+        contentName,
+        contents: [],
+      };
+
+      if (thumnailImgUrl) {
+        const result = await handleUpload(thumnailImgUrl, uuidv4());
+        setThumbImgUrl(result);
+        console.log('썸네일 Url : ' + JSON.stringify(result, null, 2));
+      }
+
+      let newLocalContents = [...localContents];
+
+      for (const item of localContents) {
+        if (item.type === 'deleteImage') {
+          console.log('삭제해야하는 이미지 url : ' + item.url);
+
+          try {
+            await deleteImage(item.url);
+            console.log('이미지 삭제 성공:', item.url);
+            newLocalContents = newLocalContents.filter(
+              (content) => content.url !== item.url,
+            );
+            setLocalContents(newLocalContents);
+          } catch (error) {
+            console.error('이미지 삭제 실패:', error);
+          }
+        }
+
+        if (item.type === 'html') {
+          const div = document.createElement('div');
+          div.innerHTML = item.content;
+          const images = div.querySelectorAll('img');
+
+          images.forEach((img) => {
+            const src = img.src;
+            if (src.startsWith('data:image/')) {
+              const base64Data = src.split(',')[1]; // Extract base64 part
+              stepData.contents.push({
+                type: 'img',
+                src: base64Data,
+                x: item.x,
+                y: item.y,
+              });
+            } else {
+              stepData.contents.push({
+                type: 'img',
+                src,
+                x: item.x,
+                y: item.y,
+              });
+            }
+          });
+          stepData.contents.push(item);
+        } else {
+          if (item.type !== 'deleteImage' && item.type !== 'file') {
+            stepData.contents.push(item);
+          }
+
+          if (item.type === 'file') {
+            console.log('이미지 이름 : ' + item.content.name);
+            stepData.contents.push(item);
+          }
+        }
+      }
+
+      // console.log('최종 저장 stepData : ' + JSON.stringify(stepData, null, 2));
+
+      if (stepCount >= activeStep) {
+        console.log('스텝 카운트 : ' + stepCount);
+        console.log('액티브 스텝 : ' + activeStep);
+        stepData.contents.forEach((content) => {
+          if (content.type === 'file') {
+            console.log(
+              'step 저장전 이미지 확인2222 : ' + content.content.name,
+            );
+          }
+        });
+
+        // clearContents();
+        if (activeStep > 0) {
+          updateContent(activeStep - 1, stepData);
+        } else {
+          updateContent(activeStep, stepData);
+        }
+
+        console.log(
+          '최종 저장 stepData : ' + JSON.stringify(stepData, null, 2),
+        );
+
+        // alert('Step 업데이트 완료');
+        console.log('업데이트된 데이터:', stepData);
+      }
+
+      setContentName('');
+      setLocalContentsUpdate(false);
+    };
+    if (localContentsUpdate) fetchData();
+  }, [localContents]);
 
   // 첫 번째 useEffect: stepperStepName 배열을 업데이트
   useEffect(() => {
@@ -219,6 +324,7 @@ export default function TeacherWordProcessor({
           });
 
         setLocalContents(formattedContents);
+        setLocalContentsUpdate(true);
         setContentName(stepData.contentName);
         setIsEditing(true);
       }
@@ -318,7 +424,7 @@ export default function TeacherWordProcessor({
         { type: 'html', content: contentHtml },
       ]);
     }
-
+    setLocalContentsUpdate(true);
     imageFile = null; // 추가 후 초기화
     setValue('');
   };
@@ -330,6 +436,7 @@ export default function TeacherWordProcessor({
 
   const handleAddTextBox = () => {
     setLocalContents([...localContents, { type: 'textBox', content: '' }]); // 새로운 빈 텍스트 박스를 추가
+    setLocalContentsUpdate(true);
   };
 
   // 모달에서 데이터를 확정한 후 content에 넣기 위한 함수
@@ -349,6 +456,7 @@ export default function TeacherWordProcessor({
       ...localContents,
       { type: 'dataInChartButton', content: '' }, // 엑셀 데이터를 content에 저장
     ]);
+    setLocalContentsUpdate(true);
   };
 
   // 모달에서 데이터를 확정한 후 content에 넣기 위한 함수
@@ -372,12 +480,14 @@ export default function TeacherWordProcessor({
 
     setLocalContents(updatedContents);
     setExcelModalOpen(false); // 모달 닫기
+    setLocalContentsUpdate(true);
   };
 
   const handleTextBoxChange = (index, event) => {
     const newContents = [...localContents];
     newContents[index].content = event.target.value;
     setLocalContents(newContents);
+    setLocalContentsUpdate(true);
   };
 
   const handleDeleteContent = (index, deleteImage) => {
@@ -393,6 +503,7 @@ export default function TeacherWordProcessor({
 
     // 상태 업데이트
     setLocalContents(newContents);
+    setLocalContentsUpdate(true);
   };
 
   const handleSelectData = async (type, id) => {
@@ -540,7 +651,7 @@ export default function TeacherWordProcessor({
               ...localContents,
               { type: 'data', content: tableContent },
             ]);
-
+            setLocalContentsUpdate(true);
             setAddTableFlag(true);
           })
           .catch((err) => console.log(err));
@@ -645,7 +756,7 @@ export default function TeacherWordProcessor({
           ...localContents,
           { type: 'data', content: tableContent },
         ]);
-
+        setLocalContentsUpdate(true);
         setAddTableFlag(true);
       }
     } catch (error) {
@@ -696,133 +807,8 @@ export default function TeacherWordProcessor({
   };
 
   const handleNext = async (moveEclass) => {
-    const stepData = {
-      stepName: lectureName,
-      stepNum: activeStep,
-      contentName,
-      contents: [],
-    };
-
-    if (thumnailImgUrl) {
-      const result = await handleUpload(thumnailImgUrl, uuidv4());
-      setThumbImgUrl(result);
-      console.log('썸네일 Url : ' + JSON.stringify(result, null, 2));
-    }
-
-    let newLocalContents = [...localContents];
-
-    for (const item of localContents) {
-      if (item.type === 'deleteImage') {
-        console.log('삭제해야하는 이미지 url : ' + item.url);
-
-        try {
-          await deleteImage(item.url);
-          console.log('이미지 삭제 성공:', item.url);
-          newLocalContents = newLocalContents.filter(
-            (content) => content.url !== item.url,
-          );
-          setLocalContents(newLocalContents);
-        } catch (error) {
-          console.error('이미지 삭제 실패:', error);
-        }
-      }
-
-      if (item.type === 'html') {
-        const div = document.createElement('div');
-        div.innerHTML = item.content;
-        const images = div.querySelectorAll('img');
-
-        images.forEach((img) => {
-          const src = img.src;
-          if (src.startsWith('data:image/')) {
-            const base64Data = src.split(',')[1]; // Extract base64 part
-            stepData.contents.push({
-              type: 'img',
-              src: base64Data,
-              x: item.x,
-              y: item.y,
-            });
-          } else {
-            stepData.contents.push({
-              type: 'img',
-              src,
-              x: item.x,
-              y: item.y,
-            });
-          }
-        });
-        stepData.contents.push(item);
-      } else {
-        if (item.type !== 'deleteImage' && item.type !== 'file') {
-          stepData.contents.push(item);
-        }
-
-        if (item.type === 'file') {
-          console.log('이미지 이름 : ' + item.content.name);
-          stepData.contents.push(item);
-        }
-      }
-    }
-
-    // console.log('최종 저장 stepData : ' + JSON.stringify(stepData, null, 2));
-
-    if (stepCount >= activeStep) {
-      console.log('스텝 카운트 : ' + stepCount);
-      console.log('액티브 스텝 : ' + activeStep);
-      stepData.contents.forEach((content) => {
-        if (content.type === 'file') {
-          console.log('step 저장전 이미지 확인2222 : ' + content.content.name);
-        }
-      });
-
-      if (isEditing) {
-        // clearContents();
-        if (activeStep > 0) {
-          updateContent(activeStep - 1, stepData);
-        } else {
-          updateContent(activeStep, stepData);
-        }
-
-        console.log(
-          '최종 저장 stepData : ' + JSON.stringify(stepData, null, 2),
-        );
-
-        alert('Step 업데이트 완료');
-        console.log('업데이트된 데이터:', stepData);
-      } else {
-        addContent(stepData);
-        alert('Step 저장 완료');
-        console.log('저장된 데이터:', stepData);
-      }
-    }
-
-    setLocalContents([]);
-    setContentName('');
-    setIsEditing(false);
-
     // 상위 컴포넌트의 저장 메서드
     handleNextStep(moveEclass);
-  };
-
-  const createElementFromJson = (json) => {
-    if (typeof json === 'string') {
-      json = JSON.parse(json);
-    }
-
-    if (typeof json === 'object' && json !== null) {
-      const { type, props } = json;
-      const children = props.children;
-
-      return React.createElement(
-        type,
-        { ...props },
-        Array.isArray(children)
-          ? children.map((child, index) => createElementFromJson(child))
-          : children,
-      );
-    }
-
-    return json;
   };
 
   // DataTable Component
@@ -1217,6 +1203,7 @@ export default function TeacherWordProcessor({
     newContents.splice(dragIndex, 1);
     newContents.splice(hoverIndex, 0, draggedItem);
     setLocalContents(newContents);
+    setLocalContentsUpdate(true);
   };
 
   // 썸네일 이미지 업로드 핸들러
