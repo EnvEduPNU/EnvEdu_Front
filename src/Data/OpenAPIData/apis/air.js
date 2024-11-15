@@ -1,3 +1,4 @@
+import { customAxios } from '../../../Common/CustomAxios';
 import axios from 'axios';
 
 const key = process.env.REACT_APP_DATA_KEY;
@@ -45,3 +46,32 @@ export const getAirByPlace = (
     },
   );
 };
+
+export const getAirByCity = (
+  selectedMeasurement,
+  selectedAverage,
+  selectedPeriod,
+) => {
+  const dataGubun = selectedAverage === '일평균' ? 'DAILY' : 'HOUR';
+  const searchCondition = selectedPeriod === '한달' ? 'MONTH' : 'WEEK';
+  return axios.get(
+    `https://apis.data.go.kr/B552584/ArpltnStatsSvc/getCtprvnMesureLIst`,
+    {
+      params: {
+        serviceKey: key,
+        returnType: 'json',
+        numOfRows: 100,
+        pageNo: 1,
+        itemCode: `${selectedMeasurement}`,
+        dataGubun,
+        searchCondition,
+      },
+    },
+  );
+};
+
+export const saveAirByPlace = (dataList, memo) =>
+  customAxios.post('/air-quality', {
+    data: dataList,
+    memo,
+  });

@@ -367,42 +367,33 @@ function PlaceWater() {
                   ptnm: item.PT_NM, //측정 장소
                   date: item.WMCYMD, // 년.월.일
                   wmwk: item.WMWK, //회차
-                  wmdep:
-                    item.WMDEP === null
-                      ? '측정 안됨'
-                      : Number(item.WMDEP.trim()),
+                  wmdep: item.WMDEP === null ? '측정 안됨' : Number(item.WMDEP),
                   temp:
                     item.ITEM_TEMP === null
                       ? '측정 안됨'
-                      : Number(item.ITEM_TEMP.trim()),
+                      : Number(item.ITEM_TEMP),
                   do:
                     item.ITEM_COD === null
                       ? '측정 안됨'
-                      : Number(item.ITEM_COD.trim()),
+                      : Number(item.ITEM_COD),
                   bod:
                     item.ITEM_BOD === null
                       ? '측정 안됨'
-                      : Number(item.ITEM_BOD.trim()),
+                      : Number(item.ITEM_BOD),
                   cod:
                     item.ITEM_COD === null
                       ? '측정 안됨'
-                      : Number(item.ITEM_COD.trim()),
+                      : Number(item.ITEM_COD),
                   ss:
-                    item.ITEM_SS === null
-                      ? '측정 안됨'
-                      : Number(item.ITEM_SS.trim()),
+                    item.ITEM_SS === null ? '측정 안됨' : Number(item.ITEM_SS),
                   tn:
-                    item.ITEM_TN === null
-                      ? '측정 안됨'
-                      : Number(item.ITEM_TN.trim()),
+                    item.ITEM_TN === null ? '측정 안됨' : Number(item.ITEM_TN),
                   tp:
-                    item.ITEM_TP === null
-                      ? '측정 안됨'
-                      : Number(item.ITEM_TP.trim()),
+                    item.ITEM_TP === null ? '측정 안됨' : Number(item.ITEM_TP),
                   toc:
                     item.ITEM_TOC === null
                       ? '측정 안됨'
-                      : Number(item.ITEM_TOC.trim()),
+                      : Number(item.ITEM_TOC),
                 })),
               );
             }}

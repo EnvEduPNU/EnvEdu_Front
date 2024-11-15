@@ -284,6 +284,22 @@ function PlaceAir() {
         {/* 검색 버튼 */}
         <button
           onClick={async () => {
+            if (searchAddress === '') {
+              alert('측정 장소를 선택해주세요');
+              return;
+            }
+            if (
+              searchData.startYear === '년' ||
+              searchData.startMonth === '월' ||
+              searchData.startDay === '일' ||
+              searchData.endYear === '년' ||
+              searchData.endMonth === '월' ||
+              searchData.endDay === '일'
+            ) {
+              alert('측정 날짜 범위를 선택해주세요.');
+              return;
+            }
+
             const { data } = await getAirByPlace(
               searchStationName,
               searchData.startYear,
@@ -293,17 +309,32 @@ function PlaceAir() {
               searchData.endMonth,
               searchData.endDay,
             );
+            if (data.response.header.resultMsg === '데이터베이스 에러') {
+              setAirDataList([]);
+              return;
+            }
             console.log(data.response.body.items);
+            if (data.response.body.items.length === 0) {
+              setAirDataList([]);
+              return;
+            }
+
+            const tempAirDataList = data.response.body.items.map((item) => ({
+              stationName:
+                item.msrstnName === null ? '측정 안됨' : item.msrstnName,
+              date: item.msurDt === null ? '측정 안됨' : item.msurDt,
+              no2: item.no2Value === null ? '측정 안됨' : item.no2Value, //이산화 질소
+              o3: item.o3Value === null ? '측정 안됨' : item.o3Value,
+              pm10: item.pm10Value === null ? '측정 안됨' : item.pm10Value,
+              pm25: item.pm25Value === null ? '측정 안됨' : item.pm25Value,
+              so2Value: item.so2Value === null ? '측정 안됨' : item.so2Value, //아황산
+            }));
+            console.log(tempAirDataList[0].stationName, searchStationName);
+
             setAirDataList(
-              data.response.body.items.map((item) => ({
-                stationName: item.msrstnName,
-                date: item.msurDt,
-                no2: item.no2Value, //이산화 질소
-                o3: item.o3Value,
-                pm10: item.pm10Value,
-                pm25: item.pm25Value,
-                so2Value: item.so2Value, //아황산
-              })),
+              tempAirDataList.filter(
+                (airData) => airData.stationName === searchStationName,
+              ),
             );
           }}
           style={{
