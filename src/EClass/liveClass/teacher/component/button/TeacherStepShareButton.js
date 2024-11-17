@@ -7,7 +7,6 @@ export function TeacherStepShareButton({
   stepCount,
   lectureDataUuid,
   sharedScreenState,
-  assginmentShareCheck,
   setAssginmentShareCheck,
   setAssginmentShareStop,
   setStepCount,
@@ -72,6 +71,9 @@ export function TeacherStepShareButton({
                 // prevState가 null 또는 undefined이면 빈 배열로 초기화
                 const validPrevState = prevState || [];
 
+                if (validPrevState) {
+                  return;
+                }
                 // 기존 상태에서 shareState.sessionId와 동일한 객체가 있는지 확인
                 const existingIndex = validPrevState.findIndex(
                   (item) => item.sessionId === shareState.sessionId,

@@ -27,6 +27,13 @@ export const LiveTeacherPage = () => {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    console.log(
+      'assginmentShareCheck 바뀌면 확인 : ' +
+        JSON.stringify(assginmentShareCheck, null, 2),
+    );
+  }, [assginmentShareCheck]);
+
   const closeEclass = async () => {
     await customAxios
       .patch(`/api/eclass/eclass-close?uuid=${eClassUuid}`)
@@ -92,10 +99,7 @@ export const LiveTeacherPage = () => {
 
   return (
     <div style={{ display: 'flex', margin: '0 10vh', height: '800px' }}>
-      <StudentWebSocket
-        setSessionIds={setSessionIds}
-        setAssginmentShareCheck={setAssginmentShareCheck}
-      />
+      <StudentWebSocket setSessionIds={setSessionIds} />
 
       <ScreenShareWebSocket
         sessionIds={sessionIds}
@@ -151,7 +155,6 @@ export const LiveTeacherPage = () => {
               stepCount={stepCount}
               lectureDataUuid={lectureDataUuid}
               sharedScreenState={sharedScreenState}
-              assginmentShareCheck={assginmentShareCheck}
               setAssginmentShareCheck={setAssginmentShareCheck}
               setAssginmentShareStop={setAssginmentShareStop}
               setStepCount={setStepCount}
