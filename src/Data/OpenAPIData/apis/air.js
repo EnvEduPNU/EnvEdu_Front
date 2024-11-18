@@ -70,8 +70,16 @@ export const getAirByCity = (
   );
 };
 
-export const saveAirByPlace = (dataList, memo) =>
+export const saveAirByPlace = (dataList, memo, title) =>
   customAxios.post('/air-quality', {
     data: dataList,
     memo,
+    title,
+  });
+
+export const saveAirByCity = (dataList, memo, title) =>
+  customAxios.post('/air-quality2', {
+    data: dataList,
+    memo,
+    title,
   });

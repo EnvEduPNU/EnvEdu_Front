@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { saveAirByPlace } from '../apis/air';
+import TitleMemoInputModal from '../modals/TitleMemoInputModal';
 
 function AirPlaceList({ airDataList }) {
   const headers = [
@@ -61,6 +62,8 @@ function AirPlaceList({ airDataList }) {
     new Array(airDataList.length).fill(false),
   );
 
+  const [isOpen, setIsOpen] = useState(false);
+
   const toggleColumn = (index) => {
     setFilteredColumns((prev) =>
       prev.map((value, idx) => (idx === index ? !value : value)),
@@ -107,6 +110,15 @@ function AirPlaceList({ airDataList }) {
         </div>
       ) : (
         <div style={{ overflowX: 'auto' }}>
+          <TitleMemoInputModal
+            type="airPlace"
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            dataList={airDataList}
+            filteredRows={filteredRows}
+            filteredColumns={filteredColumns}
+            getRowDataToServer={getRowDataToServer}
+          />
           <table
             style={{
               minWidth: '100%',
@@ -232,40 +244,7 @@ function AirPlaceList({ airDataList }) {
           zIndex: 999,
         }}
         onClick={() => {
-          let saveToDataList = airDataList
-            .map((waterDatas, rowIndex) => {
-              console.log(waterDatas);
-              if (filteredRows[rowIndex] === true)
-                return getRowDataToServer(waterDatas).map(
-                  (data, columnIndex) => {
-                    console.log(data);
-                    if (filteredColumns[columnIndex] === true)
-                      return {
-                        [data.key]: data.value,
-                      };
-                    else
-                      return {
-                        [data.key]: null,
-                      };
-                  },
-                );
-              else return null;
-            })
-            .filter((value) => value !== null);
-          console.log(saveToDataList);
-
-          let realSaveToDataList = [];
-
-          for (let i = 0; i < saveToDataList.length; i++) {
-            const result = Object.assign(
-              {},
-              ...Object.values(saveToDataList[i]),
-            );
-            realSaveToDataList.push(result);
-          }
-          console.log(realSaveToDataList);
-          const memo = '메모';
-          // saveAirByPlace(realSaveToDataList, memo);
+          setIsOpen(true);
         }}
       >
         데이터 저장하기

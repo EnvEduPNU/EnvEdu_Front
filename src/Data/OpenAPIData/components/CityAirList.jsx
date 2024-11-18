@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { saveAirByCity } from '../apis/air';
+import TitleMemoInputModal from '../modals/TitleMemoInputModal';
 
 function CityAirList({ cityAirDataList }) {
   const headers = [
@@ -33,6 +35,8 @@ function CityAirList({ cityAirDataList }) {
     new Array(cityAirDataList.length).fill(false), // 기본적으로 모든 행을 표시
   );
 
+  const [isOpen, setIsOpen] = useState(false);
+
   const toggleColumn = (index) => {
     // 해당 열을 선택/해제
     setFilteredColumns((prev) =>
@@ -46,6 +50,85 @@ function CityAirList({ cityAirDataList }) {
       prev.map((value, idx) => (idx === index ? !value : value)),
     );
   };
+
+  const getRowDataToServer = (item) => [
+    {
+      key: 'ITEMITEMCODE',
+      value: item.itemCode,
+    },
+    {
+      key: 'ITEMDATETIME',
+      value: item.dataTime,
+    },
+    {
+      key: 'ITEMDAEGU',
+      value: item.daegu,
+    },
+    {
+      key: 'ITEMCHUNGNAM',
+      value: item.chungnam,
+    },
+    {
+      key: 'ITEMINCHEON',
+      value: item.incheon,
+    },
+    {
+      key: 'ITEMDAEJEON',
+      value: item.daejeon,
+    },
+    {
+      key: 'ITEMGYONGBUK',
+      value: item.gyeongbuk,
+    },
+    {
+      key: 'ITEMSEJONG',
+      value: item.sejong,
+    },
+    {
+      key: 'ITEMGWANGJU',
+      value: item.gwangju,
+    },
+    {
+      key: 'ITEMJEONBUK',
+      value: item.jeonbuk,
+    },
+    {
+      key: 'ITEMGANGWON',
+      value: item.gangwon,
+    },
+    {
+      key: 'ITEMULSAN',
+      value: item.ulsan,
+    },
+    {
+      key: 'ITEMJEONNAM',
+      value: item.jeonnam,
+    },
+    {
+      key: 'ITEMSEOUL',
+      value: item.seoul,
+    },
+    {
+      key: 'ITEMBUSAN',
+      value: item.busan,
+    },
+    {
+      key: 'ITEMJEJU',
+      value: item.jeju,
+    },
+    {
+      key: 'ITEMCHUNGBUK',
+      value: item.chungbuk,
+    },
+    {
+      key: 'ITEMGYEONGNAM',
+      value: item.gyeongnam,
+    },
+    {
+      key: 'ITEMGYEONGGI',
+      value: item.gyeonggi,
+    },
+  ];
 
   useEffect(() => {
     setFilteredRows(new Array(cityAirDataList.length).fill(false));
@@ -81,6 +164,15 @@ function CityAirList({ cityAirDataList }) {
         </div>
       ) : (
         <div style={{ overflowX: 'auto' }}>
+          <TitleMemoInputModal
+            type="airCity"
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            dataList={cityAirDataList}
+            filteredRows={filteredRows}
+            filteredColumns={filteredColumns}
+            getRowDataToServer={getRowDataToServer}
+          />
           <table
             style={{
               minWidth: '100%',
@@ -236,6 +328,9 @@ function CityAirList({ cityAirDataList }) {
           cursor: 'pointer',
           fontSize: '1rem',
           zIndex: 999,
+        }}
+        onClick={() => {
+          setIsOpen(true);
         }}
       >
         데이터 저장하기

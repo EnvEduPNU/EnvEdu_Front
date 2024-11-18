@@ -284,7 +284,7 @@ function PlaceAir() {
         {/* 검색 버튼 */}
         <button
           onClick={async () => {
-            if (searchAddress === '') {
+            if (searchStationName === '') {
               alert('측정 장소를 선택해주세요');
               return;
             }
