@@ -56,8 +56,9 @@ export const getWaterByPlace = (
   );
 };
 
-export const saveWaterByPlace = (dataList, memo) =>
+export const saveWaterByPlace = (dataList, memo, title) =>
   customAxios.post('/ocean-quality', {
     data: dataList,
     memo,
+    title,
   });

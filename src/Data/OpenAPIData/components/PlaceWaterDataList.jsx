@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { saveWaterByPlace } from '../apis/water';
 import { KeyTwoTone } from '@mui/icons-material';
+import TitleMemoInputModal from '../modals/TitleMemoInputModal';
 
 function PlaceWaterDataList({ waterlistData }) {
   const headers = [
@@ -94,6 +95,8 @@ function PlaceWaterDataList({ waterlistData }) {
     new Array(waterlistData.length).fill(false), // 기본적으로 모든 열을 표시
   );
 
+  const [isOpen, setIsOpen] = useState(false);
+
   const toggleColumn = (index) => {
     // 해당 열을 선택/해제
     setFilteredColumns((prev) =>
@@ -141,6 +144,15 @@ function PlaceWaterDataList({ waterlistData }) {
         </div>
       ) : (
         <div style={{ overflowX: 'auto' }}>
+          <TitleMemoInputModal
+            type="waterPlace"
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            dataList={waterlistData}
+            filteredRows={filteredRows}
+            filteredColumns={filteredColumns}
+            getRowDataToServer={getRowDataToServer}
+          />
           <table
             style={{
               minWidth: '100%',
@@ -279,41 +291,7 @@ function PlaceWaterDataList({ waterlistData }) {
           zIndex: 999,
         }}
         onClick={() => {
-          console.log(waterlistData);
-          let saveToDataList = waterlistData
-            .map((waterDatas, rowIndex) => {
-              console.log(waterDatas);
-              if (filteredRows[rowIndex] === true)
-                return getRowDataToServer(waterDatas).map(
-                  (data, columnIndex) => {
-                    console.log(data);
-                    if (filteredColumns[columnIndex] === true)
-                      return {
-                        [data.key]: data.value,
-                      };
-                    else
-                      return {
-                        [data.key]: null,
-                      };
-                  },
-                );
-              else return null;
-            })
-            .filter((value) => value !== null);
-          console.log(saveToDataList);
-
-          let realSaveToDataList = [];
-
-          for (let i = 0; i < saveToDataList.length; i++) {
-            const result = Object.assign(
-              {},
-              ...Object.values(saveToDataList[i]),
-            );
-            realSaveToDataList.push(result);
-          }
-          console.log(realSaveToDataList);
-          const memo = '메모';
-          saveWaterByPlace(realSaveToDataList, memo);
+          setIsOpen(true);
         }}
       >
         데이터 저장하기

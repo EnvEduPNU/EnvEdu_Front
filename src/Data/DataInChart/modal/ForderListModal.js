@@ -39,31 +39,28 @@ const customModalStyles = {
 //항목 이름 (한국어 -> 영어)
 const engToKor = (name) => {
   const kor = {
+    ITEMDATE: '측정일',
+
     //수질 데이터
     PTNM: '조사지점명',
-    WMYR: '측정연도',
-    WMOD: '측정월',
-    ITEMTEMP: '수온(°C)',
-    ITEMPH: 'pH',
-    ITEMDOC: 'DO(㎎/L)',
-    ITEMBOD: 'BOD(㎎/L)',
-    ITEMCOD: 'COD(㎎/L)',
-    ITEMTN: '총질소(㎎/L)',
-    ITEMTP: '총인(㎎/L)',
-    ITEMTRANS: '투명도(㎎/L)',
-    ITEMCLOA: '클로로필-a(㎎/L)',
-    ITEMEC: '전기전도도(µS/㎝)',
-    ITEMTOC: 'TOC(㎎/L)',
+    ITEMWMWK: '회차',
+    ITEMWNDEP: '수심',
+    ITEMTEMP: '수온',
+    ITEMDO: '용존 산소',
+    ITEMBOD: 'BOD',
+    ITEMCOD: 'COD',
+    ITEMSS: '부유물',
+    ITEMTN: '총 질소',
+    ITEMTP: '총인',
+    ITEMTOC: '총유기탄소',
 
     //대기질 데이터
     stationName: '조사지점명',
-    dataTime: '측정일',
-    so2Value: '아황산가스 농도(ppm)',
-    coValue: '일산화탄소 농도(ppm)',
-    o3Value: '오존 농도(ppm)',
-    no2Value: '이산화질소 농도(ppm)',
-    pm10Value: '미세먼지(PM10) 농도(㎍/㎥)',
-    pm25Value: '미세먼지(PM2.5)  농도(㎍/㎥)',
+    ITEMNO2: '산소 농도(ppm)',
+    ITEMO3: '오존 농도(ppm)',
+    ITEMPM10: '미세먼지(PM10) 농도(㎍/㎥)',
+    ITEMPM25: '미세먼지(PM2.5) 농도(㎍/㎥)',
+    ITEMSO2VALUE: '아황산가스 농도(ppm)',
 
     //SEED 데이터
     measuredDate: '측정 시간',
@@ -187,78 +184,15 @@ export default function ForderListModal({
         .get(path)
         .then((res) => {
           console.log(res.data);
-          let headers = Object.keys(res.data[0]).filter(
-            (key) =>
-              key !== 'id' &&
-              key !== 'dataUUID' &&
-              key !== 'saveDate' &&
-              key !== 'dateString' &&
-              key !== 'sessionid' &&
-              key !== 'memo' &&
-              key !== 'dataLabel',
-          );
-
-          const attributesToCheck = [
-            'co2',
-            'dox',
-            'dust',
-            'hum',
-            'hum_EARTH',
-            'lux',
-            'ph',
-            'pre',
-            'temp',
-            'tur',
-          ];
-
-          const keysToExclude = [
-            'id',
-            'dataUUID',
-            'saveDate',
-            'dateString',
-            'sessionid',
-            'unit',
-            'memo',
-            'dataLabel',
-          ];
-
-          for (const attribute of attributesToCheck) {
-            const isAllNone = res.data.every(
-              (item) => item[attribute] === -99999.0,
-            );
-            if (isAllNone) {
-              // 해당 속성이 모두 -99999.0일 때, keysToExclude에 추가(헤더에 따른 values도 제거해줘야함)
-              if (!keysToExclude.includes(attribute)) {
-                keysToExclude.push(attribute);
-              }
-              // 해당 속성이 모두 -99999.0일 때, headers에서 제거
-              headers = headers.filter((header) => header !== attribute);
-            }
-          }
+          let headers = Object.keys(res.data[0]);
 
           headers = headers.map((header) => engToKor(header));
 
-          // 중요한 데이터들은 들어온 데이터 리스트에서 제거
-          const values = res.data.map((item) => {
-            const filteredItem = Object.keys(item)
-              .filter((key) => !keysToExclude.includes(key))
-              .reduce((obj, key) => {
-                obj[key] = convertToNumber(item[key]);
-                return obj;
-              }, {});
-
-            console.log(
-              '값들이 어떻게 필터 되나 : ' + Object.values(filteredItem),
-            );
-            return Object.values(filteredItem);
-          });
-          console.log(values);
+          const datas = res.data.map((item) => Object.values(item));
           // 최종 결과 생성 (헤더 + 값)
-          const recombined = [headers, ...values];
-          console.log(recombined);
-          setData(recombined, '없음', true);
-          // localStorage.setItem("data", JSON.stringify(recombined));
-          // window.location.reload();
+          const recombined = [headers, ...datas];
+
+          setData(recombined, res.title, true);
         })
         .catch((err) => console.log(err));
     }
