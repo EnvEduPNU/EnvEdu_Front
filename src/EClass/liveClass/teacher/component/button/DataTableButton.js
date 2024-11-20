@@ -59,15 +59,35 @@ export default function DataTableButton({ summary, onSelectData }) {
 
   return (
     <>
-      <Button
-        variant="contained"
-        color="primary"
-        className="yellow-btn" // yellow-btn 클래스 적용
+      <button
         onClick={handleOpen}
-        sx={{ margin: '20px 10px 0 0', width: '10rem' }}
+        style={{
+          width: '200px',
+          marginRight: '10px',
+          padding: '0.75rem 0.1rem',
+          backgroundColor: '#4CAF50', // 새로운 색상 (초록)
+          color: '#FFFFFF',
+          borderRadius: '0.5rem',
+          fontWeight: '600',
+          fontSize: '1rem',
+          cursor: 'pointer',
+          border: 'none',
+          boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.15)',
+          transition: 'background-color 0.3s ease, transform 0.2s ease',
+          outline: 'none',
+        }}
+        onMouseOver={(e) => {
+          e.target.style.backgroundColor = '#66BB6A'; // 마우스 오버 시 밝은 초록색
+          e.target.style.transform = 'scale(1.05)'; // 확대 효과
+        }}
+        onMouseOut={(e) => {
+          e.target.style.backgroundColor = '#4CAF50'; // 기본 초록색
+          e.target.style.transform = 'scale(1)'; // 원래 크기로 복구
+        }}
       >
-        데이터 추가하기
-      </Button>
+        테이블 추가
+      </button>
+
       <Modal
         open={open}
         onClose={handleClose}

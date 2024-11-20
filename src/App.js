@@ -119,8 +119,7 @@ function App() {
             exact={true}
             element={<DataInChartPage />}
           />
-          <Route path="/openAPI" exact={true} element={<OpenApi />} />{' '}
-          <Route path="/openAPI2" exact={true} element={<OpenApi2 />} />{' '}
+          <Route path="/openAPI" exact={true} element={<OpenApi2 />} />{' '}
           <Route path="/resources" exact={true} element={<Resource />} />{' '}
           {/* --------------------------------------------------- E-Class------------------------------------------------------ */}
           <Route

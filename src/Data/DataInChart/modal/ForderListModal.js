@@ -62,6 +62,27 @@ const engToKor = (name) => {
     ITEMPM25: '미세먼지(PM2.5) 농도(㎍/㎥)',
     ITEMSO2VALUE: '아황산가스 농도(ppm)',
 
+    //시도별 대기질 데이터
+    ITEMITEMCODE: '변인',
+    ITEMDATETIME: '측정 시간',
+    ITEMDAEGU: '대구',
+    ITEMCHUNGNAM: '충남',
+    ITEMINCHEON: '인천',
+    ITEMDAEJEON: '대전',
+    ITEMGYONGBUK: '경북',
+    ITEMSEJONG: '세종',
+    ITEMGWANGJU: '광주',
+    ITEMJEONBUK: '전북',
+    ITEMGANGWON: '강원',
+    ITEMULSAN: '울산',
+    ITEMJEONNAM: '전남',
+    ITEMSEOUL: '서울',
+    ITEMBUSAN: '부산',
+    ITEMJEJU: '제주',
+    ITEMCHUNGBUK: '충북',
+    ITEMGYEONGNAM: '경남',
+    ITEMGYEONGGI: '경기',
+
     //SEED 데이터
     measuredDate: '측정 시간',
     location: '측정 장소',
@@ -171,30 +192,150 @@ export default function ForderListModal({
       let path = '';
       if (type === '수질 데이터') {
         path = `/ocean-quality/mine/chunk?dataUUID=${id}`;
+        customAxios
+          .get(path)
+          .then((res) => {
+            // 남기고 싶은 키 목록
+            const keysToKeep = [
+              'PTNM',
+              'ITEMDATE',
+              'ITEMWMWK',
+              'ITEMWNDEP',
+              'ITEMBOD',
+              'ITEMCOD',
+              'ITEMDO',
+              'ITEMSS',
+              'ITEMTEMP',
+              'ITEMTN',
+              'ITEMTOC',
+              'ITEMTP',
+            ];
+
+            // 변환 로직
+            const transformedData = res.data[0].data.map((item) => {
+              const newItem = {};
+              keysToKeep.forEach((key) => {
+                if (item[key] !== undefined) {
+                  newItem[key] = item[key];
+                } else {
+                  newItem[key] = null; // 해당 키가 없으면 null로 설정
+                }
+              });
+              return newItem;
+            });
+            console.log(transformedData);
+            let headers = Object.keys(transformedData[0]);
+
+            headers = headers.map((header) => engToKor(header));
+
+            const datas = transformedData.map((item) => Object.values(item));
+            // 최종 결과 생성 (헤더 + 값)
+            const recombined = [headers, ...datas];
+            console.log(recombined);
+            setData(recombined, res.data[0].title, true);
+            setModalOpen(false);
+          })
+          .catch((err) => console.log(err));
       } else if (type === '대기질 데이터') {
         path = `/air-quality/mine/chunk?dataUUID=${id}`;
+        customAxios
+          .get(path)
+          .then((res) => {
+            // 남기고 싶은 키 목록
+            const keysToKeep = [
+              'stationName',
+              'ITEMDATE',
+              'ITEMN02',
+              'ITEM03',
+              'ITEMPM10',
+              'ITEMPM25',
+              'ITEMS02VALUE',
+            ];
+            console.log(res.data);
+            // 변환 로직
+            const transformedData = res.data.map((item) => {
+              const newItem = {};
+              keysToKeep.forEach((key) => {
+                if (item[key] !== undefined) {
+                  newItem[key] = item[key];
+                } else {
+                  newItem[key] = null; // 해당 키가 없으면 null로 설정
+                }
+              });
+              return newItem;
+            });
+            console.log(transformedData);
+            let headers = Object.keys(transformedData[0]);
+
+            headers = headers.map((header) => engToKor(header));
+
+            const datas = transformedData.map((item) => Object.values(item));
+            // 최종 결과 생성 (헤더 + 값)
+            const recombined = [headers, ...datas];
+            console.log(recombined);
+            setData(recombined, res.data[0].title, true);
+            setModalOpen(false);
+          })
+          .catch((err) => console.log(err));
+      } else if (type === '시도별 대기질 데이터') {
+        path = `/air-city-quality/mine/chunk?dataUUID=${id}`;
+        customAxios
+          .get(path)
+          .then((res) => {
+            // 남기고 싶은 키 목록
+            const keysToKeep = [
+              'ITEMITEMCODE',
+              'ITEMDATETIME',
+              'ITEMDAEGU',
+              'ITEMCHUNGNAM',
+              'ITEMINCHEON',
+              'ITEMDAEJEON',
+              'ITEMGYONGBUK',
+              'ITEMSEJONG',
+              'ITEMGWANGJU',
+              'ITEMJEONBUK',
+              'ITEMGANGWON',
+              'ITEMULSAN',
+              'ITEMJEONNAM',
+              'ITEMSEOUL',
+              'ITEMBUSAN',
+              'ITEMJEJU',
+              'ITEMCHUNGBUK',
+              'ITEMGYEONGNAM',
+              'ITEMGYEONGGI',
+            ];
+            console.log(res.data);
+            // 변환 로직
+            const transformedData = res.data.map((item) => {
+              const newItem = {};
+              keysToKeep.forEach((key) => {
+                if (item[key] !== undefined) {
+                  newItem[key] = item[key];
+                } else {
+                  newItem[key] = null; // 해당 키가 없으면 null로 설정
+                }
+              });
+              return newItem;
+            });
+            console.log(transformedData);
+            let headers = Object.keys(transformedData[0]);
+
+            headers = headers.map((header) => engToKor(header));
+
+            const datas = transformedData.map((item) => Object.values(item));
+            // 최종 결과 생성 (헤더 + 값)
+            const recombined = [headers, ...datas];
+            console.log(recombined);
+            setData(recombined, res.data[0].title, true);
+            setModalOpen(false);
+          })
+          .catch((err) => console.log(err));
       } else if (type === 'SEED') {
         path = `/seed/mine/chunk?dataUUID=${id}`;
       } else if (type === '데이터없음') {
         console.log('데이터 없음');
         return;
       }
-
-      customAxios
-        .get(path)
-        .then((res) => {
-          console.log(res.data);
-          let headers = Object.keys(res.data[0]);
-
-          headers = headers.map((header) => engToKor(header));
-
-          const datas = res.data.map((item) => Object.values(item));
-          // 최종 결과 생성 (헤더 + 값)
-          const recombined = [headers, ...datas];
-
-          setData(recombined, res.title, true);
-        })
-        .catch((err) => console.log(err));
     }
   };
   console.log(filteredData);
