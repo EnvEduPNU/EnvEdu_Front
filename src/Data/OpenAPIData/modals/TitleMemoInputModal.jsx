@@ -66,7 +66,22 @@ function TitleMemoInputModal({
       let realSaveToDataList = [];
 
       for (let i = 0; i < saveToDataList.length; i++) {
-        const result = Object.assign({}, ...Object.values(saveToDataList[i]));
+        const result = Object.assign(
+          {},
+          ...Object.values(
+            saveToDataList[i].map((value) => {
+              if (
+                Object.keys(value)[0] === 'ITEMNO2' ||
+                Object.keys(value)[0] === 'ITEMSO2VALUE' ||
+                Object.keys(value)[0] === 'ITEMO3'
+              )
+                return {
+                  [Object.keys(value)[0]]: `0${value[Object.keys(value)[0]]}`,
+                };
+              else return value;
+            }),
+          ),
+        );
         realSaveToDataList.push(result);
       }
       console.log(realSaveToDataList);

@@ -71,7 +71,7 @@ function PlaceAir() {
         <button
           onClick={async () => {
             const { data } = await getPlaceByAddress(searchAddress);
-            console.log(data.response.body.items);
+            console.log(data.response);
             setPlaceList(
               data.response.body.items.map((item) => ({
                 addr: item.addr,
