@@ -26,6 +26,8 @@ export default function MyDataList({ summary, setSummary }) {
                 ? '대기질 데이터'
                 : data.dataLabel === 'OCEANQUALITY'
                 ? '수질 데이터'
+                : data.dataLabel === 'CITYAIRQUALITY'
+                ? '시도별 대기질 데이터'
                 : data.dataLabel,
             title: data.title,
           }));
@@ -71,6 +73,11 @@ export default function MyDataList({ summary, setSummary }) {
       setDataType('대기질 데이터');
     } else if (type == '수질') {
       filtered = summary.filter((data) => data.dataLabel === '수질 데이터');
+      setDataType('수질 데이터');
+    } else if (type == '시도별 대기질 데이터') {
+      filtered = summary.filter(
+        (data) => data.dataLabel === '시도별 대기질 데이터',
+      );
       setDataType('수질 데이터');
     } else if (type == 'SEED') {
       filtered = summary.filter((data) => data.dataLabel === 'SEED');
@@ -125,6 +132,18 @@ export default function MyDataList({ summary, setSummary }) {
             style={{ textDecoration: 'underline', cursor: 'pointer' }}
           >
             대기질
+          </label>
+        </div>
+        <div style={{ marginTop: '0.5rem' }} className="flex">
+          <img
+            src="/assets/img/folder-icon.png"
+            style={{ width: '1.5rem', margin: '0 0.5rem' }}
+          />
+          <label
+            onClick={() => selectFolder('시도별 대기질')}
+            style={{ textDecoration: 'underline', cursor: 'pointer' }}
+          >
+            시도별 대기질
           </label>
         </div>
 

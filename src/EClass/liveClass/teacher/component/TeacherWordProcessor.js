@@ -1259,16 +1259,124 @@ export default function TeacherWordProcessor({
                 ))}
               </Paper>
 
-              {/* 오른쪽 WordProcessor 편집창 */}
-              <ReactQuill
-                ref={quillRef}
-                value={value}
-                style={{ width: '55%', height: '88%', margin: '0 0 0 10px' }}
-                onChange={handleChange}
-                modules={modules}
-                formats={formats}
-                placeholder="내용을 입력하세요..."
-              />
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'start',
+                  alignItems: 'start',
+                  marginLeft: '10px',
+                }}
+              >
+                {/* 오른쪽 WordProcessor 편집창 */}
+                <ReactQuill
+                  ref={quillRef}
+                  value={value}
+                  style={{ height: '330px', margin: '0 0 80px' }}
+                  onChange={handleChange}
+                  modules={modules}
+                  formats={formats}
+                  placeholder="내용을 입력하세요..."
+                />
+
+                <div style={{ marginLeft: '10px' }}>
+                  <button
+                    onClick={handleSave}
+                    style={{
+                      marginTop: '10px',
+                      marginRight: '10px',
+                      width: '200px',
+                      padding: '0.75rem 1.5rem',
+                      backgroundColor: '#4CAF50', // 새로운 색상 (초록)
+                      color: '#FFFFFF',
+                      borderRadius: '0.5rem',
+                      fontWeight: '600',
+                      fontSize: '1rem',
+                      cursor: 'pointer',
+                      border: 'none',
+                      boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.15)',
+                      transition:
+                        'background-color 0.3s ease, transform 0.2s ease',
+                      outline: 'none',
+                    }}
+                    onMouseOver={(e) => {
+                      e.target.style.backgroundColor = '#66BB6A'; // 마우스 오버 시 밝은 초록색
+                      e.target.style.transform = 'scale(1.05)'; // 확대 효과
+                    }}
+                    onMouseOut={(e) => {
+                      e.target.style.backgroundColor = '#4CAF50'; // 기본 초록색
+                      e.target.style.transform = 'scale(1)'; // 원래 크기로 복구
+                    }}
+                  >
+                    글상자 포함
+                  </button>
+                  <button
+                    onClick={handleAddTextBox}
+                    style={{
+                      marginTop: '10px',
+                      width: '200px',
+                      padding: '0.75rem 1.5rem',
+                      backgroundColor: '#4CAF50', // 새로운 색상 (초록)
+                      color: '#FFFFFF',
+                      borderRadius: '0.5rem',
+                      fontWeight: '600',
+                      fontSize: '1rem',
+                      cursor: 'pointer',
+                      border: 'none',
+                      boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.15)',
+                      transition:
+                        'background-color 0.3s ease, transform 0.2s ease',
+                      outline: 'none',
+                    }}
+                    onMouseOver={(e) => {
+                      e.target.style.backgroundColor = '#66BB6A'; // 마우스 오버 시 밝은 초록색
+                      e.target.style.transform = 'scale(1.05)'; // 확대 효과
+                    }}
+                    onMouseOut={(e) => {
+                      e.target.style.backgroundColor = '#4CAF50'; // 기본 초록색
+                      e.target.style.transform = 'scale(1)'; // 원래 크기로 복구
+                    }}
+                  >
+                    답변 박스 추가
+                  </button>
+                </div>
+                <div style={{ marginLeft: '10px' }}>
+                  {/* 데이터 추가하기 버튼 */}
+                  <DataTableButton
+                    summary={summary}
+                    onSelectData={handleSelectData}
+                  />
+                  <button
+                    onClick={handleSaveExcelData}
+                    style={{
+                      marginTop: '10px',
+                      width: '200px',
+                      padding: '0.75rem 1rem',
+                      backgroundColor: '#4CAF50', // 새로운 색상 (초록)
+                      color: '#FFFFFF',
+                      borderRadius: '0.5rem',
+                      fontWeight: '600',
+                      fontSize: '1rem',
+                      cursor: 'pointer',
+                      border: 'none',
+                      boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.15)',
+                      transition:
+                        'background-color 0.3s ease, transform 0.2s ease',
+                      outline: 'none',
+                    }}
+                    onMouseOver={(e) => {
+                      e.target.style.backgroundColor = '#66BB6A'; // 마우스 오버 시 밝은 초록색
+                      e.target.style.transform = 'scale(1.05)'; // 확대 효과
+                    }}
+                    onMouseOut={(e) => {
+                      e.target.style.backgroundColor = '#4CAF50'; // 기본 초록색
+                      e.target.style.transform = 'scale(1)'; // 원래 크기로 복구
+                    }}
+                  >
+                    그래프 그리기 추가
+                  </button>
+                </div>
+              </div>
             </div>
 
             <div
@@ -1282,50 +1390,11 @@ export default function TeacherWordProcessor({
               <div
                 style={{
                   display: 'flex',
-                  justifyContent: 'flex-start',
-                  width: '100%',
-                }}
-              >
-                {/* 데이터 추가하기 버튼 */}
-                <DataTableButton
-                  summary={summary}
-                  onSelectData={handleSelectData}
-                />
-                <Button
-                  variant="contained"
-                  color="primary"
-                  className="yellow-btn" // yellow-btn 클래스 적용
-                  onClick={handleAddTextBox}
-                  sx={{ margin: '20px 10px 0 0', width: '10rem' }}
-                >
-                  답변 박스 추가
-                </Button>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleSaveExcelData}
-                  sx={{ margin: '20px 10px 0 0', width: '10rem' }}
-                >
-                  그래프 그리기 추가
-                </Button>
-              </div>
-              <div
-                style={{
-                  display: 'flex',
                   justifyContent: 'flex-end',
                   margin: '20px 0 0 0',
                   width: '100%',
                 }}
               >
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleSave}
-                  sx={{ width: '10rem', marginRight: '1rem' }}
-                >
-                  포함하기
-                </Button>
-
                 <Button
                   variant="contained"
                   color="secondary"

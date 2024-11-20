@@ -424,10 +424,11 @@ function ExpertCustomTable({ onAddPhoto, setSummary, isDrawGraph }) {
       <table
         ref={tableRef}
         style={{
-          width: '100%',
+          width: '1400px',
           border: '1px solid rgba(34, 36, 38, 0.15)',
           borderCollapse: 'collapse',
           borderRadius: '8px',
+          captionSide: 'top',
         }}
       >
         <caption
@@ -499,7 +500,7 @@ function ExpertCustomTable({ onAddPhoto, setSummary, isDrawGraph }) {
                       style={{
                         display: 'inline-flex',
                         alignItems: 'center',
-                        gap: '0.5rem',
+                        gap: '0rem',
                       }}
                     >
                       <span style={{ fontSize: '1.25rem' }}>{header}</span>
@@ -531,7 +532,7 @@ function ExpertCustomTable({ onAddPhoto, setSummary, isDrawGraph }) {
                       onClick={() => handleMoveColumnLeft(headerIndex)}
                       style={{
                         position: 'absolute',
-                        left: '1rem',
+                        left: '0.2rem',
                         top: '50%',
                         transform: 'translateY(-50%)',
                         padding: '0.25rem 0.5rem',
@@ -557,7 +558,7 @@ function ExpertCustomTable({ onAddPhoto, setSummary, isDrawGraph }) {
                       onClick={() => handleMoveColumnRight(headerIndex)}
                       style={{
                         position: 'absolute',
-                        right: '1rem',
+                        right: '0.2rem',
                         top: '50%',
                         transform: 'translateY(-50%)',
                         padding: '0.25rem 0.5rem',
