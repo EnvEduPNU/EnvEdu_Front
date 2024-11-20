@@ -39,31 +39,49 @@ const customModalStyles = {
 //항목 이름 (한국어 -> 영어)
 const engToKor = (name) => {
   const kor = {
+    ITEMDATE: '측정일',
+
     //수질 데이터
     PTNM: '조사지점명',
-    WMYR: '측정연도',
-    WMOD: '측정월',
-    ITEMTEMP: '수온(°C)',
-    ITEMPH: 'pH',
-    ITEMDOC: 'DO(㎎/L)',
-    ITEMBOD: 'BOD(㎎/L)',
-    ITEMCOD: 'COD(㎎/L)',
-    ITEMTN: '총질소(㎎/L)',
-    ITEMTP: '총인(㎎/L)',
-    ITEMTRANS: '투명도(㎎/L)',
-    ITEMCLOA: '클로로필-a(㎎/L)',
-    ITEMEC: '전기전도도(µS/㎝)',
-    ITEMTOC: 'TOC(㎎/L)',
+    ITEMWMWK: '회차',
+    ITEMWNDEP: '수심',
+    ITEMTEMP: '수온',
+    ITEMDO: '용존 산소',
+    ITEMBOD: 'BOD',
+    ITEMCOD: 'COD',
+    ITEMSS: '부유물',
+    ITEMTN: '총 질소',
+    ITEMTP: '총인',
+    ITEMTOC: '총유기탄소',
 
     //대기질 데이터
     stationName: '조사지점명',
-    dataTime: '측정일',
-    so2Value: '아황산가스 농도(ppm)',
-    coValue: '일산화탄소 농도(ppm)',
-    o3Value: '오존 농도(ppm)',
-    no2Value: '이산화질소 농도(ppm)',
-    pm10Value: '미세먼지(PM10) 농도(㎍/㎥)',
-    pm25Value: '미세먼지(PM2.5)  농도(㎍/㎥)',
+    ITEMNO2: '산소 농도(ppm)',
+    ITEMO3: '오존 농도(ppm)',
+    ITEMPM10: '미세먼지(PM10) 농도(㎍/㎥)',
+    ITEMPM25: '미세먼지(PM2.5) 농도(㎍/㎥)',
+    ITEMSO2VALUE: '아황산가스 농도(ppm)',
+
+    //시도별 대기질 데이터
+    ITEMITEMCODE: '변인',
+    ITEMDATETIME: '측정 시간',
+    ITEMDAEGU: '대구',
+    ITEMCHUNGNAM: '충남',
+    ITEMINCHEON: '인천',
+    ITEMDAEJEON: '대전',
+    ITEMGYONGBUK: '경북',
+    ITEMSEJONG: '세종',
+    ITEMGWANGJU: '광주',
+    ITEMJEONBUK: '전북',
+    ITEMGANGWON: '강원',
+    ITEMULSAN: '울산',
+    ITEMJEONNAM: '전남',
+    ITEMSEOUL: '서울',
+    ITEMBUSAN: '부산',
+    ITEMJEJU: '제주',
+    ITEMCHUNGBUK: '충북',
+    ITEMGYEONGNAM: '경남',
+    ITEMGYEONGGI: '경기',
 
     //SEED 데이터
     measuredDate: '측정 시간',
@@ -174,93 +192,152 @@ export default function ForderListModal({
       let path = '';
       if (type === '수질 데이터') {
         path = `/ocean-quality/mine/chunk?dataUUID=${id}`;
+        customAxios
+          .get(path)
+          .then((res) => {
+            // 남기고 싶은 키 목록
+            const keysToKeep = [
+              'PTNM',
+              'ITEMDATE',
+              'ITEMWMWK',
+              'ITEMWNDEP',
+              'ITEMBOD',
+              'ITEMCOD',
+              'ITEMDO',
+              'ITEMSS',
+              'ITEMTEMP',
+              'ITEMTN',
+              'ITEMTOC',
+              'ITEMTP',
+            ];
+
+            // 변환 로직
+            const transformedData = res.data[0].data.map((item) => {
+              const newItem = {};
+              keysToKeep.forEach((key) => {
+                if (item[key] !== undefined) {
+                  if (isNaN(item[key])) newItem[key] = item[key];
+                  else newItem[key] = Number(item[key]);
+                } else {
+                  newItem[key] = null; // 해당 키가 없으면 null로 설정
+                }
+              });
+              return newItem;
+            });
+            console.log(transformedData);
+            let headers = Object.keys(transformedData[0]);
+
+            headers = headers.map((header) => engToKor(header));
+
+            const datas = transformedData.map((item) => Object.values(item));
+            // 최종 결과 생성 (헤더 + 값)
+            const recombined = [headers, ...datas];
+            console.log(recombined);
+            setData(recombined, res.data[0].title, true);
+            setModalOpen(false);
+          })
+          .catch((err) => console.log(err));
       } else if (type === '대기질 데이터') {
         path = `/air-quality/mine/chunk?dataUUID=${id}`;
+        customAxios
+          .get(path)
+          .then((res) => {
+            // 남기고 싶은 키 목록
+            const keysToKeep = [
+              'stationName',
+              'ITEMDATE',
+              'ITEMNO2',
+              'ITEMO3',
+              'ITEMPM10',
+              'ITEMPM25',
+              'ITEMSO2VALUE',
+            ];
+            console.log(res.data);
+            // 변환 로직
+            const transformedData = res.data.data.map((item) => {
+              const newItem = {};
+              keysToKeep.forEach((key) => {
+                if (item[key] !== undefined) {
+                  if (isNaN(item[key])) newItem[key] = item[key];
+                  else newItem[key] = Number(item[key]);
+                } else {
+                  newItem[key] = null; // 해당 키가 없으면 null로 설정
+                }
+              });
+              return newItem;
+            });
+            console.log(transformedData);
+            let headers = Object.keys(transformedData[0]);
+
+            headers = headers.map((header) => engToKor(header));
+
+            const datas = transformedData.map((item) => Object.values(item));
+            // 최종 결과 생성 (헤더 + 값)
+            const recombined = [headers, ...datas];
+            console.log(recombined);
+            setData(recombined, res.data.title, true);
+            setModalOpen(false);
+          })
+          .catch((err) => console.log(err));
+      } else if (type === '시도별 대기질 데이터') {
+        path = `/air-city-quality/mine/chunk?dataUUID=${id}`;
+        customAxios
+          .get(path)
+          .then((res) => {
+            // 남기고 싶은 키 목록
+            const keysToKeep = [
+              'ITEMITEMCODE',
+              'ITEMDATETIME',
+              'ITEMDAEGU',
+              'ITEMCHUNGNAM',
+              'ITEMINCHEON',
+              'ITEMDAEJEON',
+              'ITEMGYONGBUK',
+              'ITEMSEJONG',
+              'ITEMGWANGJU',
+              'ITEMJEONBUK',
+              'ITEMGANGWON',
+              'ITEMULSAN',
+              'ITEMJEONNAM',
+              'ITEMSEOUL',
+              'ITEMBUSAN',
+              'ITEMJEJU',
+              'ITEMCHUNGBUK',
+              'ITEMGYEONGNAM',
+              'ITEMGYEONGGI',
+            ];
+            console.log(res.data);
+            // 변환 로직
+            const transformedData = res.data.map((item) => {
+              const newItem = {};
+              keysToKeep.forEach((key) => {
+                if (item[key] !== undefined) {
+                  newItem[key] = item[key];
+                } else {
+                  newItem[key] = null; // 해당 키가 없으면 null로 설정
+                }
+              });
+              return newItem;
+            });
+            console.log(transformedData);
+            let headers = Object.keys(transformedData[0]);
+
+            headers = headers.map((header) => engToKor(header));
+
+            const datas = transformedData.map((item) => Object.values(item));
+            // 최종 결과 생성 (헤더 + 값)
+            const recombined = [headers, ...datas];
+            console.log(recombined);
+            setData(recombined, res.data[0].title, true);
+            setModalOpen(false);
+          })
+          .catch((err) => console.log(err));
       } else if (type === 'SEED') {
         path = `/seed/mine/chunk?dataUUID=${id}`;
       } else if (type === '데이터없음') {
         console.log('데이터 없음');
         return;
       }
-
-      customAxios
-        .get(path)
-        .then((res) => {
-          console.log(res.data);
-          let headers = Object.keys(res.data[0]).filter(
-            (key) =>
-              key !== 'id' &&
-              key !== 'dataUUID' &&
-              key !== 'saveDate' &&
-              key !== 'dateString' &&
-              key !== 'sessionid' &&
-              key !== 'memo' &&
-              key !== 'dataLabel',
-          );
-
-          const attributesToCheck = [
-            'co2',
-            'dox',
-            'dust',
-            'hum',
-            'hum_EARTH',
-            'lux',
-            'ph',
-            'pre',
-            'temp',
-            'tur',
-          ];
-
-          const keysToExclude = [
-            'id',
-            'dataUUID',
-            'saveDate',
-            'dateString',
-            'sessionid',
-            'unit',
-            'memo',
-            'dataLabel',
-          ];
-
-          for (const attribute of attributesToCheck) {
-            const isAllNone = res.data.every(
-              (item) => item[attribute] === -99999.0,
-            );
-            if (isAllNone) {
-              // 해당 속성이 모두 -99999.0일 때, keysToExclude에 추가(헤더에 따른 values도 제거해줘야함)
-              if (!keysToExclude.includes(attribute)) {
-                keysToExclude.push(attribute);
-              }
-              // 해당 속성이 모두 -99999.0일 때, headers에서 제거
-              headers = headers.filter((header) => header !== attribute);
-            }
-          }
-
-          headers = headers.map((header) => engToKor(header));
-
-          // 중요한 데이터들은 들어온 데이터 리스트에서 제거
-          const values = res.data.map((item) => {
-            const filteredItem = Object.keys(item)
-              .filter((key) => !keysToExclude.includes(key))
-              .reduce((obj, key) => {
-                obj[key] = convertToNumber(item[key]);
-                return obj;
-              }, {});
-
-            console.log(
-              '값들이 어떻게 필터 되나 : ' + Object.values(filteredItem),
-            );
-            return Object.values(filteredItem);
-          });
-          console.log(values);
-          // 최종 결과 생성 (헤더 + 값)
-          const recombined = [headers, ...values];
-          console.log(recombined);
-          setData(recombined, '없음', true);
-          // localStorage.setItem("data", JSON.stringify(recombined));
-          // window.location.reload();
-        })
-        .catch((err) => console.log(err));
     }
   };
   console.log(filteredData);

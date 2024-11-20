@@ -1,11 +1,77 @@
 import React, { useState, useEffect } from 'react';
 import { customAxios } from '../../Common/CustomAxios';
-import { engToKor } from './engToKor';
 import * as XLSX from 'xlsx';
 import { useNavigate } from 'react-router-dom';
 import { IconButton, Button, Typography } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { convertToNumber } from '../DataInChart/store/utils/convertToNumber';
+
+//항목 이름 (한국어 -> 영어)
+const engToKor = (name) => {
+  const kor = {
+    ITEMDATE: '측정일',
+
+    //수질 데이터
+    PTNM: '조사지점명',
+    ITEMWMWK: '회차',
+    ITEMWNDEP: '수심',
+    ITEMTEMP: '수온',
+    ITEMDO: '용존 산소',
+    ITEMBOD: 'BOD',
+    ITEMCOD: 'COD',
+    ITEMSS: '부유물',
+    ITEMTN: '총 질소',
+    ITEMTP: '총인',
+    ITEMTOC: '총유기탄소',
+
+    //대기질 데이터
+    stationName: '조사지점명',
+    ITEMNO2: '산소 농도(ppm)',
+    ITEMO3: '오존 농도(ppm)',
+    ITEMPM10: '미세먼지(PM10) 농도(㎍/㎥)',
+    ITEMPM25: '미세먼지(PM2.5) 농도(㎍/㎥)',
+    ITEMSO2VALUE: '아황산가스 농도(ppm)',
+
+    //시도별 대기질 데이터
+    ITEMITEMCODE: '변인',
+    ITEMDATETIME: '측정 시간',
+    ITEMDAEGU: '대구',
+    ITEMCHUNGNAM: '충남',
+    ITEMINCHEON: '인천',
+    ITEMDAEJEON: '대전',
+    ITEMGYONGBUK: '경북',
+    ITEMSEJONG: '세종',
+    ITEMGWANGJU: '광주',
+    ITEMJEONBUK: '전북',
+    ITEMGANGWON: '강원',
+    ITEMULSAN: '울산',
+    ITEMJEONNAM: '전남',
+    ITEMSEOUL: '서울',
+    ITEMBUSAN: '부산',
+    ITEMJEJU: '제주',
+    ITEMCHUNGBUK: '충북',
+    ITEMGYEONGNAM: '경남',
+    ITEMGYEONGGI: '경기',
+
+    //SEED 데이터
+    measuredDate: '측정 시간',
+    location: '측정 장소',
+    unit: '소속',
+    period: '저장 주기',
+    username: '사용자명',
+    hum: '습도',
+    temp: '기온',
+    tur: '탁도',
+    ph: 'pH',
+    dust: '미세먼지',
+    dox: '용존산소량',
+    co2: '이산화탄소',
+    lux: '조도',
+    hum_EARTH: '토양 습도',
+    pre: '기압',
+  };
+  return kor[name] || name;
+};
 
 const DataTable = ({ type, id, handleMenuToggle }) => {
   const [details, setDetails] = useState([]); // 초기 값을 빈 배열로 설정
@@ -129,53 +195,149 @@ const DataTable = ({ type, id, handleMenuToggle }) => {
       let path = '';
       if (type === '수질 데이터') {
         path = `/ocean-quality/mine/chunk?dataUUID=${id}`;
+        customAxios
+          .get(path)
+          .then((res) => {
+            // 남기고 싶은 키 목록
+            const keysToKeep = [
+              'PTNM',
+              'ITEMDATE',
+              'ITEMWMWK',
+              'ITEMWNDEP',
+              'ITEMBOD',
+              'ITEMCOD',
+              'ITEMDO',
+              'ITEMSS',
+              'ITEMTEMP',
+              'ITEMTN',
+              'ITEMTOC',
+              'ITEMTP',
+            ];
+
+            // 변환 로직
+            const transformedData = res.data[0].data.map((item) => {
+              const newItem = {};
+              keysToKeep.forEach((key) => {
+                if (item[key] !== undefined) {
+                  if (isNaN(item[key])) newItem[key] = item[key];
+                  else newItem[key] = Number(item[key]);
+                } else {
+                  newItem[key] = null; // 해당 키가 없으면 null로 설정
+                }
+              });
+              return newItem;
+            });
+            console.log(transformedData);
+            let headers = Object.keys(transformedData[0]);
+
+            headers = headers.map((header) => engToKor(header));
+
+            const datas = transformedData.map((item) => Object.values(item));
+            // 최종 결과 생성 (헤더 + 값)
+            const recombined = [headers, ...datas];
+            console.log(recombined);
+            setData(recombined, res.data[0].title, true);
+          })
+          .catch((err) => console.log(err));
       } else if (type === '대기질 데이터') {
         path = `/air-quality/mine/chunk?dataUUID=${id}`;
+        customAxios
+          .get(path)
+          .then((res) => {
+            // 남기고 싶은 키 목록
+            const keysToKeep = [
+              'stationName',
+              'ITEMDATE',
+              'ITEMNO2',
+              'ITEMO3',
+              'ITEMPM10',
+              'ITEMPM25',
+              'ITEMSO2VALUE',
+            ];
+            console.log(res.data);
+            // 변환 로직
+            const transformedData = res.data.data.map((item) => {
+              const newItem = {};
+              keysToKeep.forEach((key) => {
+                if (item[key] !== undefined) {
+                  if (isNaN(item[key])) newItem[key] = item[key];
+                  else newItem[key] = Number(item[key]);
+                } else {
+                  newItem[key] = null; // 해당 키가 없으면 null로 설정
+                }
+              });
+              return newItem;
+            });
+            console.log(transformedData);
+            let headers = Object.keys(transformedData[0]);
+
+            headers = headers.map((header) => engToKor(header));
+
+            const datas = transformedData.map((item) => Object.values(item));
+            // 최종 결과 생성 (헤더 + 값)
+            const recombined = [headers, ...datas];
+            console.log(recombined);
+            setData(recombined, res.data.title, true);
+          })
+          .catch((err) => console.log(err));
+      } else if (type === '시도별 대기질 데이터') {
+        path = `/air-city-quality/mine/chunk?dataUUID=${id}`;
+        customAxios
+          .get(path)
+          .then((res) => {
+            // 남기고 싶은 키 목록
+            const keysToKeep = [
+              'ITEMITEMCODE',
+              'ITEMDATETIME',
+              'ITEMDAEGU',
+              'ITEMCHUNGNAM',
+              'ITEMINCHEON',
+              'ITEMDAEJEON',
+              'ITEMGYONGBUK',
+              'ITEMSEJONG',
+              'ITEMGWANGJU',
+              'ITEMJEONBUK',
+              'ITEMGANGWON',
+              'ITEMULSAN',
+              'ITEMJEONNAM',
+              'ITEMSEOUL',
+              'ITEMBUSAN',
+              'ITEMJEJU',
+              'ITEMCHUNGBUK',
+              'ITEMGYEONGNAM',
+              'ITEMGYEONGGI',
+            ];
+            console.log(res.data);
+            // 변환 로직
+            const transformedData = res.data.map((item) => {
+              const newItem = {};
+              keysToKeep.forEach((key) => {
+                if (item[key] !== undefined) {
+                  newItem[key] = item[key];
+                } else {
+                  newItem[key] = null; // 해당 키가 없으면 null로 설정
+                }
+              });
+              return newItem;
+            });
+            console.log(transformedData);
+            let headers = Object.keys(transformedData[0]);
+
+            headers = headers.map((header) => engToKor(header));
+
+            const datas = transformedData.map((item) => Object.values(item));
+            // 최종 결과 생성 (헤더 + 값)
+            const recombined = [headers, ...datas];
+            console.log(recombined);
+            setData(recombined, res.data[0].title, true);
+          })
+          .catch((err) => console.log(err));
       } else if (type === 'SEED') {
         path = `/seed/mine/chunk?dataUUID=${id}`;
+      } else if (type === '데이터없음') {
+        console.log('데이터 없음');
+        return;
       }
-
-      customAxios
-        .get(path)
-        .then((res) => {
-          const data = res.data;
-
-          // 데이터가 배열인지 확인, 배열이 아니면 빈 배열로 설정
-          if (!Array.isArray(data)) {
-            console.error('API에서 받은 데이터가 배열이 아닙니다:', data);
-            setDetails([]);
-            return;
-          }
-
-          setDetails(data);
-
-          // 필요없는 헤더 지우기
-          let headers = Object.keys(data[0] || {}).filter(
-            (key) =>
-              key !== 'id' &&
-              key !== 'dataUUID' &&
-              key !== 'saveDate' &&
-              key !== 'dateString' &&
-              key !== 'sessionid' &&
-              key !== 'unit',
-          );
-
-          // 값이 없는 컬럼 필터링
-          headers = headers.filter((header) => {
-            return data.some(
-              (item) =>
-                item[header] !== null &&
-                item[header] !== undefined &&
-                item[header] !== '',
-            );
-          });
-
-          setHeaders(headers);
-        })
-        .catch((err) => {
-          console.log('데이터 가져오기 중 오류:', err);
-          setDetails([]); // 오류 발생 시 빈 배열로 설정
-        });
     }
   }, [type, id]);
 

@@ -1,95 +1,149 @@
 import React, { useEffect, useState } from 'react';
-import { saveAirByPlace } from '../apis/air';
+import { saveAirByCity } from '../apis/air';
 import TitleMemoInputModal from '../modals/TitleMemoInputModal';
 
-function AirPlaceList({ airDataList }) {
+function CityAirList({ cityAirDataList }) {
   const headers = [
-    '측정 장소',
-    '측정 일',
-    '이산화질소 농도(ppm)',
-    '오존 농도(ppm)',
-    '미세먼지(PM10) 농도(㎍/㎥)',
-    '미세먼지(PM2.5) 농도(㎍/㎥)',
-    '아황산가스 농도(ppm)',
+    '변인',
+    '시간',
+    '대구',
+    '충남',
+    '인천',
+    '대전',
+    '경북',
+    '세종',
+    '광주',
+    '전북',
+    '강원',
+    '울산',
+    '전남',
+    '서울',
+    '부산',
+    '제주',
+    '충북',
+    '경남',
+    '경기',
   ];
 
-  const getRowData = (item) => [
-    item.stationName,
-    item.date,
-    item.no2,
-    item.o3,
-    item.pm10,
-    item.pm25,
-    item.so2Value,
-  ];
-
-  const getRowDataToServer = (item) => [
-    {
-      key: 'stationName',
-      value: item.stationName,
-    },
-    {
-      key: 'ITEMDATE',
-      value: item.date,
-    },
-    {
-      key: 'ITEMNO2',
-      value: item.no2,
-    },
-    {
-      key: 'ITEMO3',
-      value: item.o3,
-    },
-    {
-      key: 'ITEMPM10',
-      value: item.pm10,
-    },
-    {
-      key: 'ITEMPM25',
-      value: item.pm25,
-    },
-    {
-      key: 'ITEMSO2VALUE',
-      value: item.so2Value,
-    },
-  ];
-
+  // 상태 관리: 선택된 열
   const [filteredColumns, setFilteredColumns] = useState(
-    new Array(headers.length).fill(true),
+    new Array(headers.length).fill(true), // 기본적으로 모든 열을 표시
   );
 
+  // 상태 관리: 선택된 행
   const [filteredRows, setFilteredRows] = useState(
-    new Array(airDataList.length).fill(false),
+    new Array(cityAirDataList.length).fill(false), // 기본적으로 모든 행을 표시
   );
 
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleColumn = (index) => {
+    // 해당 열을 선택/해제
     setFilteredColumns((prev) =>
       prev.map((value, idx) => (idx === index ? !value : value)),
     );
   };
 
   const toggleRow = (index) => {
+    // 해당 행을 선택/해제
     setFilteredRows((prev) =>
       prev.map((value, idx) => (idx === index ? !value : value)),
     );
   };
 
+  const getRowDataToServer = (item) => [
+    {
+      key: 'ITEMITEMCODE',
+      value: item.itemCode,
+    },
+    {
+      key: 'ITEMDATETIME',
+      value: item.dataTime,
+    },
+    {
+      key: 'ITEMDAEGU',
+      value: item.daegu,
+    },
+    {
+      key: 'ITEMCHUNGNAM',
+      value: item.chungnam,
+    },
+    {
+      key: 'ITEMINCHEON',
+      value: item.incheon,
+    },
+    {
+      key: 'ITEMDAEJEON',
+      value: item.daejeon,
+    },
+    {
+      key: 'ITEMGYONGBUK',
+      value: item.gyeongbuk,
+    },
+    {
+      key: 'ITEMSEJONG',
+      value: item.sejong,
+    },
+    {
+      key: 'ITEMGWANGJU',
+      value: item.gwangju,
+    },
+    {
+      key: 'ITEMJEONBUK',
+      value: item.jeonbuk,
+    },
+    {
+      key: 'ITEMGANGWON',
+      value: item.gangwon,
+    },
+    {
+      key: 'ITEMULSAN',
+      value: item.ulsan,
+    },
+    {
+      key: 'ITEMJEONNAM',
+      value: item.jeonnam,
+    },
+    {
+      key: 'ITEMSEOUL',
+      value: item.seoul,
+    },
+    {
+      key: 'ITEMBUSAN',
+      value: item.busan,
+    },
+    {
+      key: 'ITEMJEJU',
+      value: item.jeju,
+    },
+    {
+      key: 'ITEMCHUNGBUK',
+      value: item.chungbuk,
+    },
+    {
+      key: 'ITEMGYEONGNAM',
+      value: item.gyeongnam,
+    },
+    {
+      key: 'ITEMGYEONGGI',
+      value: item.gyeonggi,
+    },
+  ];
+
   useEffect(() => {
-    setFilteredRows(new Array(airDataList.length).fill(false));
-  }, [airDataList]);
+    setFilteredRows(new Array(cityAirDataList.length).fill(false));
+  }, [cityAirDataList]);
 
   return (
     <div
       style={{
+        overflow: 'auto',
         margin: '2rem auto',
         display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
+        justifyContent: 'center',
       }}
     >
-      {airDataList.length === 0 ? (
+      {cityAirDataList.length === 0 ? (
         <div
           style={{
             padding: '2rem',
@@ -111,10 +165,10 @@ function AirPlaceList({ airDataList }) {
       ) : (
         <div style={{ overflowX: 'auto' }}>
           <TitleMemoInputModal
-            type="airPlace"
+            type="airCity"
             isOpen={isOpen}
             setIsOpen={setIsOpen}
-            dataList={airDataList}
+            dataList={cityAirDataList}
             filteredRows={filteredRows}
             filteredColumns={filteredColumns}
             getRowDataToServer={getRowDataToServer}
@@ -132,7 +186,7 @@ function AirPlaceList({ airDataList }) {
                   backgroundColor: '#E5E7EB',
                   color: '#374151',
                   fontWeight: '600',
-                  fontSize: '0.875rem',
+                  fontSize: '0.875rem', // fontsize 축소
                 }}
               >
                 <th
@@ -144,25 +198,35 @@ function AirPlaceList({ airDataList }) {
                     cursor: 'pointer',
                   }}
                 >
-                  <div style={{ display: 'flex' }}>선택</div>
+                  <div
+                    style={{
+                      display: 'flex',
+                    }}
+                  >
+                    선택
+                  </div>
                 </th>
                 {headers.map((header, index) => (
                   <th
                     key={index}
                     style={{
-                      padding: '0.75rem 1.5rem',
+                      padding: '0.3rem 1rem',
                       border: '1px solid #D1D5DB',
                       textAlign: 'center',
                       cursor: 'pointer',
                     }}
                     onClick={() => toggleColumn(index)}
                   >
-                    <div style={{ display: 'flex' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                      }}
+                    >
                       <input
                         type="checkbox"
                         checked={filteredColumns[index]}
                         readOnly
-                        style={{ marginRight: '0.5rem', width: '16px' }}
+                        style={{ marginRight: '0.3rem', width: '16px' }}
                       />
                       {header}
                     </div>
@@ -171,7 +235,7 @@ function AirPlaceList({ airDataList }) {
               </tr>
             </thead>
             <tbody>
-              {airDataList.map((item, index) => (
+              {cityAirDataList.map((item, index) => (
                 <tr
                   key={index}
                   style={{
@@ -190,7 +254,7 @@ function AirPlaceList({ airDataList }) {
                   <td
                     key="checkbox"
                     style={{
-                      padding: '0.75rem 1.5rem',
+                      padding: '0.5rem 1rem',
                       border: '1px solid #D1D5DB',
                     }}
                     onClick={() => toggleRow(index)}
@@ -202,20 +266,40 @@ function AirPlaceList({ airDataList }) {
                       style={{ marginRight: '0.5rem', width: '16px' }}
                     />
                   </td>
-                  {getRowData(item).map((value, idx) =>
+                  {[
+                    'itemCode',
+                    'dataTime',
+                    'daegu',
+                    'chungnam',
+                    'incheon',
+                    'daejeon',
+                    'gyeongbuk',
+                    'sejong',
+                    'gwangju',
+                    'jeonbuk',
+                    'gangwon',
+                    'ulsan',
+                    'jeonnam',
+                    'seoul',
+                    'busan',
+                    'jeju',
+                    'chungbuk',
+                    'gyeongnam',
+                    'gyeonggi',
+                  ].map((value, idx) =>
                     filteredColumns[idx] ? (
                       <td
-                        key={idx}
+                        key={value}
                         style={{
                           padding: '0.75rem 1.5rem',
                           border: '1px solid #D1D5DB',
                         }}
                       >
-                        {value}
+                        {item[value]}
                       </td>
                     ) : (
                       <td
-                        key={idx}
+                        key={value}
                         style={{
                           padding: '0.75rem 1.5rem',
                           border: '1px solid #D1D5DB',
@@ -229,6 +313,8 @@ function AirPlaceList({ airDataList }) {
           </table>
         </div>
       )}
+
+      {/* 데이터 저장하기 버튼 */}
       <button
         style={{
           position: 'fixed',
@@ -253,4 +339,4 @@ function AirPlaceList({ airDataList }) {
   );
 }
 
-export default AirPlaceList;
+export default CityAirList;

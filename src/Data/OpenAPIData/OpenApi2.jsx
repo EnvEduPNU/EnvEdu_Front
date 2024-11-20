@@ -38,7 +38,8 @@ function OpenApi2() {
     >
       <div
         style={{
-          width: '1200px',
+          minWidth: '1500px',
+          overflow: 'auto',
         }}
       >
         <div
