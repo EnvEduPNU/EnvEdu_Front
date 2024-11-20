@@ -216,7 +216,8 @@ export default function ForderListModal({
               const newItem = {};
               keysToKeep.forEach((key) => {
                 if (item[key] !== undefined) {
-                  newItem[key] = item[key];
+                  if (isNaN(item[key])) newItem[key] = item[key];
+                  else newItem[key] = Number(item[key]);
                 } else {
                   newItem[key] = null; // 해당 키가 없으면 null로 설정
                 }
@@ -245,19 +246,20 @@ export default function ForderListModal({
             const keysToKeep = [
               'stationName',
               'ITEMDATE',
-              'ITEMN02',
-              'ITEM03',
+              'ITEMNO2',
+              'ITEMO3',
               'ITEMPM10',
               'ITEMPM25',
-              'ITEMS02VALUE',
+              'ITEMSO2VALUE',
             ];
             console.log(res.data);
             // 변환 로직
-            const transformedData = res.data.map((item) => {
+            const transformedData = res.data.data.map((item) => {
               const newItem = {};
               keysToKeep.forEach((key) => {
                 if (item[key] !== undefined) {
-                  newItem[key] = item[key];
+                  if (isNaN(item[key])) newItem[key] = item[key];
+                  else newItem[key] = Number(item[key]);
                 } else {
                   newItem[key] = null; // 해당 키가 없으면 null로 설정
                 }
@@ -273,7 +275,7 @@ export default function ForderListModal({
             // 최종 결과 생성 (헤더 + 값)
             const recombined = [headers, ...datas];
             console.log(recombined);
-            setData(recombined, res.data[0].title, true);
+            setData(recombined, res.data.title, true);
             setModalOpen(false);
           })
           .catch((err) => console.log(err));
