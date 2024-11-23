@@ -10,17 +10,15 @@ import { Typography, TextField, Button, Divider } from '@mui/material';
 import './CreateLectureSourcePage.scss'; // 스타일을 위한 SCSS 파일 임포트
 import { useNavigate } from 'react-router-dom';
 
-export const CreateLectureSourcePage = (props) => {
-  const {
-    stepCount: initialStepCount,
-    stepContents,
-    summary,
-    lectureName: initialLectureName,
-    lectureSummary,
-    lectureUuid,
-    timeStamp,
-  } = props;
-
+export const CreateLectureSourcePage = ({
+  stepCount: initialStepCount,
+  stepContents,
+  summary,
+  lectureName: initialLectureName,
+  lectureSummary,
+  lectureUuid,
+  timeStamp,
+}) => {
   const [activeStep, setActiveStep] = useState(1);
   const [stepCount, setStepCount] = useState(initialStepCount); // stepCount 상태 관리
   const [lectureName, setLectureName] = useState(initialLectureName || '');

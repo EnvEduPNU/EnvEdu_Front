@@ -185,7 +185,7 @@ function Header() {
                         <>
                           {userRole === 'ROLE_EDUCATOR' && (
                             <Nav.Link
-                              onClick={() => handleNavLinkClick('/classData')}
+                              onClick={() => handleNavLinkClick('/createClass')}
                             >
                               E-Class 생성
                             </Nav.Link>

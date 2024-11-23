@@ -1,0 +1,37 @@
+.custom-html-container ul {
+  list-style-type: disc; /* 기본 스타일: 원형 점 */
+  padding-left: 20px; /* 들여쓰기 */
+}
+
+.custom-html-container li {
+  font-size: 16px;
+  line-height: 1.6; /* 행 간격 */
+  color: #374151; /* 텍스트 색상 (Tailwind의 text-gray-700) */
+}
+
+.custom-html-container ol {
+  list-style-type: decimal; /* 기본 스타일: 숫자 */
+  padding-left: 20px; /* 들여쓰기 */
+  margin-bottom: 16px; /* 목록 간격 */
+}
+
+.custom-html-container h1 {
+  font-size: 2rem; /* 글자 크기 */
+  font-weight: 700; /* 굵기 */
+  color: #1f2937; /* 텍스트 색상 (Tailwind의 text-gray-800) */
+  margin-bottom: 16px; /* 하단 여백 */
+}
+
+.custom-html-container h2 {
+  font-size: 1.5rem; /* 글자 크기 */
+  font-weight: 600; /* 굵기 */
+  color: #374151; /* 텍스트 색상 (Tailwind의 text-gray-700) */
+  margin-bottom: 12px; /* 하단 여백 */
+}
+
+.custom-html-container h3 {
+  font-size: 1.25rem; /* 글자 크기 */
+  font-weight: 500; /* 굵기 */
+  color: #4b5563; /* 텍스트 색상 (Tailwind의 text-gray-600) */
+  margin-bottom: 8px; /* 하단 여백 */
+}
