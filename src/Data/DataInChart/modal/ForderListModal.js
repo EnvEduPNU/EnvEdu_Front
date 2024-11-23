@@ -63,7 +63,7 @@ const engToKor = (name) => {
     ITEMSO2VALUE: '아황산가스 농도(ppm)',
 
     //시도별 대기질 데이터
-    ITEMITEMCODE: '변인',
+    ITEMCODE: '변인',
     ITEMDATETIME: '측정 시간',
     ITEMDAEGU: '대구',
     ITEMCHUNGNAM: '충남',
@@ -216,7 +216,8 @@ export default function ForderListModal({
               const newItem = {};
               keysToKeep.forEach((key) => {
                 if (item[key] !== undefined) {
-                  if (isNaN(item[key])) newItem[key] = item[key];
+                  if (item[key] === null) return;
+                  else if (isNaN(item[key])) newItem[key] = item[key];
                   else newItem[key] = Number(item[key]);
                 } else {
                   newItem[key] = null; // 해당 키가 없으면 null로 설정
@@ -258,7 +259,8 @@ export default function ForderListModal({
               const newItem = {};
               keysToKeep.forEach((key) => {
                 if (item[key] !== undefined) {
-                  if (isNaN(item[key])) newItem[key] = item[key];
+                  if (item[key] === null) return;
+                  else if (isNaN(item[key])) newItem[key] = item[key];
                   else newItem[key] = Number(item[key]);
                 } else {
                   newItem[key] = null; // 해당 키가 없으면 null로 설정
@@ -280,13 +282,13 @@ export default function ForderListModal({
           })
           .catch((err) => console.log(err));
       } else if (type === '시도별 대기질 데이터') {
-        path = `/air-city-quality/mine/chunk?dataUUID=${id}`;
+        path = `/city-air-quality/mine/chunk?dataUUID=${id}`;
         customAxios
           .get(path)
           .then((res) => {
             // 남기고 싶은 키 목록
             const keysToKeep = [
-              'ITEMITEMCODE',
+              'ITEMCODE',
               'ITEMDATETIME',
               'ITEMDAEGU',
               'ITEMCHUNGNAM',
@@ -308,10 +310,11 @@ export default function ForderListModal({
             ];
             console.log(res.data);
             // 변환 로직
-            const transformedData = res.data.map((item) => {
+            const transformedData = res.data.data.map((item) => {
               const newItem = {};
               keysToKeep.forEach((key) => {
-                if (item[key] !== undefined) {
+                if (item[key] === null) return;
+                else if (item[key] !== undefined) {
                   newItem[key] = item[key];
                 } else {
                   newItem[key] = null; // 해당 키가 없으면 null로 설정
@@ -328,7 +331,7 @@ export default function ForderListModal({
             // 최종 결과 생성 (헤더 + 값)
             const recombined = [headers, ...datas];
             console.log(recombined);
-            setData(recombined, res.data[0].title, true);
+            setData(recombined, res.data.title, true);
             setModalOpen(false);
           })
           .catch((err) => console.log(err));

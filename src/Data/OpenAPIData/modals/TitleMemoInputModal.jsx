@@ -71,9 +71,10 @@ function TitleMemoInputModal({
           ...Object.values(
             saveToDataList[i].map((value) => {
               if (
-                Object.keys(value)[0] === 'ITEMNO2' ||
-                Object.keys(value)[0] === 'ITEMSO2VALUE' ||
-                Object.keys(value)[0] === 'ITEMO3'
+                (Object.keys(value)[0] === 'ITEMNO2' ||
+                  Object.keys(value)[0] === 'ITEMSO2VALUE' ||
+                  Object.keys(value)[0] === 'ITEMO3') &&
+                value[Object.keys(value)[0]] !== null
               )
                 return {
                   [Object.keys(value)[0]]: `0${value[Object.keys(value)[0]]}`,

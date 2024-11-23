@@ -74,11 +74,11 @@ export default function MyDataList({ summary, setSummary }) {
     } else if (type == '수질') {
       filtered = summary.filter((data) => data.dataLabel === '수질 데이터');
       setDataType('수질 데이터');
-    } else if (type == '시도별 대기질 데이터') {
+    } else if (type == '시도별 대기질') {
       filtered = summary.filter(
         (data) => data.dataLabel === '시도별 대기질 데이터',
       );
-      setDataType('수질 데이터');
+      setDataType('시도별 대기질 데이터');
     } else if (type == 'SEED') {
       filtered = summary.filter((data) => data.dataLabel === 'SEED');
       setDataType('SEED 데이터');
@@ -86,7 +86,7 @@ export default function MyDataList({ summary, setSummary }) {
       filtered = summary.filter((data) => data.dataLabel === 'CUSTOM');
       setDataType('CUSTOM 데이터');
     }
-
+    console.log(filtered);
     if (filtered.length === 0) {
       setFilteredData([
         // {
@@ -100,6 +100,7 @@ export default function MyDataList({ summary, setSummary }) {
       setModalOpen(true);
       console.log('데이터 없음');
     } else {
+      console.log(filtered);
       setFilteredData(filtered);
       setModalOpen(true);
       console.log('데이터리스트에서 모달 true');

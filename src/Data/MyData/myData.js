@@ -39,6 +39,8 @@ const MyData = () => {
                 ? '대기질 데이터'
                 : data.dataLabel === 'OCEANQUALITY'
                 ? '수질 데이터'
+                : data.dataLabel === 'CITYAIRQUALITY'
+                ? '시도별 대기질 데이터'
                 : data.dataLabel,
           }));
 
