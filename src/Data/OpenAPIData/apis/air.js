@@ -71,15 +71,31 @@ export const getAirByCity = (
 };
 
 export const saveAirByPlace = (dataList, memo, title) =>
-  customAxios.post('/air-quality', {
-    data: dataList,
-    memo,
-    title,
-  });
+  customAxios.post(
+    '/air-quality',
+    {
+      data: dataList,
+      memo,
+      title,
+    },
+    {
+      headers: {
+        userName: localStorage.getItem('username'),
+      },
+    },
+  );
 
 export const saveAirByCity = (dataList, memo, title) =>
-  customAxios.post('/air-quality2', {
-    data: dataList,
-    memo,
-    title,
-  });
+  customAxios.post(
+    '/city-air-quality',
+    {
+      data: dataList,
+      memo,
+      title,
+    },
+    {
+      headers: {
+        userName: localStorage.getItem('username'),
+      },
+    },
+  );

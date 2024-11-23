@@ -53,7 +53,7 @@ function CityAirList({ cityAirDataList }) {
 
   const getRowDataToServer = (item) => [
     {
-      key: 'ITEMITEMCODE',
+      key: 'ITEMCODE',
       value: item.itemCode,
     },
     {
