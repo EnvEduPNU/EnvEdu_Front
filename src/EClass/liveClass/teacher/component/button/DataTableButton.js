@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Modal,
-  Box,
-  Button,
-  Typography,
-  Container,
-  Paper,
-} from '@mui/material';
+import { Modal, Box, Button, Typography, Paper } from '@mui/material';
 
 import '../TeacherWordProcessor.scss';
 
@@ -15,11 +8,13 @@ const modalStyle = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 800,
+  width: 600,
+  height: 800,
   bgcolor: 'background.paper',
   boxShadow: 24,
-  p: 4,
-  zIndex: 1300,
+  borderRadius: 2,
+  p: 2,
+  overflowY: 'auto', // 세로 스크롤 활성화
 };
 
 const tableStyle = {
@@ -62,9 +57,8 @@ export default function DataTableButton({ summary, onSelectData }) {
       <button
         onClick={handleOpen}
         style={{
-          width: '200px',
-          marginRight: '10px',
-          padding: '0.75rem 0.1rem',
+          width: '160px',
+          padding: '0.5rem 1rem',
           backgroundColor: '#4CAF50', // 새로운 색상 (초록)
           color: '#FFFFFF',
           borderRadius: '0.5rem',
@@ -75,6 +69,7 @@ export default function DataTableButton({ summary, onSelectData }) {
           boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.15)',
           transition: 'background-color 0.3s ease, transform 0.2s ease',
           outline: 'none',
+          marginRight: '10px',
         }}
         onMouseOver={(e) => {
           e.target.style.backgroundColor = '#66BB6A'; // 마우스 오버 시 밝은 초록색

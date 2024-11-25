@@ -7,30 +7,627 @@ import {
   Stepper,
   Tooltip,
 } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactQuill from 'react-quill';
 import './customContainer.css';
+import { AiOutlineArrowDown, AiOutlineArrowUp } from 'react-icons/ai';
+import { BsFillTrashFill } from 'react-icons/bs';
+import DataTableButton from '../liveClass/teacher/component/button/DataTableButton';
+import { customAxios } from '../../Common/CustomAxios';
+import { convertToNumber } from '../../Data/DataInChart/store/utils/convertToNumber';
+
+//항목 이름 (한국어 -> 영어)
+const engToKor = (name) => {
+  const kor = {
+    ITEMDATE: '측정일',
+
+    //수질 데이터
+    PTNM: '조사지점명',
+    ITEMWMWK: '회차',
+    ITEMWNDEP: '수심',
+    ITEMTEMP: '수온',
+    ITEMDO: '용존 산소',
+    ITEMBOD: 'BOD',
+    ITEMCOD: 'COD',
+    ITEMSS: '부유물',
+    ITEMTN: '총 질소',
+    ITEMTP: '총인',
+    ITEMTOC: '총유기탄소',
+
+    //대기질 데이터
+    stationName: '조사지점명',
+    ITEMNO2: '산소 농도(ppm)',
+    ITEMO3: '오존 농도(ppm)',
+    ITEMPM10: '미세먼지(PM10) 농도(㎍/㎥)',
+    ITEMPM25: '미세먼지(PM2.5) 농도(㎍/㎥)',
+    ITEMSO2VALUE: '아황산가스 농도(ppm)',
+
+    //시도별 대기질 데이터
+    ITEMCODE: '변인',
+    ITEMDATETIME: '측정 시간',
+    ITEMDAEGU: '대구',
+    ITEMCHUNGNAM: '충남',
+    ITEMINCHEON: '인천',
+    ITEMDAEJEON: '대전',
+    ITEMGYONGBUK: '경북',
+    ITEMSEJONG: '세종',
+    ITEMGWANGJU: '광주',
+    ITEMJEONBUK: '전북',
+    ITEMGANGWON: '강원',
+    ITEMULSAN: '울산',
+    ITEMJEONNAM: '전남',
+    ITEMSEOUL: '서울',
+    ITEMBUSAN: '부산',
+    ITEMJEJU: '제주',
+    ITEMCHUNGBUK: '충북',
+    ITEMGYEONGNAM: '경남',
+    ITEMGYEONGGI: '경기',
+
+    //SEED 데이터
+    measuredDate: '측정 시간',
+    location: '측정 장소',
+    unit: '소속',
+    period: '저장 주기',
+    username: '사용자명',
+    hum: '습도',
+    temp: '기온',
+    tur: '탁도',
+    ph: 'pH',
+    dust: '미세먼지',
+    dox: '용존산소량',
+    co2: '이산화탄소',
+    lux: '조도',
+    hum_EARTH: '토양 습도',
+    pre: '기압',
+  };
+  return kor[name] || name;
+};
 
 function CreateClassPage() {
-  const [steps, setSteps] = useState([]);
-  const [contents, setContents] = useState([]);
+  const [eclassContents, setEclassContents] = useState([
+    {
+      stepTitle: '스텝1',
+      contents: [],
+    },
+  ]);
   const [activeStepIndex, setActiveStepIndex] = useState(0);
   const [quillData, setQuillData] = useState(null);
+  const [summary, setSummary] = useState([]);
+
+  useEffect(() => {
+    const username = localStorage.getItem('username');
+
+    const fetchData = async () => {
+      try {
+        const myDataResponse = await customAxios.get('/mydata/list');
+        const myDataFormatted = myDataResponse.data.map((data) => ({
+          ...data,
+          saveDate: data.saveDate.split('T')[0],
+          dataLabel:
+            data.dataLabel === 'AIRQUALITY'
+              ? '대기질 데이터'
+              : data.dataLabel === 'OCEANQUALITY'
+              ? '수질 데이터'
+              : data.dataLabel === 'CITYAIRQUALITY'
+              ? '시도별 대기질 데이터'
+              : data.dataLabel,
+        }));
+
+        const customDataResponse = await customAxios.get(
+          `/api/custom/list?username=${username}`,
+        );
+
+        const customDataFormatted = customDataResponse.data.map((data) => ({
+          ...data,
+          saveDate: data.saveDate.split('T')[0],
+          dataLabel:
+            data.dataLabel === 'CUSTOM' ? '커스텀 데이터' : data.dataLabel,
+          dynamicFields: data.dynamicFields || {},
+        }));
+
+        const combinedData = [...myDataFormatted, ...customDataFormatted];
+        setSummary(combinedData);
+      } catch (error) {
+        console.error('데이터 가져오기 중 오류:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleSelectData = async (type, id) => {
+    try {
+      let path = '';
+      let dataContent;
+      console.log(type);
+      if (type === '커스텀 데이터') {
+        customAxios
+          .get(`api/custom/${id}`)
+          .then((res) => {
+            //수정 필요
+            console.log(res.data.title);
+            const title = res.data.title;
+            let rows = 0;
+            let columns = 0;
+            const headerSet = new Set();
+            res.data.numericFields.forEach((table) => {
+              const key = Object.keys(table)[0];
+              headerSet.add(key);
+            });
+
+            res.data.stringFields.forEach((table) => {
+              const key = Object.keys(table)[0];
+              headerSet.add(key);
+            });
+
+            columns = headerSet.size;
+            rows =
+              (res.data.numericFields.length + res.data.stringFields.length) /
+              columns;
+            const variables = Array(columns);
+
+            const data = Array(rows + 1)
+              .fill()
+              .map(() => Array(columns).fill(0));
+
+            res.data.numericFields.forEach((table) => {
+              const key = Object.keys(table)[0];
+              if (table[key].order < columns) {
+                data[0][table[key].order] = key;
+                variables[table[key].order] = {
+                  name: key,
+                  type: 'Numeric',
+                  isSelected: false,
+                  isMoreSelected: false,
+                  variableIndex: table[key].order,
+                };
+              }
+
+              data[Math.floor(table[key].order / columns) + 1][
+                table[key].order % columns
+              ] = convertToNumber(table[key].value);
+            });
+
+            res.data.stringFields.forEach((table) => {
+              const key = Object.keys(table)[0];
+              if (table[key].order < columns) {
+                data[0][table[key].order] = key;
+                variables[table[key].order] = {
+                  name: key,
+                  type: 'Categorical',
+                  isSelected: false,
+                  isMoreSelected: false,
+                  variableIndex: table[key].order,
+                };
+              }
+              data[Math.floor(table[key].order / columns) + 1][
+                table[key].order % columns
+              ] = convertToNumber(table[key].value);
+            });
+            console.log(data);
+            dataContent = data;
+
+            // localStorage.setItem('data', JSON.stringify(data));
+            // localStorage.setItem('title', JSON.stringify(title));
+
+            // JSON 데이터를 테이블 형식으로 변환하여 contents에 추가
+            let headers = dataContent[0];
+
+            const tableContent = (
+              <div style={{ width: 'auto', overflowX: 'auto' }}>
+                <div
+                  style={{
+                    transform: 'scale(1)',
+                    transformOrigin: 'top left',
+                  }}
+                >
+                  <table
+                    style={{
+                      width: '100%',
+                      marginTop: '10px',
+                      borderCollapse: 'collapse',
+                      tableLayout: 'fixed', // 테이블 셀 너비를 고정
+                    }}
+                  >
+                    <thead>
+                      <tr>
+                        {headers.map((header) => (
+                          <th
+                            key={header}
+                            style={{
+                              border: '1px solid #ddd',
+                              padding: '8px',
+                              backgroundColor: '#f2f2f2',
+                              wordWrap: 'break-word', // 긴 단어를 줄바꿈
+                              fontSize: '10px', // 테이블 길이에 맞춰서 size 조절 수정해야함
+                            }}
+                          >
+                            {header}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {dataContent.map((row, rowIndex) => (
+                        <tr
+                          key={rowIndex}
+                          style={{ borderBottom: '1px solid #ddd' }}
+                        >
+                          {row.map((item) => (
+                            <td
+                              key={`${rowIndex}-${item}`}
+                              style={{
+                                border: '1px solid #ddd',
+                                padding: '8px',
+                                wordWrap: 'break-word', // 긴 단어를 줄바꿈
+                                fontSize: '10px', // 테이블 길이에 맞춰서 size 조절 수정해야함
+                              }}
+                            >
+                              {item}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+
+            setEclassContents((prev) => {
+              const tempEclassContents = prev.map((eclassContent) => ({
+                ...eclassContent,
+                contents: [...eclassContent.contents],
+              }));
+
+              tempEclassContents[activeStepIndex].contents.push({
+                type: 'data',
+                content: tableContent,
+              });
+
+              return tempEclassContents;
+            });
+          })
+          .catch((err) => console.log(err));
+      } else {
+        let headers = [];
+        let path = '';
+
+        if (type === '수질 데이터') {
+          path = `/ocean-quality/mine/chunk?dataUUID=${id}`;
+          await customAxios
+            .get(path)
+            .then((res) => {
+              // 남기고 싶은 키 목록
+              const keysToKeep = [
+                'PTNM',
+                'ITEMDATE',
+                'ITEMWMWK',
+                'ITEMWNDEP',
+                'ITEMBOD',
+                'ITEMCOD',
+                'ITEMDO',
+                'ITEMSS',
+                'ITEMTEMP',
+                'ITEMTN',
+                'ITEMTOC',
+                'ITEMTP',
+              ];
+
+              // 변환 로직
+              const transformedData = res.data[0].data.map((item) => {
+                const newItem = {};
+                keysToKeep.forEach((key) => {
+                  if (item[key] !== undefined) {
+                    if (item[key] === null) return;
+                    else if (isNaN(item[key])) newItem[key] = item[key];
+                    else newItem[key] = Number(item[key]);
+                  } else {
+                    newItem[key] = null; // 해당 키가 없으면 null로 설정
+                  }
+                });
+                return newItem;
+              });
+              console.log(transformedData);
+              headers = Object.keys(transformedData[0]);
+
+              headers = headers.map((header) => engToKor(header));
+
+              dataContent = transformedData.map((item) => Object.values(item));
+              // 최종 결과 생성 (헤더 + 값)
+              const recombined = [headers, ...dataContent];
+              console.log(recombined);
+            })
+            .catch((err) => console.log(err));
+        } else if (type === '대기질 데이터') {
+          path = `/air-quality/mine/chunk?dataUUID=${id}`;
+          await customAxios
+            .get(path)
+            .then((res) => {
+              // 남기고 싶은 키 목록
+              const keysToKeep = [
+                'stationName',
+                'ITEMDATE',
+                'ITEMNO2',
+                'ITEMO3',
+                'ITEMPM10',
+                'ITEMPM25',
+                'ITEMSO2VALUE',
+              ];
+              console.log(res.data);
+
+              // 변환 로직
+              const transformedData = res.data.data.map((item) => {
+                const newItem = {};
+                keysToKeep.forEach((key) => {
+                  if (item[key] !== undefined) {
+                    if (item[key] === null) return;
+                    else if (isNaN(item[key])) newItem[key] = item[key];
+                    else newItem[key] = Number(item[key]);
+                  } else {
+                    newItem[key] = null; // 해당 키가 없으면 null로 설정
+                  }
+                });
+                return newItem;
+              });
+              console.log(transformedData);
+              headers = Object.keys(transformedData[0]);
+
+              headers = headers.map((header) => engToKor(header));
+
+              dataContent = transformedData.map((item) => Object.values(item));
+              // 최종 결과 생성 (헤더 + 값)
+              const recombined = [headers, ...dataContent];
+              console.log(recombined);
+            })
+            .catch((err) => console.log(err));
+        } else if (type === '시도별 대기질 데이터') {
+          path = `/city-air-quality/mine/chunk?dataUUID=${id}`;
+          await customAxios
+            .get(path)
+            .then((res) => {
+              // 남기고 싶은 키 목록
+              const keysToKeep = [
+                'ITEMCODE',
+                'ITEMDATETIME',
+                'ITEMDAEGU',
+                'ITEMCHUNGNAM',
+                'ITEMINCHEON',
+                'ITEMDAEJEON',
+                'ITEMGYONGBUK',
+                'ITEMSEJONG',
+                'ITEMGWANGJU',
+                'ITEMJEONBUK',
+                'ITEMGANGWON',
+                'ITEMULSAN',
+                'ITEMJEONNAM',
+                'ITEMSEOUL',
+                'ITEMBUSAN',
+                'ITEMJEJU',
+                'ITEMCHUNGBUK',
+                'ITEMGYEONGNAM',
+                'ITEMGYEONGGI',
+              ];
+              console.log(res.data);
+
+              // 변환 로직
+              const transformedData = res.data.data.map((item) => {
+                const newItem = {};
+                keysToKeep.forEach((key) => {
+                  if (item[key] === null) return;
+                  else if (item[key] !== undefined) {
+                    newItem[key] = item[key];
+                  } else {
+                    newItem[key] = null; // 해당 키가 없으면 null로 설정
+                  }
+                });
+                return newItem;
+              });
+              console.log(transformedData);
+              headers = Object.keys(transformedData[0]);
+
+              headers = headers.map((header) => engToKor(header));
+
+              dataContent = transformedData.map((item) => Object.values(item));
+              // 최종 결과 생성 (헤더 + 값)
+              const recombined = [headers, ...dataContent];
+              console.log(recombined);
+            })
+            .catch((err) => console.log(err));
+        }
+        console.log(dataContent);
+        const tableContent = (
+          <div style={{ width: 'auto', overflowX: 'auto' }}>
+            <div
+              style={{
+                transform: 'scale(1)',
+                transformOrigin: 'top left',
+              }}
+            >
+              <table
+                style={{
+                  width: '100%',
+                  marginTop: '10px',
+                  borderCollapse: 'collapse',
+                  tableLayout: 'fixed', // 테이블 셀 너비를 고정
+                }}
+              >
+                <thead>
+                  <tr>
+                    {headers.map((header) => (
+                      <th
+                        key={header}
+                        style={{
+                          border: '1px solid #ddd',
+                          padding: '8px',
+                          backgroundColor: '#f2f2f2',
+                          wordWrap: 'break-word', // 긴 단어를 줄바꿈
+                          fontSize: '10px', // 테이블 길이에 맞춰서 size 조절 수정해야함
+                        }}
+                      >
+                        {header}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {dataContent.map((row, rowIndex) => (
+                    <tr
+                      key={rowIndex}
+                      style={{ borderBottom: '1px solid #ddd' }}
+                    >
+                      {headers.map((header, index) => (
+                        <td
+                          key={`${rowIndex}-${header}`}
+                          style={{
+                            border: '1px solid #ddd',
+                            padding: '8px',
+                            wordWrap: 'break-word', // 긴 단어를 줄바꿈
+                            fontSize: '10px', // 테이블 길이에 맞춰서 size 조절 수정해야함
+                          }}
+                        >
+                          {row[index]}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        );
+        setEclassContents((prev) => {
+          const tempEclassContents = prev.map((eclassContent) => ({
+            ...eclassContent,
+            contents: [...eclassContent.contents],
+          }));
+
+          tempEclassContents[activeStepIndex].contents.push({
+            type: 'data',
+            content: tableContent,
+          });
+
+          return tempEclassContents;
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
 
   const addStep = () => {
-    if (steps.length === 6) {
+    if (eclassContents.length === 6) {
       alert('최대 스텝 개수는 6개입니다.');
       return;
     }
-    setSteps([...steps, '']);
+    setEclassContents((prev) => {
+      const tempEclassContents = prev.map((eclassContent) => ({
+        ...eclassContent,
+        contents: [...eclassContent.contents],
+      }));
+      tempEclassContents.push({
+        stepTitle: '추가된 스텝',
+        contents: [],
+      });
+      return tempEclassContents;
+    });
   };
   const deleteCurStep = (filteredIndex) => {
-    console.log(filteredIndex);
-    setSteps([...steps].filter((value, index) => index !== filteredIndex));
+    if (filteredIndex === 0) setActiveStepIndex(0);
+    else setActiveStepIndex(activeStepIndex - 1);
+    setEclassContents((prev) => {
+      const tempEclassContents = prev.map((eclassContent) => ({
+        ...eclassContent,
+        contents: [...eclassContent.contents],
+      }));
+      return tempEclassContents.filter(
+        (value, index) => index !== filteredIndex,
+      );
+    });
   };
 
-  console.log(quillData);
-  console.log(contents);
+  const moveUp = (index) => {
+    if (index === 0) return;
+
+    setEclassContents((prev) => {
+      const tempEclassContents = prev.map((eclassContent) => ({
+        ...eclassContent,
+        contents: [...eclassContent.contents],
+      }));
+
+      const tempContens =
+        tempEclassContents[activeStepIndex].contents[index - 1];
+      tempEclassContents[activeStepIndex].contents[index - 1] =
+        tempEclassContents[activeStepIndex].contents[index];
+      tempEclassContents[activeStepIndex].contents[index] = tempContens;
+
+      return tempEclassContents;
+    });
+  };
+
+  const moveDown = (index) => {
+    if (index === eclassContents[activeStepIndex].contents.length - 1) return;
+
+    setEclassContents((prev) => {
+      const tempEclassContents = prev.map((eclassContent) => ({
+        ...eclassContent,
+        contents: [...eclassContent.contents],
+      }));
+
+      const tempContens =
+        tempEclassContents[activeStepIndex].contents[index + 1];
+      tempEclassContents[activeStepIndex].contents[index + 1] =
+        tempEclassContents[activeStepIndex].contents[index];
+      tempEclassContents[activeStepIndex].contents[index] = tempContens;
+
+      return tempEclassContents;
+    });
+  };
+
+  const deleteItem = (deletedIndex) => {
+    setEclassContents((prev) => {
+      const tempEclassContents = prev.map((eclassContent) => ({
+        ...eclassContent,
+        contents: [...eclassContent.contents],
+      }));
+
+      tempEclassContents[activeStepIndex].contents = tempEclassContents[
+        activeStepIndex
+      ].contents.filter((value, index) => deletedIndex !== index);
+
+      console.log(tempEclassContents);
+
+      return tempEclassContents;
+    });
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setEclassContents((prev) => {
+          const tempEclassContents = prev.map((eclassContent) => ({
+            ...eclassContent,
+            contents: [...eclassContent.contents],
+          }));
+
+          tempEclassContents[activeStepIndex].contents.push({
+            type: 'img',
+            url: reader.result,
+            file,
+          });
+
+          console.log(tempEclassContents);
+
+          return tempEclassContents;
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  console.log(eclassContents);
   return (
     <div
       style={{
@@ -113,7 +710,7 @@ function CreateClassPage() {
             activeStep={activeStepIndex}
             style={{ width: '920px', overflow: 'auto' }}
           >
-            {steps.map((label, index) => (
+            {eclassContents.map((eclassContent, index) => (
               <Step key={index}>
                 <StepLabel
                   sx={{
@@ -144,13 +741,18 @@ function CreateClassPage() {
                       transition: 'box-shadow 0.2s, border-color 0.2s',
                     }}
                     type="text"
-                    value={label}
+                    value={eclassContent.stepTitle}
                     placeholder="스텝 이름 입력"
                     onChange={(e) => {
-                      setSteps((prev) => {
-                        const tempSteps = [...prev];
-                        tempSteps[index] = e.target.value;
-                        return tempSteps;
+                      setEclassContents((prev) => {
+                        const tempEclassContents = prev.map(
+                          (eclassContent) => ({
+                            ...eclassContent,
+                            contents: [...eclassContent.contents],
+                          }),
+                        );
+                        tempEclassContents[index].stepTitle = e.target.value;
+                        return tempEclassContents;
                       });
                     }}
                   />
@@ -215,26 +817,118 @@ function CreateClassPage() {
         <div
           style={{
             width: '750px',
-            height: '500px',
+            height: '700px',
             boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
             overflowY: 'auto',
             margin: '0 20px 80px 0px',
           }}
           className="custom-html-container ql-editor"
         >
-          {/* {localContents.map((item, index) => (
-            <DraggableItem
-              key={index}
-              index={index}
-              item={item}
-              moveItem={moveItem}
-              handleDeleteContent={handleDeleteContent}
-              handleTextBoxChange={handleTextBoxChange}
-            />
-          ))} */}
-          {contents.map((item, index) => (
-            <div key={index} dangerouslySetInnerHTML={{ __html: item }} />
-          ))}
+          {eclassContents.length > 0 &&
+            eclassContents[activeStepIndex].contents.map((item, index) => (
+              <div
+                style={{
+                  fontFamily: 'Arial',
+                }}
+              >
+                <div
+                  key={index}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '10px',
+                    margin: '5px 0',
+                  }}
+                >
+                  {/* 아이템 콘텐츠(답변 박스, 글 상자) */}
+                  {(item.type === 'textBox' || item.type === 'html') && (
+                    <div dangerouslySetInnerHTML={{ __html: item.content }} />
+                  )}
+                  {/* 아이템 콘텐츠(이미지) */}
+                  {item.type === 'img' && (
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: `<img src=${item.url} />`,
+                      }}
+                    />
+                  )}
+
+                  {/* 아이템 콘텐츠(이미지) */}
+                  {item.type === 'data' &&
+                    React.createElement(item.content.type, item.content.props)}
+                  {/* 아이콘 버튼 */}
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: '15px',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <AiOutlineArrowUp
+                        onClick={() => moveUp(index)}
+                        style={{
+                          cursor: 'pointer',
+                          fontSize: '24px', // 아이콘 크기 증가
+                          color: '#007bff', // 기본 색상 파란색
+                          transition: 'transform 0.2s ease', // 부드러운 애니메이션 효과
+                        }}
+                        title="Move Up"
+                        onMouseEnter={(e) =>
+                          (e.target.style.transform = 'scale(1.2)')
+                        } // 호버 시 크기 증가
+                        onMouseLeave={(e) =>
+                          (e.target.style.transform = 'scale(1)')
+                        } // 호버 해제 시 원래 크기로
+                      />
+                      <AiOutlineArrowDown
+                        onClick={() => moveDown(index)}
+                        style={{
+                          cursor: 'pointer',
+                          fontSize: '24px', // 아이콘 크기 증가
+                          color: '#007bff', // 기본 색상 파란색
+                          transition: 'transform 0.2s ease', // 부드러운 애니메이션 효과
+                        }}
+                        title="Move Down"
+                        onMouseEnter={(e) =>
+                          (e.target.style.transform = 'scale(1.2)')
+                        } // 호버 시 크기 증가
+                        onMouseLeave={(e) =>
+                          (e.target.style.transform = 'scale(1)')
+                        } // 호버 해제 시 원래 크기로
+                      />
+                    </div>
+
+                    <BsFillTrashFill
+                      onClick={() => deleteItem(index)}
+                      style={{
+                        cursor: 'pointer',
+                        fontSize: '24px', // 아이콘 크기 증가
+                        color: '#e74c3c', // 삭제 버튼 빨간색
+                        transition: 'transform 0.2s ease, color 0.2s ease', // 부드러운 애니메이션 효과
+                      }}
+                      title="Delete"
+                      onMouseEnter={(e) => {
+                        e.target.style.transform = 'scale(1.2)'; // 호버 시 크기 증가
+                        e.target.style.color = '#c0392b'; // 호버 시 색상 변화
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.transform = 'scale(1)'; // 호버 해제 시 원래 크기로
+                        e.target.style.color = '#e74c3c'; // 호버 해제 시 색상 원상 복귀
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
         </div>
 
         <div
@@ -263,9 +957,9 @@ function CreateClassPage() {
             >
               <button
                 style={{
-                  width: '170px',
+                  width: '120px',
                   padding: '0.5rem 1rem',
-                  backgroundColor: '#4CAF50', // 새로운 색상 (초록)
+                  backgroundColor: '#FF9800', // 새로운 색상 (주황색)
                   color: '#FFFFFF',
                   borderRadius: '0.5rem',
                   fontWeight: '600',
@@ -278,62 +972,41 @@ function CreateClassPage() {
                   marginRight: '10px',
                 }}
                 onMouseOver={(e) => {
-                  e.target.style.backgroundColor = '#66BB6A'; // 마우스 오버 시 밝은 초록색
+                  e.target.style.backgroundColor = '#FFA500'; // 마우스 오버 시 밝은 주황색
                   e.target.style.transform = 'scale(1.05)'; // 확대 효과
                 }}
                 onMouseOut={(e) => {
-                  e.target.style.backgroundColor = '#4CAF50'; // 기본 초록색
+                  e.target.style.backgroundColor = '#FF9800'; // 기본 주황색
                   e.target.style.transform = 'scale(1)'; // 원래 크기로 복구
                 }}
                 onClick={() => {
-                  setContents((prev) => [...prev, quillData]);
+                  setEclassContents((prev) => {
+                    const tempEclassContents = prev.map((eclassContent) => ({
+                      ...eclassContent,
+                      contents: [...eclassContent.contents],
+                    }));
+                    tempEclassContents[activeStepIndex].contents = [
+                      ...tempEclassContents[activeStepIndex].contents,
+                      {
+                        type: 'html',
+                        content: quillData,
+                      },
+                    ];
+                    return tempEclassContents;
+                  });
+
                   setQuillData(null);
                 }}
               >
                 글상자 포함
               </button>
-              <button
+              <label
+                htmlFor="imageUpload"
                 style={{
-                  width: '170px',
+                  width: '120px',
+                  textAlign: 'center',
                   padding: '0.5rem 1rem',
-                  backgroundColor: '#4CAF50', // 새로운 색상 (초록)
-                  color: '#FFFFFF',
-                  borderRadius: '0.5rem',
-                  fontWeight: '600',
-                  fontSize: '1rem',
-                  cursor: 'pointer',
-                  border: 'none',
-                  boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.15)',
-                  transition: 'background-color 0.3s ease, transform 0.2s ease',
-                  outline: 'none',
-                }}
-                onMouseOver={(e) => {
-                  e.target.style.backgroundColor = '#66BB6A'; // 마우스 오버 시 밝은 초록색
-                  e.target.style.transform = 'scale(1.05)'; // 확대 효과
-                }}
-                onMouseOut={(e) => {
-                  e.target.style.backgroundColor = '#4CAF50'; // 기본 초록색
-                  e.target.style.transform = 'scale(1)'; // 원래 크기로 복구
-                }}
-                onClick={() => {
-                  setContents((prev) => [
-                    ...prev,
-                    `<textarea
-                      style="width: 100%; height: 150px; padding: 10px; fontSize: 16px; lineHeight: 1.5; color: #374151; border: 1px solid #D1D5DB; borderRadius: 8px;  boxShadow: 0px 4px 10px rgba(0, 0, 0, 0.1); outline: none; resize: vertical; backgroundColor: #F9FAFB";
-                      placeholder="학생이 여기에 답변을 입력합니다"
-                      disabled/>`,
-                  ]);
-                }}
-              >
-                답변 박스 추가
-              </button>
-            </div>
-            <div>
-              <button
-                style={{
-                  width: '170px',
-                  padding: '0.5rem 1rem',
-                  backgroundColor: '#4CAF50', // 새로운 색상 (초록)
+                  backgroundColor: '#FF9800', // 새로운 색상 (주황색)
                   color: '#FFFFFF',
                   borderRadius: '0.5rem',
                   fontWeight: '600',
@@ -346,19 +1019,85 @@ function CreateClassPage() {
                   marginRight: '10px',
                 }}
                 onMouseOver={(e) => {
-                  e.target.style.backgroundColor = '#66BB6A'; // 마우스 오버 시 밝은 초록색
+                  e.target.style.backgroundColor = '#FFA500'; // 마우스 오버 시 밝은 주황색
                   e.target.style.transform = 'scale(1.05)'; // 확대 효과
                 }}
                 onMouseOut={(e) => {
-                  e.target.style.backgroundColor = '#4CAF50'; // 기본 초록색
+                  e.target.style.backgroundColor = '#FF9800'; // 기본 주황색
                   e.target.style.transform = 'scale(1)'; // 원래 크기로 복구
                 }}
               >
-                테이블 추가
-              </button>
+                이미지 추가
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                id="imageUpload"
+                onChange={handleFileChange}
+              />
               <button
                 style={{
-                  width: '170px',
+                  width: '140px',
+                  padding: '0.5rem 1rem',
+                  backgroundColor: '#FF9800', // 새로운 색상 (주황색)
+                  color: '#FFFFFF',
+                  borderRadius: '0.5rem',
+                  fontWeight: '600',
+                  fontSize: '1rem',
+                  cursor: 'pointer',
+                  border: 'none',
+                  boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.15)',
+                  transition: 'background-color 0.3s ease, transform 0.2s ease',
+                  outline: 'none',
+                  marginRight: '10px',
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.backgroundColor = '#FFA500'; // 마우스 오버 시 밝은 주황색
+                  e.target.style.transform = 'scale(1.05)'; // 확대 효과
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.backgroundColor = '#FF9800'; // 기본 주황색
+                  e.target.style.transform = 'scale(1)'; // 원래 크기로 복구
+                }}
+                onClick={() => {
+                  setEclassContents((prev) => {
+                    const tempEclassContents = prev.map((eclassContent) => ({
+                      ...eclassContent,
+                      contents: [...eclassContent.contents],
+                    }));
+                    tempEclassContents[activeStepIndex].contents = [
+                      ...tempEclassContents[activeStepIndex].contents,
+                      {
+                        type: 'textBox',
+                        content: `<textarea
+                        style="width: 550px; height: 150px; padding: 10px; fontSize: 16px; lineHeight: 1.5; color: #374151; border: 1px solid #D1D5DB; borderRadius: 8px;  boxShadow: 0px 4px 10px rgba(0, 0, 0, 0.1); outline: none; resize: vertical; backgroundColor: #F9FAFB";
+                        placeholder="학생이 여기에 답변을 입력합니다"
+                        disabled/>`,
+                      },
+                    ];
+                    return tempEclassContents;
+                  });
+                }}
+              >
+                답변 박스 추가
+              </button>
+            </div>
+
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+              }}
+            >
+              {/* 데이터 추가하기 버튼 */}
+              <DataTableButton
+                summary={summary}
+                onSelectData={handleSelectData}
+              />
+              <button
+                style={{
+                  width: '160px',
                   padding: '0.5rem 1rem',
                   backgroundColor: '#4CAF50', // 새로운 색상 (초록)
                   color: '#FFFFFF',
