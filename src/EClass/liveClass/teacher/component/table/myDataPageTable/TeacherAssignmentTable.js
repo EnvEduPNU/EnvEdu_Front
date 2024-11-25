@@ -93,13 +93,19 @@ export default function TeacherAssignmentTable(props) {
 
         const formattedData = filteredData.flatMap((data) =>
           data.contents.map((content) => ({
-            contentName: content.contentName,
+            contentName: content.contents[0].content,
             id: `${data.uuid}-${content.stepNum}`,
             Step: data.stepName,
             stepNum: content.stepNum,
           })),
         );
 
+        console.log(
+          '가져오는 데이터 : ' + JSON.stringify(filteredData, null, 2),
+        );
+        // console.log(
+        //   '포맷 된 데이터 : ' + JSON.stringify(formattedData, null, 2),
+        // );
         setTableData(formattedData);
         setAllTableData(filteredData);
         props.setTableData(filteredData);
@@ -126,7 +132,6 @@ export default function TeacherAssignmentTable(props) {
       .filter((data) => data.contents.length > 0);
 
     props.setTableData(filteredTableData);
-    props.setAssginmentShareCheck(null);
   };
 
   return (

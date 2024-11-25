@@ -127,40 +127,48 @@ export function StudentStepCompnent(props) {
   const assginmentCheckStompClient = async (state) => {
     let message = null;
 
-    if (page === 'stop') {
-      message = {
-        assginmentStatus: state,
-        sessionId: props.sessionIdState,
-        assginmentShared: false,
-        timestamp: new Date().toLocaleString('ko-KR', {
-          timeZone: 'Asia/Seoul',
-        }),
-      };
-    }
-    if (page === 'newPage') {
-      message = {
-        assginmentStatus: state,
-        sessionId: props.sessionIdState,
-        assginmentShared: true,
-        timestamp: new Date().toLocaleString('ko-KR', {
-          timeZone: 'Asia/Seoul',
-        }),
-      };
-    }
+    const setCheckAssignmentState = (page) => {
+      if (page === 'stop') {
+        message = {
+          assginmentStatus: state,
+          sessionId: props.sessionIdState,
+          assginmentShared: false,
+          timestamp: new Date().toLocaleString('ko-KR', {
+            timeZone: 'Asia/Seoul',
+          }),
+        };
+      }
+      if (page === 'newPage') {
+        message = {
+          assginmentStatus: state,
+          sessionId: props.sessionIdState,
+          assginmentShared: true,
+          timestamp: new Date().toLocaleString('ko-KR', {
+            timeZone: 'Asia/Seoul',
+          }),
+        };
+      }
+    };
 
-    if (
-      assginmentStompClient.current &&
-      assginmentStompClient.current.connected
-    ) {
-      console.log('공유 상태 보내기 : ' + JSON.stringify(message, null, 2));
-      await assginmentStompClient.current.publish({
-        destination: '/app/assginment-status', // 메시지를 보낼 경로
-        body: JSON.stringify(message), // 메시지 본문
-        headers: {}, // 선택적 헤더
-      });
-    } else {
-      console.error('STOMP 클라이언트가 연결되지 않았습니다.');
-    }
+    const sendCheckAssignmentState = async () => {
+      if (
+        assginmentStompClient.current &&
+        assginmentStompClient.current.connected &&
+        message !== null
+      ) {
+        console.log('공유 상태 보내기 : ' + JSON.stringify(message, null, 2));
+        await assginmentStompClient.current.publish({
+          destination: '/app/assginment-status', // 메시지를 보낼 경로
+          body: JSON.stringify(message), // 메시지 본문
+          headers: {}, // 선택적 헤더
+        });
+      } else {
+        console.error('STOMP 클라이언트가 연결되지 않았습니다.');
+      }
+    };
+
+    setCheckAssignmentState(page);
+    await sendCheckAssignmentState();
   };
 
   // 학생 ID 및 테이블 데이터 가져오기
