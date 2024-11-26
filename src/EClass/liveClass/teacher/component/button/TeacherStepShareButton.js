@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
 import { useLiveClassPartStore } from '../../../store/LiveClassPartStore';
+import { Button } from '@mui/material';
 
 export function TeacherStepShareButton({
   stepCount,
@@ -10,6 +11,8 @@ export function TeacherStepShareButton({
   setAssginmentShareCheck,
   setAssginmentShareStop,
   setStepCount,
+  sessionIds,
+  setAssginShareFlag,
 }) {
   const stompClientRef = useRef(null); // 소켓 연결을 참조하는 상태
   const [sessionId, setSessionId] = useState();
@@ -17,10 +20,15 @@ export function TeacherStepShareButton({
   const [assignShared, setAssignShared] = useState(false);
   const [assginmentSubmit, setAssginmentSubmit] = useState();
   const [reportSubmit, setReportSubmit] = useState();
+  const [studentList, setStudentList] = useState([]);
 
   const updateShareStatus = useLiveClassPartStore(
     (state) => state.updateShareStatus,
   );
+
+  useEffect(() => {
+    setStudentList(sessionIds);
+  }, [sessionIds]);
 
   useEffect(() => {
     if (!stompClientRef.current) {
@@ -123,21 +131,41 @@ export function TeacherStepShareButton({
       return;
     }
 
-    if (stompClientRef.current && !sharedScreenState) {
-      console.log('스텝카운트 ' + stepCount);
+    console.log('스텝카운트 ' + stepCount);
 
+    if (studentList.length < 1) {
+      alert('공유할 학생이 없습니다!');
+      return;
+    }
+
+    if (stompClientRef.current && !sharedScreenState) {
       const message = {
         page: 'newPage', // JSON 객체에서 "newPage"를 값으로 하는 'page' 키 생성
         stepCount: stepCount,
         lectureDataUuid: lectureDataUuid,
       };
-      stompClientRef.current.publish({
-        destination: '/app/switch', // 메시지를 보낼 경로
-        body: JSON.stringify(message), // 메시지 본문
-        headers: {}, // (선택 사항) 헤더
-      });
+
+      try {
+        stompClientRef.current.publish({
+          destination: '/app/switch', // 메시지를 보낼 경로
+          body: JSON.stringify(message), // 메시지 본문
+          headers: {}, // (선택 사항) 헤더
+        });
+
+        // publish가 성공하면 학생 수만큼 성공 메시지를 표시
+        alert(
+          `공유 성공: ${studentList.length}명의 학생에게 과제를 공유하였습니다.`,
+        );
+        setAssginShareFlag(true);
+      } catch (error) {
+        console.error('메시지 전송 에러:', error);
+        alert('공유 실패: 메시지를 전송하지 못했습니다.');
+      }
+    } else {
+      alert('공유 실패!');
     }
 
+    // 화면 공유 중 때는 과제 공유 못함
     if (sharedScreenState) {
       alert('화면 공유 중 입니다!');
     }
@@ -152,13 +180,25 @@ export function TeacherStepShareButton({
       const message = {
         page: 'stop', // JSON 객체에서 "stop"를 값으로 하는 'page' 키 생성
       };
-      stompClientRef.current.publish({
-        destination: '/app/switch', // 메시지를 보낼 경로
-        body: JSON.stringify(message), // 메시지 본문
-        headers: {}, // (선택 사항) 헤더
-      });
-      setAssginmentShareStop(true);
-      setStepCount(null);
+
+      try {
+        stompClientRef.current.publish({
+          destination: '/app/switch', // 메시지를 보낼 경로
+          body: JSON.stringify(message), // 메시지 본문
+          headers: {}, // (선택 사항) 헤더
+        });
+
+        // publish가 성공하면 학생 수만큼 성공 메시지를 표시
+        alert(`공유 중지되었습니다.`);
+        setAssignShared(false);
+
+        setAssginmentShareStop(true);
+        setStepCount(0);
+        setAssginShareFlag(false);
+      } catch (error) {
+        console.error('메시지 전송 에러:', error);
+        alert('공유 중지 실패!');
+      }
     }
 
     if (sharedScreenState) {
@@ -169,13 +209,14 @@ export function TeacherStepShareButton({
   return (
     <>
       {!assignShared ? (
-        <button
+        <Button
+          variant="contained"
           onClick={sendMessage}
           style={{
-            width: '18%',
-            marginLeft: '10px',
-            marginRight: 1,
-            fontFamily: "'Asap', sans-serif", // 버튼에 Asap 폰트 적용
+            marginTop: '10px',
+            width: '200px',
+            height: '30px',
+            fontFamily: "'Asap', sans-serif",
             fontWeight: '600',
             fontSize: '0.9rem',
             color: 'grey',
@@ -185,15 +226,16 @@ export function TeacherStepShareButton({
           }}
         >
           과제 공유
-        </button>
+        </Button>
       ) : (
-        <button
+        <Button
+          variant="contained"
           onClick={sendStopMessage}
           style={{
-            width: '18%',
-            margin: '10px 0 0 10px ',
-            marginRight: 1,
-            fontFamily: "'Asap', sans-serif", // 버튼에 Asap 폰트 적용
+            marginTop: '10px',
+            width: '200px',
+            height: '30px',
+            fontFamily: "'Asap', sans-serif",
             fontWeight: '600',
             fontSize: '0.9rem',
             color: 'grey',
@@ -203,7 +245,7 @@ export function TeacherStepShareButton({
           }}
         >
           과제 중지
-        </button>
+        </Button>
       )}
     </>
   );
