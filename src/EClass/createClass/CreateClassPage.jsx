@@ -15,6 +15,8 @@ import { BsFillTrashFill } from 'react-icons/bs';
 import DataTableButton from '../liveClass/teacher/component/button/DataTableButton';
 import { customAxios } from '../../Common/CustomAxios';
 import { convertToNumber } from '../../Data/DataInChart/store/utils/convertToNumber';
+import { createEclass } from './api/eclass';
+import { v4 as uuidv4 } from 'uuid';
 
 //항목 이름 (한국어 -> 영어)
 const engToKor = (name) => {
@@ -84,6 +86,7 @@ const engToKor = (name) => {
 };
 
 function CreateClassPage() {
+  const [eclassTitle, setEclassTitle] = useState('');
   const [eclassContents, setEclassContents] = useState([
     {
       stepTitle: '스텝1',
@@ -135,7 +138,24 @@ function CreateClassPage() {
     fetchData();
   }, []);
 
-  const handleSelectData = async (type, id) => {
+  const handleSelectData = async (type, id, type2) => {
+    console.log(type2);
+    if (type2 === 'graph') {
+      setEclassContents((prev) => {
+        const tempEclassContents = prev.map((eclassContent) => ({
+          ...eclassContent,
+          contents: [...eclassContent.contents],
+        }));
+
+        tempEclassContents[activeStepIndex].contents.push({
+          type: 'dataInChartButton',
+          content: id,
+        });
+
+        return tempEclassContents;
+      });
+      return;
+    }
     try {
       let path = '';
       let dataContent;
@@ -145,7 +165,7 @@ function CreateClassPage() {
           .get(`api/custom/${id}`)
           .then((res) => {
             //수정 필요
-            console.log(res.data.title);
+
             const title = res.data.title;
             let rows = 0;
             let columns = 0;
@@ -695,6 +715,10 @@ function CreateClassPage() {
               e.target.style.boxShadow = '0 1px 2px rgba(0, 0, 0, 0.05)';
               e.target.style.borderColor = '#d1d5db';
             }}
+            value={eclassTitle}
+            onChange={(e) => {
+              setEclassTitle(e.target.value);
+            }}
           />
         </div>
         <hr
@@ -854,9 +878,45 @@ function CreateClassPage() {
                     />
                   )}
 
-                  {/* 아이템 콘텐츠(이미지) */}
+                  {/* 아이템 콘텐츠(테이블) */}
                   {item.type === 'data' &&
                     React.createElement(item.content.type, item.content.props)}
+
+                  {/* 아이템 콘텐츠(그래프) */}
+                  {item.type === 'dataInChartButton' && (
+                    <button
+                      style={{
+                        width: '180px',
+                        textAlign: 'center',
+                        padding: '0.5rem 1rem',
+                        backgroundColor: '#8E44AD', // 기본 색상 (짙은 보라색)
+                        color: '#FFFFFF',
+                        borderRadius: '0.5rem',
+                        fontWeight: '600',
+                        fontSize: '1rem',
+                        cursor: 'pointer',
+                        border: 'none',
+                        boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.15)',
+                        transition:
+                          'background-color 0.3s ease, transform 0.2s ease',
+                        outline: 'none',
+                        marginRight: '10px',
+                      }}
+                      onMouseOver={(e) => {
+                        e.target.style.backgroundColor = '#A569BD'; // 마우스 오버 시 밝은 보라색
+                        e.target.style.transform = 'scale(1.05)'; // 확대 효과
+                      }}
+                      onMouseOut={(e) => {
+                        e.target.style.backgroundColor = '#8E44AD'; // 기본 보라색
+                        e.target.style.transform = 'scale(1)'; // 원래 크기로 복구
+                      }}
+                      onClick={() => {
+                        alert('학생이 수업때 사용할 수 있는 버튼입니다 ^^');
+                      }}
+                    >
+                      그래프 그리러 가기
+                    </button>
+                  )}
                   {/* 아이콘 버튼 */}
                   <div
                     style={{
@@ -1094,33 +1154,13 @@ function CreateClassPage() {
               <DataTableButton
                 summary={summary}
                 onSelectData={handleSelectData}
+                type="table"
               />
-              <button
-                style={{
-                  width: '160px',
-                  padding: '0.5rem 1rem',
-                  backgroundColor: '#4CAF50', // 새로운 색상 (초록)
-                  color: '#FFFFFF',
-                  borderRadius: '0.5rem',
-                  fontWeight: '600',
-                  fontSize: '1rem',
-                  cursor: 'pointer',
-                  border: 'none',
-                  boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.15)',
-                  transition: 'background-color 0.3s ease, transform 0.2s ease',
-                  outline: 'none',
-                }}
-                onMouseOver={(e) => {
-                  e.target.style.backgroundColor = '#66BB6A'; // 마우스 오버 시 밝은 초록색
-                  e.target.style.transform = 'scale(1.05)'; // 확대 효과
-                }}
-                onMouseOut={(e) => {
-                  e.target.style.backgroundColor = '#4CAF50'; // 기본 초록색
-                  e.target.style.transform = 'scale(1)'; // 원래 크기로 복구
-                }}
-              >
-                그래프 그리기 추가
-              </button>
+              <DataTableButton
+                summary={summary}
+                onSelectData={handleSelectData}
+                type="graph"
+              />
             </div>
           </div>
           <button
@@ -1147,6 +1187,71 @@ function CreateClassPage() {
             onMouseOut={(e) => {
               e.target.style.backgroundColor = '#6A1B9A'; // 기본 보라색
               e.target.style.transform = 'scale(1)'; // 원래 크기로 복구
+            }}
+            onClick={async () => {
+              const postData = {
+                uuid: uuidv4(),
+                username: localStorage.getItem('username'),
+                timestamp: new Date().toISOString(),
+                stepName: eclassTitle,
+                stepCount: eclassContents.length,
+                thumbIng: '',
+                contents: eclassContents.map((eclassContent, stepIndex) => ({
+                  stepNum: stepIndex + 1,
+                  contentName: eclassContent.stepTitle,
+                  contents: [
+                    ...eclassContent.contents.map((content) => {
+                      if (
+                        content.type === 'textBox' ||
+                        content.type === 'html'
+                      ) {
+                        return {
+                          type: content.type,
+                          content: content.content,
+                          x: null,
+                          y: null,
+                        };
+                      }
+                      if (content.type === 'img') {
+                        return {
+                          type: content.type,
+                          content: '',
+                          x: null,
+                          y: null,
+                        };
+                      }
+                      if (content.type === 'data') {
+                        return {
+                          type: content.type,
+                          content: {
+                            type: 'div',
+                            key: null,
+                            ref: null,
+                            props: content.content.props,
+                          },
+                          x: null,
+                          y: null,
+                        };
+                      }
+
+                      if (content.type === 'dataInChartButton') {
+                        return {
+                          type: content.type,
+                          content: content.content,
+                          x: null,
+                          y: null,
+                        };
+                      }
+                    }),
+                  ],
+                })),
+              };
+              try {
+                await createEclass(postData);
+                alert('수업이 정상적으로 생성 되었습니다.');
+              } catch (e) {
+                console.log(e);
+              }
             }}
           >
             수업 생성
