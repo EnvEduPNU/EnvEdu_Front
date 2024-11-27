@@ -146,14 +146,14 @@ export default function StudentAssignmentTable(props) {
               return matchingAssignment
                 ? {
                     stepNum: content.stepNum,
-                    contentName: matchingAssignment.contents[0].content,
+                    contentName: matchingAssignment.contentName,
                     id: `${data.uuid}-${content.stepNum}`,
                     Step: data.stepName,
                     contents: matchingAssignment.contents,
                   }
                 : {
                     stepNum: content.stepNum,
-                    contentName: content.contents[0].content,
+                    contentName: content.contentName,
                     id: `${data.uuid}-${content.stepNum}`,
                     Step: data.stepName,
                     contents: content.contents,
@@ -212,7 +212,7 @@ export default function StudentAssignmentTable(props) {
         const formattedLectureData = filteredData.flatMap((data) =>
           data.contents.map((content) => ({
             stepNum: content.stepNum,
-            contentName: content.contents[0].content,
+            contentName: content.contentName,
             id: `${data.uuid}-${content.stepNum}`,
             Step: data.stepName,
             contents: content.contents,
