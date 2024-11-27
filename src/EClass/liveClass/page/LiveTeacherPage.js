@@ -15,7 +15,9 @@ export const LiveTeacherPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [tableData, setTableData] = useState([]);
   const [courseStep, setCourseStep] = useState();
-  const [stepCount, setStepCount] = useState();
+  const [stepCount, setStepCount] = useState(0);
+  const [assginShareFlag, setAssginShareFlag] = useState(false);
+
   const [sessionIds, setSessionIds] = useState([]);
   const [assginmentShareCheck, setAssginmentShareCheck] = useState([]);
   const [showAssignmentTable, setShowAssignmentTable] = useState(true); // 상태 추가
@@ -26,6 +28,13 @@ export const LiveTeacherPage = () => {
   const { lectureDataUuid, eClassName } = location.state || {};
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log(
+      'assginmentShareCheck 바뀌면 확인 : ' +
+        JSON.stringify(assginmentShareCheck, null, 2),
+    );
+  }, [assginmentShareCheck]);
 
   const closeEclass = async () => {
     await customAxios
@@ -92,10 +101,7 @@ export const LiveTeacherPage = () => {
 
   return (
     <div style={{ display: 'flex', margin: '0 10vh', height: '800px' }}>
-      <StudentWebSocket
-        setSessionIds={setSessionIds}
-        setAssginmentShareCheck={setAssginmentShareCheck}
-      />
+      <StudentWebSocket setSessionIds={setSessionIds} />
 
       <ScreenShareWebSocket
         sessionIds={sessionIds}
@@ -142,50 +148,99 @@ export const LiveTeacherPage = () => {
         )}
 
         {/* 버튼 렌더링 조건 */}
-        {!sharedScreenState ? (
+        {!sharedScreenState && (
           <>
-            <button onClick={() => handleScreenShare(true)} style={buttonStyle}>
-              화면 공유
-            </button>
+            {/* 과제 공유 버튼 */}
             <TeacherStepShareButton
               stepCount={stepCount}
               lectureDataUuid={lectureDataUuid}
               sharedScreenState={sharedScreenState}
-              assginmentShareCheck={assginmentShareCheck}
               setAssginmentShareCheck={setAssginmentShareCheck}
               setAssginmentShareStop={setAssginmentShareStop}
               setStepCount={setStepCount}
+              sessionIds={sessionIds}
+              setAssginShareFlag={setAssginShareFlag}
             />
           </>
+        )}
+
+        {/* 버튼 렌더링 조건 */}
+        {/* {!sharedScreenState ? (
+          <>
+            {
+              <Button
+                variant="contained"
+                onClick={() => handleScreenShare(true)}
+                style={{
+                  marginTop: '20px',
+                  marginLeft: '20px',
+                  width: '200px',
+                  height: '30px',
+                  fontFamily: "'Asap', sans-serif",
+                  fontWeight: '600',
+                  fontSize: '0.9rem',
+                  color: 'grey',
+                  backgroundColor: '#feecfe',
+                  borderRadius: '2.469rem',
+                  border: 'none',
+                }}
+              >
+                화면 공유
+              </Button>
+            }
+          </>
         ) : (
-          <button
+          <Button
+            variant="contained"
             onClick={() => handleScreenShare(false)}
-            style={{ ...buttonStyle, marginLeft: '10px' }}
+            style={{
+              marginTop: '10px',
+              width: '200px',
+              height: '30px',
+              fontFamily: "'Asap', sans-serif",
+              fontWeight: '600',
+              fontSize: '0.9rem',
+              color: 'grey',
+              backgroundColor: '#feecfe',
+              borderRadius: '2.469rem',
+              border: 'none',
+            }}
           >
             공유 중지
-          </button>
-        )}
+          </Button>
+        )} */}
       </div>
 
       {/* [오른쪽 블럭] 수업 Step 테이블, 수업 상태 테이블 */}
       <div style={{ width: '30%', marginRight: '30px', height: '100%' }}>
-        {showAssignmentTable ? (
-          <TeacherAssignmentTable
-            setCourseStep={setCourseStep}
-            setTableData={setTableData}
-            lectureDataUuid={lectureDataUuid}
-            setStepCount={setStepCount}
-            setAssginmentShareCheck={setAssginmentShareCheck}
-          />
-        ) : (
-          <TeacherCourseStatusTable
-            stepCount={stepCount}
-            eclassUuid={eClassUuid}
-            sessionIds={sessionIds}
-            assginmentShareCheck={assginmentShareCheck}
-            assginmentShareStop={assginmentShareStop}
-          />
-        )}
+        <div>
+          <div
+            style={{
+              display: showAssignmentTable ? 'block' : 'none', // showAssignmentTable에 따라 표시 여부 조절
+            }}
+          >
+            <TeacherAssignmentTable
+              setCourseStep={setCourseStep}
+              setTableData={setTableData}
+              lectureDataUuid={lectureDataUuid}
+              setStepCount={setStepCount}
+              setAssginmentShareCheck={setAssginmentShareCheck}
+            />
+          </div>
+          <div
+            style={{
+              display: showAssignmentTable ? 'none' : 'block', // showAssignmentTable에 따라 표시 여부 조절
+            }}
+          >
+            <TeacherCourseStatusTable
+              stepCount={stepCount}
+              eclassUuid={eClassUuid}
+              sessionIds={sessionIds}
+              assginmentShareCheck={assginmentShareCheck}
+              assginmentShareStop={assginmentShareStop}
+            />
+          </div>
+        </div>
 
         <Button
           variant="contained"

@@ -46,10 +46,20 @@ function fixedHeaderContent() {
   );
 }
 
-function rowContent(index, row, handleClick, handleDelete, selectedRow) {
-  const requestDelete = (studentId) => {
-    customAxios
-      .delete(`/api/eclass/student/delete?studentId=${studentId}`)
+function rowContent(
+  index,
+  row,
+  handleClick,
+  handleDelete,
+  selectedRow,
+  eclassUuid,
+) {
+  const requestDelete = async () => {
+    console.log('데이터 화긴 :' + JSON.stringify(row, null, 2));
+    await customAxios
+      .delete(
+        `/api/eclass/student/delete?eClassUuid=${eclassUuid}&studentName=${row.Name}`,
+      )
       .then((response) => {
         console.log('삭제 결과 : ' + JSON.stringify(response.data, null, 2));
         window.location.reload();
@@ -78,8 +88,11 @@ function rowContent(index, row, handleClick, handleDelete, selectedRow) {
               style={{ width: column.width }}
               onClick={(e) => {
                 e.stopPropagation(); // 이벤트 전파 방지
-                requestDelete(row.Num);
-                handleDelete(row.id);
+                const isConfirmed = window.confirm('정말 삭제하시겠습니까?');
+                if (isConfirmed) {
+                  requestDelete(row.Num);
+                  handleDelete(row.id);
+                }
               }}
             >
               삭제
@@ -182,7 +195,14 @@ export default function TeacherStudentList({ eclassUuid, setRowDatatop }) {
           <TableVirtuoso
             data={rowData}
             itemContent={(index, row) =>
-              rowContent(index, row, handleRowClick, handleDelete, selectedRow)
+              rowContent(
+                index,
+                row,
+                handleRowClick,
+                handleDelete,
+                selectedRow,
+                eclassUuid,
+              )
             }
             style={{ height: 400, overflow: 'auto' }}
           />

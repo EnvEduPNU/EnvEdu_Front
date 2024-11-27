@@ -46,10 +46,19 @@ function fixedHeaderContent() {
   );
 }
 
-function rowContent(index, row, handleClick, handleDelete, selectedRow) {
+function rowContent(
+  index,
+  row,
+  handleClick,
+  handleDelete,
+  selectedRow,
+  eclassUuid,
+) {
   const requestDelete = (studentId) => {
     customAxios
-      .delete(`/api/eclass/student/delete?studentId=${studentId}`)
+      .delete(
+        `/api/eclass/student/delete?eClassUuid=${eclassUuid}&studentName=${row.Name}`,
+      )
       .then((response) => {
         console.log('삭제 결과 : ' + JSON.stringify(response.data, null, 2));
         window.location.reload();
@@ -72,18 +81,19 @@ function rowContent(index, row, handleClick, handleDelete, selectedRow) {
           }}
         >
           {column.dataKey === 'Action' ? (
-            <Button
-              variant="outlined"
-              color="secondary"
-              style={{ width: column.width }}
-              onClick={(e) => {
-                e.stopPropagation(); // 이벤트 전파 방지
-                requestDelete(row.Num);
-                handleDelete(row.id);
-              }}
-            >
-              삭제
-            </Button>
+            // <Button
+            //   variant="outlined"
+            //   color="secondary"
+            //   style={{ width: column.width }}
+            //   onClick={(e) => {
+            //     e.stopPropagation(); // 이벤트 전파 방지
+            //     requestDelete(row.Num);
+            //     handleDelete(row.id);
+            //   }}
+            // >
+            //   삭제
+            // </Button>
+            <></>
           ) : (
             <span
               onClick={() =>
@@ -134,7 +144,7 @@ export default function StudentStudentList({ eclassUuid, setRowDatatop }) {
             );
 
             setRowData((prevRowData) => [...prevRowData, ...newStudents]);
-            setRowDatatop(newStudents);
+            // setRowDatatop(newStudents);
           })
           .catch((error) => {
             console.error('Error fetching student list:', error);
@@ -182,7 +192,14 @@ export default function StudentStudentList({ eclassUuid, setRowDatatop }) {
           <TableVirtuoso
             data={rowData}
             itemContent={(index, row) =>
-              rowContent(index, row, handleRowClick, handleDelete, selectedRow)
+              rowContent(
+                index,
+                row,
+                handleRowClick,
+                handleDelete,
+                selectedRow,
+                eclassUuid,
+              )
             }
             style={{ height: 400, overflow: 'auto' }}
           />

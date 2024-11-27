@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Modal,
   Box,
@@ -11,9 +11,9 @@ import {
   Button,
   Paper,
   Typography,
-} from "@mui/material";
-import { customAxios } from "../../../../Common/CustomAxios";
-import moment from "moment";
+} from '@mui/material';
+import { customAxios } from '../../../../Common/CustomAxios';
+import moment from 'moment';
 
 const createData = (index, item) => ({
   Num: index + 1,
@@ -32,7 +32,7 @@ const SearchLectureModal = ({ open, onClose }) => {
   const [userData, setUserData] = useState();
 
   useEffect(() => {
-    const username = localStorage.getItem("username");
+    const username = localStorage.getItem('username');
 
     customAxios
       .get(`/api/student/get/${username}`)
@@ -40,24 +40,24 @@ const SearchLectureModal = ({ open, onClose }) => {
         setUserData(response.data);
       })
       .catch((error) => {
-        console.error("조회 에러:", error);
+        console.error('조회 에러:', error);
       });
   }, []);
 
   useEffect(() => {
     if (open) {
       customAxios
-        .get("/api/eclass/list")
+        .get('/api/eclass/list')
         .then((response) => {
           const list = response.data;
-          console.log("Eclass list :", JSON.stringify(response.data, null, 2));
+          console.log('Eclass list :', JSON.stringify(response.data, null, 2));
 
           const rows = list.map((item, index) => createData(index, item));
 
           setRowData(rows);
         })
         .catch((error) => {
-          console.error("Eclass 리스트 조회 에러:", error);
+          console.error('Eclass 리스트 조회 에러:', error);
         });
     }
   }, [open]);
@@ -67,34 +67,34 @@ const SearchLectureModal = ({ open, onClose }) => {
     setSelectedRow(row);
   };
 
-  const handleJoinClick = () => {
+  const handleJoinClick = async () => {
     if (selectedRow) {
-      console.log("클래스 데이터:", JSON.stringify(selectedRow, null, 2));
-      console.log("유저 데이터:", JSON.stringify(userData, null, 2));
+      console.log('클래스 데이터:', JSON.stringify(selectedRow, null, 2));
+      console.log('유저 데이터:', JSON.stringify(userData, null, 2));
 
       const enrollStudent = {
         eclassUuid: [selectedRow.eClassUuid],
         studentId: userData.id,
         studentName: userData.username,
         studentGroup: userData.studentGroup,
-        joinDate: moment().tz("Asia/Seoul").format("YYYY-MM-DDTHH:mm:ssZ"), // 현재 서울 시각을 ISO 8601 포맷으로 추가
+        joinDate: moment().tz('Asia/Seoul').format('YYYY-MM-DDTHH:mm:ssZ'), // 현재 서울 시각을 ISO 8601 포맷으로 추가
       };
 
       console.log(
-        "요청보내기전 확인 : " + JSON.stringify(enrollStudent, null, 2)
+        '요청보내기전 확인 : ' + JSON.stringify(enrollStudent, null, 2),
       );
 
       // customAxios로 POST 요청 보내기
-      customAxios
-        .post("/api/eclass/student/enroll", enrollStudent)
+      await customAxios
+        .post('/api/eclass/student/enroll', enrollStudent)
         .then((response) => {
-          console.log("Student added successfully:", response.data);
-
+          console.log('Student added successfully:', response.data);
+          alert('수업이 등록되었습니다.');
           window.location.reload();
         })
         .catch((error) => {
-          alert("이미 등록한 수업입니다!");
-          console.error("Error adding student:", error);
+          alert('이미 등록한 수업입니다!');
+          console.error('Error adding student:', error);
         });
     }
   };
@@ -107,12 +107,12 @@ const SearchLectureModal = ({ open, onClose }) => {
     <Modal open={open} onClose={onClose}>
       <Box
         sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
           width: 600,
-          bgcolor: "background.paper",
+          bgcolor: 'background.paper',
           boxShadow: 24,
           p: 4,
         }}
@@ -121,10 +121,10 @@ const SearchLectureModal = ({ open, onClose }) => {
         <Typography
           variant="h6"
           sx={{
-            margin: "10px 0 10px 0",
+            margin: '10px 0 10px 0',
             fontWeight: 600,
-            fontSize: "3rem",
-            letterSpacing: "0.013rem",
+            fontSize: '3rem',
+            letterSpacing: '0.013rem',
             fontFamily: "'Montserrat', sans-serif",
           }}
         >
@@ -135,7 +135,7 @@ const SearchLectureModal = ({ open, onClose }) => {
           onClick={(e) => e.stopPropagation()} // TableContainer 클릭 시 이벤트 전파를 막아 선택 해제 방지
         >
           <Table sx={{ minWidth: 500 }} aria-label="lecture table">
-            <TableHead sx={{ backgroundColor: "lightgray" }}>
+            <TableHead sx={{ backgroundColor: 'lightgray' }}>
               <TableRow>
                 <TableCell>번호</TableCell>
                 <TableCell>수업 이름</TableCell>
@@ -150,11 +150,11 @@ const SearchLectureModal = ({ open, onClose }) => {
                   key={row.eClassUuid}
                   onClick={(event) => handleRowClick(event, row)}
                   sx={{
-                    cursor: "pointer",
+                    cursor: 'pointer',
                     bgcolor:
                       selectedRow?.eClassUuid === row.eClassUuid
-                        ? "#f0f0f0"
-                        : "inherit",
+                        ? '#f0f0f0'
+                        : 'inherit',
                   }}
                 >
                   <TableCell>{row.Num}</TableCell>
@@ -175,12 +175,12 @@ const SearchLectureModal = ({ open, onClose }) => {
           sx={{
             mt: 2,
             fontFamily: "'Asap', sans-serif", // 버튼에 Asap 폰트 적용
-            fontWeight: "600",
-            fontSize: "0.9rem",
-            color: "grey",
-            backgroundColor: "#feecfe",
-            borderRadius: "2.469rem",
-            border: "none",
+            fontWeight: '600',
+            fontSize: '0.9rem',
+            color: 'grey',
+            backgroundColor: '#feecfe',
+            borderRadius: '2.469rem',
+            border: 'none',
           }}
         >
           참여하기

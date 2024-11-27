@@ -112,9 +112,9 @@ export default function StudentAssignmentTable(props) {
         const assignmentResponse = await customAxios.get(
           `/api/assignment/getstep?uuid=${assignmentUuidResp.data}`,
         );
-        // console.log(
-        //   '수업 정보 확인 : ' + JSON.stringify(assignmentResponse, null, 2),
-        // );
+        console.log(
+          '수업 정보 확인 : ' + JSON.stringify(assignmentResponse, null, 2),
+        );
 
         if (assignmentResponse.data.length > 0) {
           const assignmentData = assignmentResponse.data;
@@ -122,9 +122,9 @@ export default function StudentAssignmentTable(props) {
           const lectureResponse = await customAxios.get(
             '/api/steps/getLectureContent',
           );
-          // console.log(
-          //   '수업 자료 확인 : ' + JSON.stringify(lectureResponse, null, 2),
-          // );
+          console.log(
+            '수업 자료 확인 : ' + JSON.stringify(lectureResponse, null, 2),
+          );
 
           const filteredData = lectureResponse.data.filter(
             (data) => data.uuid === props.lectureDataUuid,
@@ -139,17 +139,21 @@ export default function StudentAssignmentTable(props) {
                     assignmentContent.stepNum === content.stepNum,
                 );
 
+              console.log(
+                '데이터 확인 : ' + JSON.stringify(updatedData, null, 2),
+              );
+
               return matchingAssignment
                 ? {
                     stepNum: content.stepNum,
-                    contentName: matchingAssignment.contentName,
+                    contentName: matchingAssignment.contents[0].content,
                     id: `${data.uuid}-${content.stepNum}`,
                     Step: data.stepName,
                     contents: matchingAssignment.contents,
                   }
                 : {
                     stepNum: content.stepNum,
-                    contentName: content.contentName,
+                    contentName: content.contents[0].content,
                     id: `${data.uuid}-${content.stepNum}`,
                     Step: data.stepName,
                     contents: content.contents,
@@ -208,7 +212,7 @@ export default function StudentAssignmentTable(props) {
         const formattedLectureData = filteredData.flatMap((data) =>
           data.contents.map((content) => ({
             stepNum: content.stepNum,
-            contentName: content.contentName,
+            contentName: content.contents[0].content,
             id: `${data.uuid}-${content.stepNum}`,
             Step: data.stepName,
             contents: content.contents,

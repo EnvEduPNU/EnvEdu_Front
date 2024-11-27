@@ -87,13 +87,9 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
       );
       stompClientRef.current = new Client({ webSocketFactory: () => sock });
 
-      stompClientRef.current.onConnect = (frame) => (
-        {},
-        () => {
-          console.log('STOMP 연결 성공');
-        },
-        onError
-      );
+      stompClientRef.current.onConnect = () => {
+        console.log('STOMP 연결 성공');
+      };
 
       stompClientRef.current.activate();
     }
@@ -105,21 +101,12 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
         });
       }
     };
-
-    function onError(error) {
-      console.error('STOMP 연결 에러:', error);
-      alert(
-        '웹소켓 연결에 실패했습니다. 네트워크 설정을 확인하거나 관리자에게 문의하세요.',
-      );
-    }
   }, []);
 
-  // E-Class 조회 훅
   useEffect(() => {
     const fetchEclassData = async () => {
       try {
         const StudentName = localStorage.getItem('username');
-
         const eclassListResponse = await customAxios.get('/api/eclass/list');
         const eclassList = eclassListResponse.data;
 
@@ -128,16 +115,11 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
         );
         const uuidList = studentEclassResponse.data;
 
-        console.log('Eclass list :', eclassList);
-        console.log('uuid 리스트 : ' + JSON.stringify(uuidList, null, 2));
-
         const filteredList = eclassList.filter((item) =>
           uuidList.includes(item.eClassUuid),
         );
 
-        const rows = await filteredList.map((item, index) =>
-          createData(index, item),
-        );
+        const rows = filteredList.map((item, index) => createData(index, item));
 
         setRowData(rows);
       } catch (error) {
@@ -151,15 +133,9 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
   const handleRowClick = (id, row) => {
     setSelectedRow(id);
     setSelectedEClassUuid(row.eClassUuid);
-    console.log('Selected eClassUuid:', row.eClassUuid);
   };
 
   const joinEclass = async (row) => {
-    console.log(
-      '[studentEclassTable] row 값 : ' + JSON.stringify(row, null, 2),
-    );
-
-    // 수업이 교사에 의해서 열렸는지 닫혔는지 확인
     try {
       const response = await customAxios.get(
         `/api/eclass/status-check?uuid=${row.eClassUuid}`,
@@ -167,8 +143,6 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
       const eClassStatus = response.data;
 
       if (eClassStatus) {
-        console.log('[studentEclassTable] eclassUuid : ' + row.eClassUuid);
-
         navigate(`/LiveStudentPage/${row.eClassUuid}`, {
           state: {
             lectureDataUuid: row.LectureData,
@@ -184,50 +158,86 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
     }
   };
 
-  const rowContent = (index, row) => {
-    return (
-      <React.Fragment>
-        {columns.map((column) => (
-          <TableCell
-            key={column.dataKey}
-            align="center"
-            style={{ width: column.width }}
-            sx={{
-              backgroundColor: selectedRow === row.Num ? '#f0f0f0' : 'inherit',
-              cursor: column.dataKey !== 'Action' ? 'pointer' : 'default',
-            }}
-            onClick={() =>
-              column.dataKey !== 'Action' && handleRowClick(row.Num, row)
-            }
-          >
-            {column.dataKey === 'Action' ? (
-              <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => joinEclass(row)}
-                  sx={{
-                    marginRight: 1,
-                    fontFamily: "'Asap', sans-serif",
-                    fontWeight: '600',
-                    fontSize: '0.9rem',
-                    color: 'grey',
-                    backgroundColor: '#feecfe',
-                    borderRadius: '2.469rem',
-                    border: 'none',
-                  }}
-                >
-                  들어가기
-                </Button>
-              </div>
-            ) : (
-              <span>{row[column.dataKey]}</span>
-            )}
-          </TableCell>
-        ))}
-      </React.Fragment>
+  const deleteEclass = async (row) => {
+    const confirmation = window.confirm(
+      `정말 "${row.Name}" 수업을 삭제하시겠습니까?`,
     );
+    if (!confirmation) return;
+
+    try {
+      const response = await customAxios.delete(
+        `/api/eclass/student/delete?eClassUuid=${
+          row.eClassUuid
+        }&studentName=${localStorage.getItem('username')}`,
+      );
+
+      if (response.status === 200) {
+        alert('E-Class 삭제 성공!');
+        setRowData((prevRowData) =>
+          prevRowData.filter((item) => item.eClassUuid !== row.eClassUuid),
+        );
+      } else {
+        alert(`E-Class 삭제 실패! 상태 코드: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Eclass 삭제 에러:', error);
+      alert('E-Class 삭제 실패!');
+    }
   };
+
+  const rowContent = (index, row) => (
+    <React.Fragment>
+      {columns.map((column) => (
+        <TableCell
+          key={column.dataKey}
+          align="center"
+          style={{ width: column.width }}
+          sx={{
+            backgroundColor: selectedRow === row.Num ? '#f0f0f0' : 'inherit',
+            cursor: column.dataKey !== 'Action' ? 'pointer' : 'default',
+          }}
+          onClick={() =>
+            column.dataKey !== 'Action' && handleRowClick(row.Num, row)
+          }
+        >
+          {column.dataKey === 'Action' ? (
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <Button
+                variant="contained"
+                onClick={() => joinEclass(row)}
+                sx={{
+                  marginRight: 1,
+                  fontFamily: "'Asap', sans-serif",
+                  fontWeight: '600',
+                  fontSize: '0.9rem',
+                  color: 'gray',
+                  backgroundColor: '#feecfe',
+                  borderRadius: '1rem',
+                }}
+              >
+                들어가기
+              </Button>
+              <Button
+                variant="contained"
+                color="error"
+                onClick={() => deleteEclass(row)}
+                sx={{
+                  fontFamily: "'Asap', sans-serif",
+                  fontWeight: '600',
+                  fontSize: '0.9rem',
+                  borderRadius: '1rem',
+                }}
+              >
+                삭제
+              </Button>
+            </div>
+          ) : (
+            <span>{row[column.dataKey]}</span>
+          )}
+        </TableCell>
+      ))}
+    </React.Fragment>
+  );
 
   return (
     <div>

@@ -76,7 +76,7 @@ export function TeacherClassroomPage() {
     );
   };
 
-  const handleAddStudent = () => {
+  const handleAddStudent = async () => {
     if (selectedStudent) {
       const newStudent = {
         eclassUuid: selectedEClassUuid,
@@ -86,12 +86,14 @@ export function TeacherClassroomPage() {
         joinDate: moment().tz('Asia/Seoul').format('YYYY-MM-DDTHH:mm:ssZ'),
       };
 
-      customAxios
-        .post('/api/eclass/student/enroll', newStudent)
+      await customAxios
+        .post('/api/eclass/student/enroll-by-teacher', newStudent)
         .then(() => {
           setSelectedStudent(null);
           setRowData((prevRowData) => [...prevRowData, newStudent]);
           handleCloseStudentModal();
+          alert('학생이 추가되었습니다');
+          window.location.reload();
         })
         .catch((error) => {
           console.error('Error adding student:', error);
