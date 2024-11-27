@@ -73,33 +73,23 @@ export function TeacherStepShareButton({
               '확인해보자1!@#!@#!@# : ' + JSON.stringify(shareState, null, 2),
             );
 
-            // 상태 업데이트
-            const addAssginmentShareCheck = async (shareState) => {
-              await setAssginmentShareCheck((prevState) => {
-                // prevState가 null 또는 undefined이면 빈 배열로 초기화
-                const validPrevState = prevState || [];
+            // 상태 업데이트 로직
+            setAssginmentShareCheck((prevState) => {
+              const validPrevState = prevState || []; // null/undefined 방지
+              const existingIndex = validPrevState.findIndex(
+                (item) => item.sessionId === shareState.sessionId,
+              );
 
-                if (validPrevState) {
-                  return;
-                }
-                // 기존 상태에서 shareState.sessionId와 동일한 객체가 있는지 확인
-                const existingIndex = validPrevState.findIndex(
-                  (item) => item.sessionId === shareState.sessionId,
-                );
+              if (existingIndex !== -1) {
+                // 기존 상태가 있다면 업데이트
+                const updatedState = [...validPrevState];
+                updatedState[existingIndex] = shareState; // 기존 객체를 덮어씌움
+                return updatedState;
+              }
 
-                if (existingIndex !== -1) {
-                  // 이미 같은 sessionId를 가진 객체가 있으면, 해당 객체를 업데이트
-                  const updatedState = [...validPrevState];
-                  updatedState[existingIndex] = shareState; // 기존 객체를 새로운 객체로 교체
-                  return updatedState;
-                } else {
-                  // 같은 sessionId를 가진 객체가 없으면, 새로운 객체를 추가
-                  return [...validPrevState, shareState];
-                }
-              });
-            };
-
-            addAssginmentShareCheck(shareState);
+              // 새로운 상태 추가
+              return [...validPrevState, shareState];
+            });
           },
         );
       };
