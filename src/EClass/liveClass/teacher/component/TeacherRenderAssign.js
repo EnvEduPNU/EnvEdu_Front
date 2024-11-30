@@ -54,6 +54,10 @@ function TeacherRenderAssign({ data }) {
         >
           {item.contents.map((contentItem, index) => (
             <div key={index} style={{ marginBottom: '20px' }}>
+              <Typography variant="h4" gutterBottom>
+                {contentItem.contentName}
+              </Typography>
+
               {contentItem.contents.map((content, idx) => (
                 <RenderContent
                   key={idx}
@@ -101,12 +105,6 @@ function RenderContent({
   };
 
   switch (content.type) {
-    case 'title':
-      return (
-        <Typography variant="h4" gutterBottom>
-          {content.content}
-        </Typography>
-      );
     case 'html':
       return (
         <div

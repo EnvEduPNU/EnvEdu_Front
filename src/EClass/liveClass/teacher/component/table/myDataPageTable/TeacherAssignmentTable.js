@@ -93,7 +93,7 @@ export default function TeacherAssignmentTable(props) {
 
         const formattedData = filteredData.flatMap((data) =>
           data.contents.map((content) => ({
-            contentName: content.contents[0].content,
+            contentName: content.contentName,
             id: `${data.uuid}-${content.stepNum}`,
             Step: data.stepName,
             stepNum: content.stepNum,

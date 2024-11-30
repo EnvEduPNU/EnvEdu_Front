@@ -104,10 +104,10 @@ export default function StudentAssignmentTable(props) {
           requestData,
         );
 
-        // console.log(
-        //   'Assignmnet Uuid 잘 나오나 확인 : ' +
-        //     JSON.stringify(assignmentUuidResp, null, 2),
-        // );
+        console.log(
+          'Assignmnet Uuid 잘 나오나 확인 : ' +
+            JSON.stringify(assignmentUuidResp, null, 2),
+        );
 
         const assignmentResponse = await customAxios.get(
           `/api/assignment/getstep?uuid=${assignmentUuidResp.data}`,
@@ -119,15 +119,17 @@ export default function StudentAssignmentTable(props) {
         if (assignmentResponse.data.length > 0) {
           const assignmentData = assignmentResponse.data;
 
+          // 현재 전체 자료를 가져오고 있음, 초기에 개발한것이고 시간 없어서 아직 API교체를 못했다.
           const lectureResponse = await customAxios.get(
             '/api/steps/getLectureContent',
-          );
-          console.log(
-            '수업 자료 확인 : ' + JSON.stringify(lectureResponse, null, 2),
           );
 
           const filteredData = lectureResponse.data.filter(
             (data) => data.uuid === props.lectureDataUuid,
+          );
+
+          console.log(
+            '수업 자료 확인 : ' + JSON.stringify(filteredData, null, 2),
           );
 
           const updatedData = filteredData.flatMap((data) =>
@@ -139,21 +141,17 @@ export default function StudentAssignmentTable(props) {
                     assignmentContent.stepNum === content.stepNum,
                 );
 
-              console.log(
-                '데이터 확인 : ' + JSON.stringify(updatedData, null, 2),
-              );
-
               return matchingAssignment
                 ? {
                     stepNum: content.stepNum,
-                    contentName: matchingAssignment.contents[0].content,
+                    contentName: matchingAssignment.contentName,
                     id: `${data.uuid}-${content.stepNum}`,
                     Step: data.stepName,
                     contents: matchingAssignment.contents,
                   }
                 : {
                     stepNum: content.stepNum,
-                    contentName: content.contents[0].content,
+                    contentName: content.contentName,
                     id: `${data.uuid}-${content.stepNum}`,
                     Step: data.stepName,
                     contents: content.contents,
@@ -189,6 +187,10 @@ export default function StudentAssignmentTable(props) {
             };
           });
 
+          console.log(
+            '업데이트 데이터 확인 : ' + JSON.stringify(updatedData, null, 2),
+          );
+
           setTableData(updatedData);
           setAllTableData(updatedFilteredData);
           setIsDataAvailable(true);
@@ -212,7 +214,7 @@ export default function StudentAssignmentTable(props) {
         const formattedLectureData = filteredData.flatMap((data) =>
           data.contents.map((content) => ({
             stepNum: content.stepNum,
-            contentName: content.contents[0].content,
+            contentName: content.contentName,
             id: `${data.uuid}-${content.stepNum}`,
             Step: data.stepName,
             contents: content.contents,

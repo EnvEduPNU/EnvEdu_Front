@@ -426,6 +426,9 @@ function StudentRenderAssign({
             }}
           >
             <div>
+              <Typography variant="h4" gutterBottom>
+                {stepData.contentName}
+              </Typography>
               {stepData.contents.map((content, idx) => (
                 <RenderContent
                   key={`${stepData.stepNum}-${idx}`}
@@ -533,12 +536,6 @@ function RenderContent({
   };
 
   switch (content.type) {
-    case 'title':
-      return (
-        <Typography variant="h4" gutterBottom>
-          {content.content}
-        </Typography>
-      );
     case 'html':
       return (
         <div
@@ -693,7 +690,7 @@ function RenderContent({
             {storedPhotoList.length > 0 ? (
               storedPhotoList.map((photo, index) => (
                 <div
-                  key={index}
+                  key={photo.image || index} // key를 photo.image로 설정, 없을 경우 index 사용
                   style={{
                     marginBottom: '20px',
                     position: 'relative',
@@ -702,7 +699,7 @@ function RenderContent({
                 >
                   <img
                     src={photo.image}
-                    alt={photo.title}
+                    alt={photo.title || `photo-${index}`} // 고유 alt 제공
                     style={{
                       width: '100%',
                       height: 'auto',
@@ -715,21 +712,6 @@ function RenderContent({
               <></>
             )}
           </div>
-        </div>
-      );
-    case 'emptyBox':
-      return (
-        <div
-          style={{
-            border: '1px dashed #ddd',
-            padding: '20px',
-            textAlign: 'center',
-            margin: '20px 0',
-          }}
-        >
-          <Typography variant="h6" color="textSecondary">
-            Empty Box
-          </Typography>
         </div>
       );
 
