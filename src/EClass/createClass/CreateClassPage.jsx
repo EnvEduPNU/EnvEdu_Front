@@ -17,6 +17,9 @@ import { customAxios } from '../../Common/CustomAxios';
 import { convertToNumber } from '../../Data/DataInChart/store/utils/convertToNumber';
 import { createEclass } from './api/eclass';
 import { v4 as uuidv4 } from 'uuid';
+import axios from 'axios';
+import basicImage from '../../assets/img/basicImage.png';
+import VideoLinkModal from './modal/VideoLinkModal';
 
 //항목 이름 (한국어 -> 영어)
 const engToKor = (name) => {
@@ -96,7 +99,11 @@ function CreateClassPage() {
   const [activeStepIndex, setActiveStepIndex] = useState(0);
   const [quillData, setQuillData] = useState(null);
   const [summary, setSummary] = useState([]);
-
+  const [classUUID] = useState(uuidv4());
+  const [isEnd, setIsEnd] = useState(false);
+  const [thumbnailImage, setThumbnailImage] = useState(basicImage);
+  const [videoLink, setVideoLink] = useState('');
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   useEffect(() => {
     const username = localStorage.getItem('username');
 
@@ -137,6 +144,34 @@ function CreateClassPage() {
 
     fetchData();
   }, []);
+
+  // 이미지 파일 업로드 메서드
+  const handleUpload = async (file, contentUuid) => {
+    try {
+      // Pre-signed URL을 가져오는 요청
+      const response = await customAxios.get('/api/images/presigned-url', {
+        params: { fileName: contentUuid },
+      });
+
+      const { preSignedUrl, imageUrl } = response.data;
+      const contentType = file.type; // 파일의 MIME 타입을 사용
+
+      //S3로 이미지 업로드
+      await axios.put(preSignedUrl, file, {
+        headers: {
+          'Content-Type': contentType,
+        },
+      });
+
+      console.log('이미지 업로드 성공');
+      alert('이미지 업로드 성공');
+
+      return imageUrl; // S3에 업로드된 이미지 URL 반환
+    } catch (error) {
+      console.error('파일 업로드 오류:', error);
+      throw error;
+    }
+  };
 
   const handleSelectData = async (type, id, type2) => {
     console.log(type2);
@@ -621,11 +656,12 @@ function CreateClassPage() {
     });
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e, type) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
+      const imageUrl = await handleUpload(file, classUUID);
+
+      if (type === 'image')
         setEclassContents((prev) => {
           const tempEclassContents = prev.map((eclassContent) => ({
             ...eclassContent,
@@ -634,7 +670,7 @@ function CreateClassPage() {
 
           tempEclassContents[activeStepIndex].contents.push({
             type: 'img',
-            url: reader.result,
+            url: imageUrl,
             file,
           });
 
@@ -642,8 +678,7 @@ function CreateClassPage() {
 
           return tempEclassContents;
         });
-      };
-      reader.readAsDataURL(file);
+      else setThumbnailImage(imageUrl);
     }
   };
 
@@ -657,6 +692,28 @@ function CreateClassPage() {
         justifyContent: 'center',
       }}
     >
+      <VideoLinkModal
+        isOpen={isVideoModalOpen}
+        setIsOpen={setIsVideoModalOpen}
+        videoLink={videoLink}
+        setVideoLink={setVideoLink}
+        handleClose={() => {
+          setEclassContents((prev) => {
+            const tempEclassContents = prev.map((eclassContent) => ({
+              ...eclassContent,
+              contents: [...eclassContent.contents],
+            }));
+            tempEclassContents[activeStepIndex].contents = [
+              ...tempEclassContents[activeStepIndex].contents,
+              {
+                type: 'html',
+                content: `<iframe class="ql-video" frameborder="0" allowfullscreen="true" src=${videoLink}></iframe>`,
+              },
+            ];
+            return tempEclassContents;
+          });
+        }}
+      />
       <div
         style={{
           display: 'flex',
@@ -832,432 +889,640 @@ function CreateClassPage() {
         </div>
       </div>
 
-      <div
-        style={{
-          display: 'flex',
-        }}
-      >
-        {/* 왼쪽에 과제 만드는 미리보기란에 랜더링 되는 곳 */}
-        <div
-          style={{
-            width: '750px',
-            height: '700px',
-            boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
-            overflowY: 'auto',
-            margin: '0 20px 80px 0px',
-          }}
-          className="custom-html-container ql-editor"
-        >
-          {eclassContents.length > 0 &&
-            eclassContents[activeStepIndex].contents.map((item, index) => (
-              <div
-                style={{
-                  fontFamily: 'Arial',
-                }}
-              >
-                <div
-                  key={index}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    padding: '10px',
-                    margin: '5px 0',
-                  }}
-                >
-                  {/* 아이템 콘텐츠(답변 박스, 글 상자) */}
-                  {(item.type === 'textBox' || item.type === 'html') && (
-                    <div dangerouslySetInnerHTML={{ __html: item.content }} />
-                  )}
-                  {/* 아이템 콘텐츠(이미지) */}
-                  {item.type === 'img' && (
-                    <div
-                      dangerouslySetInnerHTML={{
-                        __html: `<img src=${item.url} />`,
-                      }}
-                    />
-                  )}
-
-                  {/* 아이템 콘텐츠(테이블) */}
-                  {item.type === 'data' &&
-                    React.createElement(item.content.type, item.content.props)}
-
-                  {/* 아이템 콘텐츠(그래프) */}
-                  {item.type === 'dataInChartButton' && (
-                    <button
-                      style={{
-                        width: '180px',
-                        textAlign: 'center',
-                        padding: '0.5rem 1rem',
-                        backgroundColor: '#8E44AD', // 기본 색상 (짙은 보라색)
-                        color: '#FFFFFF',
-                        borderRadius: '0.5rem',
-                        fontWeight: '600',
-                        fontSize: '1rem',
-                        cursor: 'pointer',
-                        border: 'none',
-                        boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.15)',
-                        transition:
-                          'background-color 0.3s ease, transform 0.2s ease',
-                        outline: 'none',
-                        marginRight: '10px',
-                      }}
-                      onMouseOver={(e) => {
-                        e.target.style.backgroundColor = '#A569BD'; // 마우스 오버 시 밝은 보라색
-                        e.target.style.transform = 'scale(1.05)'; // 확대 효과
-                      }}
-                      onMouseOut={(e) => {
-                        e.target.style.backgroundColor = '#8E44AD'; // 기본 보라색
-                        e.target.style.transform = 'scale(1)'; // 원래 크기로 복구
-                      }}
-                      onClick={() => {
-                        alert('학생이 수업때 사용할 수 있는 버튼입니다 ^^');
-                      }}
-                    >
-                      그래프 그리러 가기
-                    </button>
-                  )}
-                  {/* 아이콘 버튼 */}
-                  <div
-                    style={{
-                      display: 'flex',
-                      gap: '15px',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <AiOutlineArrowUp
-                        onClick={() => moveUp(index)}
-                        style={{
-                          cursor: 'pointer',
-                          fontSize: '24px', // 아이콘 크기 증가
-                          color: '#007bff', // 기본 색상 파란색
-                          transition: 'transform 0.2s ease', // 부드러운 애니메이션 효과
-                        }}
-                        title="Move Up"
-                        onMouseEnter={(e) =>
-                          (e.target.style.transform = 'scale(1.2)')
-                        } // 호버 시 크기 증가
-                        onMouseLeave={(e) =>
-                          (e.target.style.transform = 'scale(1)')
-                        } // 호버 해제 시 원래 크기로
-                      />
-                      <AiOutlineArrowDown
-                        onClick={() => moveDown(index)}
-                        style={{
-                          cursor: 'pointer',
-                          fontSize: '24px', // 아이콘 크기 증가
-                          color: '#007bff', // 기본 색상 파란색
-                          transition: 'transform 0.2s ease', // 부드러운 애니메이션 효과
-                        }}
-                        title="Move Down"
-                        onMouseEnter={(e) =>
-                          (e.target.style.transform = 'scale(1.2)')
-                        } // 호버 시 크기 증가
-                        onMouseLeave={(e) =>
-                          (e.target.style.transform = 'scale(1)')
-                        } // 호버 해제 시 원래 크기로
-                      />
-                    </div>
-
-                    <BsFillTrashFill
-                      onClick={() => deleteItem(index)}
-                      style={{
-                        cursor: 'pointer',
-                        fontSize: '24px', // 아이콘 크기 증가
-                        color: '#e74c3c', // 삭제 버튼 빨간색
-                        transition: 'transform 0.2s ease, color 0.2s ease', // 부드러운 애니메이션 효과
-                      }}
-                      title="Delete"
-                      onMouseEnter={(e) => {
-                        e.target.style.transform = 'scale(1.2)'; // 호버 시 크기 증가
-                        e.target.style.color = '#c0392b'; // 호버 시 색상 변화
-                      }}
-                      onMouseLeave={(e) => {
-                        e.target.style.transform = 'scale(1)'; // 호버 해제 시 원래 크기로
-                        e.target.style.color = '#e74c3c'; // 호버 해제 시 색상 원상 복귀
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
-        </div>
-
+      {isEnd ? (
         <div
           style={{
             display: 'flex',
+            width: '1200px',
             flexDirection: 'column',
-            justifyContent: 'start',
+            justifyContent: 'center',
             alignItems: 'center',
+            height: '450px',
+            border: '1px solid #d1d5db', // Tailwind의 border-gray-300
+            borderRadius: '8px',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', // 강조를 위한 그림자
+            backgroundColor: '#ffffff', // 배경색 (흰색)
+            marginBottom: '40px',
           }}
         >
-          {/* 오른쪽 WordProcessor 편집창 */}
-          <ReactQuill
-            //   ref={quillRef}
-            style={{ width: '420px', height: '200px', margin: '0 0 60px' }}
-            //   modules={modules}
-            //   formats={formats}
-            value={quillData}
-            onChange={setQuillData}
-            placeholder="내용을 입력하세요..."
-          />
-          <div>
-            <div
-              style={{
-                marginBottom: '10px',
-              }}
-            >
-              <button
-                style={{
-                  width: '120px',
-                  padding: '0.5rem 1rem',
-                  backgroundColor: '#FF9800', // 새로운 색상 (주황색)
-                  color: '#FFFFFF',
-                  borderRadius: '0.5rem',
-                  fontWeight: '600',
-                  fontSize: '1rem',
-                  cursor: 'pointer',
-                  border: 'none',
-                  boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.15)',
-                  transition: 'background-color 0.3s ease, transform 0.2s ease',
-                  outline: 'none',
-                  marginRight: '10px',
-                }}
-                onMouseOver={(e) => {
-                  e.target.style.backgroundColor = '#FFA500'; // 마우스 오버 시 밝은 주황색
-                  e.target.style.transform = 'scale(1.05)'; // 확대 효과
-                }}
-                onMouseOut={(e) => {
-                  e.target.style.backgroundColor = '#FF9800'; // 기본 주황색
-                  e.target.style.transform = 'scale(1)'; // 원래 크기로 복구
-                }}
-                onClick={() => {
-                  setEclassContents((prev) => {
-                    const tempEclassContents = prev.map((eclassContent) => ({
-                      ...eclassContent,
-                      contents: [...eclassContent.contents],
-                    }));
-                    tempEclassContents[activeStepIndex].contents = [
-                      ...tempEclassContents[activeStepIndex].contents,
-                      {
-                        type: 'html',
-                        content: quillData,
-                      },
-                    ];
-                    return tempEclassContents;
-                  });
-
-                  setQuillData(null);
-                }}
-              >
-                글상자 포함
-              </button>
-              <label
-                htmlFor="imageUpload"
-                style={{
-                  width: '120px',
-                  textAlign: 'center',
-                  padding: '0.5rem 1rem',
-                  backgroundColor: '#FF9800', // 새로운 색상 (주황색)
-                  color: '#FFFFFF',
-                  borderRadius: '0.5rem',
-                  fontWeight: '600',
-                  fontSize: '1rem',
-                  cursor: 'pointer',
-                  border: 'none',
-                  boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.15)',
-                  transition: 'background-color 0.3s ease, transform 0.2s ease',
-                  outline: 'none',
-                  marginRight: '10px',
-                }}
-                onMouseOver={(e) => {
-                  e.target.style.backgroundColor = '#FFA500'; // 마우스 오버 시 밝은 주황색
-                  e.target.style.transform = 'scale(1.05)'; // 확대 효과
-                }}
-                onMouseOut={(e) => {
-                  e.target.style.backgroundColor = '#FF9800'; // 기본 주황색
-                  e.target.style.transform = 'scale(1)'; // 원래 크기로 복구
-                }}
-              >
-                이미지 추가
-              </label>
-              <input
-                type="file"
-                accept="image/*"
-                style={{ display: 'none' }}
-                id="imageUpload"
-                onChange={handleFileChange}
-              />
-              <button
-                style={{
-                  width: '140px',
-                  padding: '0.5rem 1rem',
-                  backgroundColor: '#FF9800', // 새로운 색상 (주황색)
-                  color: '#FFFFFF',
-                  borderRadius: '0.5rem',
-                  fontWeight: '600',
-                  fontSize: '1rem',
-                  cursor: 'pointer',
-                  border: 'none',
-                  boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.15)',
-                  transition: 'background-color 0.3s ease, transform 0.2s ease',
-                  outline: 'none',
-                  marginRight: '10px',
-                }}
-                onMouseOver={(e) => {
-                  e.target.style.backgroundColor = '#FFA500'; // 마우스 오버 시 밝은 주황색
-                  e.target.style.transform = 'scale(1.05)'; // 확대 효과
-                }}
-                onMouseOut={(e) => {
-                  e.target.style.backgroundColor = '#FF9800'; // 기본 주황색
-                  e.target.style.transform = 'scale(1)'; // 원래 크기로 복구
-                }}
-                onClick={() => {
-                  setEclassContents((prev) => {
-                    const tempEclassContents = prev.map((eclassContent) => ({
-                      ...eclassContent,
-                      contents: [...eclassContent.contents],
-                    }));
-                    tempEclassContents[activeStepIndex].contents = [
-                      ...tempEclassContents[activeStepIndex].contents,
-                      {
-                        type: 'textBox',
-                        content: `<textarea
-                        style="width: 550px; height: 150px; padding: 10px; fontSize: 16px; lineHeight: 1.5; color: #374151; border: 1px solid #D1D5DB; borderRadius: 8px;  boxShadow: 0px 4px 10px rgba(0, 0, 0, 0.1); outline: none; resize: vertical; backgroundColor: #F9FAFB";
-                        placeholder="학생이 여기에 답변을 입력합니다"
-                        disabled/>`,
-                      },
-                    ];
-                    return tempEclassContents;
-                  });
-                }}
-              >
-                답변 박스 추가
-              </button>
-            </div>
-
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-              }}
-            >
-              {/* 데이터 추가하기 버튼 */}
-              <DataTableButton
-                summary={summary}
-                onSelectData={handleSelectData}
-                type="table"
-              />
-              <DataTableButton
-                summary={summary}
-                onSelectData={handleSelectData}
-                type="graph"
-              />
-            </div>
-          </div>
-          <button
+          <span
             style={{
-              width: '170px',
-              padding: '0.5rem 1rem',
-              backgroundColor: '#6A1B9A', // 기본 색상 (보라색)
-              color: '#FFFFFF',
-              borderRadius: '0.5rem',
-              fontWeight: '600',
-              fontSize: '1rem',
-              cursor: 'pointer',
-              border: 'none',
-              boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.15)',
-              transition: 'background-color 0.3s ease, transform 0.2s ease',
-              outline: 'none',
-              marginLeft: '250px',
-              marginTop: '100px',
-            }}
-            onMouseOver={(e) => {
-              e.target.style.backgroundColor = '#AB47BC'; // 마우스 오버 시 밝은 보라색
-              e.target.style.transform = 'scale(1.05)'; // 확대 효과
-            }}
-            onMouseOut={(e) => {
-              e.target.style.backgroundColor = '#6A1B9A'; // 기본 보라색
-              e.target.style.transform = 'scale(1)'; // 원래 크기로 복구
-            }}
-            onClick={async () => {
-              const postData = {
-                uuid: uuidv4(),
-                username: localStorage.getItem('username'),
-                timestamp: new Date().toISOString(),
-                stepName: eclassTitle,
-                stepCount: eclassContents.length,
-                thumbIng: '',
-                contents: eclassContents.map((eclassContent, stepIndex) => ({
-                  stepNum: stepIndex + 1,
-                  contentName: eclassContent.stepTitle,
-                  contents: [
-                    ...eclassContent.contents.map((content) => {
-                      if (
-                        content.type === 'textBox' ||
-                        content.type === 'html'
-                      ) {
-                        return {
-                          type: content.type,
-                          content: content.content,
-                          x: null,
-                          y: null,
-                        };
-                      }
-                      if (content.type === 'img') {
-                        return {
-                          type: content.type,
-                          content: '',
-                          x: null,
-                          y: null,
-                        };
-                      }
-                      if (content.type === 'data') {
-                        return {
-                          type: content.type,
-                          content: {
-                            type: 'div',
-                            key: null,
-                            ref: null,
-                            props: content.content.props,
-                          },
-                          x: null,
-                          y: null,
-                        };
-                      }
-
-                      if (content.type === 'dataInChartButton') {
-                        return {
-                          type: content.type,
-                          content: content.content,
-                          x: null,
-                          y: null,
-                        };
-                      }
-                    }),
-                  ],
-                })),
-              };
-              try {
-                await createEclass(postData);
-                alert('수업이 정상적으로 생성 되었습니다.');
-              } catch (e) {
-                console.log(e);
-              }
+              fontSize: '24px',
+              fontWeight: '500',
+              marginBottom: '24px',
             }}
           >
-            수업 생성
-          </button>
+            Finish 버튼으로 E-Class 생성을 완료하세요.
+          </span>
+          <div>
+            <img
+              src={thumbnailImage}
+              style={{
+                height: '200px',
+                marginBottom: '40px',
+              }}
+            />
+          </div>
+          <div>
+            <button
+              style={{
+                width: '180px',
+                textAlign: 'center',
+                padding: '0.5rem 1rem',
+                backgroundColor: '#8E44AD', // 기본 색상 (짙은 보라색)
+                color: '#FFFFFF',
+                borderRadius: '0.5rem',
+                fontWeight: '600',
+                fontSize: '1rem',
+                cursor: 'pointer',
+                border: 'none',
+                boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.15)',
+                transition: 'background-color 0.3s ease, transform 0.2s ease',
+                outline: 'none',
+                marginRight: '10px',
+              }}
+              onMouseOver={(e) => {
+                e.target.style.backgroundColor = '#A569BD'; // 마우스 오버 시 밝은 보라색
+                e.target.style.transform = 'scale(1.05)'; // 확대 효과
+              }}
+              onMouseOut={(e) => {
+                e.target.style.backgroundColor = '#8E44AD'; // 기본 보라색
+                e.target.style.transform = 'scale(1)'; // 원래 크기로 복구
+              }}
+              onClick={() => {
+                setIsEnd(false);
+              }}
+            >
+              뒤로 가기
+            </button>
+
+            <label
+              htmlFor="thumbImageUpload"
+              style={{
+                width: '180px',
+                textAlign: 'center',
+                padding: '0.5rem 1rem',
+                backgroundColor: '#8E44AD', // 기본 색상 (짙은 보라색)
+                color: '#FFFFFF',
+                borderRadius: '0.5rem',
+                fontWeight: '600',
+                fontSize: '1rem',
+                cursor: 'pointer',
+                border: 'none',
+                boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.15)',
+                transition: 'background-color 0.3s ease, transform 0.2s ease',
+                outline: 'none',
+                marginRight: '10px',
+              }}
+              onMouseOver={(e) => {
+                e.target.style.backgroundColor = '#A569BD'; // 마우스 오버 시 밝은 보라색
+                e.target.style.transform = 'scale(1.05)'; // 확대 효과
+              }}
+              onMouseOut={(e) => {
+                e.target.style.backgroundColor = '#8E44AD'; // 기본 보라색
+                e.target.style.transform = 'scale(1)'; // 원래 크기로 복구
+              }}
+            >
+              썸네일 이미지 추가
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              style={{ display: 'none' }}
+              id="thumbImageUpload"
+              onChange={(e) => {
+                handleFileChange(e, 'thumb');
+              }}
+            />
+
+            <button
+              style={{
+                width: '120px',
+                padding: '0.5rem 1rem',
+                backgroundColor: '#FF9800', // 새로운 색상 (주황색)
+                color: '#FFFFFF',
+                borderRadius: '0.5rem',
+                fontWeight: '600',
+                fontSize: '1rem',
+                cursor: 'pointer',
+                border: 'none',
+                boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.15)',
+                transition: 'background-color 0.3s ease, transform 0.2s ease',
+                outline: 'none',
+                marginRight: '10px',
+              }}
+              onMouseOver={(e) => {
+                e.target.style.backgroundColor = '#FFA500'; // 마우스 오버 시 밝은 주황색
+                e.target.style.transform = 'scale(1.05)'; // 확대 효과
+              }}
+              onMouseOut={(e) => {
+                e.target.style.backgroundColor = '#FF9800'; // 기본 주황색
+                e.target.style.transform = 'scale(1)'; // 원래 크기로 복구
+              }}
+              onClick={async () => {
+                const postData = {
+                  uuid: classUUID,
+                  username: localStorage.getItem('username'),
+                  timestamp: new Date().toISOString(),
+                  stepName: eclassTitle,
+                  stepCount: eclassContents.length,
+                  thumbImg: thumbnailImage,
+                  contents: eclassContents.map((eclassContent, stepIndex) => ({
+                    stepNum: stepIndex + 1,
+                    contentName: eclassContent.stepTitle,
+                    contents: [
+                      ...eclassContent.contents.map((content) => {
+                        if (content.type === 'textBox') {
+                          return {
+                            type: 'textBox',
+                            content: '답변을 이곳에 입력해주세요',
+                            x: null,
+                            y: null,
+                          };
+                        }
+                        if (content.type === 'html') {
+                          return {
+                            type: content.type,
+                            content: content.content,
+                            x: null,
+                            y: null,
+                          };
+                        }
+                        if (content.type === 'img') {
+                          return {
+                            type: content.type,
+                            content: content.url,
+                            x: null,
+                            y: null,
+                          };
+                        }
+                        if (content.type === 'data') {
+                          return {
+                            type: content.type,
+                            content: {
+                              type: 'div',
+                              key: null,
+                              ref: null,
+                              props: content.content.props,
+                            },
+                            x: null,
+                            y: null,
+                          };
+                        }
+
+                        if (content.type === 'dataInChartButton') {
+                          return {
+                            type: content.type,
+                            content: content.content,
+                            x: null,
+                            y: null,
+                          };
+                        }
+                      }),
+                    ],
+                  })),
+                };
+                try {
+                  await createEclass(postData);
+                  alert('수업이 정상적으로 생성 되었습니다.');
+                } catch (e) {
+                  console.log(e);
+                }
+              }}
+            >
+              FINISH
+            </button>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div
+          style={{
+            display: 'flex',
+          }}
+        >
+          {/* 왼쪽에 과제 만드는 미리보기란에 랜더링 되는 곳 */}
+          <div
+            style={{
+              width: '750px',
+              height: '700px',
+              boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+              overflowY: 'auto',
+              margin: '0 20px 80px 0px',
+            }}
+            className="custom-html-container ql-editor"
+          >
+            {eclassContents.length > 0 &&
+              eclassContents[activeStepIndex].contents.map((item, index) => (
+                <div
+                  style={{
+                    fontFamily: 'Arial',
+                  }}
+                >
+                  <div
+                    key={index}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '10px',
+                      margin: '5px 0',
+                    }}
+                  >
+                    {/* 아이템 콘텐츠(답변 박스, 글 상자) */}
+                    {(item.type === 'textBox' || item.type === 'html') && (
+                      <div dangerouslySetInnerHTML={{ __html: item.content }} />
+                    )}
+                    {/* 아이템 콘텐츠(이미지) */}
+                    {item.type === 'img' && (
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: `<img src=${item.url} />`,
+                        }}
+                      />
+                    )}
+
+                    {/* 아이템 콘텐츠(테이블) */}
+                    {item.type === 'data' &&
+                      React.createElement(
+                        item.content.type,
+                        item.content.props,
+                      )}
+
+                    {/* 아이템 콘텐츠(그래프) */}
+                    {item.type === 'dataInChartButton' && (
+                      <button
+                        style={{
+                          width: '180px',
+                          textAlign: 'center',
+                          padding: '0.5rem 1rem',
+                          backgroundColor: '#8E44AD', // 기본 색상 (짙은 보라색)
+                          color: '#FFFFFF',
+                          borderRadius: '0.5rem',
+                          fontWeight: '600',
+                          fontSize: '1rem',
+                          cursor: 'pointer',
+                          border: 'none',
+                          boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.15)',
+                          transition:
+                            'background-color 0.3s ease, transform 0.2s ease',
+                          outline: 'none',
+                          marginRight: '10px',
+                        }}
+                        onMouseOver={(e) => {
+                          e.target.style.backgroundColor = '#A569BD'; // 마우스 오버 시 밝은 보라색
+                          e.target.style.transform = 'scale(1.05)'; // 확대 효과
+                        }}
+                        onMouseOut={(e) => {
+                          e.target.style.backgroundColor = '#8E44AD'; // 기본 보라색
+                          e.target.style.transform = 'scale(1)'; // 원래 크기로 복구
+                        }}
+                        onClick={() => {
+                          alert('학생이 수업때 사용할 수 있는 버튼입니다 ^^');
+                        }}
+                      >
+                        그래프 그리러 가기
+                      </button>
+                    )}
+                    {/* 아이콘 버튼 */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        gap: '15px',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <AiOutlineArrowUp
+                          onClick={() => moveUp(index)}
+                          style={{
+                            cursor: 'pointer',
+                            fontSize: '24px', // 아이콘 크기 증가
+                            color: '#007bff', // 기본 색상 파란색
+                            transition: 'transform 0.2s ease', // 부드러운 애니메이션 효과
+                          }}
+                          title="Move Up"
+                          onMouseEnter={(e) =>
+                            (e.target.style.transform = 'scale(1.2)')
+                          } // 호버 시 크기 증가
+                          onMouseLeave={(e) =>
+                            (e.target.style.transform = 'scale(1)')
+                          } // 호버 해제 시 원래 크기로
+                        />
+                        <AiOutlineArrowDown
+                          onClick={() => moveDown(index)}
+                          style={{
+                            cursor: 'pointer',
+                            fontSize: '24px', // 아이콘 크기 증가
+                            color: '#007bff', // 기본 색상 파란색
+                            transition: 'transform 0.2s ease', // 부드러운 애니메이션 효과
+                          }}
+                          title="Move Down"
+                          onMouseEnter={(e) =>
+                            (e.target.style.transform = 'scale(1.2)')
+                          } // 호버 시 크기 증가
+                          onMouseLeave={(e) =>
+                            (e.target.style.transform = 'scale(1)')
+                          } // 호버 해제 시 원래 크기로
+                        />
+                      </div>
+
+                      <BsFillTrashFill
+                        onClick={() => deleteItem(index)}
+                        style={{
+                          cursor: 'pointer',
+                          fontSize: '24px', // 아이콘 크기 증가
+                          color: '#e74c3c', // 삭제 버튼 빨간색
+                          transition: 'transform 0.2s ease, color 0.2s ease', // 부드러운 애니메이션 효과
+                        }}
+                        title="Delete"
+                        onMouseEnter={(e) => {
+                          e.target.style.transform = 'scale(1.2)'; // 호버 시 크기 증가
+                          e.target.style.color = '#c0392b'; // 호버 시 색상 변화
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.transform = 'scale(1)'; // 호버 해제 시 원래 크기로
+                          e.target.style.color = '#e74c3c'; // 호버 해제 시 색상 원상 복귀
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+          </div>
+
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'start',
+              alignItems: 'center',
+            }}
+          >
+            {/* 오른쪽 WordProcessor 편집창 */}
+            <ReactQuill
+              //   ref={quillRef}
+              style={{ width: '420px', height: '200px', margin: '0 0 60px' }}
+              //   modules={modules}
+              //   formats={formats}
+              value={quillData}
+              onChange={setQuillData}
+              placeholder="내용을 입력하세요..."
+            />
+            <div>
+              <div
+                style={{
+                  marginBottom: '10px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                }}
+              >
+                <button
+                  style={{
+                    width: '120px',
+                    padding: '0.5rem 1rem',
+                    backgroundColor: '#FF9800', // 새로운 색상 (주황색)
+                    color: '#FFFFFF',
+                    borderRadius: '0.5rem',
+                    fontWeight: '600',
+                    fontSize: '1rem',
+                    cursor: 'pointer',
+                    border: 'none',
+                    boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.15)',
+                    transition:
+                      'background-color 0.3s ease, transform 0.2s ease',
+                    outline: 'none',
+                    marginRight: '10px',
+                  }}
+                  onMouseOver={(e) => {
+                    e.target.style.backgroundColor = '#FFA500'; // 마우스 오버 시 밝은 주황색
+                    e.target.style.transform = 'scale(1.05)'; // 확대 효과
+                  }}
+                  onMouseOut={(e) => {
+                    e.target.style.backgroundColor = '#FF9800'; // 기본 주황색
+                    e.target.style.transform = 'scale(1)'; // 원래 크기로 복구
+                  }}
+                  onClick={() => {
+                    setEclassContents((prev) => {
+                      const tempEclassContents = prev.map((eclassContent) => ({
+                        ...eclassContent,
+                        contents: [...eclassContent.contents],
+                      }));
+                      tempEclassContents[activeStepIndex].contents = [
+                        ...tempEclassContents[activeStepIndex].contents,
+                        {
+                          type: 'html',
+                          content: quillData,
+                        },
+                      ];
+                      return tempEclassContents;
+                    });
+
+                    setQuillData(null);
+                  }}
+                >
+                  글상자 포함
+                </button>
+                <button
+                  style={{
+                    width: '140px',
+                    padding: '0.5rem 1rem',
+                    backgroundColor: '#FF9800', // 새로운 색상 (주황색)
+                    color: '#FFFFFF',
+                    borderRadius: '0.5rem',
+                    fontWeight: '600',
+                    fontSize: '1rem',
+                    cursor: 'pointer',
+                    border: 'none',
+                    boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.15)',
+                    transition:
+                      'background-color 0.3s ease, transform 0.2s ease',
+                    outline: 'none',
+                    marginRight: '10px',
+                  }}
+                  onMouseOver={(e) => {
+                    e.target.style.backgroundColor = '#FFA500'; // 마우스 오버 시 밝은 주황색
+                    e.target.style.transform = 'scale(1.05)'; // 확대 효과
+                  }}
+                  onMouseOut={(e) => {
+                    e.target.style.backgroundColor = '#FF9800'; // 기본 주황색
+                    e.target.style.transform = 'scale(1)'; // 원래 크기로 복구
+                  }}
+                  onClick={() => {
+                    setEclassContents((prev) => {
+                      const tempEclassContents = prev.map((eclassContent) => ({
+                        ...eclassContent,
+                        contents: [...eclassContent.contents],
+                      }));
+                      tempEclassContents[activeStepIndex].contents = [
+                        ...tempEclassContents[activeStepIndex].contents,
+                        {
+                          type: 'textBox',
+                          content: `<textarea
+                style="width: 550px; height: 150px; padding: 10px; fontSize: 16px; lineHeight: 1.5; color: #374151; border: 1px solid #D1D5DB; borderRadius: 8px;  boxShadow: 0px 4px 10px rgba(0, 0, 0, 0.1); outline: none; resize: vertical; backgroundColor: #F9FAFB";
+                placeholder="학생이 여기에 답변을 입력합니다"
+                disabled/>`,
+                        },
+                      ];
+                      return tempEclassContents;
+                    });
+                  }}
+                >
+                  답변 박스 추가
+                </button>
+              </div>
+              <div
+                style={{
+                  marginBottom: '10px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                }}
+              >
+                <button
+                  style={{
+                    width: '120px',
+                    padding: '0.5rem 1rem',
+                    backgroundColor: '#FF9800', // 새로운 색상 (주황색)
+                    color: '#FFFFFF',
+                    borderRadius: '0.5rem',
+                    fontWeight: '600',
+                    fontSize: '1rem',
+                    cursor: 'pointer',
+                    border: 'none',
+                    boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.15)',
+                    transition:
+                      'background-color 0.3s ease, transform 0.2s ease',
+                    outline: 'none',
+                    marginRight: '10px',
+                  }}
+                  onMouseOver={(e) => {
+                    e.target.style.backgroundColor = '#FFA500'; // 마우스 오버 시 밝은 주황색
+                    e.target.style.transform = 'scale(1.05)'; // 확대 효과
+                  }}
+                  onMouseOut={(e) => {
+                    e.target.style.backgroundColor = '#FF9800'; // 기본 주황색
+                    e.target.style.transform = 'scale(1)'; // 원래 크기로 복구
+                  }}
+                  onClick={() => {
+                    setIsVideoModalOpen(true);
+                    // setEclassContents((prev) => {
+                    //   const tempEclassContents = prev.map((eclassContent) => ({
+                    //     ...eclassContent,
+                    //     contents: [...eclassContent.contents],
+                    //   }));
+                    //   tempEclassContents[activeStepIndex].contents = [
+                    //     ...tempEclassContents[activeStepIndex].contents,
+                    //     {
+                    //       type: 'html',
+                    //       content: `<iframe class="ql-video" frameborder="0" allowfullscreen="true" src="https://www.youtube.com/embed/7AH-QDddFE4"></iframe>`,
+                    //     },
+                    //   ];
+                    //   return tempEclassContents;
+                    // });
+                  }}
+                >
+                  동영상 추가
+                </button>
+                <label
+                  htmlFor="imageUpload"
+                  style={{
+                    width: '120px',
+                    textAlign: 'center',
+                    padding: '0.5rem 1rem',
+                    backgroundColor: '#FF9800', // 새로운 색상 (주황색)
+                    color: '#FFFFFF',
+                    borderRadius: '0.5rem',
+                    fontWeight: '600',
+                    fontSize: '1rem',
+                    cursor: 'pointer',
+                    border: 'none',
+                    boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.15)',
+                    transition:
+                      'background-color 0.3s ease, transform 0.2s ease',
+                    outline: 'none',
+                    marginRight: '10px',
+                  }}
+                  onMouseOver={(e) => {
+                    e.target.style.backgroundColor = '#FFA500'; // 마우스 오버 시 밝은 주황색
+                    e.target.style.transform = 'scale(1.05)'; // 확대 효과
+                  }}
+                  onMouseOut={(e) => {
+                    e.target.style.backgroundColor = '#FF9800'; // 기본 주황색
+                    e.target.style.transform = 'scale(1)'; // 원래 크기로 복구
+                  }}
+                >
+                  이미지 추가
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  id="imageUpload"
+                  onChange={(e) => {
+                    handleFileChange(e, 'image');
+                  }}
+                />
+              </div>
+
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                }}
+              >
+                {/* 데이터 추가하기 버튼 */}
+                <DataTableButton
+                  summary={summary}
+                  onSelectData={handleSelectData}
+                  type="table"
+                />
+                <DataTableButton
+                  summary={summary}
+                  onSelectData={handleSelectData}
+                  type="graph"
+                />
+              </div>
+            </div>
+            <button
+              style={{
+                width: '170px',
+                padding: '0.5rem 1rem',
+                backgroundColor: '#6A1B9A', // 기본 색상 (보라색)
+                color: '#FFFFFF',
+                borderRadius: '0.5rem',
+                fontWeight: '600',
+                fontSize: '1rem',
+                cursor: 'pointer',
+                border: 'none',
+                boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.15)',
+                transition: 'background-color 0.3s ease, transform 0.2s ease',
+                outline: 'none',
+                marginLeft: '250px',
+                marginTop: '100px',
+              }}
+              onMouseOver={(e) => {
+                e.target.style.backgroundColor = '#AB47BC'; // 마우스 오버 시 밝은 보라색
+                e.target.style.transform = 'scale(1.05)'; // 확대 효과
+              }}
+              onMouseOut={(e) => {
+                e.target.style.backgroundColor = '#6A1B9A'; // 기본 보라색
+                e.target.style.transform = 'scale(1)'; // 원래 크기로 복구
+              }}
+              onClick={async () => {
+                setIsEnd(true);
+              }}
+            >
+              수업 생성
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
