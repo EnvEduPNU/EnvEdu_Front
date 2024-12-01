@@ -125,21 +125,42 @@ function ClassData() {
   };
 
   const handleDeleteLecture = async (index, uuid, timestamp) => {
-    try {
-      await customAxios.delete(
-        `/api/steps/deleteLectureContent/${uuid}/${timestamp}`,
-      );
-      const updatedLectures = [...lectureSummary];
-      updatedLectures.splice(index, 1);
-      setLectureSummary(updatedLectures);
-      setLectureUuid(uuid);
-      alert('E-Class가 성공적으로 삭제되었습니다.');
-      window.location.reload();
-    } catch (error) {
-      console.error('Error deleting lecture:', error);
-      alert('E-Class 삭제 중 오류가 발생했습니다.');
+    // 삭제 확인 대화상자 표시
+    const isConfirmed = window.confirm('정말로 이 E-Class를 삭제하시겠습니까?');
+    
+    if (!isConfirmed) {
+      // 사용자가 삭제를 취소하면 함수 종료
+      return;
     }
+
+    try {
+      const response = await customAxios.get(
+        `/api/eclass/eclass-check?lectureDataUuid=${uuid}`,
+      );
+
+      if(response.data){
+        alert("E-Class 실행에서 사용중입니다!")
+        return;
+      }else{
+
+        await customAxios.delete(
+          `/api/steps/deleteLectureContent/${uuid}/${timestamp}`,
+        );
+        const updatedLectures = [...lectureSummary];
+        updatedLectures.splice(index, 1);
+        setLectureSummary(updatedLectures);
+        setLectureUuid(uuid);
+        alert('E-Class가 성공적으로 삭제되었습니다.');
+        window.location.reload();
+      }
+
+    } catch (error) {
+      console.error('Error checking lecture:', error);
+      alert('E-Class 검증 중 오류가 발생했습니다.');
+    }
+
   };
+  
 
   return (
     <div
