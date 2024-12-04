@@ -40,6 +40,9 @@ import { LiveTeacherPage } from './EClass/liveClass/page/LiveTeacherPage';
 import { LiveStudentPage } from './EClass/liveClass/page/LiveStudentPage';
 import Resource from './EducationResources/Resource';
 import DataInChartTutorialPage from './Data/DataInChart/Page/DataInChartTutorialPage';
+import CreateClassPage from './EClass/createClass/CreateClassPage';
+import ClassListPage from './EClass/createClass/ClassListPage';
+import ModifyClassPage from './EClass/createClass/ModifyClassPage';
 
 function App() {
   const navigate = useNavigate();
@@ -105,6 +108,18 @@ function App() {
           <Route path="/myData" exact={true} element={<MyData />} />{' '}
           {/*------------------------------------------------- Class Data -----------------------------------------------------*/}
           <Route path="/classData" exact={true} element={<ClassData />} />{' '}
+          {/*------------------------------------------------- Class Data2 -----------------------------------------------------*/}
+          <Route
+            path="/createClass"
+            exact={true}
+            element={<CreateClassPage />}
+          />{' '}
+          <Route path="/classList" exact={true} element={<ClassListPage />} />{' '}
+          <Route
+            path="/modifyClass/:uuid/:timestamp"
+            exact={true}
+            element={<ModifyClassPage />}
+          />{' '}
           {/*My Data*/}
           <Route path="/readExcel" exact={true} element={<ReadExcel />} />
           <Route path="/search" exact={true} element={<Search />} />

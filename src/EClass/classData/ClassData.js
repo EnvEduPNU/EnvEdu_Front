@@ -19,7 +19,6 @@ function ClassData() {
   const [lectureName, setLectureName] = useState('');
   const [stepCount, setStepCount] = useState(0);
   const [stepCountLoad, setStepCountLoad] = useState();
-  const [eClassType, setEClassType] = useState('');
   const [isLoading, setIsLoading] = useState(true); // 로딩 상태 추가
 
   useEffect(() => {
@@ -63,7 +62,6 @@ function ClassData() {
   }, []);
 
   useEffect(() => {
-
     const username = localStorage.getItem('username');
 
     const fetchData = async () => {
@@ -260,7 +258,6 @@ function ClassData() {
               summary={summary}
               lectureName={lectureName}
               stepCount={stepCount}
-              eClassType={eClassType}
             />
           ) : (
             <>
@@ -271,7 +268,6 @@ function ClassData() {
                   lectureName={stepName}
                   stepCount={stepCountLoad}
                   stepContents={stepContents}
-                  eClassType={eClassType}
                   lectureUuid={lectureUuid}
                   timeStamp={timeStamp}
                 />

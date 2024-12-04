@@ -8,85 +8,88 @@ const locationsData = [
   {
     name: '서울특별시',
     subItems: [
-      { name: '고성천', code: '2501A40', isChecked: false },
-      { name: '사천천', code: '2501A30', isChecked: false },
-      { name: '곤양천', code: '2501A20', isChecked: false },
+      { name: '초이천(한강H1)', code: '1025A57', isChecked: false },
+      { name: '망월천(한강H2)', code: '1025A60', isChecked: false },
+      { name: '감이천(한강H3)', code: '1018A02', isChecked: false },
     ],
   },
   {
     name: '부산광역시',
     subItems: [
-      { name: '진전천', code: '2504A35', isChecked: false },
-      { name: '산호천', code: '2504A27', isChecked: false },
-      { name: '내동천', code: '2504A20', isChecked: false },
+      { name: '낙동강 하구언1(낙본M)', code: '2022A38', isChecked: false },
+      { name: '낙동강 하구언2(낙본N)', code: '2022A80', isChecked: false },
+      { name: '금곡(낙본L)', code: '2022A30', isChecked: false },
     ],
   },
   {
     name: '대구광역시',
     subItems: [
-      { name: '보청천1', code: '3007A10', isChecked: false },
-      { name: '우산', code: '3006A20', isChecked: false },
-      { name: '옥천', code: '3006A10', isChecked: false },
+      { name: '하빈천(낙본G1)', code: '2011A53', isChecked: false },
+      { name: '욱수천(금호C1)', code: '2012A35', isChecked: false },
+      { name: '금호강4(금호B)', code: '2012A38', isChecked: false },
     ],
   },
   {
     name: '인천광역시',
-    subItems: [{ name: '덕현', code: '2201A03', isChecked: false }],
+    subItems: [
+      { name: '굴포천2', code: '1019A35', isChecked: false },
+      { name: '굴포천4(굴포A)', code: '1019A40', isChecked: false },
+      { name: '선행천', code: '1201A10', isChecked: false },
+    ],
   },
   {
     name: '광주광역시',
     subItems: [
-      { name: '품곡천', code: '3008A50', isChecked: false },
-      { name: '대청댐', code: '3008A40', isChecked: false },
-      { name: '주원천', code: '3008A30', isChecked: false },
+      { name: '산동', code: '5001A27', isChecked: false },
+      { name: '풍영정천2', code: '5001A30', isChecked: false },
+      { name: '광주1', code: '5001A40', isChecked: false },
     ],
   },
   {
     name: '대전광역시',
     subItems: [
-      { name: '무주남대천2', code: '3003A20', isChecked: false },
-      { name: '무주남대천1', code: '3003A10', isChecked: false },
-      { name: '용포', code: '3002A50', isChecked: false },
+      { name: '용호천(금본G1)', code: '3008A55', isChecked: false },
+      { name: '주원천', code: '3008A30', isChecked: false },
+      { name: '금곡천', code: '3009A10', isChecked: false },
     ],
   },
   {
     name: '울산광역시',
     subItems: [
-      { name: '수영강5', code: '2302A20', isChecked: false },
-      { name: '회동댐 상류', code: '2302A10', isChecked: false },
-      { name: '회야강3', code: '2301A40', isChecked: false },
+      { name: '덕현', code: '2201A03', isChecked: false },
+      { name: '지헌', code: '2201A06', isChecked: false },
+      { name: '신화', code: '2201A12', isChecked: false },
     ],
   },
   {
     name: '세종특별자치시',
     subItems: [
-      { name: '수영강5', code: '2302A20', isChecked: false },
-      { name: '회동댐 상류', code: '2302A10', isChecked: false },
-      { name: '회야강2', code: '2301A30', isChecked: false },
+      { name: '조천1', code: '3011A85', isChecked: false },
+      { name: '대교천1', code: '3012A15', isChecked: false },
     ],
   },
   {
     name: '경기도',
     subItems: [
-      { name: '오산천2(경안A1-2)', code: '1016A37', isChecked: false },
-      { name: '오산천1(경안A2-1)', code: '1016A35', isChecked: false },
-      { name: '경안천4(경안A1-1)', code: '1016A32', isChecked: false },
+      { name: '오갑천(청미A1-1)', code: '1007A01', isChecked: false },
+      { name: '청미천1(청미A1)', code: '1007A03', isChecked: false },
+      { name: '청미천3(청미A2)', code: '1007A11', isChecked: false },
     ],
   },
   {
     name: '강원도',
     subItems: [
-      { name: '유치천1(탐진A2)', code: '5101A15', isChecked: false },
-      { name: '탐진강1(탐진A1)', code: '5101A05', isChecked: false },
-      { name: '악양(섬본E)', code: '4009A45', isChecked: false },
+      { name: '지촌천(북한B1)', code: '1010A33', isChecked: false },
+      { name: '춘천1(북한B)', code: '1010A35', isChecked: false },
+      { name: '만대천(인북A1)', code: '1011A05', isChecked: false },
     ],
   },
   {
     name: '충청북도',
     subItems: [
-      { name: '강상', code: '1007A75', isChecked: false },
-      { name: '흑천3(흑천A)', code: '1007A70', isChecked: false },
-      { name: '흑천1', code: '1007A65', isChecked: false },
+      { name: '금상천(초강A1)', code: '3005A25', isChecked: false },
+      { name: '이원(금본E, 이원)', code: '3006A05', isChecked: false },
+      { name: '대청(금본F)', code: '3008A52', isChecked: false },
     ],
   },
   {
@@ -100,32 +103,32 @@ const locationsData = [
   {
     name: '전라남도',
     subItems: [
-      { name: '칠성천', code: '2101A70', isChecked: false },
-      { name: '형산강5', code: '2101A60', isChecked: false },
-      { name: '형산강4', code: '2101A50', isChecked: false },
+      { name: '구량천(금본B1)', code: '3001A05', isChecked: false },
+      { name: '정자천(금본B2)', code: '3001A30', isChecked: false },
+      { name: '용담(금본B)', code: '3002A40', isChecked: false },
     ],
   },
   {
     name: '경상북도',
     subItems: [
-      { name: '금강천1(탐진B1)', code: '5101A45', isChecked: false },
-      { name: '옴천천2(탐진A3)', code: '5101A25', isChecked: false },
+      { name: '석포3', code: '2001A36', isChecked: false },
+      { name: '석포4', code: '2001A37', isChecked: false },
     ],
   },
   {
     name: '경상남도',
     subItems: [
-      { name: '순천동천3', code: '4104A50', isChecked: false },
-      { name: '순천동천2', code: '4104A40', isChecked: false },
-      { name: '순천동천1', code: '4104A30', isChecked: false },
+      { name: '가야천', code: '2013A20', isChecked: false },
+      { name: '창녕(적포)', code: '2014A60', isChecked: false },
+      { name: '월곡저수지', code: '2014D50', isChecked: false },
     ],
   },
   {
     name: '제주특별자치도',
     subItems: [
-      { name: '황구지천2(진위A8)', code: '1101A58', isChecked: false },
-      { name: '황구지천1(진위A7)', code: '1101A57', isChecked: false },
-      { name: '진위천4', code: '1101A55', isChecked: false },
+      { name: '옹포천', code: '6001A10', isChecked: false },
+      { name: '외도천', code: '6002A10', isChecked: false },
+      { name: '동홍천', code: '6003A10', isChecked: false },
     ],
   },
 ];
