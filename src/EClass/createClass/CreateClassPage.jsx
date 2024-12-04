@@ -20,6 +20,7 @@ import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 import basicImage from '../../assets/img/basicImage.png';
 import VideoLinkModal from './modal/VideoLinkModal';
+import { useNavigate } from 'react-router-dom';
 
 //항목 이름 (한국어 -> 영어)
 const engToKor = (name) => {
@@ -104,6 +105,8 @@ function CreateClassPage() {
   const [thumbnailImage, setThumbnailImage] = useState(basicImage);
   const [videoLink, setVideoLink] = useState('');
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  const naviate = useNavigate();
+
   useEffect(() => {
     const username = localStorage.getItem('username');
 
@@ -1091,6 +1094,7 @@ function CreateClassPage() {
                 try {
                   await createEclass(postData);
                   alert('수업이 정상적으로 생성 되었습니다.');
+                  naviate('/classList');
                 } catch (e) {
                   console.log(e);
                 }
