@@ -28,26 +28,9 @@ function ClassListPage() {
     getData();
   }, []);
 
-  const navigateDetailClass = (uuid) => {
-    navigate(`/modifyClass/${uuid}`);
+  const navigateDetailClass = (uuid, timestamp) => {
+    navigate(`/modifyClass/${uuid}/${timestamp}`);
   };
-
-  //   const handleDeleteLecture = async (index, uuid, timestamp) => {
-  //     try {
-  //       await customAxios.delete(
-  //         `/api/steps/deleteLectureContent/${uuid}/${timestamp}`,
-  //       );
-  //       const updatedLectures = [...lectureSummary];
-  //       updatedLectures.splice(index, 1);
-  //       setLectureSummary(updatedLectures);
-  //       setLectureUuid(uuid);
-  //       alert('E-Class가 성공적으로 삭제되었습니다.');
-  //       window.location.reload();
-  //     } catch (error) {
-  //       console.error('Error deleting lecture:', error);
-  //       alert('E-Class 삭제 중 오류가 발생했습니다.');
-  //     }
-  //   };
 
   return (
     <div

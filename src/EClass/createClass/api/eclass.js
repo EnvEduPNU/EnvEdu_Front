@@ -7,7 +7,7 @@ export const getEClassDatas = () =>
   customAxios.get('/api/steps/getLectureContent');
 
 export const putEClassThumbnail = (uuid, timestamp, imageUrl) =>
-  customAxios.put('/api/steps/updateThumbImg', {
+  customAxios.patch('/api/steps/updateThumbImg', {
     uuid,
     timestamp,
     thumbImg: imageUrl,

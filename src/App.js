@@ -116,7 +116,7 @@ function App() {
           />{' '}
           <Route path="/classList" exact={true} element={<ClassListPage />} />{' '}
           <Route
-            path="/modifyClass:uuid"
+            path="/modifyClass/:uuid/:timestamp"
             exact={true}
             element={<ModifyClassPage />}
           />{' '}

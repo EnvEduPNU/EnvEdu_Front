@@ -15,11 +15,12 @@ import { BsFillTrashFill } from 'react-icons/bs';
 import DataTableButton from '../liveClass/teacher/component/button/DataTableButton';
 import { customAxios } from '../../Common/CustomAxios';
 import { convertToNumber } from '../../Data/DataInChart/store/utils/convertToNumber';
-import { createEclass } from './api/eclass';
+import { createEclass, getEClassDatas } from './api/eclass';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 import basicImage from '../../assets/img/basicImage.png';
 import VideoLinkModal from './modal/VideoLinkModal';
+import { useParams } from 'react-router-dom';
 
 //항목 이름 (한국어 -> 영어)
 const engToKor = (name) => {
@@ -89,6 +90,7 @@ const engToKor = (name) => {
 };
 
 function ModifyClassPage() {
+  const { uuid, timestamp } = useParams();
   const [eclassTitle, setEclassTitle] = useState('');
   const [eclassContents, setEclassContents] = useState([
     {
@@ -104,6 +106,422 @@ function ModifyClassPage() {
   const [thumbnailImage, setThumbnailImage] = useState(basicImage);
   const [videoLink, setVideoLink] = useState('');
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+
+  useEffect(() => {
+    const getData = async () => {
+      const response = await getEClassDatas();
+      const eclassData = response.data.filter(
+        (value) => value.uuid === uuid,
+      )[0];
+      console.log(eclassData);
+      setEclassTitle(eclassData.stepName);
+      const newEclassContents = [];
+
+      // 첫 번째 단계: eclassData.contents 반복
+      for (let i = 0; i < eclassData.contents.length; i++) {
+        const step = eclassData.contents[i];
+        const newStep = {
+          stepTitle: step.contentName,
+          contents: [],
+        };
+
+        // 두 번째 단계: step.contents 반복
+        for (let j = 0; j < step.contents.length; j++) {
+          const content = step.contents[j];
+
+          if (content.type === 'html') {
+            newStep.contents.push(content);
+          } else if (content.type === 'textBox') {
+            newStep.contents.push({
+              type: 'textBox',
+              content: `<textarea
+                style="width: 550px; height: 150px; padding: 10px; fontSize: 16px; lineHeight: 1.5; color: #374151; border: 1px solid #D1D5DB; borderRadius: 8px; boxShadow: 0px 4px 10px rgba(0, 0, 0, 0.1); outline: none; resize: vertical; backgroundColor: #F9FAFB";
+                placeholder="학생이 여기에 답변을 입력합니다"
+                disabled/>`,
+            });
+          } else if (content.type === 'img') {
+            newStep.contents.push({
+              type: 'img',
+              url: content.content,
+              file: null,
+            });
+          } else if (content.type === 'data') {
+            let tableContent;
+            let dataContent;
+            console.log(content.content.type);
+            if (content.content.type === '커스텀 데이터') {
+              await customAxios
+                .get(`api/custom/${content.content.id}`)
+                .then((res) => {
+                  //수정 필요
+
+                  const title = res.data.title;
+                  let rows = 0;
+                  let columns = 0;
+                  const headerSet = new Set();
+                  res.data.numericFields.forEach((table) => {
+                    const key = Object.keys(table)[0];
+                    headerSet.add(key);
+                  });
+
+                  res.data.stringFields.forEach((table) => {
+                    const key = Object.keys(table)[0];
+                    headerSet.add(key);
+                  });
+
+                  columns = headerSet.size;
+                  rows =
+                    (res.data.numericFields.length +
+                      res.data.stringFields.length) /
+                    columns;
+                  const variables = Array(columns);
+
+                  const data = Array(rows + 1)
+                    .fill()
+                    .map(() => Array(columns).fill(0));
+
+                  res.data.numericFields.forEach((table) => {
+                    const key = Object.keys(table)[0];
+                    if (table[key].order < columns) {
+                      data[0][table[key].order] = key;
+                      variables[table[key].order] = {
+                        name: key,
+                        type: 'Numeric',
+                        isSelected: false,
+                        isMoreSelected: false,
+                        variableIndex: table[key].order,
+                      };
+                    }
+
+                    data[Math.floor(table[key].order / columns) + 1][
+                      table[key].order % columns
+                    ] = convertToNumber(table[key].value);
+                  });
+
+                  res.data.stringFields.forEach((table) => {
+                    const key = Object.keys(table)[0];
+                    if (table[key].order < columns) {
+                      data[0][table[key].order] = key;
+                      variables[table[key].order] = {
+                        name: key,
+                        type: 'Categorical',
+                        isSelected: false,
+                        isMoreSelected: false,
+                        variableIndex: table[key].order,
+                      };
+                    }
+                    data[Math.floor(table[key].order / columns) + 1][
+                      table[key].order % columns
+                    ] = convertToNumber(table[key].value);
+                  });
+                  console.log(data);
+                  dataContent = data;
+
+                  // localStorage.setItem('data', JSON.stringify(data));
+                  // localStorage.setItem('title', JSON.stringify(title));
+
+                  // JSON 데이터를 테이블 형식으로 변환하여 contents에 추가
+                  let headers = dataContent[0];
+
+                  tableContent = (
+                    <div style={{ width: 'auto', overflowX: 'auto' }}>
+                      <div
+                        style={{
+                          transform: 'scale(1)',
+                          transformOrigin: 'top left',
+                        }}
+                      >
+                        <table
+                          style={{
+                            width: '100%',
+                            marginTop: '10px',
+                            borderCollapse: 'collapse',
+                            tableLayout: 'fixed', // 테이블 셀 너비를 고정
+                          }}
+                        >
+                          <thead>
+                            <tr>
+                              {headers.map((header) => (
+                                <th
+                                  key={header}
+                                  style={{
+                                    border: '1px solid #ddd',
+                                    padding: '8px',
+                                    backgroundColor: '#f2f2f2',
+                                    wordWrap: 'break-word', // 긴 단어를 줄바꿈
+                                    fontSize: '10px', // 테이블 길이에 맞춰서 size 조절 수정해야함
+                                  }}
+                                >
+                                  {header}
+                                </th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {dataContent.map((row, rowIndex) => (
+                              <tr
+                                key={rowIndex}
+                                style={{ borderBottom: '1px solid #ddd' }}
+                              >
+                                {row.map((item) => (
+                                  <td
+                                    key={`${rowIndex}-${item}`}
+                                    style={{
+                                      border: '1px solid #ddd',
+                                      padding: '8px',
+                                      wordWrap: 'break-word', // 긴 단어를 줄바꿈
+                                      fontSize: '10px', // 테이블 길이에 맞춰서 size 조절 수정해야함
+                                    }}
+                                  >
+                                    {item}
+                                  </td>
+                                ))}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  );
+                })
+                .catch((err) => console.log(err));
+            } else {
+              let headers = [];
+              let path = '';
+
+              if (content.content.type === '수질 데이터') {
+                path = `/ocean-quality/mine/chunk?dataUUID=${content.content.id}`;
+                await customAxios
+                  .get(path)
+                  .then((res) => {
+                    // 남기고 싶은 키 목록
+                    const keysToKeep = [
+                      'PTNM',
+                      'ITEMDATE',
+                      'ITEMWMWK',
+                      'ITEMWNDEP',
+                      'ITEMBOD',
+                      'ITEMCOD',
+                      'ITEMDO',
+                      'ITEMSS',
+                      'ITEMTEMP',
+                      'ITEMTN',
+                      'ITEMTOC',
+                      'ITEMTP',
+                    ];
+
+                    // 변환 로직
+                    const transformedData = res.data[0].data.map((item) => {
+                      const newItem = {};
+                      keysToKeep.forEach((key) => {
+                        if (item[key] !== undefined) {
+                          if (item[key] === null) return;
+                          else if (isNaN(item[key])) newItem[key] = item[key];
+                          else newItem[key] = Number(item[key]);
+                        } else {
+                          newItem[key] = null; // 해당 키가 없으면 null로 설정
+                        }
+                      });
+                      return newItem;
+                    });
+                    console.log(transformedData);
+                    headers = Object.keys(transformedData[0]);
+
+                    headers = headers.map((header) => engToKor(header));
+
+                    dataContent = transformedData.map((item) =>
+                      Object.values(item),
+                    );
+                    // 최종 결과 생성 (헤더 + 값)
+                    const recombined = [headers, ...dataContent];
+                    console.log(recombined);
+                  })
+                  .catch((err) => console.log(err));
+              } else if (content.content.type === '대기질 데이터') {
+                path = `/air-quality/mine/chunk?dataUUID=${content.content.id}`;
+                await customAxios
+                  .get(path)
+                  .then((res) => {
+                    // 남기고 싶은 키 목록
+                    const keysToKeep = [
+                      'stationName',
+                      'ITEMDATE',
+                      'ITEMNO2',
+                      'ITEMO3',
+                      'ITEMPM10',
+                      'ITEMPM25',
+                      'ITEMSO2VALUE',
+                    ];
+                    console.log(res.data);
+
+                    // 변환 로직
+                    const transformedData = res.data.data.map((item) => {
+                      const newItem = {};
+                      keysToKeep.forEach((key) => {
+                        if (item[key] !== undefined) {
+                          if (item[key] === null) return;
+                          else if (isNaN(item[key])) newItem[key] = item[key];
+                          else newItem[key] = Number(item[key]);
+                        } else {
+                          newItem[key] = null; // 해당 키가 없으면 null로 설정
+                        }
+                      });
+                      return newItem;
+                    });
+                    console.log(transformedData);
+                    headers = Object.keys(transformedData[0]);
+
+                    headers = headers.map((header) => engToKor(header));
+
+                    dataContent = transformedData.map((item) =>
+                      Object.values(item),
+                    );
+                    // 최종 결과 생성 (헤더 + 값)
+                    const recombined = [headers, ...dataContent];
+                    console.log(recombined);
+                  })
+                  .catch((err) => console.log(err));
+              } else if (content.content.type === '시도별 대기질 데이터') {
+                path = `/city-air-quality/mine/chunk?dataUUID=${content.content.id}`;
+                await customAxios
+                  .get(path)
+                  .then((res) => {
+                    // 남기고 싶은 키 목록
+                    const keysToKeep = [
+                      'ITEMCODE',
+                      'ITEMDATETIME',
+                      'ITEMDAEGU',
+                      'ITEMCHUNGNAM',
+                      'ITEMINCHEON',
+                      'ITEMDAEJEON',
+                      'ITEMGYONGBUK',
+                      'ITEMSEJONG',
+                      'ITEMGWANGJU',
+                      'ITEMJEONBUK',
+                      'ITEMGANGWON',
+                      'ITEMULSAN',
+                      'ITEMJEONNAM',
+                      'ITEMSEOUL',
+                      'ITEMBUSAN',
+                      'ITEMJEJU',
+                      'ITEMCHUNGBUK',
+                      'ITEMGYEONGNAM',
+                      'ITEMGYEONGGI',
+                    ];
+                    console.log(res.data);
+
+                    // 변환 로직
+                    const transformedData = res.data.data.map((item) => {
+                      const newItem = {};
+                      keysToKeep.forEach((key) => {
+                        if (item[key] === null) return;
+                        else if (item[key] !== undefined) {
+                          newItem[key] = item[key];
+                        } else {
+                          newItem[key] = null; // 해당 키가 없으면 null로 설정
+                        }
+                      });
+                      return newItem;
+                    });
+                    console.log(transformedData);
+                    headers = Object.keys(transformedData[0]);
+
+                    headers = headers.map((header) => engToKor(header));
+
+                    dataContent = transformedData.map((item) =>
+                      Object.values(item),
+                    );
+                    // 최종 결과 생성 (헤더 + 값)
+                    const recombined = [headers, ...dataContent];
+                    console.log(recombined);
+                  })
+                  .catch((err) => console.log(err));
+              }
+              console.log(dataContent);
+              tableContent = (
+                <div style={{ width: 'auto', overflowX: 'auto' }}>
+                  <div
+                    style={{
+                      transform: 'scale(1)',
+                      transformOrigin: 'top left',
+                    }}
+                  >
+                    <table
+                      style={{
+                        width: '100%',
+                        marginTop: '10px',
+                        borderCollapse: 'collapse',
+                        tableLayout: 'fixed', // 테이블 셀 너비를 고정
+                      }}
+                    >
+                      <thead>
+                        <tr>
+                          {headers.map((header) => (
+                            <th
+                              key={header}
+                              style={{
+                                border: '1px solid #ddd',
+                                padding: '8px',
+                                backgroundColor: '#f2f2f2',
+                                wordWrap: 'break-word', // 긴 단어를 줄바꿈
+                                fontSize: '10px', // 테이블 길이에 맞춰서 size 조절 수정해야함
+                              }}
+                            >
+                              {header}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {dataContent.map((row, rowIndex) => (
+                          <tr
+                            key={rowIndex}
+                            style={{ borderBottom: '1px solid #ddd' }}
+                          >
+                            {headers.map((header, index) => (
+                              <td
+                                key={`${rowIndex}-${header}`}
+                                style={{
+                                  border: '1px solid #ddd',
+                                  padding: '8px',
+                                  wordWrap: 'break-word', // 긴 단어를 줄바꿈
+                                  fontSize: '10px', // 테이블 길이에 맞춰서 size 조절 수정해야함
+                                }}
+                              >
+                                {row[index]}
+                              </td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              );
+            }
+
+            newStep.contents.push({
+              type: 'data',
+              content: {
+                view: tableContent,
+                id: content.content.id,
+                type: content.content.type,
+              },
+            });
+          } else {
+            newStep.contents.push(content);
+          }
+        }
+
+        newEclassContents.push(newStep);
+      }
+
+      // 최종 결과 설정
+      setEclassContents(newEclassContents);
+      setThumbnailImage(eclassData.thumbImg);
+    };
+    getData();
+  }, [uuid]);
   useEffect(() => {
     const username = localStorage.getItem('username');
 
@@ -329,12 +747,16 @@ function ModifyClassPage() {
               </div>
             );
 
+            console.log({
+              type: 'data',
+              content: tableContent,
+            });
+
             setEclassContents((prev) => {
               const tempEclassContents = prev.map((eclassContent) => ({
                 ...eclassContent,
                 contents: [...eclassContent.contents],
               }));
-
               tempEclassContents[activeStepIndex].contents.push({
                 type: 'data',
                 content: tableContent,
@@ -912,7 +1334,7 @@ function ModifyClassPage() {
               marginBottom: '24px',
             }}
           >
-            Finish 버튼으로 E-Class 생성을 완료하세요.
+            Finish 버튼으로 E-Class 수정을 완료하세요.
           </span>
           <div>
             <img
@@ -1020,6 +1442,34 @@ function ModifyClassPage() {
                 e.target.style.transform = 'scale(1)'; // 원래 크기로 복구
               }}
               onClick={async () => {
+                // 삭제 확인 대화상자 표시
+                const isConfirmed = window.confirm(
+                  '정말로 이 E-Class를 수정하시겠습니까?',
+                );
+
+                if (!isConfirmed) {
+                  // 사용자가 삭제를 취소하면 함수 종료
+                  return;
+                }
+
+                try {
+                  const response = await customAxios.get(
+                    `/api/eclass/eclass-check?lectureDataUuid=${uuid}`,
+                  );
+
+                  if (response.data) {
+                    alert('E-Class 실행에서 사용중입니다!');
+                    return;
+                  } else {
+                    await customAxios.delete(
+                      `/api/steps/deleteLectureContent/${uuid}/${timestamp}`,
+                    );
+                  }
+                } catch (error) {
+                  console.error('Error checking lecture:', error);
+                  alert('E-Class 검증 중 오류가 발생했습니다.');
+                }
+
                 const postData = {
                   uuid: classUUID,
                   username: localStorage.getItem('username'),
@@ -1060,10 +1510,8 @@ function ModifyClassPage() {
                           return {
                             type: content.type,
                             content: {
-                              type: 'div',
-                              key: null,
-                              ref: null,
-                              props: content.content.props,
+                              id: content.content.id,
+                              type: content.content.type,
                             },
                             x: null,
                             y: null,
@@ -1084,7 +1532,7 @@ function ModifyClassPage() {
                 };
                 try {
                   await createEclass(postData);
-                  alert('수업이 정상적으로 생성 되었습니다.');
+                  alert('수업이 정상적으로 수정 되었습니다.');
                 } catch (e) {
                   console.log(e);
                 }
@@ -1143,10 +1591,18 @@ function ModifyClassPage() {
 
                     {/* 아이템 콘텐츠(테이블) */}
                     {item.type === 'data' &&
-                      React.createElement(
-                        item.content.type,
-                        item.content.props,
-                      )}
+                      // React.createElement(
+                      //   item.content.type,
+                      //   item.content.props,
+                      // )
+                      (item.content.view === undefined ? (
+                        <div>테이블</div>
+                      ) : (
+                        React.createElement(
+                          item.content.view.type,
+                          item.content.view.props,
+                        )
+                      ))}
 
                     {/* 아이템 콘텐츠(그래프) */}
                     {item.type === 'dataInChartButton' && (
@@ -1518,7 +1974,7 @@ function ModifyClassPage() {
                 setIsEnd(true);
               }}
             >
-              수업 생성
+              수업 수정
             </button>
           </div>
         </div>

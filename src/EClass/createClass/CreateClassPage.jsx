@@ -337,7 +337,11 @@ function CreateClassPage() {
 
               tempEclassContents[activeStepIndex].contents.push({
                 type: 'data',
-                content: tableContent,
+                content: {
+                  view: tableContent,
+                  id,
+                  type: '커스텀 데이터',
+                },
               });
 
               return tempEclassContents;
@@ -559,7 +563,11 @@ function CreateClassPage() {
 
           tempEclassContents[activeStepIndex].contents.push({
             type: 'data',
-            content: tableContent,
+            content: {
+              view: tableContent,
+              id,
+              type,
+            },
           });
 
           return tempEclassContents;
@@ -1060,10 +1068,8 @@ function CreateClassPage() {
                           return {
                             type: content.type,
                             content: {
-                              type: 'div',
-                              key: null,
-                              ref: null,
-                              props: content.content.props,
+                              id: content.content.id,
+                              type: content.content.type,
                             },
                             x: null,
                             y: null,
@@ -1144,8 +1150,8 @@ function CreateClassPage() {
                     {/* 아이템 콘텐츠(테이블) */}
                     {item.type === 'data' &&
                       React.createElement(
-                        item.content.type,
-                        item.content.props,
+                        item.content.view.type,
+                        item.content.view.props,
                       )}
 
                     {/* 아이템 콘텐츠(그래프) */}
