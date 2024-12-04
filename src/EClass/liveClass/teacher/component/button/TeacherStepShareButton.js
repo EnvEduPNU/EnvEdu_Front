@@ -116,6 +116,8 @@ export function TeacherStepShareButton({
 
   // 과제 공유 소켓 전달
   const sendMessage = () => {
+    console.log('과제 공유 메서드');
+
     if (!stepCount) {
       alert('공유할 스텝을 선택해주세요');
       return;

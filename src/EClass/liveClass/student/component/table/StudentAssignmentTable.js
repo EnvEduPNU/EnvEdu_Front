@@ -104,17 +104,17 @@ export default function StudentAssignmentTable(props) {
           requestData,
         );
 
-        console.log(
-          'Assignmnet Uuid 잘 나오나 확인 : ' +
-            JSON.stringify(assignmentUuidResp, null, 2),
-        );
+        // console.log(
+        //   'Assignmnet Uuid 잘 나오나 확인 : ' +
+        //     JSON.stringify(assignmentUuidResp, null, 2),
+        // );
 
         const assignmentResponse = await customAxios.get(
           `/api/assignment/getstep?uuid=${assignmentUuidResp.data}`,
         );
-        console.log(
-          '수업 정보 확인 : ' + JSON.stringify(assignmentResponse, null, 2),
-        );
+        // console.log(
+        //   '수업 정보 확인 : ' + JSON.stringify(assignmentResponse, null, 2),
+        // );
 
         if (assignmentResponse.data.length > 0) {
           const assignmentData = assignmentResponse.data;
@@ -128,9 +128,9 @@ export default function StudentAssignmentTable(props) {
             (data) => data.uuid === props.lectureDataUuid,
           );
 
-          console.log(
-            '수업 자료 확인 : ' + JSON.stringify(filteredData, null, 2),
-          );
+          // console.log(
+          //   '수업 자료 확인 : ' + JSON.stringify(filteredData, null, 2),
+          // );
 
           const updatedData = filteredData.flatMap((data) =>
             data.contents.map((content) => {
@@ -187,9 +187,9 @@ export default function StudentAssignmentTable(props) {
             };
           });
 
-          console.log(
-            '업데이트 데이터 확인 : ' + JSON.stringify(updatedData, null, 2),
-          );
+          // console.log(
+          //   '업데이트 데이터 확인 : ' + JSON.stringify(updatedData, null, 2),
+          // );
 
           setTableData(updatedData);
           setAllTableData(updatedFilteredData);

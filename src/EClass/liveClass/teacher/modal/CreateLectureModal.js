@@ -33,7 +33,7 @@ const CreateLectureModal = ({ open, onClose, onCreate, eClassUuid }) => {
 
   useEffect(() => {
     if (eClassUuid) {
-      console.log('유유아이디 나오나 : ' + eClassUuid);
+      console.log('이클래스 UUId : ' + eClassUuid);
 
       const fetchEclass = async () => {
         try {
