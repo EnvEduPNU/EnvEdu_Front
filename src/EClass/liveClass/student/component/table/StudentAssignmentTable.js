@@ -96,6 +96,10 @@ export default function StudentAssignmentTable(props) {
     props.setStepCount(stepNum);
   };
 
+  useEffect(() => {
+    console.log('테이블 확인 : ' + JSON.stringify(props.tableData, null, 2));
+  }, [props]);
+
   return (
     <div style={{ width: '100%', height: '550px', overflow: 'auto' }}>
       <Typography variant="h5" sx={{ margin: '0 0 10px 0' }}>

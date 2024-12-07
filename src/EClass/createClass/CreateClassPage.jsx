@@ -1095,7 +1095,6 @@ function CreateClassPage() {
                   await createEclass(postData);
                   alert('수업이 정상적으로 생성 되었습니다.');
                   naviate('/classList');
-                  window.location.reload();
                 } catch (e) {
                   console.log(e);
                 }

@@ -68,17 +68,17 @@ export const LiveStudentPage = () => {
         requestData,
       );
       console.log(
-        '{!!!!!!!!! 수업 자료 uuid !!!!!]  : ' +
+        '{!!!!!!!!! 보고서 uuid !!!!!]  : ' +
           JSON.stringify(assignmentUuidResp.data, null, 2),
       );
 
-      const lectureUuid = assignmentUuidResp.data;
+      const ReportUuid = assignmentUuidResp.data;
 
       const lectureResponse = await customAxios.get(
         '/api/assignment/get-step-one',
         {
           params: {
-            uuid: lectureUuid,
+            uuid: lectureDataUuid,
             username,
           },
         },
@@ -96,7 +96,7 @@ export const LiveStudentPage = () => {
           '/api/steps/getLectureContentOne',
           {
             params: {
-              uuid: lectureUuid,
+              uuid: lectureDataUuid,
             },
           },
         );
@@ -105,7 +105,16 @@ export const LiveStudentPage = () => {
           '해당 데이터 : ' + JSON.stringify(lectureData.data, null, 2),
         );
 
-        setTableData(lectureData.data);
+        const formattedData = lectureData.data.contents.map((content) => ({
+          contentName: content.contentName, // contentName 매핑
+          id: lectureData.data.uuid, // uuid와 stepNum 조합하여 id 생성
+          Step: lectureData.data.stepName, // stepName 매핑
+          stepNum: content.stepNum, // stepNum 그대로 매핑
+        }));
+
+        console.log('포맷 된 데이터:', JSON.stringify(formattedData, null, 2));
+
+        setTableData(formattedData);
       }
     };
 
@@ -388,8 +397,9 @@ export const LiveStudentPage = () => {
           </>
         ) : (
           <>
-            {/* <StudentAssignmentTable
+            <StudentAssignmentTable
               setCourseStep={setCourseStep}
+              tableData={tableData}
               setTableData={setTableData}
               lectureDataUuid={lectureDataUuid}
               setStepCount={setStepCount}
@@ -399,7 +409,7 @@ export const LiveStudentPage = () => {
               assginmentFetch={assginmentFetch}
               onReportButtonClick={handleReportButtonClick}
               setLatestTableData={setLatestTableData}
-            /> */}
+            />
             <div style={{ display: 'flex', gap: 10 }}>
               <Button
                 variant="contained"

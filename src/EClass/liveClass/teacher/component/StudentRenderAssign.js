@@ -86,15 +86,22 @@ function StudentRenderAssign({
       'latestTableData : ' + JSON.stringify(latestTableData, null, 2),
     );
     console.log('tableData : ' + JSON.stringify(tableData, null, 2));
-
     const parseStepCount = parseInt(stepCount);
+
+    console.log('parseStepCount : ' + JSON.stringify(parseStepCount, null, 2));
+
     let filteredContents = latestTableData
       ? latestTableData
-          .flatMap((data) => data.contents)
+          .flatMap((data) => data.contents || [data])
           .filter((content) => content.stepNum === parseStepCount)
       : tableData
-          .flatMap((data) => data.contents)
+          .flatMap((data) => data.contents || [data])
           .filter((content) => content.stepNum === parseStepCount);
+
+    console.log(
+      'filteredContents : ' + JSON.stringify(filteredContents, null, 2),
+    );
+
     setData(filteredContents);
   }, [stepCount, latestTableData, tableData]);
 
