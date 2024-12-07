@@ -91,18 +91,14 @@ function StudentRenderAssign({
     console.log('parseStepCount : ' + JSON.stringify(parseStepCount, null, 2));
 
     let filteredContents = latestTableData
-      ? latestTableData
-          .flatMap((data) => data.contents)
-          .filter((content) => content.stepNum === parseStepCount)
-      : tableData
-          .flatMap((data) => data.contents)
-          .filter((content) => content.stepNum === parseStepCount);
+      ? latestTableData.filter((data) => data.stepNum === parseStepCount)
+      : tableData.filter((data) => data.stepNum === parseStepCount);
 
     console.log(
       'filteredContents : ' + JSON.stringify(filteredContents, null, 2),
     );
 
-    setData(filteredContents);
+    setData(tableData);
   }, [stepCount, latestTableData, tableData]);
 
   // 로컬에서 이미지 삭제한 부분 보여주기 위한 훅

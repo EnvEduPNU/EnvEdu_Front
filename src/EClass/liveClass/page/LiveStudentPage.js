@@ -108,7 +108,7 @@ export const LiveStudentPage = () => {
         const formattedData = lectureData.data.contents.map((content) => ({
           contentName: content.contentName,
           stepNum: content.stepNum,
-          content: content.contents,
+          contents: content.contents,
         }));
 
         console.log('포맷 된 데이터:', JSON.stringify(formattedData, null, 2));
