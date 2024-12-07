@@ -34,6 +34,7 @@ export const LiveTeacherPage = () => {
       'assginmentShareCheck 바뀌면 확인 : ' +
         JSON.stringify(assginmentShareCheck, null, 2),
     );
+    setAssginmentShareStop(false);
   }, [assginmentShareCheck]);
 
   const closeEclass = async () => {

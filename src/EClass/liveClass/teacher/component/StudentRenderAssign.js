@@ -249,6 +249,15 @@ function StudentRenderAssign({
                   ) {
                     flag = true; // flag 설정하여 dataInChartButton 감지
 
+                    // stepCheck 업데이트
+                    const stepIndex = item.stepNum - 1;
+
+                    console.log('데이터 차트 인덱스 : ' + stepIndex);
+                    alert('???');
+                    if (stepIndex >= 0 && stepIndex < stepCount) {
+                      stepCheck[stepIndex] = true;
+                    }
+
                     // 이미지 업로드 및 상태 저장
                     let uploadedImages = [];
                     for (const [idx, photo] of localStoredPhotoList.entries()) {
@@ -275,6 +284,8 @@ function StudentRenderAssign({
 
                     return { ...contentItem }; // 기존 dataInChartButton 반환
                   }
+
+                  console.log('컨텐츠 타입 확인 : ' + contentItem.type);
 
                   return contentItem;
                 })
@@ -412,6 +423,14 @@ function StudentRenderAssign({
     });
   };
 
+  const shouldDisplaySubmitButton = data.some((stepData) =>
+    stepData.contents.some(
+      (contentItem) =>
+        contentItem.type === 'dataInChartButton' ||
+        contentItem.type === 'textBox',
+    ),
+  );
+
   return (
     <div>
       {data.map((stepData) => (
@@ -449,25 +468,28 @@ function StudentRenderAssign({
               ))}
             </div>
           </Paper>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={() => handleSubmit(imageUrlArray)}
-            style={{ marginTop: '10px' }}
-            sx={{
-              width: '10rem',
-              marginRight: 1,
-              fontFamily: "'Asap', sans-serif",
-              fontWeight: '600',
-              fontSize: '0.9rem',
-              color: 'grey',
-              backgroundColor: '#feecfe',
-              borderRadius: '2.469rem',
-              border: 'none',
-            }}
-          >
-            제출
-          </Button>
+          {/* 제출 버튼 조건 렌더링 */}
+          {shouldDisplaySubmitButton && (
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => handleSubmit(imageUrlArray)}
+              style={{ marginTop: '10px' }}
+              sx={{
+                width: '10rem',
+                marginRight: 1,
+                fontFamily: "'Asap', sans-serif",
+                fontWeight: '600',
+                fontSize: '0.9rem',
+                color: 'grey',
+                backgroundColor: '#feecfe',
+                borderRadius: '2.469rem',
+                border: 'none',
+              }}
+            >
+              제출
+            </Button>
+          )}
         </React.Fragment>
       ))}
       {isModalOpen && <DataInChartModal isModalOpen={isModalOpen} />}
