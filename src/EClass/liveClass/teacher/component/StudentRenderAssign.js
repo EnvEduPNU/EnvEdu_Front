@@ -86,19 +86,17 @@ function StudentRenderAssign({
       'latestTableData : ' + JSON.stringify(latestTableData, null, 2),
     );
     console.log('tableData : ' + JSON.stringify(tableData, null, 2));
-    const parseStepCount = parseInt(stepCount);
+    const parseStepCount = parseInt(stepCount, 10); // 10진수로 파싱
 
-    console.log('parseStepCount : ' + JSON.stringify(parseStepCount, null, 2));
-
-    let filteredContents = latestTableData
-      ? latestTableData.filter((data) => data.stepNum === parseStepCount)
-      : tableData.filter((data) => data.stepNum === parseStepCount);
-
-    console.log(
-      'filteredContents : ' + JSON.stringify(filteredContents, null, 2),
+    // tableData에서 stepNum과 parseStepCount가 같은 항목 필터링
+    const filteredData = tableData.filter(
+      (data) => data.stepNum === parseStepCount,
     );
 
-    setData(tableData);
+    console.log('Filtered Data:', filteredData);
+
+    // 상태에 필터링된 데이터 세팅
+    setData(filteredData);
   }, [stepCount, latestTableData, tableData]);
 
   // 로컬에서 이미지 삭제한 부분 보여주기 위한 훅
