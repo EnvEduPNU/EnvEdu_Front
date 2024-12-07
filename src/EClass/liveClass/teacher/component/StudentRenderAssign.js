@@ -92,10 +92,10 @@ function StudentRenderAssign({
 
     let filteredContents = latestTableData
       ? latestTableData
-          .flatMap((data) => data.contents || [data])
+          .flatMap((data) => data.contents)
           .filter((content) => content.stepNum === parseStepCount)
       : tableData
-          .flatMap((data) => data.contents || [data])
+          .flatMap((data) => data.contents)
           .filter((content) => content.stepNum === parseStepCount);
 
     console.log(

@@ -106,10 +106,9 @@ export const LiveStudentPage = () => {
         );
 
         const formattedData = lectureData.data.contents.map((content) => ({
-          contentName: content.contentName, // contentName 매핑
-          id: lectureData.data.uuid, // uuid와 stepNum 조합하여 id 생성
-          Step: lectureData.data.stepName, // stepName 매핑
-          stepNum: content.stepNum, // stepNum 그대로 매핑
+          contentName: content.contentName,
+          stepNum: content.stepNum,
+          content: content.contents,
         }));
 
         console.log('포맷 된 데이터:', JSON.stringify(formattedData, null, 2));
