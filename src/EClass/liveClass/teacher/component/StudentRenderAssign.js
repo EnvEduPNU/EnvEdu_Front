@@ -9,9 +9,6 @@ import { useNavigate } from 'react-router-dom';
 import usePhotoStore from '../../../../Data/DataInChart/store/photoStore';
 import axios from 'axios';
 
-import { IconButton } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-
 // Base64를 File로 변환하는 함수
 function base64ToFile(base64Data, filename) {
   const arr = base64Data.split(',');
@@ -85,7 +82,11 @@ function StudentRenderAssign({
   };
 
   useEffect(() => {
-    console.log('stepCount : ' + JSON.stringify(stepCount, null, 2));
+    console.log(
+      'latestTableData : ' + JSON.stringify(latestTableData, null, 2),
+    );
+    console.log('tableData : ' + JSON.stringify(tableData, null, 2));
+
     const parseStepCount = parseInt(stepCount);
     let filteredContents = latestTableData
       ? latestTableData
@@ -208,7 +209,7 @@ function StudentRenderAssign({
   const handleSubmit = async () => {
     const studentName = localStorage.getItem('username');
     const dataToUse = latestTableData || tableData;
-    const stepCount = tableData[0].stepCount;
+    const stepCount = tableData[0].stepCount || latestTableData[0].stepCount;
     const stepCheck = new Array(stepCount).fill(false);
     let flag = false;
 
@@ -334,6 +335,11 @@ function StudentRenderAssign({
       studentId: studentId,
     };
 
+    console.log(
+      '저장하는 학생의 세션 uuid : ' +
+        JSON.stringify(finalUpdatedData[0].uuid, null, 2),
+    );
+
     const assignmentUuidRegistData = {
       eclassUuid: eclassUuid,
       assginmentUuid: finalUpdatedData[0].uuid,
@@ -348,10 +354,6 @@ function StudentRenderAssign({
           await customAxios.post(
             '/api/eclass/student/assginmentUuid/update',
             assignmentUuidRegistData,
-          );
-
-          console.log(
-            '뭐야 보내는데 없는거야 : ' + JSON.stringify(requestData, null, 2),
           );
 
           await customAxios.post(
@@ -392,7 +394,7 @@ function StudentRenderAssign({
           console.log('제출된 객체 : ', updatedData);
           setAssginmentFetch(true);
           alert('제출 완료했습니다.');
-          window.location.reload();
+          // window.location.reload();
         } catch (error) {
           console.error('Error during submission:', error);
           alert('제출 중 오류가 발생했습니다. 다시 시도해주세요.');
@@ -504,9 +506,6 @@ function RenderContent({
   onNavigate,
   stepData,
   storedPhotoList,
-  setStoredPhotoList,
-  setLocalStoredPhotoList,
-  setImageUrlArray,
 }) {
   const [tableData, setTableData] = useState(null);
 
@@ -547,15 +546,6 @@ function RenderContent({
         : null,
     );
   }
-
-  const handleDeletePhoto = (contentUrl) => {
-    setImageUrlArray((prevUrls) => {
-      if (!prevUrls.includes(contentUrl)) {
-        return [...prevUrls, contentUrl];
-      }
-      return prevUrls;
-    });
-  };
 
   switch (content.type) {
     case 'html':

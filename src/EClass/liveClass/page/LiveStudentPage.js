@@ -17,6 +17,7 @@ export const LiveStudentPage = () => {
   const [sessionIdState, setSessionIdState] = useState();
   const [finished, setFinished] = useState(false);
   const [tableData, setTableData] = useState([]);
+  const [latestTableData, setLatestTableData] = useState([]);
   const [courseStep, setCourseStep] = useState();
   const [stepCount, setStepCount] = useState();
   const [reportTable, setReportTable] = useState([]);
@@ -47,6 +48,69 @@ export const LiveStudentPage = () => {
   const handleCloseModal = () => {
     setOpenReportModal(false);
   };
+
+  useEffect(() => {
+    const fetch = async () => {
+      // 기본 요청 데이터 설정
+      const requestData = {
+        eclassUuid: eClassUuid,
+        username: localStorage.getItem('username'),
+      };
+
+      const username = localStorage.getItem('username');
+
+      console.log(
+        '{!!!!!!!!! 너누구야 !!!!!]  : ' +
+          JSON.stringify(localStorage.getItem('username'), null, 2),
+      );
+      const assignmentUuidResp = await customAxios.post(
+        '/api/eclass/student/assginmentUuid/get',
+        requestData,
+      );
+      console.log(
+        '{!!!!!!!!! 수업 자료 uuid !!!!!]  : ' +
+          JSON.stringify(assignmentUuidResp.data, null, 2),
+      );
+
+      const lectureUuid = assignmentUuidResp.data;
+
+      const lectureResponse = await customAxios.get(
+        '/api/assignment/get-step-one',
+        {
+          params: {
+            uuid: lectureUuid,
+            username,
+          },
+        },
+      );
+
+      console.log(
+        '{!!!!!!!!! 있니? !!!!!]  : ' +
+          JSON.stringify(lectureResponse.data, null, 2),
+      );
+
+      if (!lectureResponse.data) {
+        console.log('제출된 데이터 없음');
+
+        const lectureData = await customAxios.get(
+          '/api/steps/getLectureContentOne',
+          {
+            params: {
+              uuid: lectureUuid,
+            },
+          },
+        );
+
+        console.log(
+          '해당 데이터 : ' + JSON.stringify(lectureData.data, null, 2),
+        );
+
+        setTableData(lectureData.data);
+      }
+    };
+
+    fetch();
+  }, []);
 
   useEffect(() => {
     console.log('테이블/그래프 캡쳐 리스트 :', photoList);
@@ -262,6 +326,7 @@ export const LiveStudentPage = () => {
               eclassUuid={eClassUuid}
               lectureDataUuid={lectureDataUuid}
               setAssginmentFetch={setAssginmentFetch}
+              latestTableData={latestTableData}
             />
           )}
           {isLoading && (
@@ -323,7 +388,7 @@ export const LiveStudentPage = () => {
           </>
         ) : (
           <>
-            <StudentAssignmentTable
+            {/* <StudentAssignmentTable
               setCourseStep={setCourseStep}
               setTableData={setTableData}
               lectureDataUuid={lectureDataUuid}
@@ -333,7 +398,8 @@ export const LiveStudentPage = () => {
               eclassUuid={eClassUuid}
               assginmentFetch={assginmentFetch}
               onReportButtonClick={handleReportButtonClick}
-            />
+              setLatestTableData={setLatestTableData}
+            /> */}
             <div style={{ display: 'flex', gap: 10 }}>
               <Button
                 variant="contained"
@@ -376,7 +442,7 @@ export const LiveStudentPage = () => {
               open={openReportModal}
               onClose={handleCloseModal}
               tableData={tableData}
-              latestTableData={tableData}
+              latestTableData={latestTableData}
               assginmentCheck={assginmentFetch}
               stepCount={stepCount}
               eclassUuid={eClassUuid}

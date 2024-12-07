@@ -90,185 +90,16 @@ export default function StudentAssignmentTable(props) {
   const [tableData, setTableData] = useState([]);
   const [allTableData, setAllTableData] = useState([]);
   const [isDataAvailable, setIsDataAvailable] = useState(false);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const requestData = {
-          eclassUuid: props.eclassUuid,
-          username: localStorage.getItem('username'),
-        };
-
-        const assignmentUuidResp = await customAxios.post(
-          '/api/eclass/student/assginmentUuid/get',
-          requestData,
-        );
-
-        // console.log(
-        //   'Assignmnet Uuid 잘 나오나 확인 : ' +
-        //     JSON.stringify(assignmentUuidResp, null, 2),
-        // );
-
-        const assignmentResponse = await customAxios.get(
-          `/api/assignment/getstep?uuid=${assignmentUuidResp.data}`,
-        );
-        // console.log(
-        //   '수업 정보 확인 : ' + JSON.stringify(assignmentResponse, null, 2),
-        // );
-
-        if (assignmentResponse.data.length > 0) {
-          const assignmentData = assignmentResponse.data;
-
-          // 현재 전체 자료를 가져오고 있음, 초기에 개발한것이고 시간 없어서 아직 API교체를 못했다.
-          const lectureResponse = await customAxios.get(
-            '/api/steps/getLectureContent',
-          );
-
-          const filteredData = lectureResponse.data.filter(
-            (data) => data.uuid === props.lectureDataUuid,
-          );
-
-          // console.log(
-          //   '수업 자료 확인 : ' + JSON.stringify(filteredData, null, 2),
-          // );
-
-          const updatedData = filteredData.flatMap((data) =>
-            data.contents.map((content) => {
-              const matchingAssignment = assignmentData
-                .flatMap((assignment) => assignment.contents)
-                .find(
-                  (assignmentContent) =>
-                    assignmentContent.stepNum === content.stepNum,
-                );
-
-              return matchingAssignment
-                ? {
-                    stepNum: content.stepNum,
-                    contentName: matchingAssignment.contentName,
-                    id: `${data.uuid}-${content.stepNum}`,
-                    Step: data.stepName,
-                    contents: matchingAssignment.contents,
-                  }
-                : {
-                    stepNum: content.stepNum,
-                    contentName: content.contentName,
-                    id: `${data.uuid}-${content.stepNum}`,
-                    Step: data.stepName,
-                    contents: content.contents,
-                  };
-            }),
-          );
-
-          const allMatchingAssignments = filteredData.flatMap((data) =>
-            data.contents.map((content) =>
-              assignmentData
-                .flatMap((assignment) => assignment.contents)
-                .find(
-                  (assignmentContent) =>
-                    assignmentContent.stepNum === content.stepNum,
-                ),
-            ),
-          );
-
-          const updatedFilteredData = filteredData.map((data) => {
-            const updatedContents = data.contents.map((content) => {
-              const matchingAssignment = allMatchingAssignments.find(
-                (assignmentContent) =>
-                  assignmentContent &&
-                  assignmentContent.stepNum === content.stepNum,
-              );
-
-              return matchingAssignment ? matchingAssignment : content;
-            });
-
-            return {
-              ...data,
-              contents: updatedContents,
-            };
-          });
-
-          // console.log(
-          //   '업데이트 데이터 확인 : ' + JSON.stringify(updatedData, null, 2),
-          // );
-
-          setTableData(updatedData);
-          setAllTableData(updatedFilteredData);
-          setIsDataAvailable(true);
-
-          props.setTableData(updatedFilteredData);
-          return;
-        }
-      } catch (err) {
-        console.error('Error in first request:', err);
-      }
-
-      try {
-        const lectureResponse = await customAxios.get(
-          '/api/steps/getLectureContent',
-        );
-
-        const filteredData = lectureResponse.data.filter(
-          (data) => data.uuid === props.lectureDataUuid,
-        );
-
-        const formattedLectureData = filteredData.flatMap((data) =>
-          data.contents.map((content) => ({
-            stepNum: content.stepNum,
-            contentName: content.contentName,
-            id: `${data.uuid}-${content.stepNum}`,
-            Step: data.stepName,
-            contents: content.contents,
-          })),
-        );
-
-        setTableData(formattedLectureData);
-        setAllTableData(filteredData);
-
-        props.setTableData(filteredData);
-      } catch (err) {
-        console.error('Error in second request:', err);
-      }
-    };
-
-    // if (!isDataAvailable) {
-    fetchData();
-    // }
-  }, []);
-
-  useEffect(() => {
-    document.addEventListener('click', handleClickOutside);
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, []);
-
   const handleRowClick = (id, Step, stepNum) => {
     setSelectedRow((prevSelectedRow) => (prevSelectedRow === id ? null : id));
     props.setCourseStep(Step);
     props.setStepCount(stepNum);
-    props.setTableData(allTableData);
-  };
-
-  const handleClickOutside = (event) => {
-    if (!event.target.closest('.virtuoso-table')) {
-      setSelectedRow(null);
-    }
-  };
-
-  const [openModal, setOpenModal] = useState(false);
-
-  const handleAssignmentReport = () => {
-    setOpenModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setOpenModal(false);
   };
 
   return (
     <div style={{ width: '100%', height: '550px', overflow: 'auto' }}>
       <Typography variant="h5" sx={{ margin: '0 0 10px 0' }}>
-        {`${tableData[0]?.Step || 'No Data'}`}
+        {`${props.tableData[0]?.Step || 'No Data'}`}
       </Typography>
       <Paper
         style={{ width: '100%', height: '500px', overflow: 'auto' }}
@@ -278,17 +109,10 @@ export default function StudentAssignmentTable(props) {
           <Table stickyHeader>{fixedHeaderContent()}</Table>
         </TableContainer>
         <TableVirtuoso
-          data={tableData}
+          data={props.tableData}
           components={VirtuosoTableComponents}
           itemContent={(index, row) =>
-            rowContent(
-              index,
-              row,
-              handleRowClick,
-              selectedRow,
-              props.stepCount,
-              isDataAvailable,
-            )
+            rowContent(index, row, handleRowClick, selectedRow, props.stepCount)
           }
           style={{ height: '100%' }}
         />
