@@ -51,7 +51,6 @@ export const LiveStudentPage = () => {
 
   useEffect(() => {
     const fetch = async () => {
-      // 기본 요청 데이터 설정
       const requestData = {
         eclassUuid: eClassUuid,
         username: localStorage.getItem('username'),
@@ -60,38 +59,12 @@ export const LiveStudentPage = () => {
       const username = localStorage.getItem('username');
 
       console.log(
-        '{!!!!!!!!! 너누구야 !!!!!]  : ' +
+        '{!!!!! 유저 이름 !!!!!]  : ' +
           JSON.stringify(localStorage.getItem('username'), null, 2),
       );
-      const assignmentUuidResp = await customAxios.post(
-        '/api/eclass/student/assginmentUuid/get',
-        requestData,
-      );
-      console.log(
-        '{!!!!!!!!! 보고서 uuid !!!!!]  : ' +
-          JSON.stringify(assignmentUuidResp.data, null, 2),
-      );
 
-      const ReportUuid = assignmentUuidResp.data;
-
-      const lectureResponse = await customAxios.get(
-        '/api/assignment/get-step-one',
-        {
-          params: {
-            uuid: lectureDataUuid,
-            username,
-          },
-        },
-      );
-
-      console.log(
-        '{!!!!!!!!! 있니? !!!!!]  : ' +
-          JSON.stringify(lectureResponse.data, null, 2),
-      );
-
-      if (!lectureResponse.data) {
-        console.log('제출된 데이터 없음');
-
+      // 맨 처음 스텝 테이블 디폴트 세팅
+      try {
         const lectureData = await customAxios.get(
           '/api/steps/getLectureContentOne',
           {
@@ -114,6 +87,45 @@ export const LiveStudentPage = () => {
         console.log('포맷 된 데이터:', JSON.stringify(formattedData, null, 2));
 
         setTableData(formattedData);
+      } catch (error) {
+        alert('Default Table Data Error! ', error);
+      }
+
+      // 작성중인 테이블 데이터나 보고서가 있을때 가져오는 api
+      try {
+        // 보고서 uuid api
+        const assignmentUuidResp = await customAxios.post(
+          '/api/eclass/student/assginmentUuid/get',
+          requestData,
+        );
+        console.log(
+          '{!!!!!!!!! 보고서 uuid !!!!!]  : ' +
+            JSON.stringify(assignmentUuidResp.data, null, 2),
+        );
+
+        const ReportUuid = assignmentUuidResp.data;
+
+        // 만약 작성된 스텝이 있으면 가져오기
+        const lectureResponse = await customAxios.get(
+          '/api/assignment/get-step-one',
+          {
+            params: {
+              uuid: lectureDataUuid,
+              username,
+            },
+          },
+        );
+
+        console.log(
+          '{!!!!! 작성된 스텝 !!!!!]  : ' +
+            JSON.stringify(lectureResponse.data, null, 2),
+        );
+
+        // TODO 1 : 기본적인 테이블 세팅 포맷이 뭔지 찾아서 작성된 스텝이 존재할 때 작성된 스텝으로 테이블 저장하기
+        // ---> 그냥 TableData로 진행할지 latestTableData로 따로 state 뺄건지 고민해서 작성하기
+        setTableData();
+      } catch (error) {
+        alert('서버에 문제가 있습니다!' + error);
       }
     };
 
