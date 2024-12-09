@@ -128,7 +128,7 @@ function StudentReportModal({
     pdf.addImage(titleImgData, 'PNG', 10, yOffset, imgWidth, imgHeight);
     yOffset += imgHeight + 10;
 
-    for (let stepIndex = 0; stepIndex < data.length; stepIndex++) {
+    for (let stepIndex = 0; stepIndex < data?.length; stepIndex++) {
       const stepElement = document.getElementById(`step-content-${stepIndex}`);
       const canvas = await html2canvas(stepElement, {
         scale: 2,
@@ -189,7 +189,7 @@ function StudentReportModal({
                   }}
                 >
                   <div>
-                    {stepData.contents.map((content, contentIdx) => (
+                    {stepData.contents?.map((content, contentIdx) => (
                       <RenderContent
                         key={`${stepData.stepNum}-${contentIdx}`}
                         content={content}

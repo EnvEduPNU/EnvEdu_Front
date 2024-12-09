@@ -221,7 +221,7 @@ function StudentRenderAssign({
     const studentName = localStorage.getItem('username');
     let dataToUse = tableData;
 
-    if (latestTableData.length > 0) {
+    if (latestTableData?.length > 0) {
       dataToUse = latestTableData;
     }
 
@@ -545,6 +545,8 @@ function RenderContent({
         ...fetchedData.stringFields[index],
         ...field,
       }));
+
+      console.log('아 여기 어디야 : ' + JSON.stringify(formattedData, null, 2));
 
       setTableData(formattedData); // 테이블 데이터를 상태에 저장
     } catch (error) {
