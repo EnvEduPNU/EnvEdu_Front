@@ -123,7 +123,7 @@ export const LiveStudentPage = () => {
 
         // TODO 1 : 기본적인 테이블 세팅 포맷이 뭔지 찾아서 작성된 스텝이 존재할 때 작성된 스텝으로 테이블 저장하기
         // ---> 그냥 TableData로 진행할지 latestTableData로 따로 state 뺄건지 고민해서 작성하기
-        setTableData();
+        setLatestTableData();
       } catch (error) {
         alert('서버에 문제가 있습니다!' + error);
       }
