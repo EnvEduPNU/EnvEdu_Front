@@ -459,7 +459,7 @@ export const LiveStudentPage = () => {
                 {isSubmittedListVisible ? 'E-Class 리스트' : '친구들의 보고서'}
               </Button>
             </div>
-            <StudentReportModal
+            {/* <StudentReportModal
               open={openReportModal}
               onClose={handleCloseModal}
               tableData={tableData}
@@ -467,7 +467,7 @@ export const LiveStudentPage = () => {
               assginmentCheck={assginmentFetch}
               stepCount={stepCount}
               eclassUuid={eClassUuid}
-            />
+            /> */}
           </>
         )}
       </div>

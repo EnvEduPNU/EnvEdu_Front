@@ -58,26 +58,31 @@ function fixedHeaderContent() {
     </TableHead>
   );
 }
-
 function rowContent(_index, row, handleClick, selectedRow) {
   return (
     <React.Fragment>
       {columns.map((column) => {
-        const cellKey = `${row.id}-${column.dataKey}`; // 고유하고 안정적인 key 생성
+        console.log('현재 selectedRow:', selectedRow);
+        console.log('row 확인 :', JSON.stringify(row, null, 2));
+
+        const cellKey = `${row.stepNum}-${column.dataKey}`; // 고유하고 안정적인 key 생성
         return (
           <TableCell
             key={cellKey}
             align="left"
-            onClick={() => handleClick(row.id, row.Step, row.stepNum)}
+            onClick={() =>
+              handleClick(row.stepNum, row.contentName, row.stepNum)
+            }
             sx={{
-              backgroundColor: selectedRow === row.id ? '#f0f0f0' : 'inherit',
+              backgroundColor:
+                selectedRow === row.stepNum ? '#f0f0f0' : 'inherit', // stepNum 기준으로 비교
               cursor: 'pointer',
               textAlign: 'left',
               color: 'inherit',
               pointerEvents: 'auto',
             }}
           >
-            {row[column.dataKey]}
+            {row[column.dataKey]} {/* contentName 표시 */}
           </TableCell>
         );
       })}
@@ -90,10 +95,14 @@ export default function StudentAssignmentTable(props) {
   const [tableData, setTableData] = useState([]);
   const [allTableData, setAllTableData] = useState([]);
   const [isDataAvailable, setIsDataAvailable] = useState(false);
-  const handleRowClick = (id, Step, stepNum) => {
-    setSelectedRow((prevSelectedRow) => (prevSelectedRow === id ? null : id));
-    props.setCourseStep(Step);
-    props.setStepCount(stepNum);
+  const handleRowClick = (stepNum, contentName, stepNumParam) => {
+    console.log('클릭된 StepNum:', stepNum);
+
+    setSelectedRow((prevSelectedRow) =>
+      prevSelectedRow === stepNum ? null : stepNum,
+    ); // stepNum 기준으로 상태 업데이트
+    props.setCourseStep(contentName); // contentName을 CourseStep으로 설정
+    props.setStepCount(stepNumParam); // stepNum을 stepCount로 설정
   };
 
   useEffect(() => {
