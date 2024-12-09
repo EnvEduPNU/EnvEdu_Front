@@ -90,7 +90,7 @@ function StudentRenderAssign({
 
     let dataToUse = tableData;
 
-    if (latestTableData.length > 0) {
+    if (latestTableData?.length > 0) {
       dataToUse = latestTableData;
     }
 
