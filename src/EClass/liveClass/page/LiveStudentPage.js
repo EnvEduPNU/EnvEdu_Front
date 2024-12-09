@@ -17,6 +17,8 @@ export const LiveStudentPage = () => {
   const [sessionIdState, setSessionIdState] = useState();
   const [finished, setFinished] = useState(false);
   const [tableData, setTableData] = useState([]);
+  const [allData, setAllData] = useState();
+
   const [latestTableData, setLatestTableData] = useState([]);
   const [courseStep, setCourseStep] = useState();
   const [stepCount, setStepCount] = useState();
@@ -84,26 +86,26 @@ export const LiveStudentPage = () => {
           contents: content.contents,
         }));
 
-        console.log('포맷 된 데이터:', JSON.stringify(formattedData, null, 2));
+        // console.log('포맷 된 데이터:', JSON.stringify(formattedData, null, 2));
 
         setTableData(formattedData);
+        setAllData(lectureData.data);
       } catch (error) {
         alert('Default Table Data Error! ', error);
       }
 
       // 작성중인 테이블 데이터나 보고서가 있을때 가져오는 api
       try {
-        // 보고서 uuid api
-        const assignmentUuidResp = await customAxios.post(
-          '/api/eclass/student/assginmentUuid/get',
-          requestData,
-        );
-        console.log(
-          '{!!!!!!!!! 보고서 uuid !!!!!]  : ' +
-            JSON.stringify(assignmentUuidResp.data, null, 2),
-        );
+        // const assignmentUuidResp = await customAxios.post(
+        //   '/api/eclass/student/assginmentUuid/get',
+        //   requestData,
+        // );
+        // console.log(
+        //   '{!!!!!!!!! 스텝 작성중인 것 uuid !!!!!]  : ' +
+        //     JSON.stringify(assignmentUuidResp.data, null, 2),
+        // );
 
-        const ReportUuid = assignmentUuidResp.data;
+        // const StepUuid = assignmentUuidResp.data;
 
         // 만약 작성된 스텝이 있으면 가져오기
         const lectureResponse = await customAxios.get(
@@ -123,7 +125,7 @@ export const LiveStudentPage = () => {
 
         // TODO 1 : 기본적인 테이블 세팅 포맷이 뭔지 찾아서 작성된 스텝이 존재할 때 작성된 스텝으로 테이블 저장하기
         // ---> 그냥 TableData로 진행할지 latestTableData로 따로 state 뺄건지 고민해서 작성하기
-        setLatestTableData();
+        setLatestTableData(lectureResponse.data.contents);
       } catch (error) {
         alert('서버에 문제가 있습니다!' + error);
       }
@@ -347,6 +349,7 @@ export const LiveStudentPage = () => {
               lectureDataUuid={lectureDataUuid}
               setAssginmentFetch={setAssginmentFetch}
               latestTableData={latestTableData}
+              allData={allData}
             />
           )}
           {isLoading && (

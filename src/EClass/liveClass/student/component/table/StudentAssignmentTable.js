@@ -62,8 +62,8 @@ function rowContent(_index, row, handleClick, selectedRow) {
   return (
     <React.Fragment>
       {columns.map((column) => {
-        console.log('현재 selectedRow:', selectedRow);
-        console.log('row 확인 :', JSON.stringify(row, null, 2));
+        // console.log('현재 selectedRow:', selectedRow);
+        // console.log('row 확인 :', JSON.stringify(row, null, 2));
 
         const cellKey = `${row.stepNum}-${column.dataKey}`; // 고유하고 안정적인 key 생성
         return (
@@ -105,14 +105,14 @@ export default function StudentAssignmentTable(props) {
     props.setStepCount(stepNumParam); // stepNum을 stepCount로 설정
   };
 
-  useEffect(() => {
-    console.log('테이블 확인 : ' + JSON.stringify(props.tableData, null, 2));
-  }, [props]);
+  // useEffect(() => {
+  //   console.log('테이블 확인 : ' + JSON.stringify(props.tableData, null, 2));
+  // }, [props]);
 
   return (
     <div style={{ width: '100%', height: '550px', overflow: 'auto' }}>
       <Typography variant="h5" sx={{ margin: '0 0 10px 0' }}>
-        {`${props.tableData[0]?.Step || 'No Data'}`}
+        {`Eclass Step`}
       </Typography>
       <Paper
         style={{ width: '100%', height: '500px', overflow: 'auto' }}

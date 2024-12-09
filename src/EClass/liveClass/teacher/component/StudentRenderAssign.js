@@ -48,6 +48,7 @@ function StudentRenderAssign({
   sessionIdState,
   eclassUuid,
   setAssginmentFetch,
+  allData,
 }) {
   const [textBoxValues, setTextBoxValues] = useState({});
   const [data, setData] = useState([]);
@@ -86,14 +87,23 @@ function StudentRenderAssign({
       'latestTableData : ' + JSON.stringify(latestTableData, null, 2),
     );
     console.log('tableData : ' + JSON.stringify(tableData, null, 2));
+
+    let dataToUse = tableData;
+
+    if (latestTableData.length > 0) {
+      dataToUse = latestTableData;
+    }
+
+    console.log('dataToUse:', JSON.stringify(dataToUse, null, 2));
+
     const parseStepCount = parseInt(stepCount, 10); // 10진수로 파싱
 
     // tableData에서 stepNum과 parseStepCount가 같은 항목 필터링
-    const filteredData = tableData.filter(
+    const filteredData = dataToUse.filter(
       (data) => data.stepNum === parseStepCount,
     );
 
-    console.log('Filtered Data:', filteredData);
+    // console.log('Filtered Data:', filteredData);
 
     // 상태에 필터링된 데이터 세팅
     setData(filteredData);
@@ -209,21 +219,33 @@ function StudentRenderAssign({
 
   const handleSubmit = async () => {
     const studentName = localStorage.getItem('username');
-    const dataToUse = latestTableData || tableData;
-    const stepCount = tableData[0].stepCount || latestTableData[0].stepCount;
+    let dataToUse = tableData;
+
+    if (latestTableData.length > 0) {
+      dataToUse = latestTableData;
+    }
+
+    console.log('dataToUse 확인 : ' + JSON.stringify(dataToUse, null, 2));
+
+    const stepCount = allData.stepCount;
+
     const stepCheck = new Array(stepCount).fill(false);
     let flag = false;
 
     const updatedTableData = replaceContents(dataToUse, data);
 
+    console.log(
+      'updatedTableData 확인 : ' + JSON.stringify(updatedTableData, null, 2),
+    );
+
     const updatedDataPromises = updatedTableData.map(async (data) => ({
-      uuid: data.uuid,
+      uuid: allData.uuid,
       timestamp: new Date().toISOString(),
       username: studentName,
-      stepName: data.stepName,
-      stepCount: data.stepCount,
+      stepName: allData.stepName,
+      stepCount: allData.stepCount,
       contents: await Promise.all(
-        data.contents.map(async (item) => {
+        updatedTableData.map(async (item) => {
           return {
             contentName: item.contentName,
             stepNum: item.stepNum,
@@ -395,7 +417,7 @@ function StudentRenderAssign({
           console.log('제출된 객체 : ', updatedData);
           setAssginmentFetch(true);
           alert('제출 완료했습니다.');
-          // window.location.reload();
+          window.location.reload();
         } catch (error) {
           console.error('Error during submission:', error);
           alert('제출 중 오류가 발생했습니다. 다시 시도해주세요.');

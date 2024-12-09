@@ -212,6 +212,7 @@ export function StudentStepCompnent(props) {
             eclassUuid={props.eclassUuid}
             setAssginmentFetch={setAssginmentFetch}
             latestTableData={props.latestTableData}
+            allData={props.allData}
           />
         </>
       ) : (
