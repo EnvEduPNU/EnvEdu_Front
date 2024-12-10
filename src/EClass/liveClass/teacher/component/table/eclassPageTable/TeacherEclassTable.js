@@ -13,6 +13,8 @@ import {
 import { customAxios } from '../../../../../../Common/CustomAxios';
 import { useNavigate } from 'react-router-dom';
 
+import CreateLectureModal from '../../../modal/CreateLectureModal';
+
 const columns = [
   { label: '번호', dataKey: 'Num', width: '8%' },
   { label: '이름', dataKey: 'Name', width: '10%' },
@@ -104,6 +106,9 @@ export default function TeacherEclassTable({ setSelectedEClassUuid }) {
   const [rowData, setRowData] = useState([]);
   const navigate = useNavigate();
 
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [localEclassUuid, setLocalEclassUuid] = useState();
+
   const handleRowClick = useCallback(
     (id, row) => {
       setSelectedRow(id);
@@ -155,6 +160,14 @@ export default function TeacherEclassTable({ setSelectedEClassUuid }) {
     }
   };
 
+  const duplicateEclass = async (row) => {
+    const { eClassUuid, LectureData: lectureDataUuid, Name: eClassName } = row;
+
+    setLocalEclassUuid(eClassUuid);
+
+    setModalOpen(true);
+  };
+
   const rowContent = (index, row) => (
     <React.Fragment>
       {columns.map((column) => (
@@ -203,6 +216,22 @@ export default function TeacherEclassTable({ setSelectedEClassUuid }) {
                 }}
               >
                 삭제
+              </Button>
+              <Button
+                variant="contained"
+                onClick={() => duplicateEclass(row)}
+                sx={{
+                  marginRight: 1,
+                  fontFamily: "'Asap', sans-serif",
+                  fontWeight: '600',
+                  fontSize: '0.9rem',
+                  color: 'grey',
+                  backgroundColor: '#feecfe',
+                  borderRadius: '2.469rem',
+                  border: 'none',
+                }}
+              >
+                {'복제'}
               </Button>
             </div>
           ) : (
@@ -255,6 +284,13 @@ export default function TeacherEclassTable({ setSelectedEClassUuid }) {
           style={{ height: '400px' }}
         />
       </Paper>
+
+      <CreateLectureModal
+        open={isModalOpen}
+        onClose={() => setModalOpen(false)}
+        onCreate={() => window.location.reload()}
+        eClassUuid={localEclassUuid}
+      />
     </div>
   );
 }

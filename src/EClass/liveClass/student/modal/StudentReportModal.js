@@ -22,6 +22,7 @@ function StudentReportModal({
   latestTableData,
   assginmentCheck,
   eclassUuid,
+  allData,
 }) {
   const [textBoxValues, setTextBoxValues] = useState({});
   const [data, setData] = useState([]);
@@ -43,9 +44,12 @@ function StudentReportModal({
   }, [eclassUuid]);
 
   useEffect(() => {
-    const allContents = latestTableData
-      ? latestTableData.flatMap((data) => data.contents)
-      : tableData.flatMap((data) => data.contents);
+    const allContents = latestTableData ? latestTableData : tableData;
+
+    console.log(
+      '보고서에 들어간 테이블 : ' + JSON.stringify(allContents, null, 2),
+    );
+
     setData(allContents);
   }, [latestTableData, tableData]);
 
@@ -64,31 +68,43 @@ function StudentReportModal({
     const dataToUse = latestTableData || tableData;
     const reportUuid = uuidv4();
 
-    const updatedData = dataToUse.map((data) => ({
-      uuid: reportUuid,
-      timestamp: new Date().toISOString(),
-      username: studentName,
-      stepName: data.stepName,
-      stepCount: data.stepCount,
-      contents: data.contents.map((item, index) => ({
-        contentName: item.contentName,
-        stepNum: item.stepNum,
-        contents: item.contents.map((contentItem, contentIndex) => {
-          if (contentItem.type === 'textBox') {
-            return {
-              ...contentItem,
-              content:
-                textBoxValues[item.stepNum]?.[contentIndex] ||
-                contentItem.content,
-            };
-          }
-          return contentItem;
-        }),
-      })),
+    const groupedContents = dataToUse.map((data) => ({
+      contentName: data.contentName, // data에서 contentName 가져오기
+      stepNum: data.stepNum, // data에서 stepNum 가져오기
+      contents: data.contents.map((contentItem, contentIndex) => {
+        if (contentItem.type === 'textBox') {
+          return {
+            ...contentItem,
+            content:
+              textBoxValues[data.stepNum]?.[contentIndex] ||
+              contentItem.content,
+          };
+        }
+        return contentItem;
+      }),
     }));
+
+    const updatedData = [
+      {
+        uuid: reportUuid,
+        timestamp: new Date().toISOString(),
+        username: studentName,
+        stepName: '수업 테스트', // 고정된 값으로 설정
+        stepCount: groupedContents.length,
+        contents: groupedContents,
+      },
+    ];
 
     if (window.confirm('제출하시겠습니까?')) {
       try {
+        console.log(
+          '업데이트 하기전 확인 : ' + JSON.stringify(updatedData, null, 2),
+        );
+        console.log(
+          '업데이트 하기전 확인 assginmentCheck : ' +
+            JSON.stringify(assginmentCheck, null, 2),
+        );
+
         const requestData = {
           reportUuid: reportUuid,
           studentId: studentId,
@@ -106,7 +122,7 @@ function StudentReportModal({
           await customAxios.post('/api/report/save', updatedData);
         }
 
-        window.location.reload();
+        // window.location.reload();
       } catch (error) {
         console.error('오류가 발생했습니다: ', error);
         alert('제출에 실패했습니다. 다시 시도해 주세요.');
@@ -128,7 +144,7 @@ function StudentReportModal({
     pdf.addImage(titleImgData, 'PNG', 10, yOffset, imgWidth, imgHeight);
     yOffset += imgHeight + 10;
 
-    for (let stepIndex = 0; stepIndex < data.length; stepIndex++) {
+    for (let stepIndex = 0; stepIndex < data?.length; stepIndex++) {
       const stepElement = document.getElementById(`step-content-${stepIndex}`);
       const canvas = await html2canvas(stepElement, {
         scale: 2,
@@ -167,13 +183,13 @@ function StudentReportModal({
         >
           <div id="title-section">
             <Typography variant="h3" sx={{ marginBottom: '20px' }}>
-              {tableData[0]?.stepName}
+              {allData?.stepName}
             </Typography>
             <Typography
               variant="h6"
               sx={{ marginBottom: '40px', textAlign: 'right' }}
             >
-              {tableData[0]?.username}
+              {allData?.username}
             </Typography>
           </div>
           <Grid container spacing={3}>
@@ -189,7 +205,7 @@ function StudentReportModal({
                   }}
                 >
                   <div>
-                    {stepData.contents.map((content, contentIdx) => (
+                    {stepData.contents?.map((content, contentIdx) => (
                       <RenderContent
                         key={`${stepData.stepNum}-${contentIdx}`}
                         content={content}

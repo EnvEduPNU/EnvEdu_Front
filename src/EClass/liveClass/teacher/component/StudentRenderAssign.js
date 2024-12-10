@@ -9,9 +9,6 @@ import { useNavigate } from 'react-router-dom';
 import usePhotoStore from '../../../../Data/DataInChart/store/photoStore';
 import axios from 'axios';
 
-import { IconButton } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-
 // Base64를 File로 변환하는 함수
 function base64ToFile(base64Data, filename) {
   const arr = base64Data.split(',');
@@ -51,6 +48,7 @@ function StudentRenderAssign({
   sessionIdState,
   eclassUuid,
   setAssginmentFetch,
+  allData,
 }) {
   const [textBoxValues, setTextBoxValues] = useState({});
   const [data, setData] = useState([]);
@@ -85,16 +83,30 @@ function StudentRenderAssign({
   };
 
   useEffect(() => {
-    console.log('stepCount : ' + JSON.stringify(stepCount, null, 2));
-    const parseStepCount = parseInt(stepCount);
-    let filteredContents = latestTableData
-      ? latestTableData
-          .flatMap((data) => data.contents)
-          .filter((content) => content.stepNum === parseStepCount)
-      : tableData
-          .flatMap((data) => data.contents)
-          .filter((content) => content.stepNum === parseStepCount);
-    setData(filteredContents);
+    console.log(
+      'latestTableData : ' + JSON.stringify(latestTableData, null, 2),
+    );
+    console.log('tableData : ' + JSON.stringify(tableData, null, 2));
+
+    let dataToUse = tableData;
+
+    if (latestTableData?.length > 0) {
+      dataToUse = latestTableData;
+    }
+
+    console.log('dataToUse:', JSON.stringify(dataToUse, null, 2));
+
+    const parseStepCount = parseInt(stepCount, 10); // 10진수로 파싱
+
+    // tableData에서 stepNum과 parseStepCount가 같은 항목 필터링
+    const filteredData = dataToUse.filter(
+      (data) => data.stepNum === parseStepCount,
+    );
+
+    // console.log('Filtered Data:', filteredData);
+
+    // 상태에 필터링된 데이터 세팅
+    setData(filteredData);
   }, [stepCount, latestTableData, tableData]);
 
   // 로컬에서 이미지 삭제한 부분 보여주기 위한 훅
@@ -207,21 +219,33 @@ function StudentRenderAssign({
 
   const handleSubmit = async () => {
     const studentName = localStorage.getItem('username');
-    const dataToUse = latestTableData || tableData;
-    const stepCount = tableData[0].stepCount;
+    let dataToUse = tableData;
+
+    if (latestTableData?.length > 0) {
+      dataToUse = latestTableData;
+    }
+
+    console.log('dataToUse 확인 : ' + JSON.stringify(dataToUse, null, 2));
+
+    const stepCount = allData.stepCount;
+
     const stepCheck = new Array(stepCount).fill(false);
     let flag = false;
 
     const updatedTableData = replaceContents(dataToUse, data);
 
+    console.log(
+      'updatedTableData 확인 : ' + JSON.stringify(updatedTableData, null, 2),
+    );
+
     const updatedDataPromises = updatedTableData.map(async (data) => ({
-      uuid: data.uuid,
+      uuid: allData.uuid,
       timestamp: new Date().toISOString(),
       username: studentName,
-      stepName: data.stepName,
-      stepCount: data.stepCount,
+      stepName: allData.stepName,
+      stepCount: allData.stepCount,
       contents: await Promise.all(
-        data.contents.map(async (item) => {
+        updatedTableData.map(async (item) => {
           return {
             contentName: item.contentName,
             stepNum: item.stepNum,
@@ -249,6 +273,15 @@ function StudentRenderAssign({
                   ) {
                     flag = true; // flag 설정하여 dataInChartButton 감지
 
+                    // stepCheck 업데이트
+                    const stepIndex = item.stepNum - 1;
+
+                    console.log('데이터 차트 인덱스 : ' + stepIndex);
+                    alert('???');
+                    if (stepIndex >= 0 && stepIndex < stepCount) {
+                      stepCheck[stepIndex] = true;
+                    }
+
                     // 이미지 업로드 및 상태 저장
                     let uploadedImages = [];
                     for (const [idx, photo] of localStoredPhotoList.entries()) {
@@ -275,6 +308,8 @@ function StudentRenderAssign({
 
                     return { ...contentItem }; // 기존 dataInChartButton 반환
                   }
+
+                  console.log('컨텐츠 타입 확인 : ' + contentItem.type);
 
                   return contentItem;
                 })
@@ -323,6 +358,11 @@ function StudentRenderAssign({
       studentId: studentId,
     };
 
+    console.log(
+      '저장하는 학생의 세션 uuid : ' +
+        JSON.stringify(finalUpdatedData[0].uuid, null, 2),
+    );
+
     const assignmentUuidRegistData = {
       eclassUuid: eclassUuid,
       assginmentUuid: finalUpdatedData[0].uuid,
@@ -337,10 +377,6 @@ function StudentRenderAssign({
           await customAxios.post(
             '/api/eclass/student/assginmentUuid/update',
             assignmentUuidRegistData,
-          );
-
-          console.log(
-            '뭐야 보내는데 없는거야 : ' + JSON.stringify(requestData, null, 2),
           );
 
           await customAxios.post(
@@ -412,6 +448,14 @@ function StudentRenderAssign({
     });
   };
 
+  const shouldDisplaySubmitButton = data.some((stepData) =>
+    stepData.contents.some(
+      (contentItem) =>
+        contentItem.type === 'dataInChartButton' ||
+        contentItem.type === 'textBox',
+    ),
+  );
+
   return (
     <div>
       {data.map((stepData) => (
@@ -449,25 +493,28 @@ function StudentRenderAssign({
               ))}
             </div>
           </Paper>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={() => handleSubmit(imageUrlArray)}
-            style={{ marginTop: '10px' }}
-            sx={{
-              width: '10rem',
-              marginRight: 1,
-              fontFamily: "'Asap', sans-serif",
-              fontWeight: '600',
-              fontSize: '0.9rem',
-              color: 'grey',
-              backgroundColor: '#feecfe',
-              borderRadius: '2.469rem',
-              border: 'none',
-            }}
-          >
-            제출
-          </Button>
+          {/* 제출 버튼 조건 렌더링 */}
+          {shouldDisplaySubmitButton && (
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => handleSubmit(imageUrlArray)}
+              style={{ marginTop: '10px' }}
+              sx={{
+                width: '10rem',
+                marginRight: 1,
+                fontFamily: "'Asap', sans-serif",
+                fontWeight: '600',
+                fontSize: '0.9rem',
+                color: 'grey',
+                backgroundColor: '#feecfe',
+                borderRadius: '2.469rem',
+                border: 'none',
+              }}
+            >
+              제출
+            </Button>
+          )}
         </React.Fragment>
       ))}
       {isModalOpen && <DataInChartModal isModalOpen={isModalOpen} />}
@@ -482,9 +529,6 @@ function RenderContent({
   onNavigate,
   stepData,
   storedPhotoList,
-  setStoredPhotoList,
-  setLocalStoredPhotoList,
-  setImageUrlArray,
 }) {
   const [tableData, setTableData] = useState(null);
 
@@ -501,6 +545,8 @@ function RenderContent({
         ...fetchedData.stringFields[index],
         ...field,
       }));
+
+      console.log('아 여기 어디야 : ' + JSON.stringify(formattedData, null, 2));
 
       setTableData(formattedData); // 테이블 데이터를 상태에 저장
     } catch (error) {
@@ -525,15 +571,6 @@ function RenderContent({
         : null,
     );
   }
-
-  const handleDeletePhoto = (contentUrl) => {
-    setImageUrlArray((prevUrls) => {
-      if (!prevUrls.includes(contentUrl)) {
-        return [...prevUrls, contentUrl];
-      }
-      return prevUrls;
-    });
-  };
 
   switch (content.type) {
     case 'html':

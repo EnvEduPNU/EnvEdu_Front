@@ -35,9 +35,9 @@ function TeacherRenderAssign({ data }) {
     );
   };
 
-  useEffect(() => {
-    console.log('data 확인 : ' + JSON.stringify(data, null, 2));
-  }, [data]);
+  // useEffect(() => {
+  //   console.log('data 확인 : ' + JSON.stringify(data, null, 2));
+  // }, [data]);
 
   return (
     <div style={{ width: '100%' }}>
