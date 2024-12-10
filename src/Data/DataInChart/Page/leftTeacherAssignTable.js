@@ -17,6 +17,9 @@ export default function LeftTeacherAssignTable({ content, setDataCategory }) {
   //TODO 4 : 이거 다해서 잘 되는거 확인 후에 전체 배포를 위한 병합 수행하고 배포 한번 하기
   const ClickTable = async () => {
     const res = await customAxios.get(`/api/custom/${content}`);
+    console.log('아 여기 어디야 content : ' + JSON.stringify(content, null, 2));
+
+    console.log('아 여기 어디야 : ' + JSON.stringify(res.data, null, 2));
 
     const dataAdaptor = CustomDataAdaptor();
     // const result = dataAdaptor.getTransformedData(response.data);

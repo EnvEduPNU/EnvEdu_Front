@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import TeacherReportTable from '../teacher/component/table/eclassPageTable/TeacherReportTable';
 import TeacherStudentList from '../teacher/component/table/eclassPageTable/TeacherStudentList';
-import CreateLectureModal from '../teacher/modal/CreateLectureModal';
+import CreateLectureModal from '../teacher/modal/CreateLectureModalBefore';
 import TeacherEclassTable from '../teacher/component/table/eclassPageTable/TeacherEclassTable';
 import {
   Table,
@@ -123,39 +123,10 @@ export function TeacherClassroomPage() {
           >
             {' E-Class '}
           </Typography>
-          <Button
-            onClick={() => setModalOpen(true)}
-            sx={{
-              margin: '10px 0',
-              width: '20%',
-              cursor: 'pointer',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              fontSize: '0.9rem',
-              fontWeight: 600,
-              color: 'black',
-              backgroundColor: '#feecfe',
-              // borderRadius: '1.469rem',
-              border: 'none',
-              height: '1.75rem',
-              fontFamily: "'Asap', sans-serif",
-              '&:hover': {
-                backgroundColor: '#d9a527', // hover 시 밝은 색상
-              },
-            }}
-          >
-            {' E-Class 실행 생성 '}
-          </Button>
         </div>
         <div>
           <TeacherEclassTable setSelectedEClassUuid={setSelectedEClassUuid} />
         </div>
-        <CreateLectureModal
-          open={isModalOpen}
-          onClose={() => setModalOpen(false)}
-          onCreate={handleCreateLecture}
-        />
       </div>
 
       <div

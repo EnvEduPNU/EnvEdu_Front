@@ -100,6 +100,10 @@ export default function TeacherCourseStatusTable({
   }, [stepCount, sessionData]);
 
   useEffect(() => {
+    console.log('과제 중지 확인 : ' + assginmentShareStop);
+  }, [assginmentShareStop]);
+
+  useEffect(() => {
     // 학생 정보가 모두 설정된 후에 sendStudentData 실행
     if (students.length > 0) {
       sendStudentData();
@@ -113,10 +117,10 @@ export default function TeacherCourseStatusTable({
         eclassUuid: eclassUuid,
       };
 
-      console.log(
-        '[TeacherCourseStatusTable] eclassStudentData : ' +
-          JSON.stringify(eclassStudentData, null, 2),
-      );
+      // console.log(
+      //   '[TeacherCourseStatusTable] eclassStudentData : ' +
+      //     JSON.stringify(eclassStudentData, null, 2),
+      // );
 
       const response = await customAxios.post(
         `${process.env.REACT_APP_API_URL}/api/sessions/student/get`,
@@ -129,9 +133,9 @@ export default function TeacherCourseStatusTable({
         return null; // 학생이 없는 상태로 반환
       }
 
-      console.log(
-        'Fetched student data: ' + JSON.stringify(response.data, null, 2),
-      );
+      // console.log(
+      //   'Fetched student data: ' + JSON.stringify(response.data, null, 2),
+      // );
       return response.data.username;
     } catch (error) {
       console.error('Error fetching student data: ', error);
@@ -200,7 +204,7 @@ export default function TeacherCourseStatusTable({
   };
 
   const Row = ({ row, isMatch, reportData }) => {
-    console.log(' 학생 상태 리스트 : ' + JSON.stringify(row, null, 2));
+    // console.log(' 학생 상태 리스트 : ' + JSON.stringify(row, null, 2));
 
     // reportData가 없으면 row를 사용
     const report = (reportData || []).filter((data) => {
@@ -211,7 +215,21 @@ export default function TeacherCourseStatusTable({
     const finalData = report.length > 0 ? report : [row];
 
     // 예시로 finalData 출력
-    console.log('최종 데이터: ', finalData);
+    // console.log('최종 데이터: ', finalData);
+
+    // console.log(
+    //   'row 내용!@! !!!!!!!!!!!!!!!!! : ',
+    //   JSON.stringify(row, null, 2),
+    // );
+    // console.log(
+    //   'assginmentShareCheck 내용!@! !!!!!!!!!!!!!!!!! : ',
+    //   JSON.stringify(assginmentShareCheck, null, 2),
+    // );
+
+    // console.log(
+    //   'assginmentShareStop 내용!@! !!!!!!!!!!!!!!!!! : ',
+    //   JSON.stringify(assginmentShareStop, null, 2),
+    // );
 
     return (
       <TableRow>
@@ -226,18 +244,29 @@ export default function TeacherCourseStatusTable({
           )}
         </TableCell>
         {/* 여기가 과제 공유 쪽 */}
-        <TableCell align="center">
-          {!assginmentShareStop &&
-          assginmentShareCheck?.some(
-            (assign) =>
-              assign.sessionId === row.sessionId &&
-              assign.assginmentShared === true,
-          ) ? (
-            <CheckCircleIcon sx={{ color: 'blue' }} />
-          ) : (
+        {/* <TableCell align="center">
+          {assginmentShareStop ? (
             <CancelIcon sx={{ color: 'red' }} />
+          ) : (
+            <>
+              {assginmentShareCheck.map((assign) =>
+                assign.sessionId === row.sessionId &&
+                assign.assginmentShared ? (
+                  <CheckCircleIcon
+                    key={assign.sessionId}
+                    sx={{ color: 'blue' }}
+                  />
+                ) : null,
+              )}
+
+              {!assginmentShareCheck.some(
+                (assign) =>
+                  assign.sessionId === row.sessionId && assign.assginmentShared,
+              ) && <CancelIcon sx={{ color: 'red' }} />}
+            </>
           )}
-        </TableCell>
+        </TableCell> */}
+
         <TableCell align="center">
           {isMatch || row.assginmentSubmit ? (
             <CheckCircleIcon sx={{ color: 'blue' }} />
@@ -325,11 +354,11 @@ export default function TeacherCourseStatusTable({
                   <ScreenShareIcon />
                 </Tooltip>
               </TableCell>
-              <TableCell align="center">
+              {/* <TableCell align="center">
                 <Tooltip title="스텝 공유 여부">
                   <AssignmentIcon />
                 </Tooltip>
-              </TableCell>
+              </TableCell> */}
               <TableCell align="center">
                 <Tooltip title="스텝 제출 여부">
                   <AssignmentTurnedInIcon />

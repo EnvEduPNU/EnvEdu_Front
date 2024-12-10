@@ -17,6 +17,9 @@ export const LiveStudentPage = () => {
   const [sessionIdState, setSessionIdState] = useState();
   const [finished, setFinished] = useState(false);
   const [tableData, setTableData] = useState([]);
+  const [allData, setAllData] = useState();
+
+  const [latestTableData, setLatestTableData] = useState([]);
   const [courseStep, setCourseStep] = useState();
   const [stepCount, setStepCount] = useState();
   const [reportTable, setReportTable] = useState([]);
@@ -47,6 +50,89 @@ export const LiveStudentPage = () => {
   const handleCloseModal = () => {
     setOpenReportModal(false);
   };
+
+  useEffect(() => {
+    const fetch = async () => {
+      const requestData = {
+        eclassUuid: eClassUuid,
+        username: localStorage.getItem('username'),
+      };
+
+      const username = localStorage.getItem('username');
+
+      console.log(
+        '{!!!!! 유저 이름 !!!!!]  : ' +
+          JSON.stringify(localStorage.getItem('username'), null, 2),
+      );
+
+      // 맨 처음 스텝 테이블 디폴트 세팅
+      try {
+        const lectureData = await customAxios.get(
+          '/api/steps/getLectureContentOne',
+          {
+            params: {
+              uuid: lectureDataUuid,
+            },
+          },
+        );
+
+        console.log(
+          '해당 데이터 : ' + JSON.stringify(lectureData.data, null, 2),
+        );
+
+        const formattedData = lectureData.data.contents.map((content) => ({
+          contentName: content.contentName,
+          stepNum: content.stepNum,
+          contents: content.contents,
+        }));
+
+        // console.log('포맷 된 데이터:', JSON.stringify(formattedData, null, 2));
+
+        setTableData(formattedData);
+        setAllData(lectureData.data);
+      } catch (error) {
+        alert('Default Table Data Error! ', error);
+      }
+
+      // 작성중인 테이블 데이터나 보고서가 있을때 가져오는 api
+      try {
+        // const assignmentUuidResp = await customAxios.post(
+        //   '/api/eclass/student/assginmentUuid/get',
+        //   requestData,
+        // );
+        // console.log(
+        //   '{!!!!!!!!! 스텝 작성중인 것 uuid !!!!!]  : ' +
+        //     JSON.stringify(assignmentUuidResp.data, null, 2),
+        // );
+
+        // const StepUuid = assignmentUuidResp.data;
+
+        // 만약 작성된 스텝이 있으면 가져오기
+        const lectureResponse = await customAxios.get(
+          '/api/assignment/get-step-one',
+          {
+            params: {
+              uuid: lectureDataUuid,
+              username,
+            },
+          },
+        );
+
+        console.log(
+          '{!!!!! 작성된 스텝 !!!!!]  : ' +
+            JSON.stringify(lectureResponse.data, null, 2),
+        );
+
+        // TODO 1 : 기본적인 테이블 세팅 포맷이 뭔지 찾아서 작성된 스텝이 존재할 때 작성된 스텝으로 테이블 저장하기
+        // ---> 그냥 TableData로 진행할지 latestTableData로 따로 state 뺄건지 고민해서 작성하기
+        setLatestTableData(lectureResponse.data.contents);
+      } catch (error) {
+        alert('서버에 문제가 있습니다!' + error);
+      }
+    };
+
+    fetch();
+  }, []);
 
   useEffect(() => {
     console.log('테이블/그래프 캡쳐 리스트 :', photoList);
@@ -147,11 +233,34 @@ export const LiveStudentPage = () => {
       '[LiveStudentPage] 이클래스 UUID: ' + JSON.stringify(eClassUuid, null, 2),
     );
     const initializeSession = async () => {
-      const newSessionId = uuidv4();
-      const registeredSessionId = await registerSessionId(newSessionId);
-      sessionId.current = registeredSessionId || newSessionId;
-      setSessionIdState(sessionId.current);
-      setFinished(true);
+      const userName = localStorage.getItem('username');
+
+      const resp = await customAxios.get('/api/eclass/student/getSession', {
+        params: {
+          eclassUuid: eClassUuid,
+          userName: userName,
+        },
+      });
+      if (resp.data) {
+        console.log(
+          '현재 학생의 SessionId : ' + JSON.stringify(resp.data, null, 2),
+        );
+
+        sessionId.current = resp.data;
+        setSessionIdState(resp.data);
+        setFinished(true);
+      } else {
+        // 데이터가 없는 경우 새로운 세션 ID 생성 및 등록
+        const newSessionId = uuidv4();
+        const registeredSessionId = await registerSessionId(newSessionId);
+        console.log(
+          '새로운 SessionId : ' + JSON.stringify(registeredSessionId, null, 2),
+        );
+
+        sessionId.current = registeredSessionId || newSessionId;
+        setSessionIdState(sessionId.current);
+        setFinished(true);
+      }
     };
 
     initializeSession();
@@ -262,6 +371,8 @@ export const LiveStudentPage = () => {
               eclassUuid={eClassUuid}
               lectureDataUuid={lectureDataUuid}
               setAssginmentFetch={setAssginmentFetch}
+              latestTableData={latestTableData}
+              allData={allData}
             />
           )}
           {isLoading && (
@@ -325,6 +436,7 @@ export const LiveStudentPage = () => {
           <>
             <StudentAssignmentTable
               setCourseStep={setCourseStep}
+              tableData={tableData}
               setTableData={setTableData}
               lectureDataUuid={lectureDataUuid}
               setStepCount={setStepCount}
@@ -333,6 +445,7 @@ export const LiveStudentPage = () => {
               eclassUuid={eClassUuid}
               assginmentFetch={assginmentFetch}
               onReportButtonClick={handleReportButtonClick}
+              setLatestTableData={setLatestTableData}
             />
             <div style={{ display: 'flex', gap: 10 }}>
               <Button
@@ -376,10 +489,11 @@ export const LiveStudentPage = () => {
               open={openReportModal}
               onClose={handleCloseModal}
               tableData={tableData}
-              latestTableData={tableData}
+              latestTableData={latestTableData}
               assginmentCheck={assginmentFetch}
               stepCount={stepCount}
               eclassUuid={eClassUuid}
+              allData={allData}
             />
           </>
         )}
