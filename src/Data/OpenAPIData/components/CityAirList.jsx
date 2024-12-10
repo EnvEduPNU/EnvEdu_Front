@@ -36,6 +36,7 @@ function CityAirList({ cityAirDataList }) {
   );
 
   const [isOpen, setIsOpen] = useState(false);
+  const [allChecked, setAllChecked] = useState(false);
 
   const toggleColumn = (index) => {
     // 해당 열을 선택/해제
@@ -198,13 +199,26 @@ function CityAirList({ cityAirDataList }) {
                     cursor: 'pointer',
                   }}
                 >
-                  <div
+                  <input
+                    type="checkbox"
                     style={{
-                      display: 'flex',
+                      marginRight: '0.5rem',
+                      width: '16px',
                     }}
-                  >
-                    선택
-                  </div>
+                    checked={allChecked}
+                    onChange={() => {
+                      if (allChecked === false) {
+                        setFilteredRows(
+                          new Array(cityAirDataList.length).fill(true),
+                        );
+                      } else {
+                        setFilteredRows(
+                          new Array(cityAirDataList.length).fill(false),
+                        );
+                      }
+                      setAllChecked((prev) => !prev);
+                    }}
+                  />
                 </th>
                 {headers.map((header, index) => (
                   <th

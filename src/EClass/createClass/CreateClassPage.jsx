@@ -1,16 +1,8 @@
-import {
-  Divider,
-  Paper,
-  Step,
-  StepConnector,
-  StepLabel,
-  Stepper,
-  Tooltip,
-} from '@mui/material';
+import { Step, StepLabel, Stepper } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import ReactQuill from 'react-quill';
 import './customContainer.css';
-import { AiOutlineArrowDown, AiOutlineArrowUp } from 'react-icons/ai';
+import { GoTriangleUp, GoTriangleDown } from 'react-icons/go';
 import { BsFillTrashFill } from 'react-icons/bs';
 import DataTableButton from '../liveClass/teacher/component/button/DataTableButton';
 import { customAxios } from '../../Common/CustomAxios';
@@ -21,6 +13,8 @@ import axios from 'axios';
 import basicImage from '../../assets/img/basicImage.png';
 import VideoLinkModal from './modal/VideoLinkModal';
 import { useNavigate } from 'react-router-dom';
+import { BiSolidVideos } from 'react-icons/bi';
+import { BiImageAdd } from 'react-icons/bi';
 
 //항목 이름 (한국어 -> 영어)
 const engToKor = (name) => {
@@ -1197,7 +1191,7 @@ function CreateClassPage() {
                     <div
                       style={{
                         display: 'flex',
-                        gap: '15px',
+                        gap: '1px',
                         alignItems: 'center',
                       }}
                     >
@@ -1209,7 +1203,7 @@ function CreateClassPage() {
                           alignItems: 'center',
                         }}
                       >
-                        <AiOutlineArrowUp
+                        <GoTriangleUp
                           onClick={() => moveUp(index)}
                           style={{
                             cursor: 'pointer',
@@ -1218,14 +1212,8 @@ function CreateClassPage() {
                             transition: 'transform 0.2s ease', // 부드러운 애니메이션 효과
                           }}
                           title="Move Up"
-                          onMouseEnter={(e) =>
-                            (e.target.style.transform = 'scale(1.2)')
-                          } // 호버 시 크기 증가
-                          onMouseLeave={(e) =>
-                            (e.target.style.transform = 'scale(1)')
-                          } // 호버 해제 시 원래 크기로
                         />
-                        <AiOutlineArrowDown
+                        <GoTriangleDown
                           onClick={() => moveDown(index)}
                           style={{
                             cursor: 'pointer',
@@ -1234,12 +1222,6 @@ function CreateClassPage() {
                             transition: 'transform 0.2s ease', // 부드러운 애니메이션 효과
                           }}
                           title="Move Down"
-                          onMouseEnter={(e) =>
-                            (e.target.style.transform = 'scale(1.2)')
-                          } // 호버 시 크기 증가
-                          onMouseLeave={(e) =>
-                            (e.target.style.transform = 'scale(1)')
-                          } // 호버 해제 시 원래 크기로
                         />
                       </div>
 
@@ -1249,17 +1231,8 @@ function CreateClassPage() {
                           cursor: 'pointer',
                           fontSize: '24px', // 아이콘 크기 증가
                           color: '#e74c3c', // 삭제 버튼 빨간색
-                          transition: 'transform 0.2s ease, color 0.2s ease', // 부드러운 애니메이션 효과
                         }}
                         title="Delete"
-                        onMouseEnter={(e) => {
-                          e.target.style.transform = 'scale(1.2)'; // 호버 시 크기 증가
-                          e.target.style.color = '#c0392b'; // 호버 시 색상 변화
-                        }}
-                        onMouseLeave={(e) => {
-                          e.target.style.transform = 'scale(1)'; // 호버 해제 시 원래 크기로
-                          e.target.style.color = '#e74c3c'; // 호버 해제 시 색상 원상 복귀
-                        }}
                       />
                     </div>
                   </div>
@@ -1286,7 +1259,185 @@ function CreateClassPage() {
               placeholder="내용을 입력하세요..."
             />
             <div>
+              <button
+                style={{
+                  width: '120px',
+                  padding: '0.6rem 0',
+                  backgroundColor: '#FF9800', // 주황색 기본 배경
+                  color: '#FFFFFF',
+                  borderRadius: '8px',
+                  fontWeight: 'bold',
+                  fontSize: '1rem',
+                  cursor: 'pointer',
+                  border: 'none',
+                  transition: 'all 0.3s ease',
+                  outline: 'none',
+                  marginRight: '12px',
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.backgroundColor = '#FFA726'; // 밝은 주황색
+                  e.target.style.transform = 'scale(1.07)';
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.backgroundColor = '#FF9800'; // 원래 색상
+                  e.target.style.transform = 'scale(1)';
+                }}
+                onClick={() => {
+                  setEclassContents((prev) => {
+                    const tempEclassContents = prev.map((eclassContent) => ({
+                      ...eclassContent,
+                      contents: [...eclassContent.contents],
+                    }));
+                    tempEclassContents[activeStepIndex].contents = [
+                      ...tempEclassContents[activeStepIndex].contents,
+                      {
+                        type: 'html',
+                        content: quillData,
+                      },
+                    ];
+                    return tempEclassContents;
+                  });
+
+                  setQuillData(null);
+                }}
+              >
+                글상자 +
+              </button>
+              <button
+                style={{
+                  width: '120px',
+                  padding: '0.6rem 0',
+                  backgroundColor: '#FF9800', // 주황색 기본 배경
+                  color: '#FFFFFF',
+                  borderRadius: '8px',
+                  fontWeight: 'bold',
+                  fontSize: '1rem',
+                  cursor: 'pointer',
+                  border: 'none',
+                  transition: 'all 0.3s ease',
+                  outline: 'none',
+                  marginRight: '12px',
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.backgroundColor = '#FFA726'; // 밝은 주황색
+                  e.target.style.transform = 'scale(1.07)';
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.backgroundColor = '#FF9800'; // 원래 색상
+                  e.target.style.transform = 'scale(1)';
+                }}
+                onClick={() => {
+                  setEclassContents((prev) => {
+                    const tempEclassContents = prev.map((eclassContent) => ({
+                      ...eclassContent,
+                      contents: [...eclassContent.contents],
+                    }));
+                    tempEclassContents[activeStepIndex].contents = [
+                      ...tempEclassContents[activeStepIndex].contents,
+                      {
+                        type: 'textBox',
+                        content: `<textarea
+              style="width: 100%; height: 150px; padding: 10px; fontSize: 16px; lineHeight: 1.5; color: #374151; border: 1px solid #D1D5DB; borderRadius: 8px; boxShadow: 0px 4px 10px rgba(0, 0, 0, 0.1); outline: none; resize: vertical; backgroundColor: #F9FAFB;";
+              placeholder="학생이 여기에 답변을 입력합니다"
+              disabled />`,
+                      },
+                    ];
+                    return tempEclassContents;
+                  });
+                }}
+              >
+                답변 박스 +
+              </button>
               <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  marginTop: '10px',
+                  gap: '10px',
+                }}
+              >
+                <button
+                  style={{
+                    width: '45px',
+                    height: '45px',
+                    backgroundColor: '#FF9800',
+                    color: '#FFFFFF',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    border: 'none',
+                    transition: 'transform 0.2s ease',
+                  }}
+                  onMouseOver={(e) => {
+                    if (e.target === e.currentTarget) {
+                      e.currentTarget.style.transform = 'scale(1.1)';
+                    }
+                  }}
+                  onMouseOut={(e) => {
+                    if (e.target === e.currentTarget) {
+                      e.currentTarget.style.transform = 'scale(1)';
+                    }
+                  }}
+                  onClick={() => {
+                    setIsVideoModalOpen(true);
+                  }}
+                >
+                  <BiSolidVideos size="24px" />
+                </button>
+
+                <label
+                  htmlFor="imageUpload"
+                  style={{
+                    width: '45px',
+                    height: '45px',
+                    backgroundColor: '#FF9800',
+                    color: '#FFFFFF',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    border: 'none',
+                    transition: 'transform 0.2s ease',
+                  }}
+                  onMouseOver={(e) => {
+                    if (e.target === e.currentTarget) {
+                      e.currentTarget.style.transform = 'scale(1.1)';
+                    }
+                  }}
+                  onMouseOut={(e) => {
+                    if (e.target === e.currentTarget) {
+                      e.currentTarget.style.transform = 'scale(1)';
+                    }
+                  }}
+                >
+                  <BiImageAdd size="24px" />
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  id="imageUpload"
+                  onChange={(e) => {
+                    handleFileChange(e, 'image');
+                  }}
+                />
+
+                <DataTableButton
+                  summary={summary}
+                  onSelectData={handleSelectData}
+                  type="table"
+                />
+                <DataTableButton
+                  summary={summary}
+                  onSelectData={handleSelectData}
+                  type="graph"
+                />
+              </div>
+
+              {/* <div
                 style={{
                   marginBottom: '10px',
                   display: 'flex',
@@ -1386,8 +1537,8 @@ function CreateClassPage() {
                 >
                   답변 박스 추가
                 </button>
-              </div>
-              <div
+              </div> */}
+              {/* <div
                 style={{
                   marginBottom: '10px',
                   display: 'flex',
@@ -1421,20 +1572,6 @@ function CreateClassPage() {
                   }}
                   onClick={() => {
                     setIsVideoModalOpen(true);
-                    // setEclassContents((prev) => {
-                    //   const tempEclassContents = prev.map((eclassContent) => ({
-                    //     ...eclassContent,
-                    //     contents: [...eclassContent.contents],
-                    //   }));
-                    //   tempEclassContents[activeStepIndex].contents = [
-                    //     ...tempEclassContents[activeStepIndex].contents,
-                    //     {
-                    //       type: 'html',
-                    //       content: `<iframe class="ql-video" frameborder="0" allowfullscreen="true" src="https://www.youtube.com/embed/7AH-QDddFE4"></iframe>`,
-                    //     },
-                    //   ];
-                    //   return tempEclassContents;
-                    // });
                   }}
                 >
                   동영상 추가
@@ -1478,16 +1615,16 @@ function CreateClassPage() {
                     handleFileChange(e, 'image');
                   }}
                 />
-              </div>
+              </div> */}
 
-              <div
+              {/* <div
                 style={{
                   display: 'flex',
                   justifyContent: 'center',
                 }}
-              >
-                {/* 데이터 추가하기 버튼 */}
-                <DataTableButton
+              > */}
+              {/* 데이터 추가하기 버튼 */}
+              {/* <DataTableButton
                   summary={summary}
                   onSelectData={handleSelectData}
                   type="table"
@@ -1497,7 +1634,7 @@ function CreateClassPage() {
                   onSelectData={handleSelectData}
                   type="graph"
                 />
-              </div>
+              </div> */}
             </div>
             <button
               style={{

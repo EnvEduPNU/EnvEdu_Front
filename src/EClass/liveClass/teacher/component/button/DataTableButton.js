@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Box, Button, Typography, Paper } from '@mui/material';
+import { BiTable } from 'react-icons/bi';
+import { BsFileBarGraphFill } from 'react-icons/bs';
 
 import '../TeacherWordProcessor.scss';
 
@@ -58,29 +60,30 @@ export default function DataTableButton({ summary, onSelectData, type }) {
         <button
           onClick={handleOpen}
           style={{
-            width: '160px',
-            padding: '0.5rem 1rem',
-            backgroundColor: '#4CAF50', // 새로운 색상 (초록)
+            width: '45px',
+            height: '45px',
+            backgroundColor: '#FF9800',
             color: '#FFFFFF',
-            borderRadius: '0.5rem',
-            fontWeight: '600',
-            fontSize: '1rem',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
             cursor: 'pointer',
             border: 'none',
-            boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.15)',
-            transition: 'background-color 0.3s ease, transform 0.2s ease',
-            outline: 'none',
+            transition: 'transform 0.2s ease',
           }}
           onMouseOver={(e) => {
-            e.target.style.backgroundColor = '#66BB6A'; // 마우스 오버 시 밝은 초록색
-            e.target.style.transform = 'scale(1.05)'; // 확대 효과
+            if (e.target === e.currentTarget) {
+              e.currentTarget.style.transform = 'scale(1.1)';
+            }
           }}
           onMouseOut={(e) => {
-            e.target.style.backgroundColor = '#4CAF50'; // 기본 초록색
-            e.target.style.transform = 'scale(1)'; // 원래 크기로 복구
+            if (e.target === e.currentTarget) {
+              e.currentTarget.style.transform = 'scale(1)';
+            }
           }}
         >
-          그래프 그리기 추가
+          <BsFileBarGraphFill size="24px" />
         </button>
 
         <Modal
@@ -140,30 +143,30 @@ export default function DataTableButton({ summary, onSelectData, type }) {
       <button
         onClick={handleOpen}
         style={{
-          width: '160px',
-          padding: '0.5rem 1rem',
-          backgroundColor: '#4CAF50', // 새로운 색상 (초록)
+          width: '45px',
+          height: '45px',
+          backgroundColor: '#FF9800',
           color: '#FFFFFF',
-          borderRadius: '0.5rem',
-          fontWeight: '600',
-          fontSize: '1rem',
+          borderRadius: '50%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           cursor: 'pointer',
           border: 'none',
-          boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.15)',
-          transition: 'background-color 0.3s ease, transform 0.2s ease',
-          outline: 'none',
-          marginRight: '10px',
+          transition: 'transform 0.2s ease',
         }}
         onMouseOver={(e) => {
-          e.target.style.backgroundColor = '#66BB6A'; // 마우스 오버 시 밝은 초록색
-          e.target.style.transform = 'scale(1.05)'; // 확대 효과
+          if (e.target === e.currentTarget) {
+            e.currentTarget.style.transform = 'scale(1.1)';
+          }
         }}
         onMouseOut={(e) => {
-          e.target.style.backgroundColor = '#4CAF50'; // 기본 초록색
-          e.target.style.transform = 'scale(1)'; // 원래 크기로 복구
+          if (e.target === e.currentTarget) {
+            e.currentTarget.style.transform = 'scale(1)';
+          }
         }}
       >
-        테이블 추가
+        <BiTable size="24px" />
       </button>
 
       <Modal

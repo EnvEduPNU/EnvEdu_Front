@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
+import YouTubeEmbed, { getVideoId } from '../utils/youTubeEmbed';
 
 // Modal의 접근성 설정 (root element 지정)
 Modal.setAppElement('#root');
@@ -13,7 +14,7 @@ function VideoLinkModal({
 }) {
   // 영상 링크 입력 핸들러
   const handleChange = (event) => {
-    setVideoLink(event.target.value);
+    setVideoLink(getVideoId(event.target.value));
   };
 
   // 제출 핸들러

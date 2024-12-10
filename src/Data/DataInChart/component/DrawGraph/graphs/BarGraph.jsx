@@ -34,6 +34,35 @@ function BarGraph() {
     graphIdx,
   } = useGraphDataStore();
   console.log(data);
+
+  const [step] = useState(() => {
+    let allPoint = true;
+    let minValue = Infinity;
+
+    for (let i = 1; i < data.length; i++) {
+      for (let j = 0; j < data[0].length; j++) {
+        if (!isNaN(data[i][j]) && 1 < data[i][j]) {
+          allPoint = false;
+          break;
+        } else {
+          if (!isNaN(data[i][j])) minValue = Math.min(minValue, data[i][j]);
+        }
+      }
+      if (!allPoint) break;
+    }
+
+    if (allPoint) {
+      let result = 1;
+
+      for (let i = 0; i < minValue.toString().split('.')[1].length + 1; i++) {
+        result /= 10; // 10으로 나누기
+      }
+      console.log(result);
+      return result;
+    }
+
+    return 1;
+  });
   const [barDatas, setBarDatas] = useState({
     labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
     datasets: [
@@ -125,7 +154,36 @@ function BarGraph() {
       }
     }
 
-    if (isPostive && isNegitive) {
+    let allPoint = true;
+    let minPointValue = Infinity;
+    let maxPointValue = -Infinity;
+
+    for (let i = 1; i < data.length; i++) {
+      for (let j = 0; j < data[0].length; j++) {
+        if (!isNaN(data[i][j]) && 1 < data[i][j]) {
+          allPoint = false;
+          break;
+        } else {
+          if (!isNaN(data[i][j])) {
+            minPointValue = Math.min(minPointValue, data[i][j]);
+            maxPointValue = Math.max(maxPointValue, data[i][j]);
+          }
+        }
+      }
+      if (!allPoint) break;
+    }
+
+    if (allPoint) {
+      console.log(minPointValue - step * 10, maxPointValue + step * 10);
+      setYScaleMinMaxValue([
+        minPointValue - step * 10,
+        maxPointValue + step * 10,
+      ]);
+
+      setYScaleValue([minPointValue - step * 10, maxPointValue + step * 10]);
+    }
+
+    if (isPostive && isNegitive && !allPoint) {
       // 양수, 음수 다 있을 때
       setYScaleMinMaxValue([
         minValue ===
@@ -171,11 +229,10 @@ function BarGraph() {
                 Math.pow(10, maxValue.toString().split('.')[0].length - 1),
             ) * Math.pow(10, maxValue.toString().split('.')[0].length - 1),
       ]);
-    } else if (isPostive) {
+    } else if (isPostive && !allPoint) {
       // 양수만 있을 때
       setYScaleMinMaxValue([
         0,
-
         maxValue ===
         Math.ceil(
           maxValue / Math.pow(10, maxValue.toString().split('.')[0].length - 1),
@@ -200,7 +257,7 @@ function BarGraph() {
                 Math.pow(10, maxValue.toString().split('.')[0].length - 1),
             ) * Math.pow(10, maxValue.toString().split('.')[0].length - 1),
       ]);
-    } else if (isNegitive) {
+    } else if (isNegitive && !allPoint) {
       // 음수만 있을 때
       setYScaleMinMaxValue([
         minValue ===
@@ -329,6 +386,7 @@ function BarGraph() {
   const handleChangeXScaleValue = (event, newValue) => {
     setXScaleValue(newValue);
   };
+  console.log(yScaleValue, yScaleValue[0], yScaleValue[1]);
   console.log(variables, selectedYVariableIndexs, selctedXVariableIndex);
   return (
     <div
@@ -476,6 +534,7 @@ function BarGraph() {
                       fontSize: '14px', // value label 글자 크기
                     },
                   }}
+                  step={step}
                 />
               </div>
               <div
