@@ -68,31 +68,43 @@ function StudentReportModal({
     const dataToUse = latestTableData || tableData;
     const reportUuid = uuidv4();
 
-    const updatedData = dataToUse.map((data) => ({
-      uuid: reportUuid,
-      timestamp: new Date().toISOString(),
-      username: studentName,
-      stepName: data.stepName,
-      stepCount: data.stepCount,
-      contents: data.contents.map((item, index) => ({
-        contentName: item.contentName,
-        stepNum: item.stepNum,
-        contents: item.contents.map((contentItem, contentIndex) => {
-          if (contentItem.type === 'textBox') {
-            return {
-              ...contentItem,
-              content:
-                textBoxValues[item.stepNum]?.[contentIndex] ||
-                contentItem.content,
-            };
-          }
-          return contentItem;
-        }),
-      })),
+    const groupedContents = dataToUse.map((data) => ({
+      contentName: data.contentName, // data에서 contentName 가져오기
+      stepNum: data.stepNum, // data에서 stepNum 가져오기
+      contents: data.contents.map((contentItem, contentIndex) => {
+        if (contentItem.type === 'textBox') {
+          return {
+            ...contentItem,
+            content:
+              textBoxValues[data.stepNum]?.[contentIndex] ||
+              contentItem.content,
+          };
+        }
+        return contentItem;
+      }),
     }));
+
+    const updatedData = [
+      {
+        uuid: reportUuid,
+        timestamp: new Date().toISOString(),
+        username: studentName,
+        stepName: '수업 테스트', // 고정된 값으로 설정
+        stepCount: groupedContents.length,
+        contents: groupedContents,
+      },
+    ];
 
     if (window.confirm('제출하시겠습니까?')) {
       try {
+        console.log(
+          '업데이트 하기전 확인 : ' + JSON.stringify(updatedData, null, 2),
+        );
+        console.log(
+          '업데이트 하기전 확인 assginmentCheck : ' +
+            JSON.stringify(assginmentCheck, null, 2),
+        );
+
         const requestData = {
           reportUuid: reportUuid,
           studentId: studentId,
@@ -110,7 +122,7 @@ function StudentReportModal({
           await customAxios.post('/api/report/save', updatedData);
         }
 
-        window.location.reload();
+        // window.location.reload();
       } catch (error) {
         console.error('오류가 발생했습니다: ', error);
         alert('제출에 실패했습니다. 다시 시도해 주세요.');
