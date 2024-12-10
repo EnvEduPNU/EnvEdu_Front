@@ -470,6 +470,7 @@ export const LiveStudentPage = () => {
               assginmentCheck={assginmentFetch}
               stepCount={stepCount}
               eclassUuid={eClassUuid}
+              allData={allData}
             />
           </>
         )}

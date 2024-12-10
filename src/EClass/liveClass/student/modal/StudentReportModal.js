@@ -22,6 +22,7 @@ function StudentReportModal({
   latestTableData,
   assginmentCheck,
   eclassUuid,
+  allData,
 }) {
   const [textBoxValues, setTextBoxValues] = useState({});
   const [data, setData] = useState([]);
@@ -43,9 +44,12 @@ function StudentReportModal({
   }, [eclassUuid]);
 
   useEffect(() => {
-    const allContents = latestTableData
-      ? latestTableData.flatMap((data) => data.contents)
-      : tableData.flatMap((data) => data.contents);
+    const allContents = latestTableData ? latestTableData : tableData;
+
+    console.log(
+      '보고서에 들어간 테이블 : ' + JSON.stringify(allContents, null, 2),
+    );
+
     setData(allContents);
   }, [latestTableData, tableData]);
 
@@ -167,13 +171,13 @@ function StudentReportModal({
         >
           <div id="title-section">
             <Typography variant="h3" sx={{ marginBottom: '20px' }}>
-              {tableData[0]?.stepName}
+              {allData?.stepName}
             </Typography>
             <Typography
               variant="h6"
               sx={{ marginBottom: '40px', textAlign: 'right' }}
             >
-              {tableData[0]?.username}
+              {allData?.username}
             </Typography>
           </div>
           <Grid container spacing={3}>
