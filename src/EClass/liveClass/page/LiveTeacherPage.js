@@ -29,13 +29,32 @@ export const LiveTeacherPage = () => {
 
   const navigate = useNavigate();
 
+  // useEffect(() => {
+  //   console.log('과제 중지 확인 : ' + assginmentShareStop);
+  // }, [assginmentShareStop]);
+
   useEffect(() => {
     console.log(
-      'assginmentShareCheck 바뀌면 확인 : ' +
+      'assginmentShareCheck 변경 확인: ' +
         JSON.stringify(assginmentShareCheck, null, 2),
     );
-    setAssginmentShareStop(false);
-  }, [assginmentShareCheck]);
+
+    console.log('sessionIds 변경 확인: ' + JSON.stringify(sessionIds, null, 2));
+
+    // sessionIds 배열에 존재하지 않는 sessionId를 가진 객체 제거
+    setAssginmentShareCheck((prevState) => {
+      const updatedState = (prevState || []).filter((item) =>
+        sessionIds.includes(item.sessionId),
+      );
+
+      console.log(
+        '업데이트된 assginmentShareCheck: ' +
+          JSON.stringify(updatedState, null, 2),
+      );
+
+      return updatedState;
+    });
+  }, [sessionIds]);
 
   const closeEclass = async () => {
     await customAxios
@@ -156,6 +175,7 @@ export const LiveTeacherPage = () => {
               stepCount={stepCount}
               lectureDataUuid={lectureDataUuid}
               sharedScreenState={sharedScreenState}
+              assginmentShareCheck={assginmentShareCheck}
               setAssginmentShareCheck={setAssginmentShareCheck}
               setAssginmentShareStop={setAssginmentShareStop}
               setStepCount={setStepCount}
@@ -166,7 +186,7 @@ export const LiveTeacherPage = () => {
         )}
 
         {/* 버튼 렌더링 조건 */}
-        {/* {!sharedScreenState ? (
+        {!sharedScreenState ? (
           <>
             {
               <Button
@@ -209,7 +229,7 @@ export const LiveTeacherPage = () => {
           >
             공유 중지
           </Button>
-        )} */}
+        )}
       </div>
 
       {/* [오른쪽 블럭] 수업 Step 테이블, 수업 상태 테이블 */}
@@ -237,6 +257,7 @@ export const LiveTeacherPage = () => {
               stepCount={stepCount}
               eclassUuid={eClassUuid}
               sessionIds={sessionIds}
+              setAssginmentShareCheck={setAssginmentShareCheck}
               assginmentShareCheck={assginmentShareCheck}
               assginmentShareStop={assginmentShareStop}
             />

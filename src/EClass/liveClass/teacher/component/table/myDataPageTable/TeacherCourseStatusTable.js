@@ -75,13 +75,6 @@ export default function TeacherCourseStatusTable({
   };
 
   useEffect(() => {
-    console.log(
-      '[assginmentShareCheck] : ' +
-        JSON.stringify(assginmentShareCheck, null, 2),
-    );
-  }, [assginmentShareCheck]);
-
-  useEffect(() => {
     console.log('세션 데이터 : ' + JSON.stringify(sessionData, null, 2));
     console.log('학생 데이터 : ' + JSON.stringify(eclassUuid, null, 2));
 
@@ -105,6 +98,10 @@ export default function TeacherCourseStatusTable({
       });
     }
   }, [stepCount, sessionData]);
+
+  useEffect(() => {
+    console.log('과제 중지 확인 : ' + assginmentShareStop);
+  }, [assginmentShareStop]);
 
   useEffect(() => {
     // 학생 정보가 모두 설정된 후에 sendStudentData 실행
@@ -220,6 +217,20 @@ export default function TeacherCourseStatusTable({
     // 예시로 finalData 출력
     // console.log('최종 데이터: ', finalData);
 
+    // console.log(
+    //   'row 내용!@! !!!!!!!!!!!!!!!!! : ',
+    //   JSON.stringify(row, null, 2),
+    // );
+    // console.log(
+    //   'assginmentShareCheck 내용!@! !!!!!!!!!!!!!!!!! : ',
+    //   JSON.stringify(assginmentShareCheck, null, 2),
+    // );
+
+    // console.log(
+    //   'assginmentShareStop 내용!@! !!!!!!!!!!!!!!!!! : ',
+    //   JSON.stringify(assginmentShareStop, null, 2),
+    // );
+
     return (
       <TableRow>
         <TableCell component="th" scope="row">
@@ -233,18 +244,29 @@ export default function TeacherCourseStatusTable({
           )}
         </TableCell>
         {/* 여기가 과제 공유 쪽 */}
-        <TableCell align="center">
-          {!assginmentShareStop &&
-          assginmentShareCheck?.some(
-            (assign) =>
-              assign.sessionId === row.sessionId &&
-              assign.assginmentShared === true,
-          ) ? (
-            <CheckCircleIcon sx={{ color: 'blue' }} />
-          ) : (
+        {/* <TableCell align="center">
+          {assginmentShareStop ? (
             <CancelIcon sx={{ color: 'red' }} />
+          ) : (
+            <>
+              {assginmentShareCheck.map((assign) =>
+                assign.sessionId === row.sessionId &&
+                assign.assginmentShared ? (
+                  <CheckCircleIcon
+                    key={assign.sessionId}
+                    sx={{ color: 'blue' }}
+                  />
+                ) : null,
+              )}
+
+              {!assginmentShareCheck.some(
+                (assign) =>
+                  assign.sessionId === row.sessionId && assign.assginmentShared,
+              ) && <CancelIcon sx={{ color: 'red' }} />}
+            </>
           )}
-        </TableCell>
+        </TableCell> */}
+
         <TableCell align="center">
           {isMatch || row.assginmentSubmit ? (
             <CheckCircleIcon sx={{ color: 'blue' }} />
@@ -332,11 +354,11 @@ export default function TeacherCourseStatusTable({
                   <ScreenShareIcon />
                 </Tooltip>
               </TableCell>
-              <TableCell align="center">
+              {/* <TableCell align="center">
                 <Tooltip title="스텝 공유 여부">
                   <AssignmentIcon />
                 </Tooltip>
-              </TableCell>
+              </TableCell> */}
               <TableCell align="center">
                 <Tooltip title="스텝 제출 여부">
                   <AssignmentTurnedInIcon />

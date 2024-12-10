@@ -233,11 +233,34 @@ export const LiveStudentPage = () => {
       '[LiveStudentPage] 이클래스 UUID: ' + JSON.stringify(eClassUuid, null, 2),
     );
     const initializeSession = async () => {
-      const newSessionId = uuidv4();
-      const registeredSessionId = await registerSessionId(newSessionId);
-      sessionId.current = registeredSessionId || newSessionId;
-      setSessionIdState(sessionId.current);
-      setFinished(true);
+      const userName = localStorage.getItem('username');
+
+      const resp = await customAxios.get('/api/eclass/student/getSession', {
+        params: {
+          eclassUuid: eClassUuid,
+          userName: userName,
+        },
+      });
+      if (resp.data) {
+        console.log(
+          '현재 학생의 SessionId : ' + JSON.stringify(resp.data, null, 2),
+        );
+
+        sessionId.current = resp.data;
+        setSessionIdState(resp.data);
+        setFinished(true);
+      } else {
+        // 데이터가 없는 경우 새로운 세션 ID 생성 및 등록
+        const newSessionId = uuidv4();
+        const registeredSessionId = await registerSessionId(newSessionId);
+        console.log(
+          '새로운 SessionId : ' + JSON.stringify(registeredSessionId, null, 2),
+        );
+
+        sessionId.current = registeredSessionId || newSessionId;
+        setSessionIdState(sessionId.current);
+        setFinished(true);
+      }
     };
 
     initializeSession();

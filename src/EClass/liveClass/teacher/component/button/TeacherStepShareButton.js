@@ -8,6 +8,7 @@ export function TeacherStepShareButton({
   stepCount,
   lectureDataUuid,
   sharedScreenState,
+  assginmentShareCheck,
   setAssginmentShareCheck,
   setAssginmentShareStop,
   setStepCount,
@@ -76,19 +77,42 @@ export function TeacherStepShareButton({
             // 상태 업데이트 로직
             setAssginmentShareCheck((prevState) => {
               const validPrevState = prevState || []; // null/undefined 방지
+
+              // 기존 배열에서 sessionId가 같은 항목을 찾기
               const existingIndex = validPrevState.findIndex(
                 (item) => item.sessionId === shareState.sessionId,
               );
 
               if (existingIndex !== -1) {
                 // 기존 상태가 있다면 업데이트
-                const updatedState = [...validPrevState];
-                updatedState[existingIndex] = shareState; // 기존 객체를 덮어씌움
-                return updatedState;
+                return validPrevState.map((item, index) => {
+                  if (index === existingIndex) {
+                    // 해당 항목만 업데이트
+                    return {
+                      ...item,
+                      shared: shareState.shared,
+                      assginmentStatus: shareState.assginmentStatus,
+                      assginmentShared: shareState.assginmentShared,
+                      assginmentSubmit: shareState.assginmentSubmit,
+                      reportSubmit: shareState.reportSubmit,
+                    };
+                  }
+                  return item; // 나머지 항목은 그대로 유지
+                });
               }
 
               // 새로운 상태 추가
-              return [...validPrevState, shareState];
+              return [
+                ...validPrevState,
+                {
+                  sessionId: shareState.sessionId,
+                  shared: shareState.shared,
+                  assginmentStatus: shareState.assginmentStatus,
+                  assginmentShared: shareState.assginmentShared,
+                  assginmentSubmit: shareState.assginmentSubmit,
+                  reportSubmit: shareState.reportSubmit,
+                },
+              ];
             });
           },
         );
@@ -148,6 +172,7 @@ export function TeacherStepShareButton({
         alert(
           `공유 성공: ${studentList.length}명의 학생에게 과제를 공유하였습니다.`,
         );
+        setAssginmentShareStop(false);
         setAssginShareFlag(true);
       } catch (error) {
         console.error('메시지 전송 에러:', error);
