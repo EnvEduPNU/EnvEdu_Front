@@ -63,6 +63,7 @@ function AirPlaceList({ airDataList }) {
   );
 
   const [isOpen, setIsOpen] = useState(false);
+  const [allChecked, setAllChecked] = useState(false);
 
   const toggleColumn = (index) => {
     setFilteredColumns((prev) =>
@@ -144,7 +145,26 @@ function AirPlaceList({ airDataList }) {
                     cursor: 'pointer',
                   }}
                 >
-                  <div style={{ display: 'flex' }}>선택</div>
+                  <input
+                    type="checkbox"
+                    style={{
+                      marginRight: '0.5rem',
+                      width: '16px',
+                    }}
+                    checked={allChecked}
+                    onChange={() => {
+                      if (allChecked === false) {
+                        setFilteredRows(
+                          new Array(airDataList.length).fill(true),
+                        );
+                      } else {
+                        setFilteredRows(
+                          new Array(airDataList.length).fill(false),
+                        );
+                      }
+                      setAllChecked((prev) => !prev);
+                    }}
+                  />
                 </th>
                 {headers.map((header, index) => (
                   <th

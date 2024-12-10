@@ -36,6 +36,25 @@ const NumericTypes = new Set([
   '미세먼지(PM10) 농도(㎍/㎥)',
   '미세먼지(PM2.5) 농도(㎍/㎥)',
   '아황산가스 농도(ppm)',
+
+  // 시도별 대기질
+  '대구',
+  '충남',
+  '인천',
+  '대전',
+  '경북',
+  '세종',
+  '광주',
+  '전북',
+  '강원',
+  '울산',
+  '전남',
+  '서울',
+  '부산',
+  '제주',
+  '충북',
+  '경남',
+  '경기',
 ]);
 
 const CategoricalTypes = new Set([
@@ -50,6 +69,8 @@ const CategoricalTypes = new Set([
   '측정월',
   '측정일',
   '소속',
+  '변인',
+  '측정 시간',
 ]);
 
 export const selectVariableType = (name) => {

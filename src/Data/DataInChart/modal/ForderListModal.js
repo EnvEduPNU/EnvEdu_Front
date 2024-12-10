@@ -218,7 +218,7 @@ export default function ForderListModal({
                 if (item[key] !== undefined) {
                   if (item[key] === null) return;
                   else if (isNaN(item[key])) newItem[key] = item[key];
-                  else newItem[key] = Number(item[key]);
+                  else newItem[key] = convertToNumber(item[key]);
                 } else {
                   newItem[key] = null; // 해당 키가 없으면 null로 설정
                 }
@@ -261,7 +261,7 @@ export default function ForderListModal({
                 if (item[key] !== undefined) {
                   if (item[key] === null) return;
                   else if (isNaN(item[key])) newItem[key] = item[key];
-                  else newItem[key] = Number(item[key]);
+                  else newItem[key] = convertToNumber(item[key]);
                 } else {
                   newItem[key] = null; // 해당 키가 없으면 null로 설정
                 }
@@ -315,7 +315,7 @@ export default function ForderListModal({
               keysToKeep.forEach((key) => {
                 if (item[key] === null) return;
                 else if (item[key] !== undefined) {
-                  newItem[key] = item[key];
+                  newItem[key] = convertToNumber(item[key]);
                 } else {
                   newItem[key] = null; // 해당 키가 없으면 null로 설정
                 }
