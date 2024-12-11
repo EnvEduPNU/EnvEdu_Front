@@ -14,6 +14,7 @@ import StudentReportModal from '../student/modal/StudentReportModal';
 
 export const LiveStudentPage = () => {
   const sessionId = useRef('');
+  const [localStoredPhotoList, setLocalStoredPhotoList] = useState([]);
   const [sessionIdState, setSessionIdState] = useState();
   const [finished, setFinished] = useState(false);
   const [tableData, setTableData] = useState([]);
@@ -351,6 +352,8 @@ export const LiveStudentPage = () => {
     }
   };
 
+  console.log(tableData);
+
   return (
     <div style={{ display: 'flex', margin: '0 20vh', height: '800px' }}>
       <div style={{ display: 'inline-block', width: '100%', height: '800px' }}>
@@ -373,6 +376,8 @@ export const LiveStudentPage = () => {
               setAssginmentFetch={setAssginmentFetch}
               latestTableData={latestTableData}
               allData={allData}
+              localStoredPhotoList={localStoredPhotoList}
+              setLocalStoredPhotoList={setLocalStoredPhotoList}
             />
           )}
           {isLoading && (
@@ -494,6 +499,7 @@ export const LiveStudentPage = () => {
               stepCount={stepCount}
               eclassUuid={eClassUuid}
               allData={allData}
+              storedPhotoList={localStoredPhotoList}
             />
           </>
         )}

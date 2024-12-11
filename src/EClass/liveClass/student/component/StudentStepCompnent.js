@@ -213,6 +213,8 @@ export function StudentStepCompnent(props) {
             setAssginmentFetch={setAssginmentFetch}
             latestTableData={props.latestTableData}
             allData={props.allData}
+            localStoredPhotoList={props.localStoredPhotoList}
+            setLocalStoredPhotoList={props.setLocalStoredPhotoList}
           />
         </>
       ) : (

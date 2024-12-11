@@ -118,12 +118,13 @@ function StudentRenderAssign({
   eclassUuid,
   setAssginmentFetch,
   allData,
+  localStoredPhotoList,
+  setLocalStoredPhotoList,
 }) {
   const [textBoxValues, setTextBoxValues] = useState({});
   const [data, setData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열기 상태 추가
   const navigate = useNavigate();
-  const [localStoredPhotoList, setLocalStoredPhotoList] = useState([]);
   const uploadedImagesState = useRef([]); // 업로드된 이미지 상태
 
   const [imageUrlArray, setImageUrlArray] = useState([]);
@@ -145,7 +146,8 @@ function StudentRenderAssign({
   }, []);
 
   const handleNavigate = (dataType, uuid) => {
-    navigate(`/data-in-chart?dataType=${dataType}&uuid=${uuid}`);
+    const id = 'drawGraph';
+    navigate(`/data-in-chart?id=${id}&dataType=${dataType}&uuid=${uuid}`);
   };
 
   useEffect(() => {
