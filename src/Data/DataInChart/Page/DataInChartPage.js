@@ -39,7 +39,7 @@ function DataInChartPage() {
   const username = searchParams.get('username');
   const contentName = searchParams.get('contentName');
   const stepNum = searchParams.get('stepNum');
-  const content = searchParams.get('content');
+  const content = searchParams.get('dataType');
   const [summary, setSummary] = useState([]);
 
   useEffect(() => {

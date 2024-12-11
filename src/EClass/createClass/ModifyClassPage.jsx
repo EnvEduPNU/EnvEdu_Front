@@ -603,7 +603,7 @@ function ModifyClassPage() {
 
         tempEclassContents[activeStepIndex].contents.push({
           type: 'dataInChartButton',
-          content: id,
+          content: { dataType: type, id },
         });
 
         return tempEclassContents;
@@ -1522,7 +1522,10 @@ function ModifyClassPage() {
                         if (content.type === 'dataInChartButton') {
                           return {
                             type: content.type,
-                            content: content.content,
+                            content: {
+                              dataType: content.content.dataType,
+                              id: content.content.id,
+                            },
                             x: null,
                             y: null,
                           };

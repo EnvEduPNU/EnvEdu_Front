@@ -171,7 +171,7 @@ function CreateClassPage() {
   };
 
   const handleSelectData = async (type, id, type2) => {
-    console.log(type2);
+    console.log(type);
     if (type2 === 'graph') {
       setEclassContents((prev) => {
         const tempEclassContents = prev.map((eclassContent) => ({
@@ -181,7 +181,7 @@ function CreateClassPage() {
 
         tempEclassContents[activeStepIndex].contents.push({
           type: 'dataInChartButton',
-          content: id,
+          content: { dataType: type, id },
         });
 
         return tempEclassContents;
@@ -1076,7 +1076,10 @@ function CreateClassPage() {
                         if (content.type === 'dataInChartButton') {
                           return {
                             type: content.type,
-                            content: content.content,
+                            content: {
+                              dataType: content.content.dataType,
+                              id: content.content.id,
+                            },
                             x: null,
                             y: null,
                           };
@@ -1337,7 +1340,7 @@ function CreateClassPage() {
                       {
                         type: 'textBox',
                         content: `<textarea
-              style="width: 100%; height: 150px; padding: 10px; fontSize: 16px; lineHeight: 1.5; color: #374151; border: 1px solid #D1D5DB; borderRadius: 8px; boxShadow: 0px 4px 10px rgba(0, 0, 0, 0.1); outline: none; resize: vertical; backgroundColor: #F9FAFB;";
+              style="width: 550px; height: 150px; padding: 10px; fontSize: 16px; lineHeight: 1.5; color: #374151; border: 1px solid #D1D5DB; borderRadius: 8px; boxShadow: 0px 4px 10px rgba(0, 0, 0, 0.1); outline: none; resize: vertical; backgroundColor: #F9FAFB;";
               placeholder="학생이 여기에 답변을 입력합니다"
               disabled />`,
                       },
