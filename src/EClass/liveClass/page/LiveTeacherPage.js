@@ -146,7 +146,7 @@ export const LiveTeacherPage = () => {
 
         <div>
           {stepCount && !sharedScreenState ? (
-            <TeacherRenderAssign data={tableData} />
+            <TeacherRenderAssign tableData={tableData} />
           ) : (
             !sharedScreenState && <DefaultPageComponent />
           )}
