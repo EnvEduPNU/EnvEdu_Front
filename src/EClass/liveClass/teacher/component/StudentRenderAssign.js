@@ -760,7 +760,7 @@ function StudentRenderAssign({
                     const stepIndex = item.stepNum - 1;
 
                     console.log('데이터 차트 인덱스 : ' + stepIndex);
-                    alert('???');
+                    // alert('???');
                     if (stepIndex >= 0 && stepIndex < stepCount) {
                       stepCheck[stepIndex] = true;
                     }

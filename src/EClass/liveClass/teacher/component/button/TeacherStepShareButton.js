@@ -169,9 +169,9 @@ export function TeacherStepShareButton({
         });
 
         // publish가 성공하면 학생 수만큼 성공 메시지를 표시
-        alert(
-          `공유 성공: ${studentList.length}명의 학생에게 과제를 공유하였습니다.`,
-        );
+        // alert(
+        //   `공유 성공: ${studentList.length}명의 학생에게 과제를 공유하였습니다.`,
+        // );
         setAssginmentShareStop(false);
         setAssginShareFlag(true);
       } catch (error) {
