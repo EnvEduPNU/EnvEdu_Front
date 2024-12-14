@@ -236,36 +236,6 @@ export const LiveStudentPage = () => {
     console.log(
       '[LiveStudentPage] 이클래스 UUID: ' + JSON.stringify(eClassUuid, null, 2),
     );
-    const initializeSession = async () => {
-      const userName = localStorage.getItem('username');
-
-      const resp = await customAxios.get('/api/eclass/student/getSession', {
-        params: {
-          eclassUuid: eClassUuid,
-          userName: userName,
-        },
-      });
-      if (resp.data) {
-        console.log(
-          '현재 학생의 SessionId : ' + JSON.stringify(resp.data, null, 2),
-        );
-
-        sessionId.current = resp.data;
-        setSessionIdState(resp.data);
-        setFinished(true);
-      } else {
-        // 데이터가 없는 경우 새로운 세션 ID 생성 및 등록
-        const newSessionId = uuidv4();
-        const registeredSessionId = await registerSessionId(newSessionId);
-        console.log(
-          '새로운 SessionId : ' + JSON.stringify(registeredSessionId, null, 2),
-        );
-
-        sessionId.current = registeredSessionId || newSessionId;
-        setSessionIdState(sessionId.current);
-        setFinished(true);
-      }
-    };
 
     initializeSession();
 
@@ -276,6 +246,7 @@ export const LiveStudentPage = () => {
     window.addEventListener('beforeunload', handleBeforeUnload);
 
     return () => {
+      // deleteSession();
       sendMessage(false);
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
@@ -283,6 +254,7 @@ export const LiveStudentPage = () => {
 
   useEffect(() => {
     if (!classProcess) {
+      // deleteSession();
       alert('수업이 종료되었습니다!');
       sendMessage(false);
       navigate('/');
@@ -295,6 +267,43 @@ export const LiveStudentPage = () => {
       setPage('defaultPage');
     }
   }, [sharedScreenState, setPage]);
+
+  const initializeSession = async () => {
+    const userName = localStorage.getItem('username');
+
+    const resp = await customAxios.get('/api/eclass/student/getSession', {
+      params: {
+        eclassUuid: eClassUuid,
+        userName: userName,
+      },
+    });
+    if (resp.data) {
+      console.log(
+        '현재 학생의 SessionId : ' + JSON.stringify(resp.data, null, 2),
+      );
+
+      sessionId.current = resp.data;
+      setSessionIdState(resp.data);
+      setFinished(true);
+    } else {
+      // 데이터가 없는 경우 새로운 세션 ID 생성 및 등록
+      const newSessionId = uuidv4();
+      const registeredSessionId = await registerSessionId(newSessionId);
+      console.log(
+        '새로운 SessionId : ' + JSON.stringify(registeredSessionId, null, 2),
+      );
+
+      sessionId.current = registeredSessionId || newSessionId;
+      setSessionIdState(sessionId.current);
+      setFinished(true);
+    }
+  };
+
+  // const deleteSession = async () => {
+  //   console.log('세션 아이디? ' + JSON.stringify(sessionId.current));
+
+  //   await customAxios.delete(`/api/session/${sessionId.current}`);
+  // };
 
   const sendMessage = async (state) => {
     const message = {
@@ -319,6 +328,7 @@ export const LiveStudentPage = () => {
 
   const sendStateMessage = async (state) => {
     const shareState = {
+      assginmentStatus: state ? 'screenSuccess' : 'screenFailed',
       sessionId: sessionId.current,
       shared: state,
     };

@@ -61,6 +61,8 @@ export default function TeacherCourseStatusTable({
 
   const [assginShared, setAssginShared] = useState([]);
 
+  const [screenShared, setScreenShared] = useState([]);
+
   const selectedReport = useRef();
 
   const updateShareStatus = useLiveClassPartStore(
@@ -117,7 +119,7 @@ export default function TeacherCourseStatusTable({
     stompClientRef.current = stompClient;
 
     stompClientRef.current.onConnect = (frame) => {
-      console.log('커넥션 생성 완료 : ' + frame);
+      // console.log('커넥션 생성 완료 : ' + frame);
 
       // 학생 상태 성공 메시지 구독
       stompClientRef.current.subscribe(
@@ -128,6 +130,20 @@ export default function TeacherCourseStatusTable({
             '학생 상태 공유 응답받기: ' +
               JSON.stringify(parsedMessage, null, 2),
           );
+
+          // 과제 공유 성공
+          if (parsedMessage.assginmentStatus == 'success') {
+            setAssginShared((prev) => {
+              // 동일한 sessionId를 가진 객체 제거
+              const filteredArray = prev.filter(
+                (item) => item.sessionId !== parsedMessage.sessionId,
+              );
+
+              return [...filteredArray, parsedMessage];
+            });
+          }
+
+          // 과제 공유 중지
           if (parsedMessage.assginmentStatus === 'failed') {
             setAssginShared((prev) => {
               // 동일한 sessionId를 가진 객체 제거
@@ -139,14 +155,27 @@ export default function TeacherCourseStatusTable({
             });
           }
 
-          if (parsedMessage.assginmentStatus == 'success') {
-            setAssginShared((prev) => {
+          // 화면 공유 성공
+          if (parsedMessage.assginmentStatus == 'screenSuccess') {
+            setScreenShared((prev) => {
               // 동일한 sessionId를 가진 객체 제거
               const filteredArray = prev.filter(
                 (item) => item.sessionId !== parsedMessage.sessionId,
               );
 
               return [...filteredArray, parsedMessage];
+            });
+          }
+
+          // 화면 공유 중지
+          if (parsedMessage.assginmentStatus == 'screenFailed') {
+            setScreenShared((prev) => {
+              // 동일한 sessionId를 가진 객체 제거
+              const filteredArray = prev.filter(
+                (item) => item.sessionId !== parsedMessage.sessionId,
+              );
+
+              return [...filteredArray];
             });
           }
         },
@@ -183,10 +212,10 @@ export default function TeacherCourseStatusTable({
         eclassUuid: eclassUuid,
       };
 
-      console.log(
-        '[TeacherCourseStatusTable] eclassStudentData : ' +
-          JSON.stringify(eclassStudentData, null, 2),
-      );
+      // console.log(
+      //   '[TeacherCourseStatusTable] eclassStudentData : ' +
+      //     JSON.stringify(eclassStudentData, null, 2),
+      // );
 
       const response = await customAxios.post(
         `${process.env.REACT_APP_API_URL}/api/sessions/student/get`,
@@ -271,8 +300,10 @@ export default function TeacherCourseStatusTable({
 
         {/* ---------------------------------------- 화면 공유 상태 ---------------------- */}
         <TableCell align="center">
-          {row.shared ? (
-            <CheckCircleIcon sx={{ color: 'blue' }} />
+          {screenShared?.some(
+            (item) => item.sessionId === row.sessionId && item.shared,
+          ) ? (
+            <CheckCircleIcon key={row.sessionId} sx={{ color: 'blue' }} />
           ) : (
             <CancelIcon sx={{ color: 'red' }} />
           )}

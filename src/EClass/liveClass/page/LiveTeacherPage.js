@@ -29,33 +29,6 @@ export const LiveTeacherPage = () => {
 
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   console.log('과제 중지 확인 : ' + assginmentShareStop);
-  // }, [assginmentShareStop]);
-
-  // useEffect(() => {
-  //   console.log(
-  //     'assginmentShareCheck 변경 확인: ' +
-  //       JSON.stringify(assginmentShareCheck, null, 2),
-  //   );
-
-  //   console.log('sessionIds 변경 확인: ' + JSON.stringify(sessionIds, null, 2));
-
-  //   // sessionIds 배열에 존재하지 않는 sessionId를 가진 객체 제거
-  //   setAssginmentShareCheck((prevState) => {
-  //     const updatedState = (prevState || []).filter((item) =>
-  //       sessionIds.includes(item.sessionId),
-  //     );
-
-  //     console.log(
-  //       '업데이트된 assginmentShareCheck: ' +
-  //         JSON.stringify(updatedState, null, 2),
-  //     );
-
-  //     return updatedState;
-  //   });
-  // }, [sessionIds]);
-
   const closeEclass = async () => {
     await customAxios
       .patch(`/api/eclass/eclass-close?uuid=${eClassUuid}`)

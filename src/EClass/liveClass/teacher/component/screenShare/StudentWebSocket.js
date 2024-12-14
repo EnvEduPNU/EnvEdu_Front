@@ -31,7 +31,7 @@ export const StudentWebSocket = ({ setSessionIds, eclassUuid }) => {
         );
 
         setSessionIds(sessionIdsArray);
-        console.log('Session IDs: ', JSON.stringify(sessionIdsArray, null, 2));
+        // console.log('Session IDs: ', JSON.stringify(sessionIdsArray, null, 2));
       } catch (error) {
         console.error('Failed to fetch session IDs:', error);
       }
@@ -41,7 +41,7 @@ export const StudentWebSocket = ({ setSessionIds, eclassUuid }) => {
 
     // 학생 소켓 연결
     stompClients.current = initializeSocketClient('/ws', (frame) => {
-      console.log('학생 입장 소켓 연결 성공 : ', frame);
+      // console.log('학생 입장 소켓 연결 성공 : ', frame);
       stompClients.current.subscribe('/topic/student-entered', (message) => {
         const parsedMessage = JSON.parse(message.body);
         console.log('학생 상태 : ' + JSON.stringify(parsedMessage, null, 2));
