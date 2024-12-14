@@ -78,13 +78,7 @@ function TeacherRenderAssign({ tableData }) {
   useEffect(() => {
     let filteredData = tableData[0].contents;
 
-    console.log(filteredData);
-    // console.log('Filtered Data:', filteredData);
-
-    // 상태에 필터링된 데이터 세팅
-
     const fetchData = async () => {
-      console.log(filteredData);
       let newStep;
       for (let i = 0; i < filteredData.length; i++) {
         const curData = filteredData[i];
@@ -96,7 +90,6 @@ function TeacherRenderAssign({ tableData }) {
 
         for (let j = 0; j < curData.contents.length; j++) {
           const content = curData.contents[j];
-          console.log(content);
           if (content.type === 'html') {
             newStep.contents.push(content);
           } else if (content.type === 'textBox') {
@@ -116,7 +109,6 @@ function TeacherRenderAssign({ tableData }) {
           } else if (content.type === 'data') {
             let tableContent;
             let dataContent;
-            console.log(content.content.type);
             if (content.content.type === '커스텀 데이터') {
               await customAxios
                 .get(`api/custom/${content.content.id}`)
@@ -182,7 +174,6 @@ function TeacherRenderAssign({ tableData }) {
                       table[key].order % columns
                     ] = convertToNumber(table[key].value);
                   });
-                  console.log(data);
                   dataContent = data;
 
                   // localStorage.setItem('data', JSON.stringify(data));
@@ -296,7 +287,6 @@ function TeacherRenderAssign({ tableData }) {
                       });
                       return newItem;
                     });
-                    console.log(transformedData);
                     headers = Object.keys(transformedData[0]);
 
                     headers = headers.map((header) => engToKor(header));
@@ -306,7 +296,6 @@ function TeacherRenderAssign({ tableData }) {
                     );
                     // 최종 결과 생성 (헤더 + 값)
                     const recombined = [headers, ...dataContent];
-                    console.log(recombined);
                   })
                   .catch((err) => console.log(err));
               } else if (content.content.type === '대기질 데이터') {
@@ -328,7 +317,6 @@ function TeacherRenderAssign({ tableData }) {
                       'ITEMPM25',
                       'ITEMSO2VALUE',
                     ];
-                    console.log(res.data);
 
                     // 변환 로직
                     const transformedData = res.data.data.map((item) => {
@@ -344,7 +332,6 @@ function TeacherRenderAssign({ tableData }) {
                       });
                       return newItem;
                     });
-                    console.log(transformedData);
                     headers = Object.keys(transformedData[0]);
 
                     headers = headers.map((header) => engToKor(header));
@@ -354,7 +341,6 @@ function TeacherRenderAssign({ tableData }) {
                     );
                     // 최종 결과 생성 (헤더 + 값)
                     const recombined = [headers, ...dataContent];
-                    console.log(recombined);
                   })
                   .catch((err) => console.log(err));
               } else if (content.content.type === '시도별 대기질 데이터') {
@@ -388,7 +374,6 @@ function TeacherRenderAssign({ tableData }) {
                       'ITEMGYEONGNAM',
                       'ITEMGYEONGGI',
                     ];
-                    console.log(res.data);
 
                     // 변환 로직
                     const transformedData = res.data.data.map((item) => {
@@ -403,7 +388,6 @@ function TeacherRenderAssign({ tableData }) {
                       });
                       return newItem;
                     });
-                    console.log(transformedData);
                     headers = Object.keys(transformedData[0]);
 
                     headers = headers.map((header) => engToKor(header));
@@ -413,11 +397,9 @@ function TeacherRenderAssign({ tableData }) {
                     );
                     // 최종 결과 생성 (헤더 + 값)
                     const recombined = [headers, ...dataContent];
-                    console.log(recombined);
                   })
                   .catch((err) => console.log(err));
               }
-              console.log(dataContent);
               tableContent = (
                 <div style={{ width: 'auto', overflowX: 'auto' }}>
                   <div
@@ -493,7 +475,6 @@ function TeacherRenderAssign({ tableData }) {
           }
         }
       }
-      console.log([newStep]);
       setData([newStep]);
     };
     fetchData();
@@ -504,7 +485,7 @@ function TeacherRenderAssign({ tableData }) {
   const { getStorePhotoList } = usePhotoStore();
 
   useEffect(() => {
-    console.log('사진 저장소 확인 : ', getStorePhotoList());
+    // console.log('사진 저장소 확인 : ', getStorePhotoList());
     // 현재 저장된 photoList 가져와서 상태 업데이트
     const photoList = getStorePhotoList();
     setStoredPhotoList(photoList);
@@ -528,7 +509,6 @@ function TeacherRenderAssign({ tableData }) {
   // useEffect(() => {
   //   console.log('data 확인 : ' + JSON.stringify(data, null, 2));
   // }, [data]);
-  console.log(data);
   return (
     <div style={{ width: '100%' }}>
       {data.map((item) => (

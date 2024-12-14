@@ -30,8 +30,6 @@ export const LiveStudentPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmittedListVisible, setIsSubmittedListVisible] = useState(false);
 
-  const [assginmentFetch, setAssginmentFetch] = useState(false);
-
   const location = useLocation();
   const { lectureDataUuid, row, eClassUuid } = location.state || {};
 
@@ -378,7 +376,6 @@ export const LiveStudentPage = () => {
               sessionIdState={sessionIdState}
               eclassUuid={eClassUuid}
               lectureDataUuid={lectureDataUuid}
-              setAssginmentFetch={setAssginmentFetch}
               latestTableData={latestTableData}
               allData={allData}
               localStoredPhotoList={localStoredPhotoList}
@@ -453,7 +450,6 @@ export const LiveStudentPage = () => {
               stepCount={stepCount}
               reportTable={reportTable}
               eclassUuid={eClassUuid}
-              assginmentFetch={assginmentFetch}
               onReportButtonClick={handleReportButtonClick}
               setLatestTableData={setLatestTableData}
             />
@@ -500,7 +496,6 @@ export const LiveStudentPage = () => {
               onClose={handleCloseModal}
               tableData={tableData}
               latestTableData={latestTableData}
-              assginmentCheck={assginmentFetch}
               stepCount={stepCount}
               eclassUuid={eClassUuid}
               allData={allData}

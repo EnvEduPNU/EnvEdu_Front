@@ -116,7 +116,6 @@ function StudentRenderAssign({
   studentId,
   sessionIdState,
   eclassUuid,
-  setAssginmentFetch,
   allData,
   localStoredPhotoList,
   setLocalStoredPhotoList,
@@ -898,7 +897,6 @@ function StudentRenderAssign({
           }
 
           console.log('제출된 객체 : ', updatedData);
-          setAssginmentFetch(true);
           alert('제출 완료했습니다.');
           window.location.reload();
         } catch (error) {

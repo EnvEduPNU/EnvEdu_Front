@@ -32,7 +32,7 @@ export function TeacherStepShareButton({
       stompClientRef.current = stompClient;
 
       stompClientRef.current.onConnect = (frame) => {
-        console.log('커넥션 생성 완료 : ' + frame);
+        // console.log('커넥션 생성 완료 : ' + frame);
       };
 
       stompClientRef.current.activate();
@@ -50,14 +50,14 @@ export function TeacherStepShareButton({
 
   // 과제 공유 소켓 전달
   const sendMessage = () => {
-    console.log('과제 공유 메서드');
+    // console.log('과제 공유 메서드');
 
     if (!stepCount) {
       alert('공유할 스텝을 선택해주세요');
       return;
     }
 
-    console.log('스텝카운트 ' + stepCount);
+    // console.log('스텝카운트 ' + stepCount);
 
     if (studentList.length < 1) {
       alert('공유할 학생이 없습니다!');

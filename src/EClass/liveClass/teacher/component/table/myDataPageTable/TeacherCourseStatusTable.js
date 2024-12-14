@@ -18,7 +18,6 @@ import { customAxios } from '../../../../../../Common/CustomAxios';
 import ReportViewModal from '../../../modal/ReportViewModal';
 
 import ScreenShareIcon from '@mui/icons-material/ScreenShare';
-import AssignmentIcon from '@mui/icons-material/Assignment';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import DescriptionIcon from '@mui/icons-material/Description';
 
@@ -60,7 +59,7 @@ export default function TeacherCourseStatusTable({
   const [reportData, setReportData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const [assginShared, setAssginShared] = useState();
+  const [assginShared, setAssginShared] = useState([]);
 
   const selectedReport = useRef();
 
@@ -80,9 +79,6 @@ export default function TeacherCourseStatusTable({
   };
 
   useEffect(() => {
-    console.log('세션 데이터 : ' + JSON.stringify(sessionData, null, 2));
-    console.log('학생 데이터 : ' + JSON.stringify(eclassUuid, null, 2));
-
     const fetchStudents = async () => {
       const studentData = await Promise.all(
         sessionData.map((session) => getStudent(session.id, eclassUuid)),
@@ -105,15 +101,11 @@ export default function TeacherCourseStatusTable({
   }, [stepCount, sessionData]);
 
   useEffect(() => {
-    console.log('과제 중지 확인 : ' + assginmentShareStop);
-  }, [assginmentShareStop]);
-
-  useEffect(() => {
     // 학생 정보가 모두 설정된 후에 sendStudentData 실행
     if (students.length > 0) {
       sendStudentData();
     }
-  }, [students, assginmentShareCheck]);
+  }, [students]);
 
   useEffect(() => {
     const token = localStorage.getItem('access_token').replace('Bearer ', '');
@@ -136,8 +128,27 @@ export default function TeacherCourseStatusTable({
             '학생 상태 공유 응답받기: ' +
               JSON.stringify(parsedMessage, null, 2),
           );
+          if (parsedMessage.assginmentStatus === 'failed') {
+            setAssginShared((prev) => {
+              // 동일한 sessionId를 가진 객체 제거
+              const filteredArray = prev.filter(
+                (item) => item.sessionId !== parsedMessage.sessionId,
+              );
 
-          setAssginShared(parsedMessage);
+              return [...filteredArray];
+            });
+          }
+
+          if (parsedMessage.assginmentStatus == 'success') {
+            setAssginShared((prev) => {
+              // 동일한 sessionId를 가진 객체 제거
+              const filteredArray = prev.filter(
+                (item) => item.sessionId !== parsedMessage.sessionId,
+              );
+
+              return [...filteredArray, parsedMessage];
+            });
+          }
         },
       );
     };
@@ -153,6 +164,16 @@ export default function TeacherCourseStatusTable({
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (assginmentShareStop) {
+      setAssginShared([]);
+    }
+  }, [assginmentShareStop]);
+
+  useEffect(() => {
+    console.log('assginShared 확인 : ' + JSON.stringify(assginShared, null, 2));
+  }, [assginShared]);
 
   // 각 한명의 학생이 있는지를 확인하는 것이고 없는 경우 null 반환
   const getStudent = async (sessionId, eclassUuid) => {
@@ -199,19 +220,9 @@ export default function TeacherCourseStatusTable({
           requestData,
         );
 
-        console.log(
-          '[TeacherCourseStatusTable] assiginment Check List : ' +
-            JSON.stringify(respCheckList.data, null, 2),
-        );
-
         const respReportUuid = await customAxios.post(
           '/api/eclass/student/assignment/reportUuid/get',
           requestData,
-        );
-
-        console.log(
-          'respReportUuid.data : ' +
-            JSON.stringify(respReportUuid.data, null, 2),
         );
 
         if (Array.isArray(respReportUuid.data)) {
@@ -252,28 +263,13 @@ export default function TeacherCourseStatusTable({
     // report가 비어있는 경우 row에서 필요한 데이터를 대신 사용할 수 있도록 처리
     const finalData = report.length > 0 ? report : [row];
 
-    // 예시로 finalData 출력
-    // console.log('최종 데이터: ', finalData);
-
-    // console.log(
-    //   'row 내용!@! !!!!!!!!!!!!!!!!! : ',
-    //   JSON.stringify(row, null, 2),
-    // );
-    // console.log(
-    //   'assginmentShareCheck 내용!@! !!!!!!!!!!!!!!!!! : ',
-    //   JSON.stringify(assginmentShareCheck, null, 2),
-    // );
-
-    // console.log(
-    //   'assginmentShareStop 내용!@! !!!!!!!!!!!!!!!!! : ',
-    //   JSON.stringify(assginmentShareStop, null, 2),
-    // );
-
     return (
       <TableRow>
         <TableCell component="th" scope="row">
           {row.name}
         </TableCell>
+
+        {/* ---------------------------------------- 화면 공유 상태 ---------------------- */}
         <TableCell align="center">
           {row.shared ? (
             <CheckCircleIcon sx={{ color: 'blue' }} />
@@ -281,30 +277,26 @@ export default function TeacherCourseStatusTable({
             <CancelIcon sx={{ color: 'red' }} />
           )}
         </TableCell>
-        {/* 여기가 과제 공유 쪽 */}
-        {/* <TableCell align="center">
+
+        {/* ---------------------------------- 과제 공유 상태 -------------------- */}
+        <TableCell align="center">
           {assginmentShareStop ? (
             <CancelIcon sx={{ color: 'red' }} />
           ) : (
             <>
-              {assginmentShareCheck.map((assign) =>
-                assign.sessionId === row.sessionId &&
-                assign.assginmentShared ? (
-                  <CheckCircleIcon
-                    key={assign.sessionId}
-                    sx={{ color: 'blue' }}
-                  />
-                ) : null,
+              {assginShared?.some(
+                (item) =>
+                  item.sessionId === row.sessionId && item.assginmentShared,
+              ) ? (
+                <CheckCircleIcon key={row.sessionId} sx={{ color: 'blue' }} />
+              ) : (
+                <CancelIcon sx={{ color: 'red' }} />
               )}
-
-              {!assginmentShareCheck.some(
-                (assign) =>
-                  assign.sessionId === row.sessionId && assign.assginmentShared,
-              ) && <CancelIcon sx={{ color: 'red' }} />}
             </>
           )}
-        </TableCell> */}
+        </TableCell>
 
+        {/* ---------------------------------------- 과제 제출 상태 ---------------------- */}
         <TableCell align="center">
           {isMatch || row.assginmentSubmit ? (
             <CheckCircleIcon sx={{ color: 'blue' }} />
