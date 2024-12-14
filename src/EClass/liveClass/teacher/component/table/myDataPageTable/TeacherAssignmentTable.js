@@ -100,9 +100,9 @@ export default function TeacherAssignmentTable(props) {
           })),
         );
 
-        console.log(
-          '포맷 된 데이터 : ' + JSON.stringify(formattedData, null, 2),
-        );
+        // console.log(
+        //   '포맷 된 데이터 : ' + JSON.stringify(formattedData, null, 2),
+        // );
         setTableData(formattedData);
         setAllTableData(filteredData);
 

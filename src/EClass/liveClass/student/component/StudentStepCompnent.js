@@ -1,10 +1,4 @@
-import React, {
-  useEffect,
-  useState,
-  useCallback,
-  useMemo,
-  useRef,
-} from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
 import StudentRenderAssign from '../../teacher/component/StudentRenderAssign';
@@ -12,179 +6,132 @@ import { Typography } from '@mui/material';
 import { customAxios } from '../../../../Common/CustomAxios';
 
 export function StudentStepCompnent(props) {
-  const [page, setPage] = useState();
-  const [stepCount, setStepCount] = useState();
-  const [tableData, setTableData] = useState(props.data);
+  const [page, setPage] = useState(null);
+  const [stepCount, setStepCount] = useState(null);
+  const [tableData, setTableData] = useState(props.data || []);
   const [socketEclassUuid, setSocketEclassUuid] = useState(null);
-  const [assginmentCheck, setAssignmentCheck] = useState(false);
   const [eclassUuid, setEclassUuid] = useState(props.eclassUuid);
   const [studentId, setStudentId] = useState(null);
-  const [assignmentCheckTime, setAssignmentCheckTime] = useState(false);
-  const [sessionId, setSessionId] = useState();
-  const [assginmentFetch, setAssginmentFetch] = useState(false);
 
   const stompClient = useRef(null);
   const assginmentStompClient = useRef(null);
 
-  // props 넘어오면 데이터 갱신
+  // Update state when props change
   useEffect(() => {
     setEclassUuid(props.eclassUuid);
     setTableData(props.data);
     setStepCount(props.stepCount);
-    setSessionId(props.sessionIdState);
-  }, [props]);
+  }, [props.eclassUuid, props.data, props.stepCount]);
 
-  // 하위 스텝 제출을 하여 보고서가 생성 됐을 때, 보고서 버튼쪽에서 fetch 되게 할 boolean 상태 값
+  // Handle WebSocket connections
   useEffect(() => {
-    props.setAssginmentFetch(assginmentFetch);
-  }, [assginmentFetch]);
+    const token = localStorage.getItem('access_token')?.replace('Bearer ', '');
+    if (!token) {
+      console.error('Token not found. Cannot connect to WebSocket.');
+      return;
+    }
 
-  // WebSocket 연결 및 페이지 변경에 따른 처리
-  useEffect(() => {
-    const token = localStorage.getItem('access_token').replace('Bearer ', '');
+    // Setup WebSocket for page updates
+    const setupPageSocket = () => {
+      if (!props.sessionIdState || stompClient.current) return;
 
-    if (props.sessionIdState && !stompClient.current) {
-      console.log('학생 세션 아이디1 : ' + props.sessionIdState);
-
+      console.log('Initializing page WebSocket...');
       const sock = new SockJS(
         `${process.env.REACT_APP_API_URL}/ws?token=${token}`,
       );
-      stompClient.current = new Client({ webSocketFactory: () => sock });
+      const client = new Client({ webSocketFactory: () => sock });
 
-      stompClient.current.onConnect = (frame) => {
-        console.log('과제 공유 소켓 연결 성공 : ', frame);
-        stompClient.current.subscribe('/topic/switchPage', function (message) {
+      client.onConnect = (frame) => {
+        console.log('Connected to page WebSocket:', frame);
+        client.subscribe('/topic/switchPage', (message) => {
           const parsedMessage = JSON.parse(message.body);
-
-          console.log(
-            '과제 공유 메시지 : ',
-            JSON.stringify(parsedMessage, null, 2),
-          );
+          console.log('Page update received:', parsedMessage);
 
           setPage(parsedMessage.page);
           props.setPage(parsedMessage.page);
           setStepCount(parsedMessage.stepCount);
           props.setStepCount(parsedMessage.stepCount);
           setSocketEclassUuid(parsedMessage.lectureDataUuid);
+
           assginmentCheckStompClient('success');
         });
       };
 
-      stompClient.current.onStompError = (frame) => {
-        console.error('Broker reported error: ' + frame.headers['message']);
-        console.error('Additional details: ' + frame.body);
+      client.onStompError = (frame) => {
+        console.error('WebSocket error:', frame.headers['message']);
+        console.error('Details:', frame.body);
       };
 
-      stompClient.current.activate();
-    }
+      client.activate();
+      stompClient.current = client;
+    };
 
-    if (!assginmentStompClient.current) {
-      const socket = new SockJS(
+    // Setup WebSocket for assignment status
+    const setupAssignmentSocket = () => {
+      if (assginmentStompClient.current) return;
+
+      console.log('Initializing assignment WebSocket...');
+      const sock = new SockJS(
         `${process.env.REACT_APP_API_URL}/ws?token=${token}`,
       );
-      assginmentStompClient.current = new Client({
-        webSocketFactory: () => socket,
-      });
+      const client = new Client({ webSocketFactory: () => sock });
 
-      assginmentStompClient.current.onConnect = (frame) => {
-        console.log('과제 상태 소켓 연결 성공 : ', frame);
+      client.onConnect = () =>
+        console.log('Connected to assignment WebSocket.');
+
+      client.onStompError = (frame) => {
+        console.error('WebSocket error:', frame.headers['message']);
+        console.error('Details:', frame.body);
       };
 
-      assginmentStompClient.current.onStompError = (frame) => {
-        console.error('Broker reported error: ' + frame.headers['message']);
-        console.error('Additional details: ' + frame.body);
-      };
+      client.activate();
+      assginmentStompClient.current = client;
+    };
 
-      assginmentStompClient.current.activate();
-    }
+    setupPageSocket();
+    setupAssignmentSocket();
 
-    // Clean up
+    // Cleanup WebSocket connections on component unmount
     return () => {
-      if (stompClient.current) {
-        stompClient.current.deactivate();
-        stompClient.current = null;
-      }
-      if (assginmentStompClient.current) {
-        assginmentStompClient.current.deactivate();
-        assginmentStompClient.current = null;
-      }
-      console.log('Disconnected');
+      assginmentCheckStompClient('failed');
+
+      stompClient.current?.deactivate();
+      assginmentStompClient.current?.deactivate();
+      stompClient.current = null;
+      assginmentStompClient.current = null;
+      console.log('Disconnected from WebSocket.');
     };
   }, [props.sessionIdState]);
 
-  useEffect(() => {
-    const success = 'success';
-    const failed = 'failed';
-    if (page === 'newPage') {
-      assginmentCheckStompClient(success);
-    }
-    if (props.stepCount !== stepCount) {
-      assginmentCheckStompClient(failed);
-    }
-  }, [props, page, assignmentCheckTime]);
-
-  // 과제 공유 성공시 응답 소켓 메서드
+  // Assignment status WebSocket message handling
   const assginmentCheckStompClient = async (state) => {
-    let message = null;
+    if (!assginmentStompClient.current?.connected) {
+      console.error('Assignment WebSocket is not connected.');
+      return;
+    }
 
-    const setCheckAssignmentState = (page) => {
-      if (page === 'stop') {
-        message = {
-          assginmentStatus: state,
-          sessionId: props.sessionIdState,
-          assginmentShared: false,
-          timestamp: new Date().toLocaleString('ko-KR', {
-            timeZone: 'Asia/Seoul',
-          }),
-        };
-      }
-      if (page === 'newPage') {
-        message = {
-          assginmentStatus: state,
-          sessionId: props.sessionIdState,
-          assginmentShared: true,
-          timestamp: new Date().toLocaleString('ko-KR', {
-            timeZone: 'Asia/Seoul',
-          }),
-        };
-      }
+    const message = {
+      assginmentStatus: state,
+      sessionId: props.sessionIdState,
+      assginmentShared: state === 'success',
+      timestamp: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
     };
 
-    const sendCheckAssignmentState = async () => {
-      if (
-        assginmentStompClient.current &&
-        assginmentStompClient.current.connected &&
-        message !== null
-      ) {
-        console.log('공유 상태 보내기 : ' + JSON.stringify(message, null, 2));
-        await assginmentStompClient.current.publish({
-          destination: '/app/assginment-status', // 메시지를 보낼 경로
-          body: JSON.stringify(message), // 메시지 본문
-          headers: {}, // 선택적 헤더
-        });
-      } else {
-        console.error('STOMP 클라이언트가 연결되지 않았습니다.');
-      }
-    };
+    console.log('Sending assignment status:', message);
 
-    setCheckAssignmentState(page);
-    await sendCheckAssignmentState();
+    assginmentStompClient.current.publish({
+      destination: '/app/assginment-status',
+      body: JSON.stringify(message),
+    });
   };
 
-  // 학생 ID 및 테이블 데이터 가져오기
+  // Fetch student ID
   useEffect(() => {
     const username = localStorage.getItem('username');
-    console.log(
-      '이클래스 유유아이디 : ' + JSON.stringify(props.eclassUuid, null, 2),
-    );
+    if (!username || studentId) return;
 
     const fetchStudentId = async () => {
       try {
-        // console.log(
-        //   '이클래스 유유아이디 어떤데 : ' +
-        //     JSON.stringify(props.eclassUuid, null, 2),
-        // );
-
         const response = await customAxios.get(
           `/api/student/getStudentId?username=${username}&uuid=${props.eclassUuid}`,
         );
@@ -194,29 +141,24 @@ export function StudentStepCompnent(props) {
       }
     };
 
-    if (!studentId) {
-      fetchStudentId();
-    }
-  }, [eclassUuid, studentId]);
+    fetchStudentId();
+  }, [props.eclassUuid, studentId]);
 
   return (
     <div>
       {page === 'newPage' || props.uuid === socketEclassUuid || stepCount ? (
-        <>
-          <StudentRenderAssign
-            tableData={tableData}
-            assginmentCheck={assginmentCheck}
-            stepCount={stepCount}
-            studentId={studentId}
-            sessionIdState={props.sessionIdState}
-            eclassUuid={props.eclassUuid}
-            setAssginmentFetch={setAssginmentFetch}
-            latestTableData={props.latestTableData}
-            allData={props.allData}
-            localStoredPhotoList={props.localStoredPhotoList}
-            setLocalStoredPhotoList={props.setLocalStoredPhotoList}
-          />
-        </>
+        <StudentRenderAssign
+          tableData={tableData}
+          assginmentCheck={props.assginmentCheck}
+          stepCount={stepCount}
+          studentId={studentId}
+          sessionIdState={props.sessionIdState}
+          eclassUuid={props.eclassUuid}
+          latestTableData={props.latestTableData}
+          allData={props.allData}
+          localStoredPhotoList={props.localStoredPhotoList}
+          setLocalStoredPhotoList={props.setLocalStoredPhotoList}
+        />
       ) : (
         <DefaultPageComponent />
       )}

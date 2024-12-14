@@ -18,11 +18,13 @@ import { customAxios } from '../../../../../../Common/CustomAxios';
 import ReportViewModal from '../../../modal/ReportViewModal';
 
 import ScreenShareIcon from '@mui/icons-material/ScreenShare';
-import AssignmentIcon from '@mui/icons-material/Assignment';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import DescriptionIcon from '@mui/icons-material/Description';
 
 import Tooltip from '@mui/material/Tooltip';
+
+import SockJS from 'sockjs-client';
+import { Client } from '@stomp/stompjs';
 
 function createData(
   name = 'noName',
@@ -57,13 +59,17 @@ export default function TeacherCourseStatusTable({
   const [reportData, setReportData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const [isAssginShared, setIsAssginShared] = useState(false);
+  const [assginShared, setAssginShared] = useState([]);
+
+  const [screenShared, setScreenShared] = useState([]);
 
   const selectedReport = useRef();
 
   const updateShareStatus = useLiveClassPartStore(
     (state) => state.updateShareStatus,
   );
+
+  const stompClientRef = useRef(null); // 소켓 연결을 참조하는 상태
 
   const handleOpenModal = (name) => {
     selectedReport.current = name;
@@ -75,9 +81,6 @@ export default function TeacherCourseStatusTable({
   };
 
   useEffect(() => {
-    console.log('세션 데이터 : ' + JSON.stringify(sessionData, null, 2));
-    console.log('학생 데이터 : ' + JSON.stringify(eclassUuid, null, 2));
-
     const fetchStudents = async () => {
       const studentData = await Promise.all(
         sessionData.map((session) => getStudent(session.id, eclassUuid)),
@@ -100,16 +103,108 @@ export default function TeacherCourseStatusTable({
   }, [stepCount, sessionData]);
 
   useEffect(() => {
-    console.log('과제 중지 확인 : ' + assginmentShareStop);
-  }, [assginmentShareStop]);
-
-  useEffect(() => {
     // 학생 정보가 모두 설정된 후에 sendStudentData 실행
     if (students.length > 0) {
       sendStudentData();
     }
-  }, [students, assginmentShareCheck]);
+  }, [students]);
 
+  useEffect(() => {
+    const token = localStorage.getItem('access_token').replace('Bearer ', '');
+    const sock = new SockJS(
+      `${process.env.REACT_APP_API_URL}/ws?token=${token}`,
+    );
+    const stompClient = new Client({ webSocketFactory: () => sock });
+
+    stompClientRef.current = stompClient;
+
+    stompClientRef.current.onConnect = (frame) => {
+      // console.log('커넥션 생성 완료 : ' + frame);
+
+      // 학생 상태 성공 메시지 구독
+      stompClientRef.current.subscribe(
+        '/topic/assginment-status',
+        (message) => {
+          const parsedMessage = JSON.parse(message.body);
+          console.log(
+            '학생 상태 공유 응답받기: ' +
+              JSON.stringify(parsedMessage, null, 2),
+          );
+
+          // 과제 공유 성공
+          if (parsedMessage.assginmentStatus == 'success') {
+            setAssginShared((prev) => {
+              // 동일한 sessionId를 가진 객체 제거
+              const filteredArray = prev.filter(
+                (item) => item.sessionId !== parsedMessage.sessionId,
+              );
+
+              return [...filteredArray, parsedMessage];
+            });
+          }
+
+          // 과제 공유 중지
+          if (parsedMessage.assginmentStatus === 'failed') {
+            setAssginShared((prev) => {
+              // 동일한 sessionId를 가진 객체 제거
+              const filteredArray = prev.filter(
+                (item) => item.sessionId !== parsedMessage.sessionId,
+              );
+
+              return [...filteredArray];
+            });
+          }
+
+          // 화면 공유 성공
+          if (parsedMessage.assginmentStatus == 'screenSuccess') {
+            setScreenShared((prev) => {
+              // 동일한 sessionId를 가진 객체 제거
+              const filteredArray = prev.filter(
+                (item) => item.sessionId !== parsedMessage.sessionId,
+              );
+
+              return [...filteredArray, parsedMessage];
+            });
+          }
+
+          // 화면 공유 중지
+          if (parsedMessage.assginmentStatus == 'screenFailed') {
+            setScreenShared((prev) => {
+              // 동일한 sessionId를 가진 객체 제거
+              const filteredArray = prev.filter(
+                (item) => item.sessionId !== parsedMessage.sessionId,
+              );
+
+              return [...filteredArray];
+            });
+          }
+        },
+      );
+    };
+
+    stompClientRef.current.activate();
+
+    return () => {
+      if (stompClientRef.current) {
+        stompClientRef.current.deactivate(() => {
+          console.log('Disconnected');
+        });
+        stompClientRef.current = null; // 참조 제거
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (assginmentShareStop) {
+      setAssginShared([]);
+    }
+  }, [assginmentShareStop]);
+
+  useEffect(() => {
+    console.log('assginShared 확인 : ' + JSON.stringify(assginShared, null, 2));
+  }, [assginShared]);
+
+  // 각 한명의 학생이 있는지를 확인하는 것이고 없는 경우 null 반환
   const getStudent = async (sessionId, eclassUuid) => {
     try {
       const eclassStudentData = {
@@ -127,15 +222,10 @@ export default function TeacherCourseStatusTable({
         eclassStudentData,
       );
 
-      // 학생 데이터가 비어있거나 username이 없는 경우 null을 반환
       if (!response.data || !response.data.username) {
-        console.log('학생 데이터가 존재하지 않음.');
-        return null; // 학생이 없는 상태로 반환
+        return null;
       }
 
-      // console.log(
-      //   'Fetched student data: ' + JSON.stringify(response.data, null, 2),
-      // );
       return response.data.username;
     } catch (error) {
       console.error('Error fetching student data: ', error);
@@ -159,19 +249,9 @@ export default function TeacherCourseStatusTable({
           requestData,
         );
 
-        console.log(
-          '[TeacherCourseStatusTable] assiginment Check List : ' +
-            JSON.stringify(respCheckList.data, null, 2),
-        );
-
         const respReportUuid = await customAxios.post(
           '/api/eclass/student/assignment/reportUuid/get',
           requestData,
-        );
-
-        console.log(
-          'respReportUuid.data : ' +
-            JSON.stringify(respReportUuid.data, null, 2),
         );
 
         if (Array.isArray(respReportUuid.data)) {
@@ -194,8 +274,6 @@ export default function TeacherCourseStatusTable({
           }
         }
 
-        setIsAssginShared(false);
-
         setStudentStepFlag(respCheckList.data);
       }
     } catch (error) {
@@ -214,59 +292,42 @@ export default function TeacherCourseStatusTable({
     // report가 비어있는 경우 row에서 필요한 데이터를 대신 사용할 수 있도록 처리
     const finalData = report.length > 0 ? report : [row];
 
-    // 예시로 finalData 출력
-    // console.log('최종 데이터: ', finalData);
-
-    // console.log(
-    //   'row 내용!@! !!!!!!!!!!!!!!!!! : ',
-    //   JSON.stringify(row, null, 2),
-    // );
-    // console.log(
-    //   'assginmentShareCheck 내용!@! !!!!!!!!!!!!!!!!! : ',
-    //   JSON.stringify(assginmentShareCheck, null, 2),
-    // );
-
-    // console.log(
-    //   'assginmentShareStop 내용!@! !!!!!!!!!!!!!!!!! : ',
-    //   JSON.stringify(assginmentShareStop, null, 2),
-    // );
-
     return (
       <TableRow>
         <TableCell component="th" scope="row">
           {row.name}
         </TableCell>
+
+        {/* ---------------------------------------- 화면 공유 상태 ---------------------- */}
         <TableCell align="center">
-          {row.shared ? (
-            <CheckCircleIcon sx={{ color: 'blue' }} />
+          {screenShared?.some(
+            (item) => item.sessionId === row.sessionId && item.shared,
+          ) ? (
+            <CheckCircleIcon key={row.sessionId} sx={{ color: 'blue' }} />
           ) : (
             <CancelIcon sx={{ color: 'red' }} />
           )}
         </TableCell>
-        {/* 여기가 과제 공유 쪽 */}
-        {/* <TableCell align="center">
+
+        {/* ---------------------------------- 과제 공유 상태 -------------------- */}
+        <TableCell align="center">
           {assginmentShareStop ? (
             <CancelIcon sx={{ color: 'red' }} />
           ) : (
             <>
-              {assginmentShareCheck.map((assign) =>
-                assign.sessionId === row.sessionId &&
-                assign.assginmentShared ? (
-                  <CheckCircleIcon
-                    key={assign.sessionId}
-                    sx={{ color: 'blue' }}
-                  />
-                ) : null,
+              {assginShared?.some(
+                (item) =>
+                  item.sessionId === row.sessionId && item.assginmentShared,
+              ) ? (
+                <CheckCircleIcon key={row.sessionId} sx={{ color: 'blue' }} />
+              ) : (
+                <CancelIcon sx={{ color: 'red' }} />
               )}
-
-              {!assginmentShareCheck.some(
-                (assign) =>
-                  assign.sessionId === row.sessionId && assign.assginmentShared,
-              ) && <CancelIcon sx={{ color: 'red' }} />}
             </>
           )}
-        </TableCell> */}
+        </TableCell>
 
+        {/* ---------------------------------------- 과제 제출 상태 ---------------------- */}
         <TableCell align="center">
           {isMatch || row.assginmentSubmit ? (
             <CheckCircleIcon sx={{ color: 'blue' }} />

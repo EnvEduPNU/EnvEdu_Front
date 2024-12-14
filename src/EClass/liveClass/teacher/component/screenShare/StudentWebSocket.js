@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
 import { customAxios } from '../../../../../Common/CustomAxios';
-export const StudentWebSocket = ({ setSessionIds }) => {
+export const StudentWebSocket = ({ setSessionIds, eclassUuid }) => {
   const stompClients = useRef();
 
   const initializeSocketClient = (url, onConnectCallback) => {
@@ -20,16 +20,28 @@ export const StudentWebSocket = ({ setSessionIds }) => {
 
   useEffect(() => {
     const fetchSessionIds = async () => {
-      const response = await customAxios.get('/api/sessions/get-session-ids');
-      setSessionIds(response.data);
-      console.log('참여한 학생 : ', JSON.stringify(response.data, null, 2));
+      try {
+        const response = await customAxios.get(
+          `/api/sessions/get-session-ids/${eclassUuid}`,
+        );
+
+        // sessionId 배열만 추출
+        const sessionIdsArray = response.data.map(
+          (session) => session.sessionId,
+        );
+
+        setSessionIds(sessionIdsArray);
+        // console.log('Session IDs: ', JSON.stringify(sessionIdsArray, null, 2));
+      } catch (error) {
+        console.error('Failed to fetch session IDs:', error);
+      }
     };
 
     fetchSessionIds();
 
     // 학생 소켓 연결
     stompClients.current = initializeSocketClient('/ws', (frame) => {
-      console.log('학생 입장 소켓 연결 성공 : ', frame);
+      // console.log('학생 입장 소켓 연결 성공 : ', frame);
       stompClients.current.subscribe('/topic/student-entered', (message) => {
         const parsedMessage = JSON.parse(message.body);
         console.log('학생 상태 : ' + JSON.stringify(parsedMessage, null, 2));

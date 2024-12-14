@@ -116,7 +116,6 @@ function StudentRenderAssign({
   studentId,
   sessionIdState,
   eclassUuid,
-  setAssginmentFetch,
   allData,
   localStoredPhotoList,
   setLocalStoredPhotoList,
@@ -760,7 +759,7 @@ function StudentRenderAssign({
                     const stepIndex = item.stepNum - 1;
 
                     console.log('데이터 차트 인덱스 : ' + stepIndex);
-                    alert('???');
+                    // alert('???');
                     if (stepIndex >= 0 && stepIndex < stepCount) {
                       stepCheck[stepIndex] = true;
                     }
@@ -898,7 +897,6 @@ function StudentRenderAssign({
           }
 
           console.log('제출된 객체 : ', updatedData);
-          setAssginmentFetch(true);
           alert('제출 완료했습니다.');
           window.location.reload();
         } catch (error) {
