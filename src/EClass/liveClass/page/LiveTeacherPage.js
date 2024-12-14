@@ -33,28 +33,28 @@ export const LiveTeacherPage = () => {
   //   console.log('과제 중지 확인 : ' + assginmentShareStop);
   // }, [assginmentShareStop]);
 
-  useEffect(() => {
-    console.log(
-      'assginmentShareCheck 변경 확인: ' +
-        JSON.stringify(assginmentShareCheck, null, 2),
-    );
+  // useEffect(() => {
+  //   console.log(
+  //     'assginmentShareCheck 변경 확인: ' +
+  //       JSON.stringify(assginmentShareCheck, null, 2),
+  //   );
 
-    console.log('sessionIds 변경 확인: ' + JSON.stringify(sessionIds, null, 2));
+  //   console.log('sessionIds 변경 확인: ' + JSON.stringify(sessionIds, null, 2));
 
-    // sessionIds 배열에 존재하지 않는 sessionId를 가진 객체 제거
-    setAssginmentShareCheck((prevState) => {
-      const updatedState = (prevState || []).filter((item) =>
-        sessionIds.includes(item.sessionId),
-      );
+  //   // sessionIds 배열에 존재하지 않는 sessionId를 가진 객체 제거
+  //   setAssginmentShareCheck((prevState) => {
+  //     const updatedState = (prevState || []).filter((item) =>
+  //       sessionIds.includes(item.sessionId),
+  //     );
 
-      console.log(
-        '업데이트된 assginmentShareCheck: ' +
-          JSON.stringify(updatedState, null, 2),
-      );
+  //     console.log(
+  //       '업데이트된 assginmentShareCheck: ' +
+  //         JSON.stringify(updatedState, null, 2),
+  //     );
 
-      return updatedState;
-    });
-  }, [sessionIds]);
+  //     return updatedState;
+  //   });
+  // }, [sessionIds]);
 
   const closeEclass = async () => {
     await customAxios
@@ -121,7 +121,7 @@ export const LiveTeacherPage = () => {
 
   return (
     <div style={{ display: 'flex', margin: '0 10vh', height: '800px' }}>
-      <StudentWebSocket setSessionIds={setSessionIds} />
+      <StudentWebSocket setSessionIds={setSessionIds} eclassUuid={eClassUuid} />
 
       <ScreenShareWebSocket
         sessionIds={sessionIds}
@@ -186,50 +186,51 @@ export const LiveTeacherPage = () => {
         )}
 
         {/* 버튼 렌더링 조건 */}
-        {!sharedScreenState ? (
-          <>
-            {
-              <Button
-                variant="contained"
-                onClick={() => handleScreenShare(true)}
-                style={{
-                  marginTop: '20px',
-                  marginLeft: '20px',
-                  width: '200px',
-                  height: '30px',
-                  fontFamily: "'Asap', sans-serif",
-                  fontWeight: '600',
-                  fontSize: '0.9rem',
-                  color: 'grey',
-                  backgroundColor: '#feecfe',
-                  borderRadius: '2.469rem',
-                  border: 'none',
-                }}
-              >
-                화면 공유
-              </Button>
-            }
-          </>
-        ) : (
-          <Button
-            variant="contained"
-            onClick={() => handleScreenShare(false)}
-            style={{
-              marginTop: '10px',
-              width: '200px',
-              height: '30px',
-              fontFamily: "'Asap', sans-serif",
-              fontWeight: '600',
-              fontSize: '0.9rem',
-              color: 'grey',
-              backgroundColor: '#feecfe',
-              borderRadius: '2.469rem',
-              border: 'none',
-            }}
-          >
-            공유 중지
-          </Button>
-        )}
+        {!assginShareFlag &&
+          (!sharedScreenState ? (
+            <>
+              {
+                <Button
+                  variant="contained"
+                  onClick={() => handleScreenShare(true)}
+                  style={{
+                    marginTop: '20px',
+                    marginLeft: '20px',
+                    width: '200px',
+                    height: '30px',
+                    fontFamily: "'Asap', sans-serif",
+                    fontWeight: '600',
+                    fontSize: '0.9rem',
+                    color: 'grey',
+                    backgroundColor: '#feecfe',
+                    borderRadius: '2.469rem',
+                    border: 'none',
+                  }}
+                >
+                  화면 공유
+                </Button>
+              }
+            </>
+          ) : (
+            <Button
+              variant="contained"
+              onClick={() => handleScreenShare(false)}
+              style={{
+                marginTop: '10px',
+                width: '200px',
+                height: '30px',
+                fontFamily: "'Asap', sans-serif",
+                fontWeight: '600',
+                fontSize: '0.9rem',
+                color: 'grey',
+                backgroundColor: '#feecfe',
+                borderRadius: '2.469rem',
+                border: 'none',
+              }}
+            >
+              공유 중지
+            </Button>
+          ))}
       </div>
 
       {/* [오른쪽 블럭] 수업 Step 테이블, 수업 상태 테이블 */}
@@ -257,8 +258,6 @@ export const LiveTeacherPage = () => {
               stepCount={stepCount}
               eclassUuid={eClassUuid}
               sessionIds={sessionIds}
-              setAssginmentShareCheck={setAssginmentShareCheck}
-              assginmentShareCheck={assginmentShareCheck}
               assginmentShareStop={assginmentShareStop}
             />
           </div>

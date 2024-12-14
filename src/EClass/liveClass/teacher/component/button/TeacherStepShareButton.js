@@ -8,24 +8,14 @@ export function TeacherStepShareButton({
   stepCount,
   lectureDataUuid,
   sharedScreenState,
-  assginmentShareCheck,
-  setAssginmentShareCheck,
   setAssginmentShareStop,
   setStepCount,
   sessionIds,
   setAssginShareFlag,
 }) {
   const stompClientRef = useRef(null); // 소켓 연결을 참조하는 상태
-  const [sessionId, setSessionId] = useState();
-  const [shared, setShared] = useState();
   const [assignShared, setAssignShared] = useState(false);
-  const [assginmentSubmit, setAssginmentSubmit] = useState();
-  const [reportSubmit, setReportSubmit] = useState();
   const [studentList, setStudentList] = useState([]);
-
-  const updateShareStatus = useLiveClassPartStore(
-    (state) => state.updateShareStatus,
-  );
 
   useEffect(() => {
     setStudentList(sessionIds);
@@ -43,89 +33,9 @@ export function TeacherStepShareButton({
 
       stompClientRef.current.onConnect = (frame) => {
         console.log('커넥션 생성 완료 : ' + frame);
-
-        // 학생 상태 성공 메시지 구독
-        stompClientRef.current.subscribe(
-          '/topic/assginment-status',
-          (message) => {
-            const parsedMessage = JSON.parse(message.body);
-            console.log(
-              '학생 상태 공유 응답받기: ' +
-                JSON.stringify(parsedMessage, null, 2),
-            );
-
-            setSessionId(parsedMessage.sessionId);
-            setShared(parsedMessage.shared);
-            setAssignShared(parsedMessage.assginmentShared);
-            setAssginmentSubmit(parsedMessage.assginmentSubmit);
-            setReportSubmit(parsedMessage.reportSubmit);
-
-            // 새로운 상태 객체
-            const shareState = {
-              sessionId: parsedMessage.sessionId,
-              shared: parsedMessage.shared,
-              assginmentStatus: parsedMessage.assginmentStatus,
-              assginmentShared: parsedMessage.assginmentShared,
-              assginmentSubmit: parsedMessage.assginmentSubmit,
-              reportSubmit: parsedMessage.reportSubmit,
-            };
-
-            console.log(
-              '확인해보자1!@#!@#!@# : ' + JSON.stringify(shareState, null, 2),
-            );
-
-            // 상태 업데이트 로직
-            setAssginmentShareCheck((prevState) => {
-              const validPrevState = prevState || []; // null/undefined 방지
-
-              // 기존 배열에서 sessionId가 같은 항목을 찾기
-              const existingIndex = validPrevState.findIndex(
-                (item) => item.sessionId === shareState.sessionId,
-              );
-
-              if (existingIndex !== -1) {
-                // 기존 상태가 있다면 업데이트
-                return validPrevState.map((item, index) => {
-                  if (index === existingIndex) {
-                    // 해당 항목만 업데이트
-                    return {
-                      ...item,
-                      shared: shareState.shared,
-                      assginmentStatus: shareState.assginmentStatus,
-                      assginmentShared: shareState.assginmentShared,
-                      assginmentSubmit: shareState.assginmentSubmit,
-                      reportSubmit: shareState.reportSubmit,
-                    };
-                  }
-                  return item; // 나머지 항목은 그대로 유지
-                });
-              }
-
-              // 새로운 상태 추가
-              return [
-                ...validPrevState,
-                {
-                  sessionId: shareState.sessionId,
-                  shared: shareState.shared,
-                  assginmentStatus: shareState.assginmentStatus,
-                  assginmentShared: shareState.assginmentShared,
-                  assginmentSubmit: shareState.assginmentSubmit,
-                  reportSubmit: shareState.reportSubmit,
-                },
-              ];
-            });
-          },
-        );
       };
 
       stompClientRef.current.activate();
-    }
-
-    function onError(error) {
-      console.error('STOMP 연결 에러:', error);
-      alert(
-        '웹소켓 연결에 실패했습니다. 네트워크 설정을 확인하거나 관리자에게 문의하세요.',
-      );
     }
 
     return () => {
@@ -169,9 +79,11 @@ export function TeacherStepShareButton({
         });
 
         // publish가 성공하면 학생 수만큼 성공 메시지를 표시
-        // alert(
-        //   `공유 성공: ${studentList.length}명의 학생에게 과제를 공유하였습니다.`,
-        // );
+        alert(
+          `공유 성공: ${studentList.length}명의 학생에게 과제를 공유하였습니다.`,
+        );
+
+        setAssignShared(true);
         setAssginmentShareStop(false);
         setAssginShareFlag(true);
       } catch (error) {
@@ -191,9 +103,6 @@ export function TeacherStepShareButton({
   // 과제 중지 소켓 전달
   const sendStopMessage = () => {
     if (stompClientRef.current && !sharedScreenState) {
-      // 과제 공유 상태 업데이트
-      updateShareStatus(sessionId, shared, false);
-
       const message = {
         page: 'stop', // JSON 객체에서 "stop"를 값으로 하는 'page' 키 생성
       };

@@ -24,6 +24,9 @@ import DescriptionIcon from '@mui/icons-material/Description';
 
 import Tooltip from '@mui/material/Tooltip';
 
+import SockJS from 'sockjs-client';
+import { Client } from '@stomp/stompjs';
+
 function createData(
   name = 'noName',
   sessionId = 'noId',
@@ -57,13 +60,15 @@ export default function TeacherCourseStatusTable({
   const [reportData, setReportData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const [isAssginShared, setIsAssginShared] = useState(false);
+  const [assginShared, setAssginShared] = useState();
 
   const selectedReport = useRef();
 
   const updateShareStatus = useLiveClassPartStore(
     (state) => state.updateShareStatus,
   );
+
+  const stompClientRef = useRef(null); // 소켓 연결을 참조하는 상태
 
   const handleOpenModal = (name) => {
     selectedReport.current = name;
@@ -110,6 +115,46 @@ export default function TeacherCourseStatusTable({
     }
   }, [students, assginmentShareCheck]);
 
+  useEffect(() => {
+    const token = localStorage.getItem('access_token').replace('Bearer ', '');
+    const sock = new SockJS(
+      `${process.env.REACT_APP_API_URL}/ws?token=${token}`,
+    );
+    const stompClient = new Client({ webSocketFactory: () => sock });
+
+    stompClientRef.current = stompClient;
+
+    stompClientRef.current.onConnect = (frame) => {
+      console.log('커넥션 생성 완료 : ' + frame);
+
+      // 학생 상태 성공 메시지 구독
+      stompClientRef.current.subscribe(
+        '/topic/assginment-status',
+        (message) => {
+          const parsedMessage = JSON.parse(message.body);
+          console.log(
+            '학생 상태 공유 응답받기: ' +
+              JSON.stringify(parsedMessage, null, 2),
+          );
+
+          setAssginShared(parsedMessage);
+        },
+      );
+    };
+
+    stompClientRef.current.activate();
+
+    return () => {
+      if (stompClientRef.current) {
+        stompClientRef.current.deactivate(() => {
+          console.log('Disconnected');
+        });
+        stompClientRef.current = null; // 참조 제거
+      }
+    };
+  }, []);
+
+  // 각 한명의 학생이 있는지를 확인하는 것이고 없는 경우 null 반환
   const getStudent = async (sessionId, eclassUuid) => {
     try {
       const eclassStudentData = {
@@ -117,25 +162,20 @@ export default function TeacherCourseStatusTable({
         eclassUuid: eclassUuid,
       };
 
-      // console.log(
-      //   '[TeacherCourseStatusTable] eclassStudentData : ' +
-      //     JSON.stringify(eclassStudentData, null, 2),
-      // );
+      console.log(
+        '[TeacherCourseStatusTable] eclassStudentData : ' +
+          JSON.stringify(eclassStudentData, null, 2),
+      );
 
       const response = await customAxios.post(
         `${process.env.REACT_APP_API_URL}/api/sessions/student/get`,
         eclassStudentData,
       );
 
-      // 학생 데이터가 비어있거나 username이 없는 경우 null을 반환
       if (!response.data || !response.data.username) {
-        console.log('학생 데이터가 존재하지 않음.');
-        return null; // 학생이 없는 상태로 반환
+        return null;
       }
 
-      // console.log(
-      //   'Fetched student data: ' + JSON.stringify(response.data, null, 2),
-      // );
       return response.data.username;
     } catch (error) {
       console.error('Error fetching student data: ', error);
@@ -193,8 +233,6 @@ export default function TeacherCourseStatusTable({
             console.warn('보고서가 존재하지 않습니다.');
           }
         }
-
-        setIsAssginShared(false);
 
         setStudentStepFlag(respCheckList.data);
       }

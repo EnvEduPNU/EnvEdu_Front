@@ -139,6 +139,7 @@ export const LiveStudentPage = () => {
     console.log('테이블/그래프 캡쳐 리스트 :', photoList);
   }, [photoList]);
 
+  //입장 했을때 선생님에게 입장했다는 메시지 보내는 소켓
   useEffect(() => {
     if (!stompClients.current) {
       const token = localStorage.getItem('access_token').replace('Bearer ', '');
@@ -163,6 +164,7 @@ export const LiveStudentPage = () => {
     };
   }, []);
 
+  // 화면 공유 성공 했다고 교사에게 보내는 소켓
   useEffect(() => {
     if (!sendScreenShareStClient.current) {
       const token = localStorage.getItem('access_token').replace('Bearer ', '');
@@ -182,6 +184,8 @@ export const LiveStudentPage = () => {
     }
     return () => {
       if (sendScreenShareStClient.current) {
+        sendMessage(false);
+
         sendScreenShareStClient.current.deactivate(() => {
           console.log('화면 상태 소켓 연결 해제');
         });
@@ -189,6 +193,7 @@ export const LiveStudentPage = () => {
     };
   }, []);
 
+  // 화면 공유 받는 소켓
   useEffect(() => {
     if (!ScreanSharestompClients.current) {
       const token = localStorage.getItem('access_token').replace('Bearer ', '');
