@@ -14,6 +14,7 @@ import { AiOutlineEllipsis } from 'react-icons/ai';
 import { customAxios } from '../../../Common/CustomAxios';
 import axios from 'axios';
 import { convertToNumber } from '../../../Data/DataInChart/store/utils/convertToNumber';
+import { useNavigate } from 'react-router-dom';
 
 //항목 이름 (한국어 -> 영어)
 const engToKor = (name) => {
@@ -87,6 +88,7 @@ function LectureCardCarousel({
   getLectureDataTable,
   setClassDatas,
 }) {
+  const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const [moreEditArr, setMoreEditArr] = useState(
     Array(lectureSummary.length).fill(0),
@@ -124,6 +126,7 @@ function LectureCardCarousel({
 
       if (response.data) {
         alert('E-Class 실행에서 사용중입니다!');
+        navigate('/EClassLivePage');
         return;
       } else {
         await customAxios.delete(

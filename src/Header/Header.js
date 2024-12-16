@@ -183,19 +183,19 @@ function Header() {
                     case 'eClass':
                       return (
                         <>
-                          {userRole === 'ROLE_EDUCATOR' && (
+                          {/* {userRole === 'ROLE_EDUCATOR' && (
                             <Nav.Link
                               onClick={() => handleNavLinkClick('/classList')}
                             >
                               E-Class 생성
                             </Nav.Link>
-                          )}
+                          )} */}
                           <Nav.Link
                             onClick={() =>
                               handleNavLinkClick('/EClassLivePage')
                             }
                           >
-                            E-Class 실행
+                            E-Class
                           </Nav.Link>
 
                           <Nav.Link
