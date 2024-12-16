@@ -119,13 +119,18 @@ function StudentRenderAssign({
   allData,
   localStoredPhotoList,
   setLocalStoredPhotoList,
+  eClassUuid,
+  openReportModal,
+  handleCloseModal,
+  textBoxDatas,
+  setTextBoxDatas,
 }) {
   const [textBoxValues, setTextBoxValues] = useState({});
   const [data, setData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열기 상태 추가
   const navigate = useNavigate();
   const uploadedImagesState = useRef([]); // 업로드된 이미지 상태
-
+  console.log(textBoxDatas);
   const [imageUrlArray, setImageUrlArray] = useState([]);
 
   // Zustand store에서 getStorePhotoList 가져오기
@@ -194,10 +199,7 @@ function StudentRenderAssign({
           } else if (content.type === 'textBox') {
             newStep.contents.push({
               type: 'textBox',
-              content: `<textarea
-                style="width: 550px; height: 150px; padding: 10px; fontSize: 16px; lineHeight: 1.5; color: #374151; border: 1px solid #D1D5DB; borderRadius: 8px; boxShadow: 0px 4px 10px rgba(0, 0, 0, 0.1); outline: none; resize: vertical; backgroundColor: #F9FAFB";
-                placeholder="학생이 여기에 답변을 입력합니다"
-                disabled/>`,
+              content: '',
             });
           } else if (content.type === 'img') {
             newStep.contents.push({
@@ -929,6 +931,7 @@ function StudentRenderAssign({
     });
   };
 
+  console.log(data);
   const shouldDisplaySubmitButton = data.some((stepData) =>
     stepData.contents.some(
       (contentItem) =>
@@ -960,10 +963,8 @@ function StudentRenderAssign({
                 <RenderContent
                   key={`${stepData.stepNum}-${idx}`}
                   content={content}
-                  textBoxValue={textBoxValues[stepData.stepNum]?.[idx] || ''}
-                  setTextBoxValue={(id, text) =>
-                    handleTextBoxSubmit(stepData.stepNum, id, text, content)
-                  }
+                  textBoxValue={textBoxDatas}
+                  setTextBoxValue={setTextBoxDatas}
                   index={idx}
                   onOpenModal={() => setIsModalOpen(true)}
                   onNavigate={handleNavigate}
@@ -972,6 +973,8 @@ function StudentRenderAssign({
                   setStorePhotoList={setStorePhotoList}
                   setLocalStoredPhotoList={setLocalStoredPhotoList}
                   setImageUrlArray={setImageUrlArray}
+                  setData={setData}
+                  stepNum={parseInt(stepCount, 10)}
                 />
               ))}
             </div>
@@ -1007,16 +1010,25 @@ function StudentRenderAssign({
 
 function RenderContent({
   content,
+  textBoxValue,
   setTextBoxValue,
   index,
   onNavigate,
   stepData,
   storedPhotoList,
+  setData,
+  stepNum,
 }) {
   const [tableData, setTableData] = useState(null);
-
-  const handleTextChange = (event) => {
-    setTextBoxValue(index, event.target.value);
+  console.log(content);
+  console.log(index, stepNum);
+  const handleTextChange = (e, index, stepNum) => {
+    setTextBoxValue((prev) => {
+      const copied = { ...prev };
+      console.log(index, stepNum);
+      copied[index + stepNum] = e.target.value;
+      return copied;
+    });
   };
 
   const handleSelectData = async (id) => {
@@ -1060,14 +1072,21 @@ function RenderContent({
       return <div dangerouslySetInnerHTML={{ __html: content.content }} />;
     case 'textBox':
       return (
-        <TextField
-          defaultValue="여기에 답변을 입력하세요"
-          onChange={handleTextChange}
+        <textarea
+          value={textBoxValue[index + stepNum]}
+          onChange={(e) => {
+            handleTextChange(e, index, stepNum);
+          }}
+          placeholder="답변을 입력해주세요"
           variant="outlined"
           fullWidth
           multiline
-          minRows={5}
-          maxRows={10}
+          minRows={3}
+          maxRows={5}
+          sx={{ marginBottom: '20px' }}
+          InputProps={{
+            readOnly: true,
+          }}
         />
       );
     case 'img':
