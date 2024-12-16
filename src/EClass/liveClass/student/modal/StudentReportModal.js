@@ -98,7 +98,7 @@ function StudentReportModal({
   const [textBoxValues, setTextBoxValues] = useState({});
   const [data, setData] = useState([]);
   const [studentId, setStudentId] = useState();
-
+  console.log(tableData);
   useEffect(() => {
     const fetchStudentId = async () => {
       const username = localStorage.getItem('username');
@@ -552,32 +552,26 @@ function StudentReportModal({
     };
     fetchData();
   }, [latestTableData, tableData]);
-
-  const handleTextBoxSubmit = (stepNum, index, text) => {
-    setTextBoxValues((prev) => ({
-      ...prev,
-      [stepNum]: {
-        ...(prev[stepNum] || []),
-        [index]: text,
-      },
-    }));
-  };
-
+  console.log(data);
   const handleSubmit = async () => {
     const studentName = localStorage.getItem('username');
     const dataToUse = latestTableData || tableData;
     const reportUuid = uuidv4();
 
-    const groupedContents = dataToUse.map((data) => ({
+    const groupedContents = dataToUse.map((data, stepIndex) => ({
       contentName: data.contentName, // data에서 contentName 가져오기
       stepNum: data.stepNum, // data에서 stepNum 가져오기
       contents: data.contents.map((contentItem, contentIndex) => {
         if (contentItem.type === 'textBox') {
           return {
             ...contentItem,
-            content:
-              textBoxValues[data.stepNum]?.[contentIndex] ||
-              contentItem.content,
+            content: textBoxDatas[stepIndex + 1 + contentIndex],
+          };
+        } else if (contentItem.type === 'dataInChartButton') {
+          console.log(contentItem);
+          return {
+            type: 'chartImg',
+            content: storedPhotoList[0].image,
           };
         }
         return contentItem;
