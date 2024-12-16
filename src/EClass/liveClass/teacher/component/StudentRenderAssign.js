@@ -132,13 +132,13 @@ function StudentRenderAssign({
   const { getStorePhotoList, setStorePhotoList } = usePhotoStore();
 
   useEffect(() => {
-    console.log('데이터 확인 : ' + JSON.stringify(data, null, 2));
+    // console.log('데이터 확인 : ' + JSON.stringify(data, null, 2));
   }, [data]);
 
   useEffect(() => {
     const photoList = getStorePhotoList();
     if (photoList) {
-      console.log('사진 수 : ', getStorePhotoList().length);
+      // console.log('사진 수 : ', getStorePhotoList().length);
 
       setLocalStoredPhotoList(photoList);
     }
@@ -150,18 +150,18 @@ function StudentRenderAssign({
   };
 
   useEffect(() => {
-    console.log(
-      'latestTableData : ' + JSON.stringify(latestTableData, null, 2),
-    );
-    console.log('tableData : ' + JSON.stringify(tableData, null, 2));
+    // console.log(
+    //   'latestTableData : ' + JSON.stringify(latestTableData, null, 2),
+    // );
+    // console.log('tableData : ' + JSON.stringify(tableData, null, 2));
 
     let dataToUse = tableData;
-    console.log(tableData);
+    // console.log(tableData);
     if (latestTableData?.length > 0) {
       dataToUse = latestTableData;
     }
 
-    console.log('dataToUse:', JSON.stringify(dataToUse, null, 2));
+    // console.log('dataToUse:', JSON.stringify(dataToUse, null, 2));
 
     const parseStepCount = parseInt(stepCount, 10); // 10진수로 파싱
 
@@ -170,13 +170,13 @@ function StudentRenderAssign({
       (data) => data.stepNum === parseStepCount,
     );
 
-    console.log(filteredData);
+    // console.log(filteredData);
     // console.log('Filtered Data:', filteredData);
 
     // 상태에 필터링된 데이터 세팅
 
     const fetchData = async () => {
-      console.log(filteredData);
+      // console.log(filteredData);
       let newStep;
       for (let i = 0; i < filteredData.length; i++) {
         const curData = filteredData[i];
@@ -208,7 +208,7 @@ function StudentRenderAssign({
           } else if (content.type === 'data') {
             let tableContent;
             let dataContent;
-            console.log(content.content.type);
+            // console.log(content.content.type);
             if (content.content.type === '커스텀 데이터') {
               await customAxios
                 .get(`api/custom/${content.content.id}`)
@@ -274,7 +274,7 @@ function StudentRenderAssign({
                       table[key].order % columns
                     ] = convertToNumber(table[key].value);
                   });
-                  console.log(data);
+                  // console.log(data);
                   dataContent = data;
 
                   // localStorage.setItem('data', JSON.stringify(data));
@@ -388,7 +388,7 @@ function StudentRenderAssign({
                       });
                       return newItem;
                     });
-                    console.log(transformedData);
+                    // console.log(transformedData);
                     headers = Object.keys(transformedData[0]);
 
                     headers = headers.map((header) => engToKor(header));
@@ -398,7 +398,7 @@ function StudentRenderAssign({
                     );
                     // 최종 결과 생성 (헤더 + 값)
                     const recombined = [headers, ...dataContent];
-                    console.log(recombined);
+                    // console.log(recombined);
                   })
                   .catch((err) => console.log(err));
               } else if (content.content.type === '대기질 데이터') {
@@ -420,7 +420,7 @@ function StudentRenderAssign({
                       'ITEMPM25',
                       'ITEMSO2VALUE',
                     ];
-                    console.log(res.data);
+                    // console.log(res.data);
 
                     // 변환 로직
                     const transformedData = res.data.data.map((item) => {
@@ -436,7 +436,7 @@ function StudentRenderAssign({
                       });
                       return newItem;
                     });
-                    console.log(transformedData);
+                    // console.log(transformedData);
                     headers = Object.keys(transformedData[0]);
 
                     headers = headers.map((header) => engToKor(header));
@@ -446,7 +446,7 @@ function StudentRenderAssign({
                     );
                     // 최종 결과 생성 (헤더 + 값)
                     const recombined = [headers, ...dataContent];
-                    console.log(recombined);
+                    // console.log(recombined);
                   })
                   .catch((err) => console.log(err));
               } else if (content.content.type === '시도별 대기질 데이터') {
@@ -480,7 +480,7 @@ function StudentRenderAssign({
                       'ITEMGYEONGNAM',
                       'ITEMGYEONGGI',
                     ];
-                    console.log(res.data);
+                    // console.log(res.data);
 
                     // 변환 로직
                     const transformedData = res.data.data.map((item) => {
@@ -495,7 +495,7 @@ function StudentRenderAssign({
                       });
                       return newItem;
                     });
-                    console.log(transformedData);
+                    // console.log(transformedData);
                     headers = Object.keys(transformedData[0]);
 
                     headers = headers.map((header) => engToKor(header));
@@ -505,11 +505,11 @@ function StudentRenderAssign({
                     );
                     // 최종 결과 생성 (헤더 + 값)
                     const recombined = [headers, ...dataContent];
-                    console.log(recombined);
+                    // console.log(recombined);
                   })
                   .catch((err) => console.log(err));
               }
-              console.log(dataContent);
+              // console.log(dataContent);
               tableContent = (
                 <div style={{ width: 'auto', overflowX: 'auto' }}>
                   <div
@@ -585,7 +585,7 @@ function StudentRenderAssign({
           }
         }
       }
-      console.log([newStep]);
+      // console.log([newStep]);
       setData([newStep]);
     };
     fetchData();
@@ -593,7 +593,7 @@ function StudentRenderAssign({
 
   // 로컬에서 이미지 삭제한 부분 보여주기 위한 훅
   useEffect(() => {
-    console.log('데이터 체크 : ' + JSON.stringify(data, null, 2));
+    // console.log('데이터 체크 : ' + JSON.stringify(data, null, 2));
 
     if (data && data.length > 0 && imageUrlArray.length > 0) {
       const removeImagesFromData = async (data, imageUrlArray) => {
@@ -603,10 +603,10 @@ function StudentRenderAssign({
             item.contents.map((contentItem) => {
               // 이미지 타입의 데이터를 처리
               if (contentItem.type === 'img') {
-                console.log(
-                  '삭제 이미지 : ' +
-                    JSON.stringify(contentItem.content, null, 2),
-                );
+                // console.log(
+                //   '삭제 이미지 : ' +
+                //     JSON.stringify(contentItem.content, null, 2),
+                // );
                 // imageUrlArray에 있는 URL과 일치하는지 확인하고 제거
                 if (imageUrlArray.includes(contentItem.content)) {
                   return null; // 이미지 삭제 시 null 반환
@@ -627,9 +627,9 @@ function StudentRenderAssign({
 
         const updatedData = await Promise.all(updatedDataPromises);
 
-        console.log(
-          '업데이트 데이터 체크 : ' + JSON.stringify(updatedData, null, 2),
-        );
+        // console.log(
+        //   '업데이트 데이터 체크 : ' + JSON.stringify(updatedData, null, 2),
+        // );
 
         return updatedData;
       };
@@ -707,7 +707,7 @@ function StudentRenderAssign({
       dataToUse = latestTableData;
     }
 
-    console.log('dataToUse 확인 : ' + JSON.stringify(dataToUse, null, 2));
+    // console.log('dataToUse 확인 : ' + JSON.stringify(dataToUse, null, 2));
 
     const stepCount = allData.stepCount;
 
@@ -716,9 +716,9 @@ function StudentRenderAssign({
 
     const updatedTableData = replaceContents(dataToUse, data);
 
-    console.log(
-      'updatedTableData 확인 : ' + JSON.stringify(updatedTableData, null, 2),
-    );
+    // console.log(
+    //   'updatedTableData 확인 : ' + JSON.stringify(updatedTableData, null, 2),
+    // );
 
     const updatedDataPromises = updatedTableData.map(async (data) => ({
       uuid: allData.uuid,
@@ -758,7 +758,7 @@ function StudentRenderAssign({
                     // stepCheck 업데이트
                     const stepIndex = item.stepNum - 1;
 
-                    console.log('데이터 차트 인덱스 : ' + stepIndex);
+                    // console.log('데이터 차트 인덱스 : ' + stepIndex);
                     // alert('???');
                     if (stepIndex >= 0 && stepIndex < stepCount) {
                       stepCheck[stepIndex] = true;
