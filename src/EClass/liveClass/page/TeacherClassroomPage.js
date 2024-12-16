@@ -139,14 +139,14 @@ export function TeacherClassroomPage() {
             </button>
             <button
               style={{
-                margin: '10px 0 10px 0',
+                margin: '10px 0 10px 10px',
               }}
               className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg shadow-md transition duration-300"
               onClick={() => {
                 navigate('/classList');
               }}
             >
-              E-Class 자료 관리하기
+              E-Class 관리
             </button>
           </Box>
         </div>

@@ -202,7 +202,7 @@ export default function TeacherEclassTable({ setSelectedEClassUuid }) {
                   border: 'none',
                 }}
               >
-                들어가기
+                수업 시작하기
               </Button>
               <Button
                 variant="outlined"

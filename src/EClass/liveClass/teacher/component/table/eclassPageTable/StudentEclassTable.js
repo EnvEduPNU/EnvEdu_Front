@@ -20,7 +20,6 @@ const columns = [
   { label: '이름', dataKey: 'Name', width: '15%' },
   { label: '강사', dataKey: 'Teacher', width: '15%' },
   { label: '개설일', dataKey: 'CreateEclassDate', width: '15%' },
-  { label: '수업자료', dataKey: 'LectureDataName', width: '15%' },
   { label: '', dataKey: 'Action', width: '20%' },
 ];
 
@@ -215,7 +214,7 @@ export default function StudentEclassTable({ setSelectedEClassUuid }) {
                   borderRadius: '1rem',
                 }}
               >
-                들어가기
+                수업 시작하기
               </Button>
               <Button
                 variant="contained"
