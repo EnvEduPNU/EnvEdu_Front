@@ -290,6 +290,7 @@ export default function TeacherEclassTable({ setSelectedEClassUuid }) {
         onClose={() => setModalOpen(false)}
         onCreate={() => window.location.reload()}
         eClassUuid={localEclassUuid}
+        rowData={rowData}
       />
     </div>
   );
