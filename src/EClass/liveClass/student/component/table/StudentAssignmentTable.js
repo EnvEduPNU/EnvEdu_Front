@@ -69,9 +69,9 @@ function rowContent(_index, row, handleClick, selectedRow) {
           <TableCell
             key={cellKey}
             align="left"
-            onClick={() =>
-              handleClick(row.stepNum, row.contentName, row.stepNum)
-            }
+            // onClick={() =>
+            //   handleClick(row.stepNum, row.contentName, row.stepNum)
+            // }
             sx={{
               backgroundColor:
                 selectedRow === row.stepNum ? '#f0f0f0' : 'inherit', // stepNum 기준으로 비교
@@ -111,7 +111,12 @@ export default function StudentAssignmentTable(props) {
         {`Eclass Step`}
       </Typography>
       <Paper
-        style={{ width: '100%', height: '500px', overflow: 'auto' }}
+        style={{
+          width: '100%',
+          height: '500px',
+          overflow: 'auto',
+          pointerEvents: 'none',
+        }}
         className="virtuoso-table"
       >
         <TableContainer component={Paper}>
