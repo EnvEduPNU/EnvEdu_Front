@@ -980,7 +980,7 @@ function StudentRenderAssign({
             </div>
           </Paper>
           {/* 제출 버튼 조건 렌더링 */}
-          {shouldDisplaySubmitButton && (
+          {/* {shouldDisplaySubmitButton && (
             <Button
               variant="contained"
               color="secondary"
@@ -1000,7 +1000,7 @@ function StudentRenderAssign({
             >
               제출
             </Button>
-          )}
+          )} */}
         </React.Fragment>
       ))}
       {isModalOpen && <DataInChartModal isModalOpen={isModalOpen} />}

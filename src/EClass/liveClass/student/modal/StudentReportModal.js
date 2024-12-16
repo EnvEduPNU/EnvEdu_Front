@@ -569,9 +569,10 @@ function StudentReportModal({
           };
         } else if (contentItem.type === 'dataInChartButton') {
           console.log(contentItem);
+
           return {
             type: 'chartImg',
-            content: storedPhotoList[0].image,
+            content: storedPhotoList.map((photo) => photo.image),
           };
         }
         return contentItem;

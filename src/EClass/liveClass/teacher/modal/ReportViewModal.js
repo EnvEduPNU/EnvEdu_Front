@@ -135,7 +135,7 @@ function ReportViewModal({ open, onClose, tableData }) {
           } else if (content.type === 'chartImg') {
             newStep.contents.push({
               type: 'chartImg',
-              file: content.content,
+              files: content.content,
             });
           } else if (content.type === 'data') {
             let tableContent;
@@ -660,12 +660,18 @@ function RenderContent({
       );
     case 'chartImg':
       return (
-        <div
-          dangerouslySetInnerHTML={{
-            __html: `<img src=${content.file} />`,
-          }}
-        />
+        <div>
+          {content.files.map((item, index) => (
+            <div
+              key={index}
+              dangerouslySetInnerHTML={{
+                __html: `<img src="${item}" alt="Chart Image" />`,
+              }}
+            />
+          ))}
+        </div>
       );
+
     case 'emptyBox':
       return (
         <div
