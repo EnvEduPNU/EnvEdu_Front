@@ -595,6 +595,12 @@ function ModifyClassPage() {
   const handleSelectData = async (type, id, type2) => {
     console.log(type2);
     if (type2 === 'graph') {
+      for (let i = 0; i < eclassContents[0].contents.length; i++) {
+        if (eclassContents[0].contents[i].type === 'dataInChartButton') {
+          alert('그래프 그리기는 1개까지 가능합니다.');
+          return;
+        }
+      }
       setEclassContents((prev) => {
         const tempEclassContents = prev.map((eclassContent) => ({
           ...eclassContent,
