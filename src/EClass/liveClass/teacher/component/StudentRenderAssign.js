@@ -1078,15 +1078,8 @@ function RenderContent({
             handleTextChange(e, index, stepNum);
           }}
           placeholder="답변을 입력해주세요"
-          variant="outlined"
-          fullWidth
-          multiline
-          minRows={3}
-          maxRows={5}
-          sx={{ marginBottom: '20px' }}
-          InputProps={{
-            readOnly: true,
-          }}
+          className="w-full p-4 text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+          rows="3"
         />
       );
     case 'img':

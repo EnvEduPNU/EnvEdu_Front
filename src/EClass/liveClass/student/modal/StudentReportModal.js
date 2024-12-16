@@ -99,7 +99,6 @@ function StudentReportModal({
   const [data, setData] = useState([]);
   const [studentId, setStudentId] = useState();
 
-
   useEffect(() => {
     const fetchStudentId = async () => {
       const username = localStorage.getItem('username');
@@ -126,8 +125,6 @@ function StudentReportModal({
     if (latestTableData?.length > 0) {
       dataToUse = latestTableData;
     }
-
-
 
     // tableData에서 stepNum과 parseStepCount가 같은 항목 필터링
     // let filteredData = dataToUse.filter((data) => data.stepNum === dataToUse);
@@ -751,8 +748,13 @@ function RenderContent({
   index,
   storedPhotoList,
 }) {
-  const handleTextChange = (event) => {
-    setTextBoxValue(index, event.target.value);
+  const handleTextChange = (e, index, stepNum) => {
+    setTextBoxValue((prev) => {
+      const copied = { ...prev };
+      console.log(index, stepNum);
+      copied[index + stepNum] = e.target.value;
+      return copied;
+    });
   };
   console.log(content);
   console.log(stepIndex, index);
@@ -769,16 +771,12 @@ function RenderContent({
       return (
         <textarea
           value={textBoxValue[stepIndex + index]}
-          onChange={handleTextChange}
-          variant="outlined"
-          fullWidth
-          multiline
-          minRows={3}
-          maxRows={5}
-          sx={{ marginBottom: '20px' }}
-          InputProps={{
-            readOnly: true,
+          onChange={(e) => {
+            handleTextChange(e, index, stepIndex);
           }}
+          placeholder="답변을 입력해주세요"
+          className="w-full p-4 text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+          rows="3"
         />
       );
     case 'img':
