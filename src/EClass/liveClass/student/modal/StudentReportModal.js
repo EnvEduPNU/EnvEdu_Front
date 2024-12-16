@@ -98,8 +98,7 @@ function StudentReportModal({
   const [textBoxValues, setTextBoxValues] = useState({});
   const [data, setData] = useState([]);
   const [studentId, setStudentId] = useState();
-  console.log(tableData);
-  console.log(textBoxValues);
+
 
   useEffect(() => {
     const fetchStudentId = async () => {
@@ -117,31 +116,29 @@ function StudentReportModal({
   }, [eclassUuid]);
 
   useEffect(() => {
-    console.log(
-      'latestTableData : ' + JSON.stringify(latestTableData, null, 2),
-    );
-    console.log('tableData : ' + JSON.stringify(tableData, null, 2));
+    // console.log(
+    //   'latestTableData : ' + JSON.stringify(latestTableData, null, 2),
+    // );
+    // console.log('tableData : ' + JSON.stringify(tableData, null, 2));
 
     let dataToUse = tableData;
-    console.log(tableData);
-    console.log(tableData);
+
     if (latestTableData?.length > 0) {
       dataToUse = latestTableData;
     }
 
-    console.log(dataToUse);
+
 
     // tableData에서 stepNum과 parseStepCount가 같은 항목 필터링
     // let filteredData = dataToUse.filter((data) => data.stepNum === dataToUse);
     let filteredData = dataToUse;
-    console.log(filteredData);
 
     // console.log('Filtered Data:', filteredData);
 
     // 상태에 필터링된 데이터 세팅
 
     const fetchData = async () => {
-      console.log(filteredData);
+      // console.log(filteredData);
       let newSteps = [];
       let newStep;
       for (let i = 0; i < filteredData.length; i++) {
@@ -174,7 +171,7 @@ function StudentReportModal({
           } else if (content.type === 'data') {
             let tableContent;
             let dataContent;
-            console.log(content.content.type);
+            // console.log(content.content.type);
             if (content.content.type === '커스텀 데이터') {
               await customAxios
                 .get(`api/custom/${content.content.id}`)
@@ -240,7 +237,7 @@ function StudentReportModal({
                       table[key].order % columns
                     ] = convertToNumber(table[key].value);
                   });
-                  console.log(data);
+                  // console.log(data);
                   dataContent = data;
 
                   // localStorage.setItem('data', JSON.stringify(data));
@@ -354,7 +351,7 @@ function StudentReportModal({
                       });
                       return newItem;
                     });
-                    console.log(transformedData);
+                    // console.log(transformedData);
                     headers = Object.keys(transformedData[0]);
 
                     headers = headers.map((header) => engToKor(header));
@@ -364,7 +361,7 @@ function StudentReportModal({
                     );
                     // 최종 결과 생성 (헤더 + 값)
                     const recombined = [headers, ...dataContent];
-                    console.log(recombined);
+                    // console.log(recombined);
                   })
                   .catch((err) => console.log(err));
               } else if (content.content.type === '대기질 데이터') {
@@ -386,7 +383,7 @@ function StudentReportModal({
                       'ITEMPM25',
                       'ITEMSO2VALUE',
                     ];
-                    console.log(res.data);
+                    // console.log(res.data);
 
                     // 변환 로직
                     const transformedData = res.data.data.map((item) => {
@@ -402,7 +399,7 @@ function StudentReportModal({
                       });
                       return newItem;
                     });
-                    console.log(transformedData);
+                    // console.log(transformedData);
                     headers = Object.keys(transformedData[0]);
 
                     headers = headers.map((header) => engToKor(header));
@@ -412,7 +409,7 @@ function StudentReportModal({
                     );
                     // 최종 결과 생성 (헤더 + 값)
                     const recombined = [headers, ...dataContent];
-                    console.log(recombined);
+                    // console.log(recombined);
                   })
                   .catch((err) => console.log(err));
               } else if (content.content.type === '시도별 대기질 데이터') {
@@ -446,7 +443,7 @@ function StudentReportModal({
                       'ITEMGYEONGNAM',
                       'ITEMGYEONGGI',
                     ];
-                    console.log(res.data);
+                    // console.log(res.data);
 
                     // 변환 로직
                     const transformedData = res.data.data.map((item) => {
@@ -461,7 +458,7 @@ function StudentReportModal({
                       });
                       return newItem;
                     });
-                    console.log(transformedData);
+                    // console.log(transformedData);
                     headers = Object.keys(transformedData[0]);
 
                     headers = headers.map((header) => engToKor(header));
@@ -471,11 +468,11 @@ function StudentReportModal({
                     );
                     // 최종 결과 생성 (헤더 + 값)
                     const recombined = [headers, ...dataContent];
-                    console.log(recombined);
+                    // console.log(recombined);
                   })
                   .catch((err) => console.log(err));
               }
-              console.log(dataContent);
+              // console.log(dataContent);
               tableContent = (
                 <div style={{ width: 'auto', overflowX: 'auto' }}>
                   <div
@@ -552,7 +549,7 @@ function StudentReportModal({
         }
         newSteps.push(newStep);
       }
-      console.log(newSteps);
+      // console.log(newSteps);
       if (newStep === undefined) setData([]);
       else setData(newSteps);
     };
@@ -603,13 +600,13 @@ function StudentReportModal({
 
     if (window.confirm('제출하시겠습니까?')) {
       try {
-        console.log(
-          '업데이트 하기전 확인 : ' + JSON.stringify(updatedData, null, 2),
-        );
-        console.log(
-          '업데이트 하기전 확인 assginmentCheck : ' +
-            JSON.stringify(assginmentCheck, null, 2),
-        );
+        // console.log(
+        //   '업데이트 하기전 확인 : ' + JSON.stringify(updatedData, null, 2),
+        // );
+        // console.log(
+        //   '업데이트 하기전 확인 assginmentCheck : ' +
+        //     JSON.stringify(assginmentCheck, null, 2),
+        // );
 
         const requestData = {
           reportUuid: reportUuid,
@@ -669,7 +666,7 @@ function StudentReportModal({
     pdf.save('report.pdf');
   };
 
-  console.log(data);
+  // console.log(data);
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="lg">

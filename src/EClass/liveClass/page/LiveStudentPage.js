@@ -59,10 +59,10 @@ export const LiveStudentPage = () => {
 
       const username = localStorage.getItem('username');
 
-      console.log(
-        '{!!!!! 유저 이름 !!!!!]  : ' +
-          JSON.stringify(localStorage.getItem('username'), null, 2),
-      );
+      // console.log(
+      //   '{!!!!! 유저 이름 !!!!!]  : ' +
+      //     JSON.stringify(localStorage.getItem('username'), null, 2),
+      // );
 
       // 맨 처음 스텝 테이블 디폴트 세팅
       try {
@@ -75,9 +75,9 @@ export const LiveStudentPage = () => {
           },
         );
 
-        console.log(
-          '해당 데이터 : ' + JSON.stringify(lectureData.data, null, 2),
-        );
+        // console.log(
+        //   '해당 데이터 : ' + JSON.stringify(lectureData.data, null, 2),
+        // );
 
         const formattedData = lectureData.data.contents.map((content) => ({
           contentName: content.contentName,
@@ -95,17 +95,6 @@ export const LiveStudentPage = () => {
 
       // 작성중인 테이블 데이터나 보고서가 있을때 가져오는 api
       try {
-        // const assignmentUuidResp = await customAxios.post(
-        //   '/api/eclass/student/assginmentUuid/get',
-        //   requestData,
-        // );
-        // console.log(
-        //   '{!!!!!!!!! 스텝 작성중인 것 uuid !!!!!]  : ' +
-        //     JSON.stringify(assignmentUuidResp.data, null, 2),
-        // );
-
-        // const StepUuid = assignmentUuidResp.data;
-
         // 만약 작성된 스텝이 있으면 가져오기
         const lectureResponse = await customAxios.get(
           '/api/assignment/get-step-one',
@@ -117,13 +106,11 @@ export const LiveStudentPage = () => {
           },
         );
 
-        console.log(
-          '{!!!!! 작성된 스텝 !!!!!]  : ' +
-            JSON.stringify(lectureResponse.data, null, 2),
-        );
+        // console.log(
+        //   '{!!!!! 작성된 스텝 !!!!!]  : ' +
+        //     JSON.stringify(lectureResponse.data, null, 2),
+        // );
 
-        // TODO 1 : 기본적인 테이블 세팅 포맷이 뭔지 찾아서 작성된 스텝이 존재할 때 작성된 스텝으로 테이블 저장하기
-        // ---> 그냥 TableData로 진행할지 latestTableData로 따로 state 뺄건지 고민해서 작성하기
         setLatestTableData(lectureResponse.data.contents);
       } catch (error) {
         alert('서버에 문제가 있습니다!' + error);
@@ -133,9 +120,9 @@ export const LiveStudentPage = () => {
     fetch();
   }, []);
 
-  useEffect(() => {
-    console.log('테이블/그래프 캡쳐 리스트 :', photoList);
-  }, [photoList]);
+  // useEffect(() => {
+  //   console.log('테이블/그래프 캡쳐 리스트 :', photoList);
+  // }, [photoList]);
 
   //입장 했을때 선생님에게 입장했다는 메시지 보내는 소켓
   useEffect(() => {
@@ -175,7 +162,7 @@ export const LiveStudentPage = () => {
 
       sendScreenShareStClient.current.onConnect = (frame) => {
         console.log('화면 상태 소켓 연결 성공', frame);
-        sendMessage(true);
+        // sendMessage(true);
       };
 
       sendScreenShareStClient.current.activate();
@@ -210,7 +197,7 @@ export const LiveStudentPage = () => {
           function (message) {
             const parsedMessage = JSON.parse(message.body);
             console.log(
-              '화면 공유 상태 : ' + JSON.stringify(parsedMessage, null, 2),
+              '화면 공유 상태 받음 : ' + JSON.stringify(parsedMessage, null, 2),
             );
             setTimeout(() => {
               setSharedScreenState(parsedMessage.screenShared);
@@ -233,22 +220,22 @@ export const LiveStudentPage = () => {
   }, []);
 
   useEffect(() => {
-    console.log(
-      '[LiveStudentPage] 이클래스 UUID: ' + JSON.stringify(eClassUuid, null, 2),
-    );
+    // console.log(
+    //   '[LiveStudentPage] 이클래스 UUID: ' + JSON.stringify(eClassUuid, null, 2),
+    // );
 
     initializeSession();
 
-    const handleBeforeUnload = (event) => {
-      sendMessage(false);
-    };
+    // const handleBeforeUnload = (event) => {
+    //   sendMessage(false);
+    // };
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    // window.addEventListener('beforeunload', handleBeforeUnload);
 
     return () => {
       // deleteSession();
       sendMessage(false);
-      window.removeEventListener('beforeunload', handleBeforeUnload);
+      // window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, []);
 
@@ -278,9 +265,9 @@ export const LiveStudentPage = () => {
       },
     });
     if (resp.data) {
-      console.log(
-        '현재 학생의 SessionId : ' + JSON.stringify(resp.data, null, 2),
-      );
+      // console.log(
+      //   '현재 학생의 SessionId : ' + JSON.stringify(resp.data, null, 2),
+      // );
 
       sessionId.current = resp.data;
       setSessionIdState(resp.data);
@@ -289,9 +276,9 @@ export const LiveStudentPage = () => {
       // 데이터가 없는 경우 새로운 세션 ID 생성 및 등록
       const newSessionId = uuidv4();
       const registeredSessionId = await registerSessionId(newSessionId);
-      console.log(
-        '새로운 SessionId : ' + JSON.stringify(registeredSessionId, null, 2),
-      );
+      // console.log(
+      //   '새로운 SessionId : ' + JSON.stringify(registeredSessionId, null, 2),
+      // );
 
       sessionId.current = registeredSessionId || newSessionId;
       setSessionIdState(sessionId.current);
@@ -322,7 +309,7 @@ export const LiveStudentPage = () => {
         headers: {},
       });
     } else {
-      console.error('STOMP 클라이언트가 연결되지 않았습니다.');
+      console.error('학생 입장 STOMP 클라이언트가 연결되지 않았습니다.');
     }
   };
 
@@ -332,9 +319,9 @@ export const LiveStudentPage = () => {
       sessionId: sessionId.current,
       shared: state,
     };
-    console.log(
-      '화면 공유 상태 응답하기 : ' + JSON.stringify(shareState, null, 2),
-    );
+    // console.log(
+    //   '화면 공유 상태 응답하기 : ' + JSON.stringify(shareState, null, 2),
+    // );
     if (
       sendScreenShareStClient &&
       sendScreenShareStClient.current &&
@@ -346,7 +333,7 @@ export const LiveStudentPage = () => {
         headers: {},
       });
     } else {
-      console.error('STOMP 클라이언트가 연결되지 않았습니다.');
+      console.error('화면 공유 STOMP 클라이언트가 연결되지 않았습니다.');
     }
   };
 
@@ -365,7 +352,7 @@ export const LiveStudentPage = () => {
     }
   };
 
-  console.log(tableData);
+  // console.log(tableData);
 
   return (
     <div style={{ display: 'flex', margin: '0 20vh', height: '800px' }}>
