@@ -106,7 +106,7 @@ function ModifyClassPage() {
   const [thumbnailImage, setThumbnailImage] = useState(basicImage);
   const [videoLink, setVideoLink] = useState('');
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
-  const naviate = useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getData = async () => {
@@ -1460,6 +1460,7 @@ function ModifyClassPage() {
 
                   if (response.data) {
                     alert('E-Class 실행에서 사용중입니다!');
+                    navigate('/EClassLivePage');
                     return;
                   } else {
                     await customAxios.delete(
@@ -1537,7 +1538,7 @@ function ModifyClassPage() {
                 try {
                   await createEclass(postData);
                   alert('수업이 정상적으로 수정 되었습니다.');
-                  naviate('/classList');
+                  navigate('/classList');
                 } catch (e) {
                   console.log(e);
                 }

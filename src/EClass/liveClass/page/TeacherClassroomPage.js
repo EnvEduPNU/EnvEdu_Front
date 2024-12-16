@@ -18,6 +18,7 @@ import {
 } from '@mui/material';
 import { customAxios } from '../../../Common/CustomAxios';
 import moment from 'moment';
+import { useNavigate } from 'react-router-dom';
 
 const modalStyle = {
   position: 'absolute',
@@ -33,7 +34,7 @@ const modalStyle = {
 };
 
 export function TeacherClassroomPage() {
-  const [isModalOpen, setModalOpen] = useState(false);
+  const navigate = useNavigate();
   const [isStudentModalOpen, setStudentModalOpen] = useState(false);
   const [isStudentListVisible, setIsStudentListVisible] = useState(true); // Toggle state
   const [selectedEClassUuid, setSelectedEClassUuid] = useState(null);
@@ -108,6 +109,7 @@ export function TeacherClassroomPage() {
           style={{
             display: 'flex',
             justifyContent: 'space-between',
+            alignContent: 'center',
             alignItems: 'end',
           }}
         >
@@ -123,6 +125,17 @@ export function TeacherClassroomPage() {
           >
             {' E-Class '}
           </Typography>
+          <button
+            style={{
+              margin: '10px 0 10px 0',
+            }}
+            className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg shadow-md transition duration-300"
+            onClick={() => {
+              navigate('/classList');
+            }}
+          >
+            E-Class 자료 관리하기
+          </button>
         </div>
         <div>
           <TeacherEclassTable setSelectedEClassUuid={setSelectedEClassUuid} />

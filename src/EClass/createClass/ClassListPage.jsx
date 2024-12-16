@@ -41,14 +41,49 @@ function ClassListPage() {
         alignItems: 'center',
       }}
     >
-      <h1
+      <div
         style={{
-          fontWeight: 600,
-          fontSize: '48px',
+          display: 'flex',
+          alignItems: 'center',
         }}
       >
-        E-CLASS 생성
-      </h1>
+        <h1
+          style={{
+            fontWeight: 600,
+            fontSize: '48px',
+          }}
+        >
+          E-CLASS 생성
+        </h1>
+        <button
+          onClick={() => {
+            navigate('/EClassLivePage');
+          }}
+          style={{
+            marginLeft: '30px',
+            padding: '3px 5px',
+            backgroundColor: '#007BFF',
+            color: '#fff',
+            border: '1px solid #007BFF',
+            borderRadius: '6px',
+            fontSize: '16px',
+            fontWeight: '600',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.backgroundColor = '#0056b3';
+            e.target.style.borderColor = '#0056b3';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.backgroundColor = '#007BFF';
+            e.target.style.borderColor = '#007BFF';
+          }}
+        >
+          뒤로가기
+        </button>
+      </div>
+
       <div
         style={{
           display: 'flex',
