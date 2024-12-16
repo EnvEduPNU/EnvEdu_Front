@@ -20,6 +20,7 @@ import ReportViewModal from '../../../modal/ReportViewModal';
 import ScreenShareIcon from '@mui/icons-material/ScreenShare';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import DescriptionIcon from '@mui/icons-material/Description';
+import AssignmentIcon from '@mui/icons-material/Assignment';
 
 import Tooltip from '@mui/material/Tooltip';
 
@@ -415,11 +416,11 @@ export default function TeacherCourseStatusTable({
                   <ScreenShareIcon />
                 </Tooltip>
               </TableCell>
-              {/* <TableCell align="center">
+              <TableCell align="center">
                 <Tooltip title="스텝 공유 여부">
                   <AssignmentIcon />
                 </Tooltip>
-              </TableCell> */}
+              </TableCell>
               <TableCell align="center">
                 <Tooltip title="스텝 제출 여부">
                   <AssignmentTurnedInIcon />

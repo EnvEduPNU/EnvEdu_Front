@@ -16,6 +16,15 @@ export function StudentStepCompnent(props) {
   const stompClient = useRef(null);
   const assginmentStompClient = useRef(null);
 
+  const token = localStorage.getItem('access_token')?.replace('Bearer ', '');
+
+  useEffect(() => {
+    console.log(
+      '세션 아이디 스탯 : ' +
+        JSON.stringify(props.sessionIdState || {}, null, 2),
+    );
+  }, [props.sessionIdState]);
+
   // Update state when props change
   useEffect(() => {
     setEclassUuid(props.eclassUuid);
@@ -25,71 +34,14 @@ export function StudentStepCompnent(props) {
 
   // Handle WebSocket connections
   useEffect(() => {
-    const token = localStorage.getItem('access_token')?.replace('Bearer ', '');
     if (!token) {
       console.error('Token not found. Cannot connect to WebSocket.');
       return;
     }
 
-    // Setup WebSocket for page updates
-    const setupPageSocket = () => {
-      if (!props.sessionIdState || stompClient.current) return;
-
-      console.log('Initializing page WebSocket...');
-      const sock = new SockJS(
-        `${process.env.REACT_APP_API_URL}/ws?token=${token}`,
-      );
-      const client = new Client({ webSocketFactory: () => sock });
-
-      client.onConnect = (frame) => {
-        console.log('Connected to page WebSocket:', frame);
-        client.subscribe('/topic/switchPage', (message) => {
-          const parsedMessage = JSON.parse(message.body);
-          console.log('Page update received:', parsedMessage);
-
-          setPage(parsedMessage.page);
-          props.setPage(parsedMessage.page);
-          setStepCount(parsedMessage.stepCount);
-          props.setStepCount(parsedMessage.stepCount);
-          setSocketEclassUuid(parsedMessage.lectureDataUuid);
-
-          assginmentCheckStompClient('success');
-        });
-      };
-
-      client.onStompError = (frame) => {
-        console.error('WebSocket error:', frame.headers['message']);
-        console.error('Details:', frame.body);
-      };
-
-      client.activate();
-      stompClient.current = client;
-    };
-
-    // Setup WebSocket for assignment status
-    const setupAssignmentSocket = () => {
-      if (assginmentStompClient.current) return;
-
-      console.log('Initializing assignment WebSocket...');
-      const sock = new SockJS(
-        `${process.env.REACT_APP_API_URL}/ws?token=${token}`,
-      );
-      const client = new Client({ webSocketFactory: () => sock });
-
-      client.onConnect = () =>
-        console.log('Connected to assignment WebSocket.');
-
-      client.onStompError = (frame) => {
-        console.error('WebSocket error:', frame.headers['message']);
-        console.error('Details:', frame.body);
-      };
-
-      client.activate();
-      assginmentStompClient.current = client;
-    };
+    setupAssignmentSocket();
 
     setupPageSocket();
-    setupAssignmentSocket();
 
     // Cleanup WebSocket connections on component unmount
     return () => {
@@ -102,6 +54,62 @@ export function StudentStepCompnent(props) {
       console.log('Disconnected from WebSocket.');
     };
   }, [props.sessionIdState]);
+
+  // Setup WebSocket for page updates
+  const setupPageSocket = () => {
+    if (!props.sessionIdState || stompClient.current) return;
+
+    console.log('Initializing page WebSocket...');
+    const sock = new SockJS(
+      `${process.env.REACT_APP_API_URL}/ws?token=${token}`,
+    );
+    const client = new Client({ webSocketFactory: () => sock });
+
+    client.onConnect = (frame) => {
+      console.log('Connected to page WebSocket:', frame);
+      client.subscribe('/topic/switchPage', (message) => {
+        const parsedMessage = JSON.parse(message.body);
+        console.log('Page update received:', parsedMessage);
+
+        setPage(parsedMessage.page);
+        props.setPage(parsedMessage.page);
+        setStepCount(parsedMessage.stepCount);
+        props.setStepCount(parsedMessage.stepCount);
+        setSocketEclassUuid(parsedMessage.lectureDataUuid);
+
+        assginmentCheckStompClient('success');
+      });
+    };
+
+    client.onStompError = (frame) => {
+      console.error('WebSocket error:', frame.headers['message']);
+      console.error('Details:', frame.body);
+    };
+
+    client.activate();
+    stompClient.current = client;
+  };
+
+  // Setup WebSocket for assignment status
+  const setupAssignmentSocket = () => {
+    if (assginmentStompClient.current) return;
+
+    console.log('Initializing assignment WebSocket...');
+    const sock = new SockJS(
+      `${process.env.REACT_APP_API_URL}/ws?token=${token}`,
+    );
+    const client = new Client({ webSocketFactory: () => sock });
+
+    client.onConnect = () => console.log('Connected to assignment WebSocket.');
+
+    client.onStompError = (frame) => {
+      console.error('WebSocket error:', frame.headers['message']);
+      console.error('Details:', frame.body);
+    };
+
+    client.activate();
+    assginmentStompClient.current = client;
+  };
 
   // Assignment status WebSocket message handling
   const assginmentCheckStompClient = async (state) => {
