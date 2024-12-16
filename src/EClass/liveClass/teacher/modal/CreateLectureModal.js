@@ -15,7 +15,7 @@ import {
 import { customAxios } from '../../../../Common/CustomAxios';
 import { v4 as uuidv4 } from 'uuid';
 
-const CreateLectureModal = ({ open, onClose, onCreate }) => {
+const CreateLectureModal = ({ open, onClose, onCreate, rowData }) => {
   const [startDate, setStartDate] = useState('');
   const [selectedMaterial, setSelectedMaterial] = useState(null);
   const [lectureDataUuid, setLectureDataUuid] = useState(null);
@@ -23,6 +23,8 @@ const CreateLectureModal = ({ open, onClose, onCreate }) => {
   const [username, setUsername] = useState('');
   const [lectureSummary, setLectureSummary] = useState([]);
   const [eClassAssginSubmitNum, setEClassAssginSubmitNum] = useState(0);
+
+  const [eclassList, setEclassList] = useState([]);
 
   useEffect(() => {
     const TeacherName = localStorage.getItem('username');
@@ -58,6 +60,53 @@ const CreateLectureModal = ({ open, onClose, onCreate }) => {
       })
       .catch((err) => console.log(err));
   }, []);
+
+  const createData = (index, item) => ({
+    Num: index + 1,
+    eClassUuid: item.eClassUuid,
+    Status: item.eclassAssginSubmitNum,
+    LectureData: item.lectureDataUuid,
+    LectureDataName: item.lectureDataName,
+    Name: item.lectureName,
+    CreateEclassDate: item.startDate,
+    Teacher: item.username,
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const name = localStorage.getItem('username');
+      try {
+        const response = await customAxios.get('/api/eclass/list');
+        const list = response.data;
+
+        console.log('Eclass list:', list);
+
+        const filteredList = list.filter((item) => item.username === name);
+        const rows = filteredList.map((item, index) => createData(index, item));
+
+        setEclassList(rows);
+      } catch (error) {
+        console.error('Eclass 리스트 조회 에러:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    console.log('lectureSummary:', JSON.stringify(lectureDataUuid, null, 2));
+
+    eclassList.forEach((item) => {
+      if (item.LectureData === lectureDataUuid) {
+        alert(
+          `Eclass가 이미 있습니다! 수업 생성하기에서 복제하고 이름을 변경해주세요`,
+        );
+        setLectureDataUuid(null); // 선택 상태 해제
+        setSelectedMaterial(null); // 버튼 선택 해제
+        console.log(`일치하는 데이터 발견: LectureData (${item.LectureData})`);
+      }
+    });
+  }, [lectureDataUuid, eclassList]);
 
   useEffect(() => {
     const storedUsername = localStorage.getItem('username');
