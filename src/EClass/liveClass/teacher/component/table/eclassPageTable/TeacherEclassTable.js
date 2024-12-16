@@ -217,7 +217,7 @@ export default function TeacherEclassTable({ setSelectedEClassUuid }) {
               >
                 삭제
               </Button>
-              <Button
+              {/* <Button
                 variant="contained"
                 onClick={() => duplicateEclass(row)}
                 sx={{
@@ -232,7 +232,7 @@ export default function TeacherEclassTable({ setSelectedEClassUuid }) {
                 }}
               >
                 {'복제'}
-              </Button>
+              </Button> */}
             </div>
           ) : (
             <span>{row[column.dataKey]}</span>
