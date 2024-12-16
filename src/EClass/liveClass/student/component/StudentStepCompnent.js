@@ -166,6 +166,11 @@ export function StudentStepCompnent(props) {
           allData={props.allData}
           localStoredPhotoList={props.localStoredPhotoList}
           setLocalStoredPhotoList={props.setLocalStoredPhotoList}
+          eClassUuid={props.eClassUuid}
+          openReportModal={props.openReportModal}
+          handleCloseModal={props.handleCloseModal}
+          textBoxDatas={props.textBoxDatas}
+          setTextBoxDatas={props.setTextBoxDatas}
         />
       ) : (
         <DefaultPageComponent />

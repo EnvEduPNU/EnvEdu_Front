@@ -92,11 +92,13 @@ function StudentReportModal({
   eclassUuid,
   allData,
   storedPhotoList,
+  textBoxDatas,
+  setTextBoxDatas,
 }) {
   const [textBoxValues, setTextBoxValues] = useState({});
   const [data, setData] = useState([]);
   const [studentId, setStudentId] = useState();
-  // console.log(tableData);
+
 
   useEffect(() => {
     const fetchStudentId = async () => {
@@ -120,17 +122,17 @@ function StudentReportModal({
     // console.log('tableData : ' + JSON.stringify(tableData, null, 2));
 
     let dataToUse = tableData;
-    // console.log(tableData);
+
     if (latestTableData?.length > 0) {
       dataToUse = latestTableData;
     }
 
-    // console.log('dataToUse:', JSON.stringify(dataToUse, null, 2));
+
 
     // tableData에서 stepNum과 parseStepCount가 같은 항목 필터링
     // let filteredData = dataToUse.filter((data) => data.stepNum === dataToUse);
     let filteredData = dataToUse;
-    // console.log(filteredData);
+
     // console.log('Filtered Data:', filteredData);
 
     // 상태에 필터링된 데이터 세팅
@@ -149,16 +151,16 @@ function StudentReportModal({
 
         for (let j = 0; j < curData.contents.length; j++) {
           const content = curData.contents[j];
-
+          console.log(content);
           if (content.type === 'html') {
-            newStep.contents.push(content);
+            newStep.contents.push({
+              type: 'html',
+              content: content.content,
+            });
           } else if (content.type === 'textBox') {
             newStep.contents.push({
               type: 'textBox',
-              content: `<textarea
-                style="width: 550px; height: 150px; padding: 10px; fontSize: 16px; lineHeight: 1.5; color: #374151; border: 1px solid #D1D5DB; borderRadius: 8px; boxShadow: 0px 4px 10px rgba(0, 0, 0, 0.1); outline: none; resize: vertical; backgroundColor: #F9FAFB";
-                placeholder="학생이 여기에 답변을 입력합니다"
-                disabled/>`,
+              content: content.content,
             });
           } else if (content.type === 'img') {
             newStep.contents.push({
@@ -710,14 +712,11 @@ function StudentReportModal({
                   <div>
                     {stepData.contents.map((content, contentIdx) => (
                       <RenderContent
+                        stepIndex={idx + 1}
                         key={`${stepData.stepNum}-${contentIdx}`}
                         content={content}
-                        textBoxValue={
-                          textBoxValues[stepData.stepNum]?.[contentIdx] || ''
-                        }
-                        setTextBoxValue={(id, text) =>
-                          handleTextBoxSubmit(stepData.stepNum, id, text)
-                        }
+                        textBoxValue={textBoxDatas}
+                        setTextBoxValue={setTextBoxDatas}
                         index={contentIdx}
                         storedPhotoList={storedPhotoList}
                       />
@@ -745,6 +744,7 @@ function StudentReportModal({
 }
 
 function RenderContent({
+  stepIndex,
   content,
   textBoxValue,
   setTextBoxValue,
@@ -754,7 +754,8 @@ function RenderContent({
   const handleTextChange = (event) => {
     setTextBoxValue(index, event.target.value);
   };
-
+  console.log(content);
+  console.log(stepIndex, index);
   switch (content.type) {
     case 'title':
       return (
@@ -766,14 +767,18 @@ function RenderContent({
       return <div dangerouslySetInnerHTML={{ __html: content.content }} />;
     case 'textBox':
       return (
-        <TextField
-          defaultValue="여기에 답변을 입력하세요"
+        <textarea
+          value={textBoxValue[stepIndex + index]}
           onChange={handleTextChange}
           variant="outlined"
           fullWidth
           multiline
-          minRows={5}
-          maxRows={10}
+          minRows={3}
+          maxRows={5}
+          sx={{ marginBottom: '20px' }}
+          InputProps={{
+            readOnly: true,
+          }}
         />
       );
     case 'img':

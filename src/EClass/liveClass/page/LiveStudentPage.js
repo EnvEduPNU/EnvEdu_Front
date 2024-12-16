@@ -36,7 +36,7 @@ export const LiveStudentPage = () => {
   const stompClients = useRef(null);
   const ScreanSharestompClients = useRef(null);
   const sendScreenShareStClient = useRef(null);
-
+  const [textBoxDatas, setTextBoxDatas] = useState({});
   const navigate = useNavigate();
 
   const photoList = location.state?.photoList || [];
@@ -377,6 +377,11 @@ export const LiveStudentPage = () => {
               allData={allData}
               localStoredPhotoList={localStoredPhotoList}
               setLocalStoredPhotoList={setLocalStoredPhotoList}
+              eClassUuid={eClassUuid}
+              openReportModal={openReportModal}
+              handleCloseModal={handleCloseModal}
+              textBoxDatas={textBoxDatas}
+              setTextBoxDatas={setTextBoxDatas}
             />
           )}
           {isLoading && (
@@ -438,6 +443,18 @@ export const LiveStudentPage = () => {
           </>
         ) : (
           <>
+            <StudentReportModal
+              open={openReportModal}
+              onClose={handleCloseModal}
+              tableData={tableData}
+              latestTableData={latestTableData}
+              stepCount={stepCount}
+              eclassUuid={eClassUuid}
+              allData={allData}
+              storedPhotoList={localStoredPhotoList}
+              textBoxDatas={textBoxDatas}
+              setTextBoxDatas={setTextBoxDatas}
+            />
             <StudentAssignmentTable
               setCourseStep={setCourseStep}
               tableData={tableData}
@@ -488,16 +505,6 @@ export const LiveStudentPage = () => {
                 {isSubmittedListVisible ? 'E-Class 리스트' : '친구들의 보고서'}
               </Button>
             </div>
-            <StudentReportModal
-              open={openReportModal}
-              onClose={handleCloseModal}
-              tableData={tableData}
-              latestTableData={latestTableData}
-              stepCount={stepCount}
-              eclassUuid={eClassUuid}
-              allData={allData}
-              storedPhotoList={localStoredPhotoList}
-            />
           </>
         )}
       </div>
