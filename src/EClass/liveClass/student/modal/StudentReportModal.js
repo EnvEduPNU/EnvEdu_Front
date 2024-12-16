@@ -630,13 +630,33 @@ function StudentReportModal({
     }
   };
 
+  const waitForImagesToLoad = (element) => {
+    const imgElements = element.querySelectorAll('img');
+    const promises = Array.from(imgElements).map(
+      (img) =>
+        new Promise((resolve) => {
+          if (img.complete) {
+            resolve();
+          } else {
+            img.onload = resolve;
+            img.onerror = resolve; // 에러 처리
+          }
+        }),
+    );
+    return Promise.all(promises);
+  };
+
   const handleSavePDF = async () => {
     const pdf = new jsPDF('p', 'mm', 'a4');
     let yOffset = 10;
 
-    // 타이틀과 이름을 먼저 캡처 및 추가
+    // 타이틀 섹션 캡처
     const titleElement = document.getElementById('title-section');
-    const titleCanvas = await html2canvas(titleElement, { scale: 2 });
+    await waitForImagesToLoad(titleElement); // 이미지 로드 대기
+    const titleCanvas = await html2canvas(titleElement, {
+      scale: 2,
+      useCORS: true,
+    });
     const titleImgData = titleCanvas.toDataURL('image/png');
     const imgWidth = 190;
     const imgHeight = (titleCanvas.height * imgWidth) / titleCanvas.width;
@@ -644,11 +664,12 @@ function StudentReportModal({
     pdf.addImage(titleImgData, 'PNG', 10, yOffset, imgWidth, imgHeight);
     yOffset += imgHeight + 10;
 
+    // 단계별 콘텐츠 캡처
     for (let stepIndex = 0; stepIndex < data?.length; stepIndex++) {
       const stepElement = document.getElementById(`step-content-${stepIndex}`);
+      await waitForImagesToLoad(stepElement); // 이미지 로드 대기
       const canvas = await html2canvas(stepElement, {
         scale: 2,
-        useCORS: true,
       });
       const imgData = canvas.toDataURL('image/png');
       const stepImgHeight = (canvas.height * imgWidth) / canvas.width;
@@ -660,6 +681,7 @@ function StudentReportModal({
       pdf.addImage(imgData, 'PNG', 10, yOffset, imgWidth, stepImgHeight);
       yOffset += stepImgHeight + 10;
     }
+
     pdf.save('report.pdf');
   };
 
