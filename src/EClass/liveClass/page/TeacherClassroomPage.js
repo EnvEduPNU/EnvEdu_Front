@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import TeacherReportTable from '../teacher/component/table/eclassPageTable/TeacherReportTable';
 import TeacherStudentList from '../teacher/component/table/eclassPageTable/TeacherStudentList';
-import CreateLectureModal from '../teacher/modal/CreateLectureModalBefore';
+import CreateLectureModal from '../teacher/modal/CreateLectureModal';
 import TeacherEclassTable from '../teacher/component/table/eclassPageTable/TeacherEclassTable';
 import {
   Table,
@@ -35,6 +35,7 @@ const modalStyle = {
 
 export function TeacherClassroomPage() {
   const navigate = useNavigate();
+  const [isModalOpen, setModalOpen] = useState(false);
   const [isStudentModalOpen, setStudentModalOpen] = useState(false);
   const [isStudentListVisible, setIsStudentListVisible] = useState(true); // Toggle state
   const [selectedEClassUuid, setSelectedEClassUuid] = useState(null);
@@ -125,18 +126,36 @@ export function TeacherClassroomPage() {
           >
             {' E-Class '}
           </Typography>
-          <button
-            style={{
-              margin: '10px 0 10px 0',
-            }}
-            className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg shadow-md transition duration-300"
-            onClick={() => {
-              navigate('/classList');
-            }}
-          >
-            E-Class 자료 관리하기
-          </button>
+
+          <Box>
+            <button
+              style={{
+                margin: '10px 0 10px 0',
+              }}
+              className="px-4 py-2 bg-blue-500 hover:bg-orange-600 text-white font-semibold rounded-lg shadow-md transition duration-300"
+              onClick={() => setModalOpen(true)}
+            >
+              E-Class 실행 생성
+            </button>
+            <button
+              style={{
+                margin: '10px 0 10px 0',
+              }}
+              className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg shadow-md transition duration-300"
+              onClick={() => {
+                navigate('/classList');
+              }}
+            >
+              E-Class 자료 관리하기
+            </button>
+          </Box>
         </div>
+
+        <CreateLectureModal
+          open={isModalOpen}
+          onClose={() => setModalOpen(false)}
+          onCreate={handleCreateLecture}
+        />
         <div>
           <TeacherEclassTable setSelectedEClassUuid={setSelectedEClassUuid} />
         </div>

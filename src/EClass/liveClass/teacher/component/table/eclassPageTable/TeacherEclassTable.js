@@ -20,7 +20,7 @@ const columns = [
   { label: '이름', dataKey: 'Name', width: '10%' },
   { label: '강사', dataKey: 'Teacher', width: '15%' },
   { label: '개설일', dataKey: 'CreateEclassDate', width: '15%' },
-  { label: '수업자료', dataKey: 'LectureDataName', width: '15%' },
+  // { label: '수업자료', dataKey: 'LectureDataName', width: '15%' },
   { label: '', dataKey: 'Action', width: '20%' },
 ];
 
@@ -217,7 +217,7 @@ export default function TeacherEclassTable({ setSelectedEClassUuid }) {
               >
                 삭제
               </Button>
-              <Button
+              {/* <Button
                 variant="contained"
                 onClick={() => duplicateEclass(row)}
                 sx={{
@@ -232,7 +232,7 @@ export default function TeacherEclassTable({ setSelectedEClassUuid }) {
                 }}
               >
                 {'복제'}
-              </Button>
+              </Button> */}
             </div>
           ) : (
             <span>{row[column.dataKey]}</span>
