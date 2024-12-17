@@ -136,6 +136,7 @@ export const LiveStudentPage = () => {
       stompClients.current.onConnect = (frame) => {
         console.log('학생 입장 소켓 연결 성공', frame);
         sendMessage(true);
+        sendEnterMessage('success');
       };
 
       stompClients.current.activate();
@@ -258,6 +259,17 @@ export const LiveStudentPage = () => {
   const initializeSession = async () => {
     const userName = localStorage.getItem('username');
 
+    // 데이터가 없는 경우 새로운 세션 ID 생성 및 등록
+    const newSessionId = uuidv4();
+    const registeredSessionId = await registerSessionId(newSessionId);
+    console.log(
+      '새로운 SessionId : ' + JSON.stringify(registeredSessionId, null, 2),
+    );
+
+    sessionId.current = registeredSessionId || newSessionId;
+    setSessionIdState(sessionId.current);
+    setFinished(true);
+
     const resp = await customAxios.get('/api/eclass/student/getSession', {
       params: {
         eclassUuid: eClassUuid,
@@ -271,17 +283,6 @@ export const LiveStudentPage = () => {
 
       sessionId.current = resp.data;
       setSessionIdState(resp.data);
-      setFinished(true);
-    } else {
-      // 데이터가 없는 경우 새로운 세션 ID 생성 및 등록
-      const newSessionId = uuidv4();
-      const registeredSessionId = await registerSessionId(newSessionId);
-      // console.log(
-      //   '새로운 SessionId : ' + JSON.stringify(registeredSessionId, null, 2),
-      // );
-
-      sessionId.current = registeredSessionId || newSessionId;
-      setSessionIdState(sessionId.current);
       setFinished(true);
     }
   };
@@ -313,6 +314,28 @@ export const LiveStudentPage = () => {
     }
   };
 
+  const sendEnterMessage = async (state) => {
+    const message = {
+      assginmentStatus: state,
+      sessionId: sessionId.current,
+      timestamp: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
+    };
+    if (
+      stompClients &&
+      stompClients.current &&
+      stompClients.current.connected
+    ) {
+      await stompClients.current.publish({
+        destination: '/app/assginment-status',
+        body: JSON.stringify(message),
+        headers: {},
+      });
+    } else {
+      console.error('학생 입장 STOMP 클라이언트가 연결되지 않았습니다.');
+    }
+  };
+
+  // 화면 공유 메시지
   const sendStateMessage = async (state) => {
     const shareState = {
       assginmentStatus: state ? 'screenSuccess' : 'screenFailed',

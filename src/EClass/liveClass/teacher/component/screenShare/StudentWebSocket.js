@@ -31,7 +31,7 @@ export const StudentWebSocket = ({ setSessionIds, eclassUuid }) => {
         );
 
         setSessionIds(sessionIdsArray);
-        // console.log('Session IDs: ', JSON.stringify(sessionIdsArray, null, 2));
+        console.log('Session IDs: ', JSON.stringify(sessionIdsArray, null, 2));
       } catch (error) {
         console.error('Failed to fetch session IDs:', error);
       }
