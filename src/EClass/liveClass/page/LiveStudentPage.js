@@ -227,16 +227,16 @@ export const LiveStudentPage = () => {
 
     initializeSession();
 
-    // const handleBeforeUnload = (event) => {
-    //   sendMessage(false);
-    // };
+    const handleBeforeUnload = (event) => {
+      sendMessage(false);
+    };
 
-    // window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('beforeunload', handleBeforeUnload);
 
     return () => {
       // deleteSession();
       sendMessage(false);
-      // window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, []);
 
