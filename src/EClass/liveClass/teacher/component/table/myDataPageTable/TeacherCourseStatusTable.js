@@ -82,10 +82,18 @@ export default function TeacherCourseStatusTable({
   };
 
   useEffect(() => {
+    console.log('학생 확인 : ' + JSON.stringify(sessionIds, null, 2));
+
+    console.log('sessionData : ' + JSON.stringify(sessionData, null, 2));
+
+    console.log('eclassUuid : ' + JSON.stringify(eclassUuid, null, 2));
+
     const fetchStudents = async () => {
       const studentData = await Promise.all(
         sessionData.map((session) => getStudent(session.id, eclassUuid)),
       );
+
+      console.log('학생 확인 : ' + JSON.stringify(studentData, null, 2));
 
       if (studentData) setStudents(studentData);
     };
@@ -122,7 +130,7 @@ export default function TeacherCourseStatusTable({
     stompClientRef.current.onConnect = (frame) => {
       // console.log('커넥션 생성 완료 : ' + frame);
 
-      // 학생 상태 성공 메시지 구독
+      // 학생 입장 상태
       stompClientRef.current.subscribe(
         '/topic/assginment-status',
         (message) => {
@@ -213,14 +221,19 @@ export default function TeacherCourseStatusTable({
         eclassUuid: eclassUuid,
       };
 
-      // console.log(
-      //   '[TeacherCourseStatusTable] eclassStudentData : ' +
-      //     JSON.stringify(eclassStudentData, null, 2),
-      // );
+      console.log(
+        '[TeacherCourseStatusTable] eclassStudentData : ' +
+          JSON.stringify(eclassStudentData, null, 2),
+      );
 
       const response = await customAxios.post(
         `${process.env.REACT_APP_API_URL}/api/sessions/student/get`,
         eclassStudentData,
+      );
+
+      console.log(
+        '[response] eclassStudentData : ' +
+          JSON.stringify(response.data, null, 2),
       );
 
       if (!response.data || !response.data.username) {
