@@ -77,7 +77,7 @@ export function StudentStepCompnent(props) {
         props.setStepCount(parsedMessage.stepCount);
         setSocketEclassUuid(parsedMessage.lectureDataUuid);
 
-        // assginmentCheckStompClient('success');
+        assginmentCheckStompClient('success');
       });
     };
 
