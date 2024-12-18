@@ -27,7 +27,7 @@ export const createEclass = async (eclassData) => {
       //   lectureData,
       // );
 
-      console.log('Lecture created successfully:', createResponse.data);
+      // console.log('Lecture created successfully:', createResponse.data);
     } catch (error) {
       console.error('There was an error:', error);
     }
