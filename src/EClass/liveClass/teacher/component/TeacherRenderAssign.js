@@ -138,7 +138,7 @@ function TeacherRenderAssign({ tableData }) {
 
                   const data = Array(rows + 1)
                     .fill()
-                    .map(() => Array(columns).fill(0));
+                    ?.map(() => Array(columns).fill(0));
 
                   res.data.numericFields.forEach((table) => {
                     const key = Object.keys(table)[0];
@@ -435,12 +435,12 @@ function TeacherRenderAssign({ tableData }) {
                         </tr>
                       </thead>
                       <tbody>
-                        {dataContent.map((row, rowIndex) => (
+                        {dataContent?.map((row, rowIndex) => (
                           <tr
                             key={rowIndex}
                             style={{ borderBottom: '1px solid #ddd' }}
                           >
-                            {headers.map((header, index) => (
+                            {headers?.map((header, index) => (
                               <td
                                 key={`${rowIndex}-${header}`}
                                 style={{
@@ -511,7 +511,7 @@ function TeacherRenderAssign({ tableData }) {
   // }, [data]);
   return (
     <div style={{ width: '100%' }}>
-      {data.map((item) => (
+      {data?.map((item) => (
         <Paper
           key={item.uuid}
           style={{
@@ -526,7 +526,7 @@ function TeacherRenderAssign({ tableData }) {
             <Typography variant="h4" gutterBottom>
               {item.contentName}
             </Typography>
-            {item.contents.map((content, index) => (
+            {item.contents?.map((content, index) => (
               <RenderContent
                 content={content}
                 onSubmitTextBox={handleTextBoxSubmit}
@@ -558,7 +558,7 @@ function RenderContent({
       const response = await customAxios.get(`api/custom/${id}`);
       const fetchedData = response.data;
 
-      const formattedData = fetchedData.numericFields.map((field, index) => ({
+      const formattedData = fetchedData.numericFields?.map((field, index) => ({
         ...fetchedData.stringFields[index],
         ...field,
       }));
