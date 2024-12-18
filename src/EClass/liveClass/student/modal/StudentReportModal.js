@@ -617,7 +617,7 @@ function StudentReportModal({
           await customAxios.post('/api/report/save', updatedData);
         }
 
-        // window.location.reload();
+        window.location.reload();
       } catch (error) {
         console.error('오류가 발생했습니다: ', error);
         alert('제출에 실패했습니다. 다시 시도해 주세요.');

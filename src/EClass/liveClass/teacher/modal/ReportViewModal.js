@@ -477,7 +477,7 @@ function ReportViewModal({ open, onClose, tableData }) {
                         </tr>
                       </thead>
                       <tbody>
-                        {dataContent.map((row, rowIndex) => (
+                        {dataContent?.map((row, rowIndex) => (
                           <tr
                             key={rowIndex}
                             style={{ borderBottom: '1px solid #ddd' }}
