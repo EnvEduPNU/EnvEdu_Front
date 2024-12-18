@@ -22,10 +22,10 @@ export const createEclass = async (eclassData) => {
       await customAxios.post('api/steps/saveLectureContent', eclassData);
 
       // 두 번째 요청
-      const createResponse = await customAxios.post(
-        '/api/eclass/create',
-        lectureData,
-      );
+      // const createResponse = await customAxios.post(
+      //   '/api/eclass/create',
+      //   lectureData,
+      // );
 
       console.log('Lecture created successfully:', createResponse.data);
     } catch (error) {
