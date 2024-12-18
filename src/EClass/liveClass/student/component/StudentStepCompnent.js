@@ -19,10 +19,10 @@ export function StudentStepCompnent(props) {
   const token = localStorage.getItem('access_token')?.replace('Bearer ', '');
 
   useEffect(() => {
-    console.log(
-      '세션 아이디 스탯 : ' +
-        JSON.stringify(props.sessionIdState || {}, null, 2),
-    );
+    // console.log(
+    //   '세션 아이디 스탯 : ' +
+    //     JSON.stringify(props.sessionIdState || {}, null, 2),
+    // );
   }, [props.sessionIdState]);
 
   // Update state when props change
@@ -51,7 +51,7 @@ export function StudentStepCompnent(props) {
       assginmentStompClient.current?.deactivate();
       stompClient.current = null;
       assginmentStompClient.current = null;
-      console.log('Disconnected from WebSocket.');
+      // console.log('Disconnected from WebSocket.');
     };
   }, [props.sessionIdState]);
 
@@ -59,23 +59,28 @@ export function StudentStepCompnent(props) {
   const setupPageSocket = () => {
     if (!props.sessionIdState || stompClient.current) return;
 
-    console.log('Initializing page WebSocket...');
+    // console.log('Initializing page WebSocket...');
     const sock = new SockJS(
       `${process.env.REACT_APP_API_URL}/ws?token=${token}`,
     );
     const client = new Client({ webSocketFactory: () => sock });
 
     client.onConnect = (frame) => {
-      console.log('Connected to page WebSocket:', frame);
+      // console.log('Connected to page WebSocket:', frame);
       client.subscribe('/topic/switchPage', (message) => {
         const parsedMessage = JSON.parse(message.body);
-        console.log('Page update received:', parsedMessage);
+        // console.log('Page update received:', parsedMessage);
 
         setPage(parsedMessage.page);
         props.setPage(parsedMessage.page);
         setStepCount(parsedMessage.stepCount);
         props.setStepCount(parsedMessage.stepCount);
         setSocketEclassUuid(parsedMessage.lectureDataUuid);
+
+        if (parsedMessage?.page == 'stop') {
+          // alert(JSON.stringify(parsedMessage, null, 2));
+          localStorage.removeItem('stepNum');
+        }
 
         assginmentCheckStompClient('success');
       });
@@ -94,7 +99,7 @@ export function StudentStepCompnent(props) {
   const setupAssignmentSocket = () => {
     if (assginmentStompClient.current) return;
 
-    console.log('Initializing assignment WebSocket...');
+    // console.log('Initializing assignment WebSocket...');
     const sock = new SockJS(
       `${process.env.REACT_APP_API_URL}/ws?token=${token}`,
     );
@@ -114,7 +119,7 @@ export function StudentStepCompnent(props) {
   // Assignment status WebSocket message handling
   const assginmentCheckStompClient = async (state) => {
     if (!assginmentStompClient.current?.connected) {
-      console.error('Assignment WebSocket is not connected.');
+      // console.error('Assignment WebSocket is not connected.');
       return;
     }
 
@@ -124,8 +129,6 @@ export function StudentStepCompnent(props) {
       assginmentShared: state === 'success',
       timestamp: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
     };
-
-    console.log('Sending assignment status:', message);
 
     assginmentStompClient.current.publish({
       destination: '/app/assginment-status',

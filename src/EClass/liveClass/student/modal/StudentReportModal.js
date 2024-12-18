@@ -98,7 +98,7 @@ function StudentReportModal({
   const [textBoxValues, setTextBoxValues] = useState({});
   const [data, setData] = useState([]);
   const [studentId, setStudentId] = useState();
-  console.log(tableData);
+  // console.log(tableData);
   useEffect(() => {
     const fetchStudentId = async () => {
       const username = localStorage.getItem('username');
@@ -148,7 +148,7 @@ function StudentReportModal({
 
         for (let j = 0; j < curData.contents.length; j++) {
           const content = curData.contents[j];
-          console.log(content);
+          // console.log(content);
           if (content.type === 'html') {
             newStep.contents.push({
               type: 'html',
@@ -546,13 +546,14 @@ function StudentReportModal({
         }
         newSteps.push(newStep);
       }
-      console.log(newSteps);
+      // console.log(newSteps);
       if (newStep === undefined) setData([]);
       else setData(newSteps);
     };
     fetchData();
   }, [latestTableData, tableData]);
-  console.log(data);
+
+  // console.log(data);
   const handleSubmit = async () => {
     const studentName = localStorage.getItem('username');
     const dataToUse = latestTableData || tableData;
@@ -568,7 +569,7 @@ function StudentReportModal({
             content: textBoxDatas[stepIndex + 1 + contentIndex],
           };
         } else if (contentItem.type === 'dataInChartButton') {
-          console.log(contentItem);
+          // console.log(contentItem);
 
           return {
             type: 'chartImg',
@@ -680,7 +681,7 @@ function StudentReportModal({
     pdf.save('report.pdf');
   };
 
-  console.log(data);
+  // console.log(data);
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="lg">

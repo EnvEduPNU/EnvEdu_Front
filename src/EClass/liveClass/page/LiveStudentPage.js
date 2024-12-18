@@ -40,7 +40,10 @@ export const LiveStudentPage = () => {
   const navigate = useNavigate();
 
   const photoList = location.state?.photoList || [];
+
   const [openReportModal, setOpenReportModal] = useState(false);
+
+  const stepNum = localStorage.getItem('stepNum');
 
   const handleReportButtonClick = () => {
     setOpenReportModal(true);
@@ -118,6 +121,11 @@ export const LiveStudentPage = () => {
     };
 
     fetch();
+
+    // if (stepNum) {
+    //   alert(stepNum);
+    //   setStepCount(stepNum);
+    // }
   }, []);
 
   // useEffect(() => {

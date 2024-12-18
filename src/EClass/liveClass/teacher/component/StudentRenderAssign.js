@@ -100,7 +100,7 @@ const handleDeleteFromS3 = async (imageUrl) => {
         'X-Previous-Image-URL': imageUrl, // 커스텀 헤더로 URL을 전달
       },
     });
-    console.log('이미지 삭제 성공:', imageUrl);
+    // console.log('이미지 삭제 성공:', imageUrl);
     window.location.reload();
   } catch (error) {
     console.error('이미지 삭제 오류:', error);
@@ -130,7 +130,7 @@ function StudentRenderAssign({
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열기 상태 추가
   const navigate = useNavigate();
   const uploadedImagesState = useRef([]); // 업로드된 이미지 상태
-  console.log(textBoxDatas);
+  // console.log(textBoxDatas);
   const [imageUrlArray, setImageUrlArray] = useState([]);
 
   // Zustand store에서 getStorePhotoList 가져오기
@@ -149,8 +149,10 @@ function StudentRenderAssign({
     }
   }, []);
 
-  const handleNavigate = (dataType, uuid) => {
+  const handleNavigate = (dataType, uuid, stepNum) => {
     const id = 'drawGraph';
+    // alert(stepNum);
+    localStorage.setItem('stepNum', stepNum);
     navigate(`/data-in-chart?id=${id}&dataType=${dataType}&uuid=${uuid}`);
   };
 
@@ -793,7 +795,7 @@ function StudentRenderAssign({
                     return { ...contentItem }; // 기존 dataInChartButton 반환
                   }
 
-                  console.log('컨텐츠 타입 확인 : ' + contentItem.type);
+                  // console.log('컨텐츠 타입 확인 : ' + contentItem.type);
 
                   return contentItem;
                 })
@@ -815,10 +817,10 @@ function StudentRenderAssign({
 
           // img 타입 추가
           if (current.type === 'dataInChartButton' && flag) {
-            console.log(
-              '잘 들어갔나 : ' +
-                JSON.stringify(uploadedImagesState.current, null, 2),
-            );
+            // console.log(
+            //   '잘 들어갔나 : ' +
+            //     JSON.stringify(uploadedImagesState.current, null, 2),
+            // );
             uploadedImagesState.current.forEach((img) => {
               acc.push(img); // 이미지들을 dataInChartButton 아래에 추가
             });
@@ -833,19 +835,19 @@ function StudentRenderAssign({
       }),
     }));
 
-    console.log(
-      '최종 제출 데이터 : ' + JSON.stringify(finalUpdatedData, null, 2),
-    );
+    // console.log(
+    //   '최종 제출 데이터 : ' + JSON.stringify(finalUpdatedData, null, 2),
+    // );
 
     const requestData = {
       stepCheck: stepCheck,
       studentId: studentId,
     };
 
-    console.log(
-      '저장하는 학생의 세션 uuid : ' +
-        JSON.stringify(finalUpdatedData[0].uuid, null, 2),
-    );
+    // console.log(
+    //   '저장하는 학생의 세션 uuid : ' +
+    //     JSON.stringify(finalUpdatedData[0].uuid, null, 2),
+    // );
 
     const assignmentUuidRegistData = {
       eclassUuid: eclassUuid,
@@ -898,7 +900,7 @@ function StudentRenderAssign({
             console.error('전체 이미지 삭제 처리 중 오류 발생:', error);
           }
 
-          console.log('제출된 객체 : ', updatedData);
+          // console.log('제출된 객체 : ', updatedData);
           alert('제출 완료했습니다.');
           window.location.reload();
         } catch (error) {
@@ -931,16 +933,15 @@ function StudentRenderAssign({
     });
   };
 
-  console.log(data);
   const shouldDisplaySubmitButton = data.some((stepData) =>
-    stepData.contents.some(
+    stepData.contents?.some(
       (contentItem) =>
         contentItem.type === 'dataInChartButton' ||
         contentItem.type === 'textBox',
     ),
   );
 
-  console.log('여기', data);
+  // console.log('여기', data);
   return (
     <div>
       {data.map((stepData) => (
@@ -959,7 +960,7 @@ function StudentRenderAssign({
               <Typography variant="h4" gutterBottom>
                 {stepData.contentName}
               </Typography>
-              {stepData.contents.map((content, idx) => (
+              {stepData.contents?.map((content, idx) => (
                 <RenderContent
                   key={`${stepData.stepNum}-${idx}`}
                   content={content}
@@ -1020,12 +1021,14 @@ function RenderContent({
   stepNum,
 }) {
   const [tableData, setTableData] = useState(null);
-  console.log(content);
-  console.log(index, stepNum);
+  // console.log(content);
+  // console.log(index, stepNum);
+  // alert(stepNum);
+
   const handleTextChange = (e, index, stepNum) => {
     setTextBoxValue((prev) => {
       const copied = { ...prev };
-      console.log(index, stepNum);
+      // console.log(index, stepNum);
       copied[index + stepNum] = e.target.value;
       return copied;
     });
@@ -1040,8 +1043,6 @@ function RenderContent({
         ...fetchedData.stringFields[index],
         ...field,
       }));
-
-      console.log('아 여기 어디야 : ' + JSON.stringify(formattedData, null, 2));
 
       setTableData(formattedData); // 테이블 데이터를 상태에 저장
     } catch (error) {
@@ -1096,7 +1097,11 @@ function RenderContent({
           <div style={{ display: 'flex' }}>
             <Button
               onClick={() =>
-                onNavigate(content.content.dataType, content.content.id)
+                onNavigate(
+                  content.content.dataType,
+                  content.content.id,
+                  stepNum,
+                )
               }
               variant="contained"
               color="primary"
