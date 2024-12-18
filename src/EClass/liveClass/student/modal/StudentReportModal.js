@@ -747,7 +747,7 @@ function StudentReportModal({
           취소
         </Button>
         <Button onClick={handleSubmit} color="primary">
-          제출
+          저장
         </Button>
         <Button onClick={handleSavePDF} color="primary">
           PDF 저장
