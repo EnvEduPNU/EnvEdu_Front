@@ -149,7 +149,104 @@ function StudentRenderAssign({
     }
   }, []);
 
-  const handleNavigate = (dataType, uuid, stepNum) => {
+  // console.log(data);
+  const handleSubmit2 = async () => {
+    const studentName = localStorage.getItem('username');
+    const reportUuid = uuidv4();
+
+    const groupedContents = data.map((data, stepIndex) => ({
+      contentName: data.contentName, // data에서 contentName 가져오기
+      stepNum: data.stepNum, // data에서 stepNum 가져오기
+      contents: data.contents.map((contentItem, contentIndex) => {
+        if (contentItem.type === 'textBox') {
+          return {
+            ...contentItem,
+            content: {
+              text:
+                textBoxDatas[contentItem.content.uuid] === undefined
+                  ? contentItem.content.text
+                  : textBoxDatas[contentItem.content.uuid],
+              uuid: contentItem.content.uuid,
+            },
+          };
+        } else if (contentItem.type === 'dataInChartButton') {
+          // console.log(contentItem);
+          console.log(contentItem);
+          if (contentItem.content.photoList !== undefined)
+            return {
+              type: 'dataInChartButton',
+              content: {
+                photoList: [
+                  ...localStoredPhotoList.map((photo) => photo.image),
+                  ...contentItem.content.photoList,
+                ],
+                dataType: contentItem.content.dataType,
+                id: contentItem.content.id,
+              },
+            };
+
+          return {
+            type: 'dataInChartButton',
+            content: {
+              photoList: [...localStoredPhotoList.map((photo) => photo.image)],
+              dataType: contentItem.content.dataType,
+              id: contentItem.content.id,
+            },
+          };
+        }
+        return contentItem;
+      }),
+    }));
+
+    const updatedData = [
+      {
+        uuid: reportUuid,
+        timestamp: new Date().toISOString(),
+        username: studentName,
+        stepName: '수업 테스트', // 고정된 값으로 설정
+        stepCount: groupedContents.length,
+        contents: groupedContents,
+      },
+    ];
+
+    if (window.confirm('제출하시겠습니까?')) {
+      try {
+        // console.log(
+        //   '업데이트 하기전 확인 : ' + JSON.stringify(updatedData, null, 2),
+        // );
+        // console.log(
+        //   '업데이트 하기전 확인 assginmentCheck : ' +
+        //     JSON.stringify(assginmentCheck, null, 2),
+        // );
+
+        const requestData = {
+          reportUuid: reportUuid,
+          studentId: studentId,
+        };
+
+        await customAxios.post(
+          '/api/eclass/student/assignment/report/save',
+          requestData,
+        );
+        alert('제출 완료했습니다!');
+
+        if (assginmentCheck) {
+          await customAxios.put('/api/report/update', updatedData);
+        } else {
+          await customAxios.post('/api/report/save', updatedData);
+        }
+
+        // window.location.reload();
+      } catch (error) {
+        console.error('오류가 발생했습니다: ', error);
+        alert('제출에 실패했습니다. 다시 시도해 주세요.');
+      }
+    }
+  };
+
+  const handleNavigate = async (dataType, uuid, stepNum) => {
+    await handleSubmit2();
+
     const id = 'drawGraph';
     // alert(stepNum);
     localStorage.setItem('stepNum', stepNum);
@@ -181,7 +278,7 @@ function StudentRenderAssign({
     // console.log('Filtered Data:', filteredData);
 
     // 상태에 필터링된 데이터 세팅
-
+    console.log(filteredData);
     const fetchData = async () => {
       // console.log(filteredData);
       let newStep;
@@ -201,7 +298,10 @@ function StudentRenderAssign({
           } else if (content.type === 'textBox') {
             newStep.contents.push({
               type: 'textBox',
-              content: '',
+              content: {
+                text: content.content.text,
+                uuid: content.content.uuid,
+              },
             });
           } else if (content.type === 'img') {
             newStep.contents.push({
@@ -589,7 +689,7 @@ function StudentRenderAssign({
           }
         }
       }
-      // console.log([newStep]);
+      console.log([newStep]);
       setData([newStep]);
     };
     fetchData();
@@ -1021,15 +1121,15 @@ function RenderContent({
   stepNum,
 }) {
   const [tableData, setTableData] = useState(null);
-  // console.log(content);
+
   // console.log(index, stepNum);
   // alert(stepNum);
 
-  const handleTextChange = (e, index, stepNum) => {
+  const handleTextChange = (e, uuid) => {
     setTextBoxValue((prev) => {
       const copied = { ...prev };
       // console.log(index, stepNum);
-      copied[index + stepNum] = e.target.value;
+      copied[uuid] = e.target.value;
       return copied;
     });
   };
@@ -1067,16 +1167,17 @@ function RenderContent({
         : null,
     );
   }
-
+  console.log(content);
   switch (content.type) {
     case 'html':
       return <div dangerouslySetInnerHTML={{ __html: content.content }} />;
     case 'textBox':
       return (
         <textarea
-          value={textBoxValue[index + stepNum]}
+          defaultValue={content.content.text}
+          value={textBoxValue[content.content.uuid]}
           onChange={(e) => {
-            handleTextChange(e, index, stepNum);
+            handleTextChange(e, content.content.uuid);
           }}
           placeholder="답변을 입력해주세요"
           className="w-full p-4 text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
@@ -1091,6 +1192,7 @@ function RenderContent({
           }}
         />
       );
+
     case 'dataInChartButton':
       return (
         <div>
@@ -1121,79 +1223,7 @@ function RenderContent({
             >
               Data & Chart
             </Button>
-
-            {/* 데이터 가져오기 버튼 */}
-            {/* <Button
-              onClick={() => handleSelectData(content.content)}
-              variant="contained"
-              color="secondary"
-              sx={{
-                backgroundColor: '#6200ea',
-                color: 'white',
-                padding: '10px 20px',
-                marginLeft: '10px',
-                borderRadius: '20px',
-                boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
-                fontWeight: 'bold',
-                fontSize: '1rem',
-                transition: 'background-color 0.3s ease',
-                '&:hover': {
-                  backgroundColor: '#3700b3',
-                },
-              }}
-            >
-              테이블 보기
-            </Button> */}
           </div>
-
-          {/* 테이블 렌더링 */}
-          {tableData && (
-            <div style={{ overflowX: 'auto', marginTop: '20px' }}>
-              <table
-                style={{
-                  width: '100%',
-                  borderCollapse: 'collapse',
-                  marginTop: '10px',
-                }}
-              >
-                <thead>
-                  <tr>
-                    {Object.keys(tableData[0]).map((header, index) => (
-                      <th
-                        key={index}
-                        style={{
-                          border: '1px solid #ddd',
-                          padding: '8px',
-                          backgroundColor: '#f2f2f2',
-                          textAlign: 'center',
-                        }}
-                      >
-                        {header}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {tableData.map((row, rowIndex) => (
-                    <tr key={rowIndex}>
-                      {Object.values(row).map((cell, cellIndex) => (
-                        <td
-                          key={cellIndex}
-                          style={{
-                            border: '1px solid #ddd',
-                            padding: '8px',
-                            textAlign: 'center',
-                          }}
-                        >
-                          {cell.value || cell}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
 
           <div
             style={{
@@ -1228,6 +1258,15 @@ function RenderContent({
             ) : (
               <></>
             )}
+            {content.content.photoList !== undefined &&
+              content.content.photoList.map((item, index) => (
+                <div
+                  key={index}
+                  dangerouslySetInnerHTML={{
+                    __html: `<img src="${item}" alt="Chart Image" />`,
+                  }}
+                />
+              ))}
           </div>
         </div>
       );

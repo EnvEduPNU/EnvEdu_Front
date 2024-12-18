@@ -1441,7 +1441,10 @@ function CreateClassPage() {
                         if (content.type === 'textBox') {
                           return {
                             type: 'textBox',
-                            content: '답변을 이곳에 입력해주세요',
+                            content: {
+                              text: '답변을 이곳에 입력해주세요',
+                              uuid: uuidv4(),
+                            },
                             x: null,
                             y: null,
                           };
