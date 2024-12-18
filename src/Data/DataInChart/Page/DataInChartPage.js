@@ -43,13 +43,12 @@ function DataInChartPage() {
   const [summary, setSummary] = useState([]);
 
   useEffect(() => {
-    console.log(
-      '선생님이 지정한 테이블 uuid : ' + JSON.stringify(content, null, 2),
-    );
-
-    console.log(
-      '데이터 카테고리 체크 : ' + JSON.stringify(dataCategory, null, 2),
-    );
+    // console.log(
+    //   '선생님이 지정한 테이블 uuid : ' + JSON.stringify(content, null, 2),
+    // );
+    // console.log(
+    //   '데이터 카테고리 체크 : ' + JSON.stringify(dataCategory, null, 2),
+    // );
   }, []);
 
   const navigate = useNavigate(); // 페이지 이동을 위한 navigate 훅
@@ -99,6 +98,9 @@ function DataInChartPage() {
   // 제출 버튼을 클릭했을 때 photoList와 함께 이전 페이지로 이동하는 함수
   const handleSubmit = () => {
     // console.log(' 전달 전 확인 : ' + JSON.stringify(photoList, null, 2));
+    const stepNum = localStorage.getItem('stepNum');
+
+    // alert(stepNum);
 
     const photoStore = {
       uuid: uuid,
@@ -116,6 +118,8 @@ function DataInChartPage() {
     // 저장된 상태를 console로 확인
     console.log('Stored photoStore:', getPhotoStore());
     console.log('Stored photoList:', getStorePhotoList());
+
+    // 현재 페이지에서 navigate(-1)와 함께 state 전달
 
     navigate(-1);
   };

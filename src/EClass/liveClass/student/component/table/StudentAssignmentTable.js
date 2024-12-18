@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -57,13 +56,11 @@ function fixedHeaderContent() {
     </TableHead>
   );
 }
+
 function rowContent(_index, row, handleClick, selectedRow) {
   return (
-    <React.Fragment>
+    <>
       {columns.map((column) => {
-        // console.log('현재 selectedRow:', selectedRow);
-        // console.log('row 확인 :', JSON.stringify(row, null, 2));
-
         const cellKey = `${row.stepNum}-${column.dataKey}`; // 고유하고 안정적인 key 생성
         return (
           <TableCell
@@ -74,7 +71,7 @@ function rowContent(_index, row, handleClick, selectedRow) {
             // }
             sx={{
               backgroundColor:
-                selectedRow === row.stepNum ? '#f0f0f0' : 'inherit', // stepNum 기준으로 비교
+                selectedRow === row.stepNum ? '#f0f0f0' : 'inherit',
               cursor: 'pointer',
               textAlign: 'left',
               color: 'inherit',
@@ -85,12 +82,13 @@ function rowContent(_index, row, handleClick, selectedRow) {
           </TableCell>
         );
       })}
-    </React.Fragment>
+    </>
   );
 }
 
 export default function StudentAssignmentTable(props) {
   const [selectedRow, setSelectedRow] = useState(null);
+
   const handleRowClick = (stepNum, contentName, stepNumParam) => {
     console.log('클릭된 StepNum:', stepNum);
 
@@ -101,9 +99,23 @@ export default function StudentAssignmentTable(props) {
     props.setStepCount(stepNumParam); // stepNum을 stepCount로 설정
   };
 
-  // useEffect(() => {
-  //   console.log('테이블 확인 : ' + JSON.stringify(props.tableData, null, 2));
-  // }, [props]);
+  // 초기 렌더링 시 localStorage에서 stepNum 확인
+  useEffect(() => {
+    const storedStepNum = localStorage.getItem('stepNum');
+    if (storedStepNum) {
+      const stepNum = parseInt(storedStepNum, 10);
+      const selectedRowData = props.tableData.find(
+        (row) => row.stepNum === stepNum,
+      );
+
+      if (selectedRowData) {
+        // 로컬스토리지 값에 맞는 행을 선택
+        setSelectedRow(stepNum);
+        props.setCourseStep(selectedRowData.contentName);
+        props.setStepCount(stepNum);
+      }
+    }
+  }, [props.tableData, props.setCourseStep, props.setStepCount]);
 
   return (
     <div style={{ width: '100%', height: '550px', overflow: 'auto' }}>
