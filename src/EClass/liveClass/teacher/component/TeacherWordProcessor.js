@@ -1085,7 +1085,7 @@ export default function TeacherWordProcessor({
                   }}
                   onClick={handleNavigate}
                 >
-                  그래프 그리기
+                  Data & Chart
                 </Button>
 
                 {/* 삭제 버튼 */}
@@ -1373,7 +1373,7 @@ export default function TeacherWordProcessor({
                       e.target.style.transform = 'scale(1)'; // 원래 크기로 복구
                     }}
                   >
-                    그래프 그리기 추가
+                    Data & Chart 추가
                   </button>
                 </div>
               </div>

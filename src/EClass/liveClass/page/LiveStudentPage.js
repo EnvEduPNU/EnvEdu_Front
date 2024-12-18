@@ -451,7 +451,7 @@ export const LiveStudentPage = () => {
                 fontSize: '1.5rem',
               }}
             >
-              {' 친구들의 보고서 '}
+              {' 제출된 보고서 확인 '}
             </Typography>
             <StudentReportTable selectedEClassUuid={eClassUuid} />
             <Button
@@ -469,7 +469,9 @@ export const LiveStudentPage = () => {
                 border: 'none',
               }}
             >
-              {isSubmittedListVisible ? 'E-Class 리스트' : '친구들의 보고서'}
+              {isSubmittedListVisible
+                ? 'E-Class 리스트'
+                : '제출된 보고서 확인  '}
             </Button>
           </>
         ) : (
@@ -514,7 +516,7 @@ export const LiveStudentPage = () => {
                   border: 'none',
                 }}
               >
-                보고서
+                보고서 입력
               </Button>
               <Button
                 variant="contained"
@@ -533,7 +535,9 @@ export const LiveStudentPage = () => {
                   border: 'none',
                 }}
               >
-                {isSubmittedListVisible ? 'E-Class 리스트' : '친구들의 보고서'}
+                {isSubmittedListVisible
+                  ? 'E-Class 리스트'
+                  : '제출된 보고서 확인'}
               </Button>
             </div>
           </>

@@ -616,7 +616,7 @@ function RenderContent({
                 },
               }}
             >
-              그래프 그리기
+              Data & Chart
             </Button>
 
             {/* 데이터 가져오기 버튼 */}
