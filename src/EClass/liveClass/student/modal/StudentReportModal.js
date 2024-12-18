@@ -505,7 +505,7 @@ function StudentReportModal({
                         </tr>
                       </thead>
                       <tbody>
-                        {dataContent.map((row, rowIndex) => (
+                        {dataContent?.map((row, rowIndex) => (
                           <tr
                             key={rowIndex}
                             style={{ borderBottom: '1px solid #ddd' }}
@@ -546,7 +546,7 @@ function StudentReportModal({
         }
         newSteps.push(newStep);
       }
-      // console.log(newSteps);
+      console.log(newSteps);
       if (newStep === undefined) setData([]);
       else setData(newSteps);
     };
@@ -680,7 +680,7 @@ function StudentReportModal({
     pdf.save('report.pdf');
   };
 
-  // console.log(data);
+  console.log(data);
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="lg">
