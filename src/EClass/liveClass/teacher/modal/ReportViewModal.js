@@ -124,18 +124,16 @@ function ReportViewModal({ open, onClose, tableData }) {
           } else if (content.type === 'textBox') {
             newStep.contents.push({
               type: 'textBox',
-              content: content.content,
+              content: {
+                text: content.content.text,
+                uuid: content.content.uuid,
+              },
             });
           } else if (content.type === 'img') {
             newStep.contents.push({
               type: 'img',
               url: content.content,
               file: null,
-            });
-          } else if (content.type === 'chartImg') {
-            newStep.contents.push({
-              type: 'chartImg',
-              files: content.content,
             });
           } else if (content.type === 'data') {
             let tableContent;
@@ -524,7 +522,7 @@ function ReportViewModal({ open, onClose, tableData }) {
     };
     fetchData();
   }, [tableData]);
-
+  console.log(data);
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="lg">
       <DialogTitle>보고서</DialogTitle>
@@ -600,14 +598,6 @@ function RenderContent({
   index,
   storedPhotoList,
 }) {
-  const handleTextChange = (e, index, stepNum) => {
-    setTextBoxValue((prev) => {
-      const copied = { ...prev };
-      console.log(index, stepNum);
-      copied[index + stepNum] = e.target.value;
-      return copied;
-    });
-  };
   console.log(content);
   console.log(stepIndex, index);
   switch (content.type) {
@@ -622,10 +612,8 @@ function RenderContent({
     case 'textBox':
       return (
         <textarea
-          value={content.content}
-          onChange={(e) => {
-            handleTextChange(e, index, stepIndex);
-          }}
+          value={content.content.text}
+          disabled
           placeholder="답변을 입력해주세요"
           className="w-full p-4 text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
           rows="3"
@@ -642,6 +630,28 @@ function RenderContent({
     case 'dataInChartButton':
       return (
         <div>
+          <div style={{ display: 'flex' }}>
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{
+                backgroundColor: '#6200ea',
+                color: 'white',
+                padding: '10px 20px',
+                borderRadius: '20px',
+                boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+                fontWeight: 'bold',
+                fontSize: '1rem',
+                transition: 'background-color 0.3s ease',
+                '&:hover': {
+                  backgroundColor: '#3700b3',
+                },
+              }}
+            >
+              Data & Chart
+            </Button>
+          </div>
+
           <div
             style={{
               marginTop: '10px',
@@ -650,26 +660,23 @@ function RenderContent({
               gap: '10px',
               justifyContent: 'center',
             }}
-          ></div>
+          >
+            {content.content.photoList !== undefined &&
+              content.content.photoList.map((item, index) => (
+                <div
+                  key={index}
+                  dangerouslySetInnerHTML={{
+                    __html: `<img src="${item}" alt="Chart Image" />`,
+                  }}
+                />
+              ))}
+          </div>
         </div>
       );
     case 'data':
       return React.createElement(
         content.content.view.type,
         content.content.view.props,
-      );
-    case 'chartImg':
-      return (
-        <div>
-          {content.files.map((item, index) => (
-            <div
-              key={index}
-              dangerouslySetInnerHTML={{
-                __html: `<img src="${item}" alt="Chart Image" />`,
-              }}
-            />
-          ))}
-        </div>
       );
 
     case 'emptyBox':

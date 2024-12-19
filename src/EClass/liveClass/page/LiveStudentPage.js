@@ -55,12 +55,8 @@ export const LiveStudentPage = () => {
 
   useEffect(() => {
     const fetch = async () => {
-      const requestData = {
-        eclassUuid: eClassUuid,
-        username: localStorage.getItem('username'),
-      };
-
       const username = localStorage.getItem('username');
+      let userUuid = null;
 
       // console.log(
       //   '{!!!!! 유저 이름 !!!!!]  : ' +
@@ -69,29 +65,65 @@ export const LiveStudentPage = () => {
 
       // 맨 처음 스텝 테이블 디폴트 세팅
       try {
-        const lectureData = await customAxios.get(
-          '/api/steps/getLectureContentOne',
-          {
-            params: {
-              uuid: lectureDataUuid,
-            },
-          },
+        const response = await customAxios.get(
+          `/api/eclass/student/assignment/report/get/${eClassUuid}`,
         );
+        const reportInfoMap = response.data;
 
-        // console.log(
-        //   '해당 데이터 : ' + JSON.stringify(lectureData.data, null, 2),
-        // );
+        const newRows = Object.entries(reportInfoMap).map(
+          ([reportData, reportUsername], index) => {
+            if (username === reportUsername) userUuid = reportData;
+            return {
+              userName: reportUsername,
+              reportUuid: reportData,
+            };
+          },
+        ); //지우면 안됨!!
 
-        const formattedData = lectureData.data.contents.map((content) => ({
-          contentName: content.contentName,
-          stepNum: content.stepNum,
-          contents: content.contents,
-        }));
+        console.log(userUuid);
 
-        // console.log('포맷 된 데이터:', JSON.stringify(formattedData, null, 2));
+        if (userUuid === null) {
+          const lectureData = await customAxios.get(
+            '/api/steps/getLectureContentOne',
+            {
+              params: {
+                uuid: lectureDataUuid,
+              },
+            },
+          );
 
-        setTableData(formattedData);
-        setAllData(lectureData.data);
+          // console.log(
+          //   '해당 데이터 : ' + JSON.stringify(lectureData.data, null, 2),
+          // );
+
+          const formattedData = lectureData.data.contents.map((content) => ({
+            contentName: content.contentName,
+            stepNum: content.stepNum,
+            contents: content.contents,
+          }));
+
+          // console.log('포맷 된 데이터:', JSON.stringify(formattedData, null, 2));
+
+          setTableData(formattedData);
+          setAllData(lectureData.data);
+        } else {
+          const serverLectureData = await customAxios.post(
+            '/api/report/getstep',
+            [userUuid],
+          );
+          const formattedData = serverLectureData.data[0].contents.map(
+            (content) => ({
+              contentName: content.contentName,
+              stepNum: content.stepNum,
+              contents: content.contents,
+            }),
+          );
+
+          // console.log('포맷 된 데이터:', JSON.stringify(formattedData, null, 2));
+
+          setTableData(formattedData);
+          setAllData(serverLectureData.data[0]);
+        }
       } catch (error) {
         alert('Default Table Data Error! ', error);
       }

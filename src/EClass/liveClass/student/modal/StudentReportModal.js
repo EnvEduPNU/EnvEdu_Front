@@ -157,7 +157,10 @@ function StudentReportModal({
           } else if (content.type === 'textBox') {
             newStep.contents.push({
               type: 'textBox',
-              content: content.content,
+              content: {
+                text: content.content.text,
+                uuid: content.content.uuid,
+              },
             });
           } else if (content.type === 'img') {
             newStep.contents.push({
@@ -566,14 +569,37 @@ function StudentReportModal({
         if (contentItem.type === 'textBox') {
           return {
             ...contentItem,
-            content: textBoxDatas[stepIndex + 1 + contentIndex],
+            content: {
+              text:
+                textBoxDatas[contentItem.content.uuid] === undefined
+                  ? contentItem.content.text
+                  : textBoxDatas[contentItem.content.uuid],
+              uuid: contentItem.content.uuid,
+            },
           };
         } else if (contentItem.type === 'dataInChartButton') {
           // console.log(contentItem);
+          console.log(contentItem);
+          if (contentItem.content.photoList !== undefined)
+            return {
+              type: 'dataInChartButton',
+              content: {
+                photoList: [
+                  ...storedPhotoList.map((photo) => photo.image),
+                  ...contentItem.content.photoList,
+                ],
+                dataType: contentItem.content.dataType,
+                id: contentItem.content.id,
+              },
+            };
 
           return {
-            type: 'chartImg',
-            content: storedPhotoList.map((photo) => photo.image),
+            type: 'dataInChartButton',
+            content: {
+              photoList: [...storedPhotoList.map((photo) => photo.image)],
+              dataType: contentItem.content.dataType,
+              id: contentItem.content.id,
+            },
           };
         }
         return contentItem;
@@ -766,14 +792,14 @@ function RenderContent({
   index,
   storedPhotoList,
 }) {
-  const handleTextChange = (e, index, stepNum) => {
+  const handleTextChange = (e, uuid) => {
     setTextBoxValue((prev) => {
       const copied = { ...prev };
-      console.log(index, stepNum);
-      copied[index + stepNum] = e.target.value;
+      copied[uuid] = e.target.value;
       return copied;
     });
   };
+  console.log(textBoxValue);
   console.log(content);
   console.log(stepIndex, index);
   switch (content.type) {
@@ -788,9 +814,10 @@ function RenderContent({
     case 'textBox':
       return (
         <textarea
-          value={textBoxValue[stepIndex + index]}
+          defaultValue={content.content.text}
+          value={textBoxValue[content.content.uuid]}
           onChange={(e) => {
-            handleTextChange(e, index, stepIndex);
+            handleTextChange(e, content.content.uuid);
           }}
           placeholder="답변을 입력해주세요"
           className="w-full p-4 text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
@@ -805,9 +832,33 @@ function RenderContent({
           }}
         />
       );
+
     case 'dataInChartButton':
       return (
         <div>
+          <div style={{ display: 'flex' }}>
+            <Button
+              onClick={() => alert('스텝에서 수정해주세요')}
+              variant="contained"
+              color="primary"
+              sx={{
+                backgroundColor: '#6200ea',
+                color: 'white',
+                padding: '10px 20px',
+                borderRadius: '20px',
+                boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+                fontWeight: 'bold',
+                fontSize: '1rem',
+                transition: 'background-color 0.3s ease',
+                '&:hover': {
+                  backgroundColor: '#3700b3',
+                },
+              }}
+            >
+              Data & Chart
+            </Button>
+          </div>
+
           <div
             style={{
               marginTop: '10px',
@@ -841,6 +892,15 @@ function RenderContent({
             ) : (
               <></>
             )}
+            {content.content.photoList !== undefined &&
+              content.content.photoList.map((item, index) => (
+                <div
+                  key={index}
+                  dangerouslySetInnerHTML={{
+                    __html: `<img src="${item}" alt="Chart Image" />`,
+                  }}
+                />
+              ))}
           </div>
         </div>
       );
