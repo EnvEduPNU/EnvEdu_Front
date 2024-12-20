@@ -111,12 +111,26 @@ export default function DataTableButton({ summary, onSelectData, type }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {summary.map((item, index) => (
+                  {[
+                    {
+                      saveDate: '없음',
+                      dataLabel: '학생 전용 데이터',
+                      memo: '학생 개별 데이터 사용',
+                    },
+                    ...summary,
+                  ].map((item, index) => (
                     <tr
                       key={index}
-                      onClick={() =>
-                        handleSelectData(item.dataLabel, item.dataUUID, 'graph')
-                      }
+                      onClick={() => {
+                        if (index === 0) {
+                          handleSelectData(null, null, 'graph');
+                        } else
+                          handleSelectData(
+                            item.dataLabel,
+                            item.dataUUID,
+                            'graph',
+                          );
+                      }}
                     >
                       <td>{item.saveDate}</td>
                       <td>{item.dataLabel}</td>

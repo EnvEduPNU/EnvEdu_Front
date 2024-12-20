@@ -180,6 +180,25 @@ function CreateClassPage() {
           return;
         }
       }
+      if (type === null && id === null) {
+        setEclassContents((prev) => {
+          const tempEclassContents = prev.map((eclassContent) => ({
+            ...eclassContent,
+            contents: [...eclassContent.contents],
+          }));
+
+          tempEclassContents[activeStepIndex].contents.push({
+            type: 'dataInChartButton',
+            content: {
+              view: null,
+              content: { dataType: null, id: null },
+            },
+          });
+
+          return tempEclassContents;
+        });
+        return;
+      }
       try {
         let path = '';
         let dataContent;
@@ -1050,12 +1069,24 @@ function CreateClassPage() {
     });
   };
 
+  // 파일을 Base64로 변환하는 함수
+  const convertFileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(',')[1]); // Base64 데이터만 추출
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(file); // Base64 데이터로 읽기
+    });
+  };
+
   const handleFileChange = async (e, type) => {
     const file = e.target.files[0];
     if (file) {
       const imageUrl = await handleUpload(file, classUUID);
 
-      if (type === 'image')
+      if (type === 'image') {
+        // FileReader를 사용해 파일을 바이너리로 변환
+        const fileBuffer = await convertFileToBase64(file);
         setEclassContents((prev) => {
           const tempEclassContents = prev.map((eclassContent) => ({
             ...eclassContent,
@@ -1064,7 +1095,7 @@ function CreateClassPage() {
 
           tempEclassContents[activeStepIndex].contents.push({
             type: 'img',
-            url: imageUrl,
+            url: `data:image/png;base64,${fileBuffer}`, // ArrayBuffer를 Uint8Array로 변환 후 배열로 변경 ,
             file,
           });
 
@@ -1072,7 +1103,7 @@ function CreateClassPage() {
 
           return tempEclassContents;
         });
-      else setThumbnailImage(imageUrl);
+      } else setThumbnailImage(imageUrl);
     }
   };
 
@@ -1595,10 +1626,11 @@ function CreateClassPage() {
                         >
                           그래프 그리러 가기
                         </button>
-                        {React.createElement(
-                          item.content.view.type,
-                          item.content.view.props,
-                        )}
+                        {item.content.view !== null &&
+                          React.createElement(
+                            item.content.view.type,
+                            item.content.view.props,
+                          )}
                       </div>
                     )}
                     {/* 아이콘 버튼 */}

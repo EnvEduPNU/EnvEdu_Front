@@ -113,6 +113,7 @@ function StudentReportModal({
     };
     fetchStudentId();
   }, [eclassUuid]);
+  console.log(data);
 
   useEffect(() => {
     // console.log(
@@ -641,10 +642,11 @@ function StudentReportModal({
         if (assginmentCheck) {
           await customAxios.put('/api/report/update', updatedData);
         } else {
+          console.log(updatedData);
           await customAxios.post('/api/report/save', updatedData);
         }
 
-        window.location.reload();
+        // window.location.reload();
       } catch (error) {
         console.error('오류가 발생했습니다: ', error);
         alert('제출에 실패했습니다. 다시 시도해 주세요.');

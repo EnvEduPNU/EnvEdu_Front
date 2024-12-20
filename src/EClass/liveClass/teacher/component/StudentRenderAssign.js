@@ -132,13 +132,9 @@ function StudentRenderAssign({
   const uploadedImagesState = useRef([]); // 업로드된 이미지 상태
   // console.log(textBoxDatas);
   const [imageUrlArray, setImageUrlArray] = useState([]);
-
+  console.log(data, stepCount);
   // Zustand store에서 getStorePhotoList 가져오기
   const { getStorePhotoList, setStorePhotoList } = usePhotoStore();
-
-  useEffect(() => {
-    // console.log('데이터 확인 : ' + JSON.stringify(data, null, 2));
-  }, [data]);
 
   useEffect(() => {
     const photoList = getStorePhotoList();
@@ -250,7 +246,10 @@ function StudentRenderAssign({
     const id = 'drawGraph';
     // alert(stepNum);
     localStorage.setItem('stepNum', stepNum);
-    navigate(`/data-in-chart?id=${id}&dataType=${dataType}&uuid=${uuid}`);
+    if (dataType === null && uuid === null) {
+      navigate(`/data-in-chart?id=${id}`);
+    } else
+      navigate(`/data-in-chart?id=${id}&dataType=${dataType}&uuid=${uuid}`);
   };
 
   useEffect(() => {
@@ -267,18 +266,21 @@ function StudentRenderAssign({
 
     // console.log('dataToUse:', JSON.stringify(dataToUse, null, 2));
 
-    const parseStepCount = parseInt(stepCount, 10); // 10진수로 파싱
+    // const parseStepCount = parseInt(stepCount, 10); // 10진수로 파싱
 
     // tableData에서 stepNum과 parseStepCount가 같은 항목 필터링
-    let filteredData = dataToUse.filter(
-      (data) => data.stepNum === parseStepCount,
-    );
+    // let filteredData = dataToUse.filter(
+    //   (data) => data.stepNum === parseStepCount,
+    // );
+
+    let filteredData = dataToUse;
 
     // console.log(filteredData);
     // console.log('Filtered Data:', filteredData);
 
     // 상태에 필터링된 데이터 세팅
     console.log(filteredData);
+    const newSteps = [];
     const fetchData = async () => {
       // console.log(filteredData);
       let newStep;
@@ -688,9 +690,10 @@ function StudentRenderAssign({
             newStep.contents.push(content);
           }
         }
+        newSteps.push(newStep);
       }
-      console.log([newStep]);
-      setData([newStep]);
+      console.log(newSteps);
+      setData(newSteps);
     };
     fetchData();
   }, [stepCount, latestTableData, tableData]);
@@ -1041,69 +1044,47 @@ function StudentRenderAssign({
     ),
   );
 
+  if (data.length === 0) return <div>로딩중</div>;
+
   // console.log('여기', data);
   return (
     <div>
-      {data.map((stepData) => (
-        <React.Fragment key={stepData.stepNum}>
-          <Paper
-            style={{
-              padding: 20,
-              boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
-              width: '100%',
-              height: '510px',
-              overflow: 'auto',
-            }}
-            className="custom-html-container ql-editor"
-          >
-            <div>
-              <Typography variant="h4" gutterBottom>
-                {stepData.contentName}
-              </Typography>
-              {stepData.contents?.map((content, idx) => (
-                <RenderContent
-                  key={`${stepData.stepNum}-${idx}`}
-                  content={content}
-                  textBoxValue={textBoxDatas}
-                  setTextBoxValue={setTextBoxDatas}
-                  index={idx}
-                  onOpenModal={() => setIsModalOpen(true)}
-                  onNavigate={handleNavigate}
-                  storedPhotoList={localStoredPhotoList}
-                  stepData={stepData}
-                  setStorePhotoList={setStorePhotoList}
-                  setLocalStoredPhotoList={setLocalStoredPhotoList}
-                  setImageUrlArray={setImageUrlArray}
-                  setData={setData}
-                  stepNum={parseInt(stepCount, 10)}
-                />
-              ))}
-            </div>
-          </Paper>
-          {/* 제출 버튼 조건 렌더링 */}
-          {/* {shouldDisplaySubmitButton && (
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={() => handleSubmit(imageUrlArray)}
-              style={{ marginTop: '10px' }}
-              sx={{
-                width: '10rem',
-                marginRight: 1,
-                fontFamily: "'Asap', sans-serif",
-                fontWeight: '600',
-                fontSize: '0.9rem',
-                color: 'grey',
-                backgroundColor: '#feecfe',
-                borderRadius: '2.469rem',
-                border: 'none',
-              }}
-            >
-              제출
-            </Button>
-          )} */}
-        </React.Fragment>
-      ))}
+      <React.Fragment key={data[[Number(stepCount) - 1]].stepNum}>
+        <Paper
+          style={{
+            padding: 20,
+            boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+            width: '100%',
+            height: '510px',
+            overflow: 'auto',
+          }}
+          className="custom-html-container ql-editor"
+        >
+          <div>
+            <Typography variant="h4" gutterBottom>
+              {data[[Number(stepCount) - 1]].contentName}
+            </Typography>
+            {data[Number(stepCount) - 1].contents.map((content, idx) => (
+              <RenderContent
+                key={`${data[[Number(stepCount) - 1]].stepNum}-${idx}`}
+                content={content}
+                textBoxValue={textBoxDatas}
+                setTextBoxValue={setTextBoxDatas}
+                index={idx}
+                onOpenModal={() => setIsModalOpen(true)}
+                onNavigate={handleNavigate}
+                storedPhotoList={localStoredPhotoList}
+                setStorePhotoList={setStorePhotoList}
+                setLocalStoredPhotoList={setLocalStoredPhotoList}
+                setImageUrlArray={setImageUrlArray}
+                setData={setData}
+                stepNum={parseInt(stepCount, 10)}
+              />
+            ))}
+          </div>
+        </Paper>
+      </React.Fragment>
+
       {isModalOpen && <DataInChartModal isModalOpen={isModalOpen} />}
     </div>
   );
@@ -1113,11 +1094,8 @@ function RenderContent({
   content,
   textBoxValue,
   setTextBoxValue,
-  index,
   onNavigate,
-  stepData,
   storedPhotoList,
-  setData,
   stepNum,
 }) {
   const [tableData, setTableData] = useState(null);
@@ -1198,13 +1176,13 @@ function RenderContent({
         <div>
           <div style={{ display: 'flex' }}>
             <Button
-              onClick={() =>
+              onClick={() => {
                 onNavigate(
                   content.content.dataType,
                   content.content.id,
                   stepNum,
-                )
-              }
+                );
+              }}
               variant="contained"
               color="primary"
               sx={{
