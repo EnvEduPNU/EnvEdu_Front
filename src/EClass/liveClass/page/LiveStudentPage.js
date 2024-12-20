@@ -29,6 +29,7 @@ export const LiveStudentPage = () => {
   const [sharedScreenState, setSharedScreenState] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmittedListVisible, setIsSubmittedListVisible] = useState(false);
+  const [assginmentCheck, setAssignmentCehck] = useState(false);
 
   const location = useLocation();
   const { lectureDataUuid, row, eClassUuid } = location.state || {};
@@ -445,6 +446,7 @@ export const LiveStudentPage = () => {
               handleCloseModal={handleCloseModal}
               textBoxDatas={textBoxDatas}
               setTextBoxDatas={setTextBoxDatas}
+              assginmentCheck={assginmentCheck}
             />
           )}
           {isLoading && (
