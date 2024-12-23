@@ -154,6 +154,12 @@ function StudentRenderAssign({
       contentName: data.contentName, // data에서 contentName 가져오기
       stepNum: data.stepNum, // data에서 stepNum 가져오기
       contents: data.contents.map((contentItem, contentIndex) => {
+        if (contentItem.type === 'img') {
+          return {
+            type: 'img',
+            content: contentItem.content.file,
+          };
+        }
         if (contentItem.type === 'textBox') {
           return {
             ...contentItem,
@@ -205,38 +211,35 @@ function StudentRenderAssign({
       },
     ];
 
-    if (window.confirm('제출하시겠습니까?')) {
-      try {
-        // console.log(
-        //   '업데이트 하기전 확인 : ' + JSON.stringify(updatedData, null, 2),
-        // );
-        // console.log(
-        //   '업데이트 하기전 확인 assginmentCheck : ' +
-        //     JSON.stringify(assginmentCheck, null, 2),
-        // );
+    try {
+      // console.log(
+      //   '업데이트 하기전 확인 : ' + JSON.stringify(updatedData, null, 2),
+      // );
+      // console.log(
+      //   '업데이트 하기전 확인 assginmentCheck : ' +
+      //     JSON.stringify(assginmentCheck, null, 2),
+      // );
 
-        const requestData = {
-          reportUuid: reportUuid,
-          studentId: studentId,
-        };
+      const requestData = {
+        reportUuid: reportUuid,
+        studentId: studentId,
+      };
 
-        await customAxios.post(
-          '/api/eclass/student/assignment/report/save',
-          requestData,
-        );
-        alert('제출 완료했습니다!');
+      await customAxios.post(
+        '/api/eclass/student/assignment/report/save',
+        requestData,
+      );
 
-        if (assginmentCheck) {
-          await customAxios.put('/api/report/update', updatedData);
-        } else {
-          await customAxios.post('/api/report/save', updatedData);
-        }
-
-        // window.location.reload();
-      } catch (error) {
-        console.error('오류가 발생했습니다: ', error);
-        alert('제출에 실패했습니다. 다시 시도해 주세요.');
+      if (assginmentCheck) {
+        await customAxios.put('/api/report/update', updatedData);
+      } else {
+        await customAxios.post('/api/report/save', updatedData);
       }
+
+      // window.location.reload();
+    } catch (error) {
+      console.error('오류가 발생했습니다: ', error);
+      alert('제출에 실패했습니다. 다시 시도해 주세요.');
     }
   };
 
@@ -308,8 +311,9 @@ function StudentRenderAssign({
           } else if (content.type === 'img') {
             newStep.contents.push({
               type: 'img',
-              url: content.content,
-              file: null,
+              content: {
+                file: content.content,
+              },
             });
           } else if (content.type === 'data') {
             let tableContent;
@@ -1048,7 +1052,37 @@ function StudentRenderAssign({
 
   // console.log('여기', data);
   return (
-    <div>
+    <div className="relative">
+      <button
+        onClick={async () => {
+          await handleSubmit2();
+          alert('제출 완료');
+          window.location.reload();
+        }}
+        style={{
+          position: 'absolute',
+          left: '48px',
+          bottom: '-58px',
+          padding: '8px 24px',
+          backgroundColor: '#3b82f6', // 단색 배경 (파란색)
+          color: 'white',
+          fontWeight: '600',
+          borderRadius: '8px',
+          boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)', // 그림자 효과
+          cursor: 'pointer',
+          transition: 'all 0.3s ease-in-out',
+        }}
+        onMouseEnter={(e) => {
+          e.target.style.backgroundColor = '#2563eb'; // 호버 시 더 진한 파란색
+          e.target.style.boxShadow = '0px 6px 8px rgba(0, 0, 0, 0.15)'; // 호버 시 더 강한 그림자
+        }}
+        onMouseLeave={(e) => {
+          e.target.style.backgroundColor = '#3b82f6'; // 기본 배경색 복원
+          e.target.style.boxShadow = '0px 4px 6px rgba(0, 0, 0, 0.1)'; // 기본 그림자 복원
+        }}
+      >
+        스텝 제출
+      </button>
       <React.Fragment key={data[[Number(stepCount) - 1]].stepNum}>
         <Paper
           style={{
@@ -1145,7 +1179,8 @@ function RenderContent({
         : null,
     );
   }
-  console.log(content);
+  console.log(content.content);
+  console.log(content.content.file);
   switch (content.type) {
     case 'html':
       return <div dangerouslySetInnerHTML={{ __html: content.content }} />;
@@ -1166,7 +1201,7 @@ function RenderContent({
       return (
         <div
           dangerouslySetInnerHTML={{
-            __html: `<img src=${content.url} />`,
+            __html: `<img src=${content.content.file} />`,
           }}
         />
       );

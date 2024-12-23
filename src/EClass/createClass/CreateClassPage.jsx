@@ -1069,24 +1069,64 @@ function CreateClassPage() {
     });
   };
 
-  // 파일을 Base64로 변환하는 함수
-  const convertFileToBase64 = (file) => {
+  const compressImage = (file, maxWidth, maxHeight, quality = 0.8) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onload = () => resolve(reader.result.split(',')[1]); // Base64 데이터만 추출
-      reader.onerror = () => reject(reader.error);
-      reader.readAsDataURL(file); // Base64 데이터로 읽기
+
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+
+          // 이미지 크기 조정
+          let width = img.width;
+          let height = img.height;
+
+          if (width > maxWidth || height > maxHeight) {
+            if (width / height > maxWidth / maxHeight) {
+              width = maxWidth;
+              height = Math.round((img.height * maxWidth) / img.width);
+            } else {
+              height = maxHeight;
+              width = Math.round((img.width * maxHeight) / img.height);
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          // Canvas에 이미지 그리기
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Canvas 데이터를 Base64로 변환
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', quality); // JPEG 압축
+          resolve(compressedDataUrl.split(',')[1]); // Base64 데이터만 추출
+        };
+
+        img.onerror = (error) => reject(error);
+        img.src = event.target.result;
+      };
+
+      reader.onerror = (error) => reject(error);
+      reader.readAsDataURL(file); // 파일 읽기
     });
   };
 
   const handleFileChange = async (e, type) => {
     const file = e.target.files[0];
     if (file) {
-      const imageUrl = await handleUpload(file, classUUID);
-
       if (type === 'image') {
         // FileReader를 사용해 파일을 바이너리로 변환
-        const fileBuffer = await convertFileToBase64(file);
+        const maxWidth = 800; // 최대 너비
+        const maxHeight = 800; // 최대 높이
+        const quality = 0.7; // 압축 품질 (0.0 ~ 1.0)
+        const fileBuffer = await compressImage(
+          file,
+          maxWidth,
+          maxHeight,
+          quality,
+        );
         setEclassContents((prev) => {
           const tempEclassContents = prev.map((eclassContent) => ({
             ...eclassContent,
@@ -1103,7 +1143,10 @@ function CreateClassPage() {
 
           return tempEclassContents;
         });
-      } else setThumbnailImage(imageUrl);
+      } else {
+        const imageUrl = await handleUpload(file, classUUID);
+        setThumbnailImage(imageUrl);
+      }
     }
   };
 
@@ -1122,11 +1165,11 @@ function CreateClassPage() {
         setIsOpen={setIsEclassFinishModal}
         handleClose={() => {
           setIsEclassFinishModal(false);
-          navigate('/EClassLivePage');
+          navigate('/classList');
         }}
         handleMove={() => {
           setIsEclassFinishModal(false);
-          navigate('/classList');
+          navigate('/EClassLivePage');
         }}
       />
       <VideoLinkModal

@@ -95,7 +95,6 @@ function StudentReportModal({
   textBoxDatas,
   setTextBoxDatas,
 }) {
-  const [textBoxValues, setTextBoxValues] = useState({});
   const [data, setData] = useState([]);
   const [studentId, setStudentId] = useState();
   // console.log(tableData);
@@ -166,8 +165,9 @@ function StudentReportModal({
           } else if (content.type === 'img') {
             newStep.contents.push({
               type: 'img',
-              url: content.content,
-              file: null,
+              content: {
+                file: content.content,
+              },
             });
           } else if (content.type === 'data') {
             let tableContent;
@@ -567,6 +567,12 @@ function StudentReportModal({
       contentName: data.contentName, // data에서 contentName 가져오기
       stepNum: data.stepNum, // data에서 stepNum 가져오기
       contents: data.contents.map((contentItem, contentIndex) => {
+        if (contentItem.type === 'img') {
+          return {
+            type: 'img',
+            content: contentItem.content,
+          };
+        }
         if (contentItem.type === 'textBox') {
           return {
             ...contentItem,
@@ -830,7 +836,7 @@ function RenderContent({
       return (
         <div
           dangerouslySetInnerHTML={{
-            __html: `<img src=${content.url} />`,
+            __html: `<img src=${content.content.file} />`,
           }}
         />
       );

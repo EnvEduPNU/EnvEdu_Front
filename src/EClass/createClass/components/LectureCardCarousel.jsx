@@ -233,6 +233,9 @@ function LectureCardCarousel({
           <ArrowBackIosIcon />
         </IconButton>
         {lectureSummary
+          .filter(
+            (lecture) => lecture.username === localStorage.getItem('username'),
+          )
           .slice(currentIndex, currentIndex + 4)
           .map((lecture, index) => {
             // 이미지가 있는지 확인
