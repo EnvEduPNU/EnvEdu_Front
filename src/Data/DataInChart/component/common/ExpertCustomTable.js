@@ -130,8 +130,22 @@ function ExpertCustomTable({ onAddPhoto, setSummary, isDrawGraph }) {
         windowHeight: tableHeight, // 캡처할 영역의 높이
       });
 
-      // 캡처한 데이터를 이미지로 변환
-      const imgData = canvas.toDataURL('image/png');
+      // 원본 캔버스를 압축 및 크기 조정
+      const compressedCanvas = document.createElement('canvas');
+      const ctx = compressedCanvas.getContext('2d');
+
+      // 압축 크기 설정 (예: 원본 크기의 50%)
+      const targetWidth = tableWidth * 0.5; // 너비를 절반으로
+      const targetHeight = tableHeight * 0.5; // 높이를 절반으로
+      compressedCanvas.width = targetWidth;
+      compressedCanvas.height = targetHeight;
+
+      // 원본 캔버스를 압축된 캔버스로 그리기
+      ctx.drawImage(canvas, 0, 0, targetWidth, targetHeight);
+
+      // 압축된 데이터를 Base64 이미지로 변환
+      const imgData = compressedCanvas.toDataURL('image/jpeg', 0.7); // JPEG 압축 (품질 70%)
+
       setCapturedImage(imgData); // 캡처된 이미지를 상태에 저장
       setOpenModal(true); // 모달 열기
     }

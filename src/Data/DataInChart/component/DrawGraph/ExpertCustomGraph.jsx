@@ -26,10 +26,28 @@ function ExpertCustomGraph({ onAddPhoto, isDrawGraph }) {
   // 캡쳐 버튼 클릭 시 실행할 함수
   const handleCapture = async () => {
     if (graphRef.current) {
-      const canvas = await html2canvas(graphRef.current); // 그래프 영역을 캡쳐
-      const imgData = canvas.toDataURL('image/png'); // 캡쳐한 데이터를 이미지로 변환
-      setCapturedImage(imgData); // 캡쳐된 이미지 데이터를 상태에 저장
-      setOpenModal(true); // 모달 열기
+      // html2canvas로 그래프 캡처
+      const canvas = await html2canvas(graphRef.current);
+
+      // 압축 캔버스 생성
+      const compressedCanvas = document.createElement('canvas');
+      const ctx = compressedCanvas.getContext('2d');
+
+      // 압축 크기 설정 (예: 원본 크기의 70%)
+      const targetWidth = canvas.width * 0.7;
+      const targetHeight = canvas.height * 0.7;
+      compressedCanvas.width = targetWidth;
+      compressedCanvas.height = targetHeight;
+
+      // 원본 캔버스를 압축된 캔버스로 복사
+      ctx.drawImage(canvas, 0, 0, targetWidth, targetHeight);
+
+      // 압축된 데이터를 Base64 이미지로 변환
+      const imgData = compressedCanvas.toDataURL('image/jpeg', 0.8); // JPEG 품질 80%
+
+      // 상태에 저장 및 모달 열기
+      setCapturedImage(imgData);
+      setOpenModal(true);
     }
   };
 
