@@ -592,7 +592,11 @@ function StudentReportModal({
               type: 'dataInChartButton',
               content: {
                 photoList: [
-                  ...storedPhotoList.map((photo) => photo.image),
+                  ...storedPhotoList
+                    .filter(
+                      (photoObj) => photoObj.id === contentItem.content.id,
+                    )
+                    .map((photo) => photo.photo.image),
                   ...contentItem.content.photoList,
                 ],
                 dataType: contentItem.content.dataType,
@@ -603,7 +607,11 @@ function StudentReportModal({
           return {
             type: 'dataInChartButton',
             content: {
-              photoList: [...storedPhotoList.map((photo) => photo.image)],
+              photoList: [
+                ...storedPhotoList
+                  .filter((photoObj) => photoObj.id === contentItem.content.id)
+                  .map((photo) => photo.photo.image),
+              ],
               dataType: contentItem.content.dataType,
               id: contentItem.content.id,
             },
@@ -652,7 +660,7 @@ function StudentReportModal({
           await customAxios.post('/api/report/save', updatedData);
         }
 
-        // window.location.reload();
+        window.location.reload();
       } catch (error) {
         console.error('오류가 발생했습니다: ', error);
         alert('제출에 실패했습니다. 다시 시도해 주세요.');
@@ -877,26 +885,28 @@ function RenderContent({
             }}
           >
             {storedPhotoList.length > 0 ? (
-              storedPhotoList.map((photo, index) => (
-                <div
-                  key={photo.image || index} // key를 photo.image로 설정, 없을 경우 index 사용
-                  style={{
-                    marginBottom: '20px',
-                    position: 'relative',
-                    textAlign: 'center',
-                  }}
-                >
-                  <img
-                    src={photo.image}
-                    alt={photo.title || `photo-${index}`} // 고유 alt 제공
+              storedPhotoList
+                .filter((photoObj) => photoObj.id === content.content.id)
+                .map((photo, index) => (
+                  <div
+                    key={photo.photo.image || index} // key를 photo.image로 설정, 없을 경우 index 사용
                     style={{
-                      width: '100%',
-                      height: 'auto',
-                      objectFit: 'cover',
+                      marginBottom: '20px',
+                      position: 'relative',
+                      textAlign: 'center',
                     }}
-                  />
-                </div>
-              ))
+                  >
+                    <img
+                      src={photo.photo.image}
+                      alt={photo.photo.title || `photo-${index}`} // 고유 alt 제공
+                      style={{
+                        width: '100%',
+                        height: 'auto',
+                        objectFit: 'cover',
+                      }}
+                    />
+                  </div>
+                ))
             ) : (
               <></>
             )}

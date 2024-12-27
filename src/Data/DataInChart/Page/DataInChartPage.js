@@ -83,11 +83,12 @@ function DataInChartPage() {
 
   // 새로운 사진을 추가하는 함수
   const handleAddPhoto = (newPhoto) => {
+    console.log(photoList);
     if (photoList.length >= 3) {
       alert('최대 3개의 사진만 저장할 수 있습니다.');
       return;
     }
-    setPhotoList((prevList) => [...prevList, newPhoto]);
+    setPhotoList((prevList) => [...prevList, { photo: newPhoto, id: uuid }]);
   };
 
   // 기본 빈 행 수 설정
@@ -239,9 +240,9 @@ function DataInChartPage() {
                           fontWeight: 'bold',
                           padding: '0 0 0 10px',
                         }}
-                        onClick={() => handlePhotoClick(photo)}
+                        onClick={() => handlePhotoClick(photo.photo)}
                       >
-                        {photo.title}
+                        {photo.photo.title}
                       </TableCell>
                       <TableCell align="right" sx={{ padding: 0 }}>
                         <IconButton onClick={() => handleDeletePhoto(index)}>
