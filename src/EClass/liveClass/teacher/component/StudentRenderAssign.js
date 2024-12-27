@@ -125,6 +125,7 @@ function StudentRenderAssign({
   textBoxDatas,
   setTextBoxDatas,
 }) {
+  console.log(localStoredPhotoList);
   const [textBoxValues, setTextBoxValues] = useState({});
   const [data, setData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열기 상태 추가
@@ -179,7 +180,11 @@ function StudentRenderAssign({
               type: 'dataInChartButton',
               content: {
                 photoList: [
-                  ...localStoredPhotoList.map((photo) => photo.image),
+                  ...localStoredPhotoList
+                    .filter(
+                      (photoObj) => photoObj.id === contentItem.content.id,
+                    )
+                    .map((photo) => photo.photo.image),
                   ...contentItem.content.photoList,
                 ],
                 dataType: contentItem.content.dataType,
@@ -190,7 +195,11 @@ function StudentRenderAssign({
           return {
             type: 'dataInChartButton',
             content: {
-              photoList: [...localStoredPhotoList.map((photo) => photo.image)],
+              photoList: [
+                ...localStoredPhotoList
+                  .filter((photoObj) => photoObj.id === contentItem.content.id)
+                  .map((photo) => photo.photo.image),
+              ],
               dataType: contentItem.content.dataType,
               id: contentItem.content.id,
             },
@@ -1248,26 +1257,28 @@ function RenderContent({
             }}
           >
             {storedPhotoList.length > 0 ? (
-              storedPhotoList.map((photo, index) => (
-                <div
-                  key={photo.image || index} // key를 photo.image로 설정, 없을 경우 index 사용
-                  style={{
-                    marginBottom: '20px',
-                    position: 'relative',
-                    textAlign: 'center',
-                  }}
-                >
-                  <img
-                    src={photo.image}
-                    alt={photo.title || `photo-${index}`} // 고유 alt 제공
+              storedPhotoList
+                .filter((photoObj) => photoObj.id === content.content.id)
+                .map((photo, index) => (
+                  <div
+                    key={photo.photo.image || index} // key를 photo.image로 설정, 없을 경우 index 사용
                     style={{
-                      width: '100%',
-                      height: 'auto',
-                      objectFit: 'cover',
+                      marginBottom: '20px',
+                      position: 'relative',
+                      textAlign: 'center',
                     }}
-                  />
-                </div>
-              ))
+                  >
+                    <img
+                      src={photo.photo.image}
+                      alt={photo.photo.title || `photo-${index}`} // 고유 alt 제공
+                      style={{
+                        width: '100%',
+                        height: 'auto',
+                        objectFit: 'cover',
+                      }}
+                    />
+                  </div>
+                ))
             ) : (
               <></>
             )}

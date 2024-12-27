@@ -535,23 +535,25 @@ export const LiveStudentPage = () => {
               setLatestTableData={setLatestTableData}
             />
             <div style={{ display: 'flex', gap: 10 }}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleReportButtonClick}
-                style={{
-                  width: '100%',
-                  fontFamily: "'Asap', sans-serif",
-                  fontWeight: '600',
-                  fontSize: '0.9rem',
-                  color: 'grey',
-                  backgroundColor: '#feecfe',
-                  borderRadius: '2.469rem',
-                  border: 'none',
-                }}
-              >
-                보고서 입력
-              </Button>
+              {stepCount == tableData.length && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleReportButtonClick}
+                  style={{
+                    width: '100%',
+                    fontFamily: "'Asap', sans-serif",
+                    fontWeight: '600',
+                    fontSize: '0.9rem',
+                    color: 'grey',
+                    backgroundColor: '#feecfe',
+                    borderRadius: '2.469rem',
+                    border: 'none',
+                  }}
+                >
+                  보고서 입력
+                </Button>
+              )}
               <Button
                 variant="contained"
                 color="primary"
