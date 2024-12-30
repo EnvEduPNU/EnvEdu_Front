@@ -1113,13 +1113,14 @@ function StudentRenderAssign({
                 content={content}
                 textBoxValue={textBoxDatas}
                 setTextBoxValue={setTextBoxDatas}
-                index={idx}
+                contentIndex={idx}
                 onOpenModal={() => setIsModalOpen(true)}
                 onNavigate={handleNavigate}
                 storedPhotoList={localStoredPhotoList}
                 setStorePhotoList={setStorePhotoList}
                 setLocalStoredPhotoList={setLocalStoredPhotoList}
                 setImageUrlArray={setImageUrlArray}
+                data={data}
                 setData={setData}
                 stepNum={parseInt(stepCount, 10)}
               />
@@ -1138,8 +1139,12 @@ function RenderContent({
   textBoxValue,
   setTextBoxValue,
   onNavigate,
+  contentIndex,
   storedPhotoList,
+  setLocalStoredPhotoList,
   stepNum,
+  data,
+  setData,
 }) {
   const [tableData, setTableData] = useState(null);
 
@@ -1277,6 +1282,46 @@ function RenderContent({
                         objectFit: 'cover',
                       }}
                     />
+                    {/* 삭제 버튼 */}
+                    <button
+                      onClick={() => {
+                        console.log(storedPhotoList);
+                        console.log(index);
+                        setLocalStoredPhotoList((prev) => {
+                          const copiedLocalStoredPhotoList = prev.map(
+                            (photo) => ({
+                              id: photo.id,
+                              photo: {
+                                image: photo.photo.image,
+                                title: photo.photo.title,
+                              },
+                            }),
+                          );
+
+                          let prevIndex = 0;
+                          for (
+                            let i = 0;
+                            copiedLocalStoredPhotoList.length;
+                            i++
+                          ) {
+                            if (
+                              copiedLocalStoredPhotoList[i].id !==
+                              content.content.id
+                            )
+                              prevIndex++;
+
+                            copiedLocalStoredPhotoList.splice(
+                              prevIndex + index,
+                              1,
+                            );
+                            return copiedLocalStoredPhotoList;
+                          }
+                        });
+                      }}
+                      className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded"
+                    >
+                      삭제
+                    </button>
                   </div>
                 ))
             ) : (
@@ -1284,12 +1329,35 @@ function RenderContent({
             )}
             {content.content.photoList !== undefined &&
               content.content.photoList.map((item, index) => (
-                <div
-                  key={index}
-                  dangerouslySetInnerHTML={{
-                    __html: `<img src="${item}" alt="Chart Image" />`,
-                  }}
-                />
+                <div key={index} className="relative">
+                  {/* 이미지 렌더링 */}
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: `<img src="${item}" alt="Chart Image" class="w-full h-auto" />`,
+                    }}
+                  />
+
+                  {/* 삭제 버튼 */}
+                  <button
+                    onClick={() => {
+                      setData((prev) => {
+                        const copiedData = prev.map((stepData) => ({
+                          contentName: stepData.contentName,
+                          stepNum: stepData.stepNum,
+                          contents: [...stepData.contents],
+                        }));
+
+                        copiedData[stepNum - 1].contents[
+                          contentIndex
+                        ].content.photoList.splice(index, 1);
+                        return copiedData;
+                      });
+                    }}
+                    className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded"
+                  >
+                    삭제
+                  </button>
+                </div>
               ))}
           </div>
         </div>
