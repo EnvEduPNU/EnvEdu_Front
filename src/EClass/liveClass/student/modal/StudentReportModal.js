@@ -815,9 +815,7 @@ function RenderContent({
       return copied;
     });
   };
-  console.log(textBoxValue);
-  console.log(content);
-  console.log(stepIndex, index);
+
   switch (content.type) {
     case 'title':
       return (
