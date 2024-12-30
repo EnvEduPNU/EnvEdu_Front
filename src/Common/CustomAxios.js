@@ -19,6 +19,7 @@ customAxios.interceptors.request.use(function (config) {
   const Authorization = localStorage.getItem('access_token');
   config.headers['Content-Type'] = 'application/json';
   config.headers['Authorization'] = Authorization;
+  config.headers['username'] = localStorage.getItem('username');
 
   return config;
 });
