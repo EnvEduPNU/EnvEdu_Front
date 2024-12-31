@@ -174,12 +174,14 @@ function CreateClassPage() {
 
   const handleSelectData = async (type, id, type2) => {
     if (type2 === 'graph') {
-      for (let i = 0; i < eclassContents[0].contents.length; i++) {
-        if (eclassContents[0].contents[i].type === 'dataInChartButton') {
-          alert('그래프 그리기는 1개까지 가능합니다.');
-          return;
-        }
-      }
+      // for (let i = 0; i < eclassContents[0].contents.length; i++) {
+      //   if (eclassContents[0].contents[i].type === 'dataInChartButton') {
+      //     alert('그래프 그리기는 1개까지 가능합니다.');
+      //     return;
+      //   }
+      // }
+
+      alert('(참고) 동일 데이터에 대한 그래프 그리기는 1개까지 가능합니다.');
       if (type === null && id === null) {
         setEclassContents((prev) => {
           const tempEclassContents = prev.map((eclassContent) => ({

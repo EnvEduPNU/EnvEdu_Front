@@ -86,11 +86,6 @@ function ReportViewModal({ open, onClose, tableData }) {
   console.log(data);
 
   useEffect(() => {
-    // console.log(
-    //   'latestTableData : ' + JSON.stringify(latestTableData, null, 2),
-    // );
-    // console.log('tableData : ' + JSON.stringify(tableData, null, 2));
-
     let dataToUse = tableData[0].contents;
 
     // tableData에서 stepNum과 parseStepCount가 같은 항목 필터링

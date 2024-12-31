@@ -114,6 +114,8 @@ function ModifyClassPage() {
       const eclassData = response.data.filter(
         (value) => value.uuid === uuid,
       )[0];
+      console.log(response.data);
+      console.log(eclassData);
 
       setEclassTitle(eclassData.stepName);
       const newEclassContents = [];
@@ -121,6 +123,7 @@ function ModifyClassPage() {
       // 첫 번째 단계: eclassData.contents 반복
       for (let i = 0; i < eclassData.contents.length; i++) {
         const step = eclassData.contents[i];
+        console.log(step);
         const newStep = {
           stepTitle: step.contentName,
           contents: [],
@@ -150,7 +153,19 @@ function ModifyClassPage() {
             let tableContent;
             let dataContent;
             console.log(content.content.dataType);
-            if (content.content.dataType === '커스텀 데이터') {
+            if (content.content.dataType == null) {
+              newStep.contents.push({
+                type: 'dataInChartButton',
+                content: {
+                  view: null,
+                  content: {
+                    dataType: content.content.dataType,
+                    id: content.content.id,
+                  },
+                },
+              });
+              continue;
+            } else if (content.content.dataType === '커스텀 데이터') {
               await customAxios
                 .get(`api/custom/${content.content.id}`)
                 .then((res) => {
@@ -960,12 +975,13 @@ function ModifyClassPage() {
   const handleSelectData = async (type, id, type2) => {
     console.log(type2);
     if (type2 === 'graph') {
-      for (let i = 0; i < eclassContents[0].contents.length; i++) {
-        if (eclassContents[0].contents[i].type === 'dataInChartButton') {
-          alert('그래프 그리기는 1개까지 가능합니다.');
-          return;
-        }
-      }
+      // for (let i = 0; i < eclassContents[0].contents.length; i++) {
+      //   if (eclassContents[0].contents[i].type === 'dataInChartButton') {
+      //     alert('그래프 그리기는 1개까지 가능합니다.');
+      //     return;
+      //   }
+      // }
+      alert('(참고) 동일 데이터에 대한 그래프 그리기는 1개까지 가능합니다.');
 
       if (type === null && id === null) {
         setEclassContents((prev) => {

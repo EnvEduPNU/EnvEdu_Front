@@ -109,8 +109,8 @@ const handleDeleteFromS3 = async (imageUrl) => {
 };
 
 function StudentRenderAssign({
+  eclassName,
   tableData,
-  latestTableData,
   assginmentCheck,
   stepCount,
   studentId,
@@ -134,6 +134,7 @@ function StudentRenderAssign({
   // console.log(textBoxDatas);
   const [imageUrlArray, setImageUrlArray] = useState([]);
   console.log(data, stepCount);
+  console.log(eclassName);
   // Zustand store에서 getStorePhotoList 가져오기
   const { getStorePhotoList, setStorePhotoList } = usePhotoStore();
 
@@ -209,12 +210,13 @@ function StudentRenderAssign({
       }),
     }));
 
+    console.log(groupedContents);
     const updatedData = [
       {
         uuid: reportUuid,
         timestamp: new Date().toISOString(),
         username: studentName,
-        stepName: '수업 테스트', // 고정된 값으로 설정
+        stepName: eclassName, // 고정된 값으로 설정
         stepCount: groupedContents.length,
         contents: groupedContents,
       },
@@ -265,16 +267,8 @@ function StudentRenderAssign({
   };
 
   useEffect(() => {
-    // console.log(
-    //   'latestTableData : ' + JSON.stringify(latestTableData, null, 2),
-    // );
-    // console.log('tableData : ' + JSON.stringify(tableData, null, 2));
-
     let dataToUse = tableData;
     // console.log(tableData);
-    if (latestTableData?.length > 0) {
-      dataToUse = latestTableData;
-    }
 
     // console.log('dataToUse:', JSON.stringify(dataToUse, null, 2));
 
@@ -709,7 +703,7 @@ function StudentRenderAssign({
       setData(newSteps);
     };
     fetchData();
-  }, [stepCount, latestTableData, tableData]);
+  }, [stepCount, tableData]);
 
   // 로컬에서 이미지 삭제한 부분 보여주기 위한 훅
   useEffect(() => {
@@ -822,10 +816,6 @@ function StudentRenderAssign({
   const handleSubmit = async () => {
     const studentName = localStorage.getItem('username');
     let dataToUse = tableData;
-
-    if (latestTableData?.length > 0) {
-      dataToUse = latestTableData;
-    }
 
     // console.log('dataToUse 확인 : ' + JSON.stringify(dataToUse, null, 2));
 

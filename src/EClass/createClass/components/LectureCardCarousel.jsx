@@ -239,7 +239,7 @@ function LectureCardCarousel({
           .slice(currentIndex, currentIndex + 4)
           .map((lecture, index) => {
             // 이미지가 있는지 확인
-
+            console.log(lecture);
             return (
               <div key={index} className="lecture-card">
                 <button
@@ -853,7 +853,10 @@ function LectureCardCarousel({
                                   if (content.type === 'textBox') {
                                     return {
                                       type: 'textBox',
-                                      content: '답변을 이곳에 입력해주세요',
+                                      content: {
+                                        text: '답변을 이곳에 입력해주세요',
+                                        uuid: uuidv4(),
+                                      },
                                       x: null,
                                       y: null,
                                     };
@@ -889,7 +892,11 @@ function LectureCardCarousel({
                                   if (content.type === 'dataInChartButton') {
                                     return {
                                       type: content.type,
-                                      content: content.content,
+                                      content: {
+                                        dataType:
+                                          content.content.content.dataType,
+                                        id: content.content.content.id,
+                                      },
                                       x: null,
                                       y: null,
                                     };
