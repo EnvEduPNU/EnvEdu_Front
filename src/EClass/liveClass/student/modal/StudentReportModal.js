@@ -87,13 +87,13 @@ function StudentReportModal({
   open,
   onClose,
   tableData,
-  latestTableData,
   assginmentCheck,
   eclassUuid,
   allData,
   storedPhotoList,
   textBoxDatas,
   setTextBoxDatas,
+  eclassName,
 }) {
   const [data, setData] = useState([]);
   const [studentId, setStudentId] = useState();
@@ -115,16 +115,7 @@ function StudentReportModal({
   console.log(data);
 
   useEffect(() => {
-    // console.log(
-    //   'latestTableData : ' + JSON.stringify(latestTableData, null, 2),
-    // );
-    // console.log('tableData : ' + JSON.stringify(tableData, null, 2));
-
     let dataToUse = tableData;
-
-    if (latestTableData?.length > 0) {
-      dataToUse = latestTableData;
-    }
 
     // tableData에서 stepNum과 parseStepCount가 같은 항목 필터링
     // let filteredData = dataToUse.filter((data) => data.stepNum === dataToUse);
@@ -555,12 +546,12 @@ function StudentReportModal({
       else setData(newSteps);
     };
     fetchData();
-  }, [latestTableData, tableData]);
+  }, [tableData]);
 
   // console.log(data);
   const handleSubmit = async () => {
     const studentName = localStorage.getItem('username');
-    const dataToUse = latestTableData || tableData;
+    const dataToUse = tableData;
     const reportUuid = uuidv4();
 
     const groupedContents = dataToUse.map((data, stepIndex) => ({
@@ -626,7 +617,7 @@ function StudentReportModal({
         uuid: reportUuid,
         timestamp: new Date().toISOString(),
         username: studentName,
-        stepName: '수업 테스트', // 고정된 값으로 설정
+        stepName: eclassName, // 고정된 값으로 설정
         stepCount: groupedContents.length,
         contents: groupedContents,
       },

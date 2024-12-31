@@ -154,7 +154,7 @@ export function StudentStepCompnent(props) {
 
     fetchStudentId();
   }, [props.eclassUuid, studentId]);
-
+  console.log(props.eclassName);
   return (
     <div>
       {page === 'newPage' || props.uuid === socketEclassUuid || stepCount ? (
@@ -165,7 +165,6 @@ export function StudentStepCompnent(props) {
           studentId={studentId}
           sessionIdState={props.sessionIdState}
           eclassUuid={props.eclassUuid}
-          latestTableData={props.latestTableData}
           allData={props.allData}
           localStoredPhotoList={props.localStoredPhotoList}
           setLocalStoredPhotoList={props.setLocalStoredPhotoList}
@@ -174,6 +173,7 @@ export function StudentStepCompnent(props) {
           handleCloseModal={props.handleCloseModal}
           textBoxDatas={props.textBoxDatas}
           setTextBoxDatas={props.setTextBoxDatas}
+          eclassName={props.eclassName}
         />
       ) : (
         <DefaultPageComponent />

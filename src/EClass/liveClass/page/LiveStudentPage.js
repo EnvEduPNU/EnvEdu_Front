@@ -20,7 +20,6 @@ export const LiveStudentPage = () => {
   const [tableData, setTableData] = useState([]);
   const [allData, setAllData] = useState();
 
-  const [latestTableData, setLatestTableData] = useState([]);
   const [courseStep, setCourseStep] = useState();
   const [stepCount, setStepCount] = useState();
   const [reportTable, setReportTable] = useState([]);
@@ -127,29 +126,6 @@ export const LiveStudentPage = () => {
         }
       } catch (error) {
         alert('Default Table Data Error! ', error);
-      }
-
-      // 작성중인 테이블 데이터나 보고서가 있을때 가져오는 api
-      try {
-        // 만약 작성된 스텝이 있으면 가져오기
-        const lectureResponse = await customAxios.get(
-          '/api/assignment/get-step-one',
-          {
-            params: {
-              uuid: lectureDataUuid,
-              username,
-            },
-          },
-        );
-
-        // console.log(
-        //   '{!!!!! 작성된 스텝 !!!!!]  : ' +
-        //     JSON.stringify(lectureResponse.data, null, 2),
-        // );
-
-        setLatestTableData(lectureResponse.data.contents);
-      } catch (error) {
-        alert('서버에 문제가 있습니다!' + error);
       }
     };
 
@@ -437,7 +413,6 @@ export const LiveStudentPage = () => {
               sessionIdState={sessionIdState}
               eclassUuid={eClassUuid}
               lectureDataUuid={lectureDataUuid}
-              latestTableData={latestTableData}
               allData={allData}
               localStoredPhotoList={localStoredPhotoList}
               setLocalStoredPhotoList={setLocalStoredPhotoList}
@@ -447,6 +422,7 @@ export const LiveStudentPage = () => {
               textBoxDatas={textBoxDatas}
               setTextBoxDatas={setTextBoxDatas}
               assginmentCheck={assginmentCheck}
+              eclassName={row.Name}
             />
           )}
           {isLoading && (
@@ -514,13 +490,13 @@ export const LiveStudentPage = () => {
               open={openReportModal}
               onClose={handleCloseModal}
               tableData={tableData}
-              latestTableData={latestTableData}
               stepCount={stepCount}
               eclassUuid={eClassUuid}
               allData={allData}
               storedPhotoList={localStoredPhotoList}
               textBoxDatas={textBoxDatas}
               setTextBoxDatas={setTextBoxDatas}
+              eClassName={row.Name}
             />
             <StudentAssignmentTable
               setCourseStep={setCourseStep}
@@ -532,7 +508,6 @@ export const LiveStudentPage = () => {
               reportTable={reportTable}
               eclassUuid={eClassUuid}
               onReportButtonClick={handleReportButtonClick}
-              setLatestTableData={setLatestTableData}
             />
             <div style={{ display: 'flex', gap: 10 }}>
               {stepCount == tableData.length && (
