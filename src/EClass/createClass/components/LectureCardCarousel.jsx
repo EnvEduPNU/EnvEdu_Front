@@ -233,9 +233,6 @@ function LectureCardCarousel({
           <ArrowBackIosIcon />
         </IconButton>
         {lectureSummary
-          .filter(
-            (lecture) => lecture.username === localStorage.getItem('username'),
-          )
           .slice(currentIndex, currentIndex + 4)
           .map((lecture, index) => {
             // 이미지가 있는지 확인
@@ -246,8 +243,7 @@ function LectureCardCarousel({
                   onClick={(e) => {
                     setMoreEditArr((prev) => {
                       const copiedMoreEditArr = [...prev];
-                      copiedMoreEditArr[lecture.index] =
-                        !copiedMoreEditArr[lecture.index];
+                      copiedMoreEditArr[index] = !copiedMoreEditArr[index];
                       return copiedMoreEditArr;
                     });
                     e.stopPropagation(); // 카드 클릭 이벤트가 트리거되지 않도록
@@ -836,7 +832,7 @@ function LectureCardCarousel({
 
                           newEclassContents.push(newStep);
                         }
-
+                        console.log(newEclassContents);
                         const postData = {
                           uuid: uuidv4(),
                           username: localStorage.getItem('username'),
@@ -893,9 +889,8 @@ function LectureCardCarousel({
                                     return {
                                       type: content.type,
                                       content: {
-                                        dataType:
-                                          content.content.content.dataType,
-                                        id: content.content.content.id,
+                                        dataType: content.content.dataType,
+                                        id: content.content.id,
                                       },
                                       x: null,
                                       y: null,
@@ -923,7 +918,12 @@ function LectureCardCarousel({
                                 username: item.username,
                                 timestamp: item.timestamp,
                                 index,
-                              })),
+                              }))
+                              .filter(
+                                (lecture) =>
+                                  lecture.username ===
+                                  localStorage.getItem('username'),
+                              ),
                           );
                         } catch (e) {
                           console.log(e);
