@@ -819,7 +819,11 @@ function RenderContent({
     case 'textBox':
       return (
         <textarea
-          defaultValue={content.content.text}
+          defaultValue={
+            content.content.text == '답변을 이곳에 입력해주세요'
+              ? ''
+              : content.content.text
+          }
           value={textBoxValue[content.content.uuid]}
           onChange={(e) => {
             handleTextChange(e, content.content.uuid);

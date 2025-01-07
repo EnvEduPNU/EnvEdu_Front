@@ -22,7 +22,10 @@ function ClassListPage() {
             stepName: item.stepName,
             username: item.username,
             timestamp: item.timestamp,
-          })),
+          }))
+          .filter(
+            (lecture) => lecture.username === localStorage.getItem('username'),
+          ),
       );
     };
     getData();
