@@ -1674,6 +1674,7 @@ export const locationsData = [
       { name: '옹포천', code: '6001A10', isChecked: false },
       { name: '외도천', code: '6002A10', isChecked: false },
       { name: '동홍천', code: '6003A10', isChecked: false },
+      { name: "천미천", code: "6004A10", isChecked: false }
     ],
   },
 ];
