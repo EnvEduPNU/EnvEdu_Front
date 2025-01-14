@@ -4,6 +4,7 @@ import { useGraphDataStore } from '../../../store/graphStore';
 import Dropdown from '../Dropdown';
 import ComboDropdown from '../ComboDropdown';
 import { Slider } from '@mui/material';
+import { useLogStore } from '../../../../../Log/store/logStore';
 
 const backgroundColor = [
   'rgba(50, 205, 50, 0.6)', // 진한 라임 그린
@@ -53,6 +54,7 @@ function ComboGraph() {
     graphIdx,
     title,
   } = useGraphDataStore();
+  const { addContent } = useLogStore();
 
   const chartRef = useRef(null);
   const myChartRef = useRef(null);
@@ -606,6 +608,11 @@ function ComboGraph() {
     );
     if (availableIndex !== -1) {
       addSelectedYVariableIndexs(availableIndex);
+      addContent({
+        logTime: new Date().toISOString(),
+        buttonName: `왼쪽 Y축 변인 ${variables[availableIndex].name} 추가`,
+        memo: '왼쪽 Y축 변인 추가',
+      });
     } else {
       alert('추가할 데이터가 없습니다.');
     }
@@ -618,6 +625,11 @@ function ComboGraph() {
     );
     if (availableIndex !== -1) {
       addSelectedMoreYVariableIndexs(availableIndex);
+      addContent({
+        logTime: new Date().toISOString(),
+        buttonName: `오른쪽 Y축 변인 ${variables[availableIndex].name} 추가`,
+        memo: '오른쪽 Y축 변인 추가',
+      });
     } else {
       alert('추가할 데이터가 없습니다.');
     }

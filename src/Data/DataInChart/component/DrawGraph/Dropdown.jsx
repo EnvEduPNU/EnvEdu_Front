@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useGraphDataStore } from '../../store/graphStore';
 import { AiFillCaretDown } from 'react-icons/ai';
 import { GoX } from 'react-icons/go';
+import { useLogStore } from '../../../../Log/store/logStore';
 
 function Dropdown({ type, moreStyle, selectedIndex }) {
   const {
@@ -11,14 +12,22 @@ function Dropdown({ type, moreStyle, selectedIndex }) {
     selectXVariableIndex,
     unselectXVariableIndex,
   } = useGraphDataStore();
-
+  const { addContent } = useLogStore();
+  const content = useLogStore((state) => state.content);
+  console.log(content);
   const [isOpen, setIsOpen] = useState(false);
 
   const selectDropdownItem = (data) => {
-    console.log(data);
+    console.log(data, '임다');
+    console.log(variables[selectedIndex]);
     deleteSelectedYVariableIndexs(selectedIndex);
     addSelectedYVariableIndexs(data.variableIndex);
     setIsOpen(false); //드롭다운 닫기
+    addContent({
+      logTime: new Date().toISOString(),
+      buttonName: `Y축 변인 ${variables[selectedIndex].name}에서 ${data.name}(으)로 변경`,
+      memo: 'Y축 변인 변경',
+    });
   };
 
   if (type === 'y')
@@ -80,6 +89,11 @@ function Dropdown({ type, moreStyle, selectedIndex }) {
               e.stopPropagation(); // 버튼 클릭 이벤트와 분리
               // 삭제 로직을 이곳에 추가
               deleteSelectedYVariableIndexs(selectedIndex);
+              addContent({
+                logTime: new Date().toISOString(),
+                buttonName: `Y축 변인 ${variables[selectedIndex].name} 삭제`,
+                memo: 'Y축 변인 삭제',
+              });
             }}
           />
         </button>
@@ -225,6 +239,12 @@ function Dropdown({ type, moreStyle, selectedIndex }) {
                         unselectXVariableIndex(selectedIndex);
                       selectXVariableIndex(data.variableIndex);
                       setIsOpen(false);
+
+                      addContent({
+                        logTime: new Date().toISOString(),
+                        buttonName: `X축 변인 ${variables[selectedIndex].name}에서 ${data.name}(으)로 변경`,
+                        memo: 'X축 변인 변경',
+                      });
                     }}
                     onMouseEnter={(e) => {
                       e.target.style.backgroundColor = '#f3f4f6'; // hover:bg-gray-100

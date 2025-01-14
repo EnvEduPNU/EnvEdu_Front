@@ -6,6 +6,7 @@ import { Slider } from '@mui/material';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Doughnut, Pie } from 'react-chartjs-2';
 import { Chart, layouts, scales } from 'chart.js';
+import { useLogStore } from '../../../../../Log/store/logStore';
 
 // Register the plugin to all charts:
 Chart.register(ChartDataLabels);
@@ -63,6 +64,7 @@ function DoughnutGraph() {
     graphIdx,
     title,
   } = useGraphDataStore();
+  const { addContent } = useLogStore();
 
   const [barDatas, setBarDatas] = useState({
     labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
@@ -202,6 +204,11 @@ function DoughnutGraph() {
     );
     if (findedindex !== -1) {
       addSelectedYVariableIndexs(findedindex);
+      addContent({
+        logTime: new Date().toISOString(),
+        buttonName: `오른쪽 Y축 변인 ${variables[findedindex].name} 추가`,
+        memo: '오른쪽 Y축 변인 추가',
+      });
     } else alert('추가 할 데이터가 없습니다.');
   };
 

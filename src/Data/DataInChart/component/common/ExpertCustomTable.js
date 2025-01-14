@@ -10,14 +10,15 @@ import {
   DialogTitle,
   TextField,
 } from '@mui/material';
-import { saveCustomTableApi } from '../../../apis/tables';
-import { customAxios } from '../../../../Common/CustomAxios';
 import TitleInputModal from '../../modal/TitleInputModal';
 import table from '../../../../assets/img/table.jpg';
 import graph from '../../../../assets/img/graph.jpg';
+import { useLogStore } from '../../../../Log/store/logStore';
 
 function ExpertCustomTable({ onAddPhoto, setSummary, isDrawGraph }) {
-  const { data, title, setData, variables } = useGraphDataStore();
+  const { data, title, setData } = useGraphDataStore();
+  const { addContent } = useLogStore();
+  const content = useLogStore((state) => state.content);
   const [isEditing, setIsEditing] = useState(false);
   const [openModal, setOpenModal] = useState(false); // 모달 열기/닫기 상태
   const [photoTitle, setPhotoTitle] = useState(''); // 사진 제목 상태
@@ -26,7 +27,8 @@ function ExpertCustomTable({ onAddPhoto, setSummary, isDrawGraph }) {
 
   const [modificationData, setModificationData] = useState([]);
   const [modeificationHeaders, setModeificationHeaders] = useState([]);
-
+  console.log(content);
+  console.log(data);
   useEffect(() => {
     if (data && data.length > 0) {
       setModificationData(data.map((value) => [...value]));
@@ -49,16 +51,31 @@ function ExpertCustomTable({ onAddPhoto, setSummary, isDrawGraph }) {
 
   const handleEdit = () => {
     setIsEditing(true);
+    addContent({
+      logTime: new Date().toISOString(),
+      buttonName: '테이블 수정하기 버튼 클릭',
+      memo: '',
+    });
   };
 
   const handleEditComplete = () => {
     setData(modificationData, title + ' 수정본');
     setIsEditing(false);
+    addContent({
+      logTime: new Date().toISOString(),
+      buttonName: '테이블 수정완료 버튼 클릭',
+      memo: '',
+    });
   };
 
   const handleEditCancel = () => {
     setIsEditing(false);
     setModificationData(data.map((value) => [...value]));
+    addContent({
+      logTime: new Date().toISOString(),
+      buttonName: '테이블 수정취소 버튼 클릭',
+      memo: '',
+    });
   };
 
   const handleMoveColumnLeft = (headerIndex) => {
@@ -78,10 +95,18 @@ function ExpertCustomTable({ onAddPhoto, setSummary, isDrawGraph }) {
       });
       return updatedData;
     });
+
+    addContent({
+      logTime: new Date().toISOString(),
+      buttonName: `${modificationData[0][headerIndex - 1]}, ${
+        modificationData[0][headerIndex - 2]
+      } 위치 바꾸기`,
+      memo: '테이블 열 바꿈',
+    });
   };
 
   const handleMoveColumnRight = (headerIndex) => {
-    if (headerIndex === headers.length) {
+    if (headerIndex === modificationData[0].length) {
       alert('더 이상 이동할 수 없습니다.');
       return;
     }
@@ -97,6 +122,14 @@ function ExpertCustomTable({ onAddPhoto, setSummary, isDrawGraph }) {
       });
       return updatedData;
     });
+
+    addContent({
+      logTime: new Date().toISOString(),
+      buttonName: `${modificationData[0][headerIndex - 1]}, ${
+        modificationData[0][headerIndex]
+      } 위치 바꾸기`,
+      memo: '테이블 열 바꿈',
+    });
   };
 
   const handleDeleteColumn = (headerIndex) => {
@@ -107,6 +140,12 @@ function ExpertCustomTable({ onAddPhoto, setSummary, isDrawGraph }) {
         return newRow;
       });
       return updatedData;
+    });
+
+    addContent({
+      logTime: new Date().toISOString(),
+      buttonName: `${modificationData[0][headerIndex - 1]} 열 삭제`,
+      memo: '테이블 열 삭제',
     });
   };
 
@@ -649,6 +688,16 @@ function ExpertCustomTable({ onAddPhoto, setSummary, isDrawGraph }) {
                           copiedModificationData[rowIndex + 1][valueIndex - 1] =
                             e.target.value;
                           return copiedModificationData;
+                        });
+
+                        addContent({
+                          logTime: new Date().toISOString(),
+                          buttonName: `${
+                            rowIndex + 1
+                          }행 ${valueIndex}열 데이터 ${
+                            e.target.value
+                          }(으)로 값 변경`,
+                          memo: '테이블 값 바꿈',
                         });
                       }}
                       style={{

@@ -14,10 +14,13 @@ import {
   DialogTitle,
   TextField,
 } from '@mui/material';
+import SelectGraph from './graphs/SelectGraph';
+import { useLogStore } from '../../../../Log/store/logStore';
 
 function ExpertCustomGraph({ onAddPhoto, isDrawGraph }) {
   // onAddPhoto prop을 받아서 상위 컴포넌트로 데이터 전달
   const { graphIdx } = useGraphDataStore();
+  const content = useLogStore((state) => state.content);
   const [capturedImage, setCapturedImage] = useState(null); // 캡쳐된 이미지를 저장할 상태
   const [openModal, setOpenModal] = useState(false); // 모달 열기/닫기 상태
   const [photoTitle, setPhotoTitle] = useState(''); // 사진 제목 상태
@@ -69,6 +72,8 @@ function ExpertCustomGraph({ onAddPhoto, isDrawGraph }) {
     }
   };
 
+  console.log(content);
+
   return (
     <div>
       {/* 캡쳐하기 버튼 */}
@@ -100,6 +105,7 @@ function ExpertCustomGraph({ onAddPhoto, isDrawGraph }) {
       {/* 그래프 영역 */}
 
       <div ref={graphRef} style={{ margin: '20px 0' }}>
+        {graphIdx === -1 && <SelectGraph />}
         {graphIdx === 0 && <BarGraph />}
         {graphIdx === 1 && <LineGraph />}
         {graphIdx === 2 && <ComboGraph />}

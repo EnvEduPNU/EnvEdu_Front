@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useGraphDataStore } from '../../../store/graphStore';
 import Dropdown from '../Dropdown';
 import { Slider } from '@mui/material';
+import { useLogStore } from '../../../../../Log/store/logStore';
 
 const backgroundColor = [
   'rgba(255, 69, 0, 0.6)', // 진한 오렌지-레드
@@ -33,6 +34,7 @@ function LineGraph() {
     graphIdx,
     title,
   } = useGraphDataStore();
+  const { addContent } = useLogStore();
 
   const [barDatas, setBarDatas] = useState({
     labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
@@ -339,6 +341,11 @@ function LineGraph() {
     );
     if (findedindex !== -1) {
       addSelectedYVariableIndexs(findedindex);
+      addContent({
+        logTime: new Date().toISOString(),
+        buttonName: `Y축 변인 ${variables[findedindex].name} 추가`,
+        memo: 'Y축 변인 추가',
+      });
     } else alert('추가 할 데이터가 없습니다.');
   };
 

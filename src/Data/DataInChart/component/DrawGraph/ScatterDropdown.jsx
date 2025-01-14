@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useGraphDataStore } from '../../store/graphStore';
 import { AiFillCaretDown } from 'react-icons/ai';
 import { GoX } from 'react-icons/go';
+import { useLogStore } from '../../../../Log/store/logStore';
 
 function ScatterDropdown({ type, moreStyle, selectedIndex }) {
   const {
@@ -12,6 +13,7 @@ function ScatterDropdown({ type, moreStyle, selectedIndex }) {
     unselectXVariableIndex,
   } = useGraphDataStore();
 
+  const { addContent } = useLogStore();
   const [isOpen, setIsOpen] = useState(false);
   console.log(selectedIndex);
 
@@ -20,6 +22,11 @@ function ScatterDropdown({ type, moreStyle, selectedIndex }) {
     deleteSelectedYVariableIndexs(selectedIndex);
     addSelectedYVariableIndexs(data.variableIndex);
     setIsOpen(false); //드롭다운 닫기
+    addContent({
+      logTime: new Date().toISOString(),
+      buttonName: `Y축 변인 ${variables[selectedIndex].name}에서 ${data.name}(으)로 변경`,
+      memo: 'Y축 변인 변경',
+    });
   };
 
   if (type === 'y')
@@ -230,6 +237,12 @@ function ScatterDropdown({ type, moreStyle, selectedIndex }) {
                         unselectXVariableIndex(selectedIndex);
                       selectXVariableIndex(data.variableIndex);
                       setIsOpen(false);
+
+                      addContent({
+                        logTime: new Date().toISOString(),
+                        buttonName: `X축 변인 ${variables[selectedIndex].name}에서 ${data.name}(으)로 변경`,
+                        memo: 'X축 변인 변경',
+                      });
                     }}
                     onMouseEnter={(e) => {
                       e.target.style.backgroundColor = '#f3f4f6'; // hover:bg-gray-100
