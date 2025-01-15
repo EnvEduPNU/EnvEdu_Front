@@ -1,16 +1,14 @@
-import * as Styled from '../CustomTable/Styled';
 import { useGraphDataStore } from '../../store/graphStore';
-import { useState } from 'react';
-import useComponentPosition from '../../hooks/useComponentPosition';
 import bar from './../../images/bar.png';
 import line from './../../images/line.png';
 import combo from './../../images/combo.png';
 import doughnut from './../../images/doughnut.png';
 import scatter from './../../images/scatter.png';
+import { useLogStore } from '../../../../Log/store/logStore';
 
 function ExpertCustomGraphHeader() {
   const { graphIdx, changeGraphIndex } = useGraphDataStore();
-  // const { ref } = useComponentPosition();
+  const { addContent } = useLogStore();
 
   return (
     <div>
@@ -48,6 +46,11 @@ function ExpertCustomGraphHeader() {
             }}
             onClick={() => {
               changeGraphIndex(0);
+              addContent({
+                logTime: new Date().toISOString(),
+                buttonName: `Bar Graph 선택`,
+                memo: '그래프 유형 바꿈',
+              });
             }}
           >
             <img
@@ -70,6 +73,11 @@ function ExpertCustomGraphHeader() {
             }}
             onClick={() => {
               changeGraphIndex(1);
+              addContent({
+                logTime: new Date().toISOString(),
+                buttonName: `Line Graph 선택`,
+                memo: '그래프 유형 바꿈',
+              });
             }}
           >
             <img
@@ -92,6 +100,11 @@ function ExpertCustomGraphHeader() {
             }}
             onClick={() => {
               changeGraphIndex(2);
+              addContent({
+                logTime: new Date().toISOString(),
+                buttonName: `Combo Graph 선택`,
+                memo: '그래프 유형 바꿈',
+              });
             }}
           >
             <img
@@ -114,6 +127,11 @@ function ExpertCustomGraphHeader() {
             }}
             onClick={() => {
               changeGraphIndex(3);
+              addContent({
+                logTime: new Date().toISOString(),
+                buttonName: `Doughnut Graph 선택`,
+                memo: '그래프 유형 바꿈',
+              });
             }}
           >
             <img
@@ -136,6 +154,11 @@ function ExpertCustomGraphHeader() {
             }}
             onClick={() => {
               changeGraphIndex(4);
+              addContent({
+                logTime: new Date().toISOString(),
+                buttonName: `Scatter Graph 선택`,
+                memo: '그래프 유형 바꿈',
+              });
             }}
           >
             <img

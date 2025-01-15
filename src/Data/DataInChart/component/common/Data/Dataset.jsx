@@ -2,9 +2,11 @@ import * as Styled from './Styled';
 
 import { useGraphDataStore } from '../../../store/graphStore';
 import { sampleDatas } from '../../../data/sampleDatas';
+import { useLogStore } from '../../../../../Log/store/logStore';
 
 function Dataset({ setModalOpen }) {
-  const { setData, setTitle } = useGraphDataStore();
+  const { setData, setTitle, changeGraphIndex } = useGraphDataStore();
+  const { startLog } = useLogStore();
 
   const onClickBtn = (key) => {
     setData(sampleDatas[key], key);
@@ -16,7 +18,9 @@ function Dataset({ setModalOpen }) {
 
     console.log('데이터 내용 : ' + JSON.stringify(sampleDatas, null, 2));
     console.log('키는? : ' + JSON.stringify(key, null, 2));
-
+    // 전문가 데이터 로그 시작
+    startLog(localStorage.getItem('username'), `expert:${key}`);
+    changeGraphIndex(-1);
     setModalOpen(false);
   };
 

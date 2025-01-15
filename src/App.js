@@ -43,6 +43,7 @@ import DataInChartTutorialPage from './Data/DataInChart/Page/DataInChartTutorial
 import CreateClassPage from './EClass/createClass/CreateClassPage';
 import ClassListPage from './EClass/createClass/ClassListPage';
 import ModifyClassPage from './EClass/createClass/ModifyClassPage';
+import LogPage from './Log/LogPage';
 
 function App() {
   const navigate = useNavigate();
@@ -135,6 +136,7 @@ function App() {
             element={<DataInChartPage />}
           />
           <Route path="/openAPI" exact={true} element={<OpenApi2 />} />{' '}
+          <Route path="/log" exact={true} element={<LogPage />} />{' '}
           <Route path="/resources" exact={true} element={<Resource />} />{' '}
           {/* --------------------------------------------------- E-Class------------------------------------------------------ */}
           <Route

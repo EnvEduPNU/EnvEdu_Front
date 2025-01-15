@@ -38,18 +38,8 @@ function DataInChartPage() {
   const uuid = searchParams.get('uuid');
   const username = searchParams.get('username');
   const contentName = searchParams.get('contentName');
-  const stepNum = searchParams.get('stepNum');
-  const content = searchParams.get('dataType');
+  const teacherDataType = searchParams.get('dataType');
   const [summary, setSummary] = useState([]);
-
-  useEffect(() => {
-    // console.log(
-    //   '선생님이 지정한 테이블 uuid : ' + JSON.stringify(content, null, 2),
-    // );
-    // console.log(
-    //   '데이터 카테고리 체크 : ' + JSON.stringify(dataCategory, null, 2),
-    // );
-  }, []);
 
   const navigate = useNavigate(); // 페이지 이동을 위한 navigate 훅
 
@@ -175,11 +165,11 @@ function DataInChartPage() {
         </div>
 
         {/* --------------------------------------------------- 왼쪽 사이드 메뉴 -------------------------------------- */}
-        {content ? (
+        {teacherDataType ? (
           <>
             {/* 선생님이 준 테이블 */}
             <LeftTeacherAssignTable
-              content={content}
+              content={teacherDataType}
               setDataCategory={setDataCategory}
             />
           </>

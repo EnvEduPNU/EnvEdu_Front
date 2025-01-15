@@ -8,6 +8,7 @@ import { useGraphDataStore } from '../store/graphStore';
 import { convertToNumber } from '../store/utils/convertToNumber';
 import { DataArray } from '@mui/icons-material';
 import { useLocation, useParams } from 'react-router-dom';
+import { useLogStore } from '../../../Log/store/logStore';
 
 //항목 이름 (한국어 -> 영어)
 const engToKor = (name) => {
@@ -78,6 +79,7 @@ const engToKor = (name) => {
 
 export default function LeftTeacherAssignTable({ content, setDataCategory }) {
   const { setData, setTitle } = useGraphDataStore();
+  const { startLog } = useLogStore();
 
   //TODO 1 : content uuid 저장된 테이블 찾아서 가져온다음 아래 버튼에 넣어주고 클릭하면 setDataCategory 넣어서 되돌려주기
   //TODO 2 : 가져와서 Dataset 테이블에 맞는 형식으로 데이터 세팅해줘야함
@@ -317,6 +319,8 @@ export default function LeftTeacherAssignTable({ content, setDataCategory }) {
     // localStorage.setItem('title', JSON.stringify(title));
 
     setDataCategory('ExpertData');
+
+    startLog(localStorage.getItem('username'), `${dataType}:${uuid}`);
   };
 
   return (

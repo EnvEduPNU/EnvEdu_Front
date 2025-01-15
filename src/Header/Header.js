@@ -155,15 +155,17 @@ function Header() {
                     case 'dataChart':
                       return (
                         <>
-                          <Nav.Link
+                          {/* <Nav.Link
                             onClick={() =>
                               handleNavLinkClick('/data-in-chart-tutorial')
                             }
                           >
                             Tutorial
-                          </Nav.Link>
+                          </Nav.Link> */}
                           <Nav.Link
-                            onClick={() => handleNavLinkClick('/data-in-chart')}
+                            onClick={() =>
+                              handleNavLinkClick('/data-in-chart?')
+                            }
                           >
                             Data & Chart
                           </Nav.Link>
@@ -178,6 +180,13 @@ function Header() {
                           >
                             My Data
                           </Nav.Link>
+                          {localStorage.getItem('role') === 'ROLE_EDUCATOR' && (
+                            <Nav.Link
+                              onClick={() => handleNavLinkClick('/log')}
+                            >
+                              Log
+                            </Nav.Link>
+                          )}
                         </>
                       );
                     case 'eClass':

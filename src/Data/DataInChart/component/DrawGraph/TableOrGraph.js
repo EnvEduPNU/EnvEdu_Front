@@ -1,11 +1,5 @@
-import { Typography } from '@mui/material';
 import { useTabStore } from '../../store/tabStore';
-import CustomTable from '../CustomTable/CustomTable';
-import CustomTableHeader from '../CustomTable/CustomTableHeader/CustomTableHeader';
 
-import GraphAndEditor from '../GraphAndEditor/GraphAndEditor';
-import PublicDataButton from './PublicDataButton';
-import SEEdAppButton from './SEEdAppButton';
 import * as Styled from './Styled';
 import { useEffect, useState } from 'react';
 
@@ -14,7 +8,6 @@ import ExpertCustomTable from '../common/ExpertCustomTable';
 import ExpertCustomGraph from './ExpertCustomGraph';
 import ExpertCustomGraphHeader from './ExpertCustomGraphHeader';
 import Header from '../Header/Header';
-import DataInChartMainPage from './DataInChartMainPage';
 
 // 테이블 아니면 그래프 선택하는 탭 컴포넌트
 function TableOrGraph({ setSummary, setPhoto, isDrawGraph }) {

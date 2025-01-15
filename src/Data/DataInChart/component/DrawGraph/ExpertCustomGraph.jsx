@@ -14,10 +14,31 @@ import {
   DialogTitle,
   TextField,
 } from '@mui/material';
+import SelectGraph from './graphs/SelectGraph';
+import { useLogStore } from '../../../../Log/store/logStore';
+import { getAllLog, saveLog } from '../../../../Log/apis/log';
 
 function ExpertCustomGraph({ onAddPhoto, isDrawGraph }) {
   // onAddPhoto prop을 받아서 상위 컴포넌트로 데이터 전달
   const { graphIdx } = useGraphDataStore();
+  const {
+    logUuid,
+    username,
+    logCollectionStartTime,
+    logCollectionEndTime,
+    graphImage,
+    dataUUID,
+    content,
+  } = useLogStore((state) => ({
+    logUuid: state.logUuid,
+    username: state.username,
+    logCollectionStartTime: state.logCollectionStartTime,
+    logCollectionEndTime: state.logCollectionEndTime,
+    graphImage: state.graphImage,
+    dataUUID: state.dataUUID,
+    content: state.content,
+  }));
+  const { endLog } = useLogStore();
   const [capturedImage, setCapturedImage] = useState(null); // 캡쳐된 이미지를 저장할 상태
   const [openModal, setOpenModal] = useState(false); // 모달 열기/닫기 상태
   const [photoTitle, setPhotoTitle] = useState(''); // 사진 제목 상태
@@ -48,6 +69,21 @@ function ExpertCustomGraph({ onAddPhoto, isDrawGraph }) {
       // 상태에 저장 및 모달 열기
       setCapturedImage(imgData);
       setOpenModal(true);
+
+      // 로그 데이터 저장 로직 작성
+      console.log('이미지 저장');
+
+      await saveLog({
+        logUuid,
+        username,
+        logCollectionStartTime,
+        logCollectionEndTime: new Date().toISOString(),
+        graphImage: imgData,
+        content,
+      });
+      console.log('로그 저장 완료');
+      const { data } = await getAllLog();
+      console.log(data);
     }
   };
 
@@ -69,10 +105,12 @@ function ExpertCustomGraph({ onAddPhoto, isDrawGraph }) {
     }
   };
 
+  console.log(content);
+
   return (
     <div>
       {/* 캡쳐하기 버튼 */}
-      {isDrawGraph && (
+      {isDrawGraph ? (
         <button
           onClick={handleCapture}
           style={{
@@ -95,11 +133,35 @@ function ExpertCustomGraph({ onAddPhoto, isDrawGraph }) {
         >
           그래프 캡쳐
         </button>
+      ) : (
+        <button
+          onClick={handleCapture}
+          style={{
+            position: 'absolute',
+            padding: '10px 15px',
+            backgroundColor: '#4a5568',
+            color: 'white',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            fontSize: '16px',
+            display: 'inline-block', // 버튼 크기를 확실히 차지하도록 설정
+            marginLeft: '20px',
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.backgroundColor = '#2d3748'; // hover 시 색상 변경
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.backgroundColor = '#4a5568'; // 기본 색상으로 복구
+          }}
+        >
+          그래프 저장
+        </button>
       )}
 
       {/* 그래프 영역 */}
 
       <div ref={graphRef} style={{ margin: '20px 0' }}>
+        {graphIdx === -1 && <SelectGraph />}
         {graphIdx === 0 && <BarGraph />}
         {graphIdx === 1 && <LineGraph />}
         {graphIdx === 2 && <ComboGraph />}

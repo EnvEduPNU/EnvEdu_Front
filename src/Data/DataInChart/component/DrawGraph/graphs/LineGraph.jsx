@@ -1,8 +1,10 @@
 import { Line } from 'react-chartjs-2';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useGraphDataStore } from '../../../store/graphStore';
 import Dropdown from '../Dropdown';
 import { Slider } from '@mui/material';
+import { useLogStore } from '../../../../../Log/store/logStore';
+import debounce from 'lodash/debounce';
 
 const backgroundColor = [
   'rgba(255, 69, 0, 0.6)', // 진한 오렌지-레드
@@ -33,6 +35,7 @@ function LineGraph() {
     graphIdx,
     title,
   } = useGraphDataStore();
+  const { addContent } = useLogStore();
 
   const [barDatas, setBarDatas] = useState({
     labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
@@ -339,6 +342,11 @@ function LineGraph() {
     );
     if (findedindex !== -1) {
       addSelectedYVariableIndexs(findedindex);
+      addContent({
+        logTime: new Date().toISOString(),
+        buttonName: `Y축 변인 ${variables[findedindex].name} 추가`,
+        memo: 'Y축 변인 추가',
+      });
     } else alert('추가 할 데이터가 없습니다.');
   };
 
@@ -385,11 +393,45 @@ function LineGraph() {
     }));
   }, [xScaleValue, yScaleValue]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedYAddContent = useCallback(
+    debounce((newValue) => {
+      addContent({
+        logTime: new Date().toISOString(),
+        buttonName: `Y축 범위 ${newValue[0]},${newValue[1]}으(로) 변경`,
+        memo: 'Y축 범위 변경',
+      });
+    }, 1000), // 1000ms(1초) 동안 중복 호출 방지
+    [], // 한 번만 정의되도록 빈 배열을 의존성 배열로 설정
+  );
+
   const handleChangeYScaleValue = (event, newValue) => {
+    console.log(newValue);
+
+    // 디바운스된 addContent 호출
+    debouncedYAddContent(newValue);
+
     setYScaleValue(newValue);
   };
 
+  const debouncedXAddContent = useCallback(
+    debounce((newValue) => {
+      addContent({
+        logTime: new Date().toISOString(),
+        buttonName: `X축 범위 ${
+          data?.[newValue[0] + 1]?.[selctedXVariableIndex]
+        },${data?.[newValue[1] + 1]?.[selctedXVariableIndex]}으(로) 변경`,
+        memo: 'X축 범위 변경',
+      });
+    }, 1000), // 1000ms(1초) 동안 중복 호출 방지
+    [], // 한 번만 정의되도록 빈 배열을 의존성 배열로 설정
+  );
   const handleChangeXScaleValue = (event, newValue) => {
+    debouncedXAddContent(newValue);
+    console.log(
+      data?.[newValue[0] + 1]?.[selctedXVariableIndex],
+      data?.[newValue[1] + 1]?.[selctedXVariableIndex],
+    );
     setXScaleValue(newValue);
   };
 

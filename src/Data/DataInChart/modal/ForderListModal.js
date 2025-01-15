@@ -9,6 +9,7 @@ import { useTabStore } from '../store/tabStore';
 import { convertToNumber } from '../store/utils/convertToNumber';
 import ReactModal from 'react-modal';
 import zIndex from '@mui/material/styles/zIndex';
+import { useLogStore } from '../../../Log/store/logStore';
 
 const customModalStyles = {
   overlay: {
@@ -113,6 +114,9 @@ export default function ForderListModal({
   console.log(filteredData);
 
   const { setData } = useGraphDataStore();
+  const { startLog } = useLogStore();
+  const dataUUID = useLogStore((state) => state.dataUUID);
+  console.log(dataUUID);
 
   const getTable = (type, id) => {
     if (type === 'CUSTOM') {
@@ -342,6 +346,7 @@ export default function ForderListModal({
         return;
       }
     }
+    startLog(localStorage.getItem('username'), `${type}:${id}`);
   };
   console.log(filteredData);
   return (
