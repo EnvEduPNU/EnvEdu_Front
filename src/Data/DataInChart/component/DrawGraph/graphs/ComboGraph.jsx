@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { Chart } from 'chart.js';
 import { useGraphDataStore } from '../../../store/graphStore';
 import Dropdown from '../Dropdown';
 import ComboDropdown from '../ComboDropdown';
 import { Slider } from '@mui/material';
 import { useLogStore } from '../../../../../Log/store/logStore';
+import debounce from 'lodash/debounce';
 
 const backgroundColor = [
   'rgba(50, 205, 50, 0.6)', // 진한 라임 그린
@@ -706,15 +707,56 @@ function ComboGraph() {
     });
   }, [xScaleValue, yScaleValue, y2ScaleValue]);
 
+  const debouncedYAddContent = useCallback(
+    debounce((newValue) => {
+      addContent({
+        logTime: new Date().toISOString(),
+        buttonName: `왼쪽 Y축 범위 ${newValue[0]},${newValue[1]}으(로) 변경`,
+        memo: '왼쪽 Y축 범위 변경',
+      });
+    }, 1000), // 1000ms(1초) 동안 중복 호출 방지
+    [], // 한 번만 정의되도록 빈 배열을 의존성 배열로 설정
+  );
+
   const handleChangeYScaleValue = (event, newValue) => {
+    console.log(newValue);
+
+    // 디바운스된 addContent 호출
+    debouncedYAddContent(newValue);
+
     setYScaleValue(newValue);
   };
 
+  const debouncedY2AddContent = useCallback(
+    debounce((newValue) => {
+      addContent({
+        logTime: new Date().toISOString(),
+        buttonName: `오른쪽 Y축 범위 ${newValue[0]},${newValue[1]}으(로) 변경`,
+        memo: '오른쪽 Y축 범위 변경',
+      });
+    }, 1000), // 1000ms(1초) 동안 중복 호출 방지
+    [], // 한 번만 정의되도록 빈 배열을 의존성 배열로 설정
+  );
+
   const handleChangeY2ScaleValue = (event, newValue) => {
+    debouncedY2AddContent(newValue);
     setY2ScaleValue(newValue);
   };
 
+  const debouncedXAddContent = useCallback(
+    debounce((newValue) => {
+      addContent({
+        logTime: new Date().toISOString(),
+        buttonName: `X축 범위 ${
+          data?.[newValue[0] + 1]?.[selctedXVariableIndex]
+        },${data?.[newValue[1] + 1]?.[selctedXVariableIndex]}으(로) 변경`,
+        memo: 'X축 범위 변경',
+      });
+    }, 1000), // 1000ms(1초) 동안 중복 호출 방지
+    [], // 한 번만 정의되도록 빈 배열을 의존성 배열로 설정
+  );
   const handleChangeXScaleValue = (event, newValue) => {
+    debouncedXAddContent(newValue);
     setXScaleValue(newValue);
   };
 

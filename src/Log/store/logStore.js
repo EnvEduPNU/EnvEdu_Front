@@ -24,7 +24,12 @@ export const useLogStore = create((set, get) => ({
       copiedLogData.logUuid = uuidv4();
       copiedLogData.username = username;
       copiedLogData.logCollectionStartTime = new Date().toISOString();
-      copiedLogData.dataUUID = dataUUID;
+      copiedLogData.content.push({
+        logTime: new Date().toISOString(),
+        buttonName: '데이터 선택',
+        memo: dataUUID,
+      });
+      //    copiedLogData.dataUUID = dataUUID;
       return copiedLogData;
     }),
 
@@ -39,22 +44,6 @@ export const useLogStore = create((set, get) => ({
         })),
       };
       copiedLogData.content.push(content);
-      return copiedLogData;
-    }),
-
-  endLog: (graphImage) =>
-    set((state) => {
-      const copiedLogData = {
-        ...state,
-        content: state.content.map((item) => ({
-          logTime: item.logTime,
-          buttonName: item.buttonName,
-          memo: item.memo,
-        })),
-      };
-
-      copiedLogData.logCollectionEndTime = new Date().toISOString();
-      copiedLogData.graphImage = graphImage;
       return copiedLogData;
     }),
 }));
