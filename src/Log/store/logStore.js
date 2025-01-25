@@ -10,7 +10,7 @@ export const useLogStore = create((set, get) => ({
   dataUUID: null,
   content: [],
 
-  startLog: (username, dataUUID) =>
+  startLog: (username, dataUUID, eclassUuid, eclassName) =>
     set((state) => {
       const copiedLogData = {
         logUuid: '',
@@ -20,12 +20,17 @@ export const useLogStore = create((set, get) => ({
         graphImage: '',
         dataUUID: null,
         content: [],
+        eclassUuid,
+        eclassName,
       };
       copiedLogData.logUuid = uuidv4();
       copiedLogData.username = username;
-      copiedLogData.logCollectionStartTime = new Date().toISOString();
+      copiedLogData.logCollectionStartTime = new Date().toLocaleString(
+        'ko-KR',
+        { timeZone: 'Asia/Seoul' },
+      );
       copiedLogData.content.push({
-        logTime: new Date().toISOString(),
+        logTime: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
         buttonName: '데이터 선택',
         memo: dataUUID,
       });

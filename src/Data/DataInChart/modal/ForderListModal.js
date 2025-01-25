@@ -10,6 +10,7 @@ import { convertToNumber } from '../store/utils/convertToNumber';
 import ReactModal from 'react-modal';
 import zIndex from '@mui/material/styles/zIndex';
 import { useLogStore } from '../../../Log/store/logStore';
+import { useLocation } from 'react-router-dom';
 
 const customModalStyles = {
   overlay: {
@@ -116,6 +117,13 @@ export default function ForderListModal({
   const { setData } = useGraphDataStore();
   const { startLog } = useLogStore();
   const dataUUID = useLogStore((state) => state.dataUUID);
+
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+
+  const eclassUuid = searchParams.get('eclassUuid');
+  const eclassName = searchParams.get('eclassName');
+
   console.log(dataUUID);
 
   const getTable = (type, id) => {
@@ -346,7 +354,12 @@ export default function ForderListModal({
         return;
       }
     }
-    startLog(localStorage.getItem('username'), `${type}:${id}`);
+    startLog(
+      localStorage.getItem('username'),
+      `${type}:${id}`,
+      eclassUuid,
+      eclassName,
+    );
   };
   console.log(filteredData);
   return (

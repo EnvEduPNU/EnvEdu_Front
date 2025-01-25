@@ -89,7 +89,9 @@ export default function LeftTeacherAssignTable({ content, setDataCategory }) {
   const searchParams = new URLSearchParams(location.search);
   const dataType = searchParams.get('dataType');
   const uuid = searchParams.get('uuid');
-
+  const eclassUuid = searchParams.get('eclassUuid');
+  const eclassName = searchParams.get('eclassName');
+  console.log(eclassUuid, eclassName);
   console.log(dataType, uuid);
   const ClickTable = async () => {
     if (dataType === '커스텀 데이터') {
@@ -320,7 +322,12 @@ export default function LeftTeacherAssignTable({ content, setDataCategory }) {
 
     setDataCategory('ExpertData');
 
-    startLog(localStorage.getItem('username'), `${dataType}:${uuid}`);
+    startLog(
+      localStorage.getItem('username'),
+      `${dataType}:${uuid}`,
+      eclassUuid,
+      eclassName,
+    );
   };
 
   return (

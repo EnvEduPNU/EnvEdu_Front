@@ -52,7 +52,7 @@ function ExpertCustomTable({ onAddPhoto, setSummary, isDrawGraph }) {
   const handleEdit = () => {
     setIsEditing(true);
     addContent({
-      logTime: new Date().toISOString(),
+      logTime: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
       buttonName: '테이블 수정하기 버튼 클릭',
       memo: '',
     });
@@ -62,7 +62,7 @@ function ExpertCustomTable({ onAddPhoto, setSummary, isDrawGraph }) {
     setData(modificationData, title + ' 수정본');
     setIsEditing(false);
     addContent({
-      logTime: new Date().toISOString(),
+      logTime: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
       buttonName: '테이블 수정완료 버튼 클릭',
       memo: '',
     });
@@ -72,7 +72,7 @@ function ExpertCustomTable({ onAddPhoto, setSummary, isDrawGraph }) {
     setIsEditing(false);
     setModificationData(data.map((value) => [...value]));
     addContent({
-      logTime: new Date().toISOString(),
+      logTime: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
       buttonName: '테이블 수정취소 버튼 클릭',
       memo: '',
     });
@@ -97,7 +97,7 @@ function ExpertCustomTable({ onAddPhoto, setSummary, isDrawGraph }) {
     });
 
     addContent({
-      logTime: new Date().toISOString(),
+      logTime: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
       buttonName: `${modificationData[0][headerIndex - 1]}, ${
         modificationData[0][headerIndex - 2]
       } 위치 바꾸기`,
@@ -124,7 +124,7 @@ function ExpertCustomTable({ onAddPhoto, setSummary, isDrawGraph }) {
     });
 
     addContent({
-      logTime: new Date().toISOString(),
+      logTime: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
       buttonName: `${modificationData[0][headerIndex - 1]}, ${
         modificationData[0][headerIndex]
       } 위치 바꾸기`,
@@ -143,7 +143,7 @@ function ExpertCustomTable({ onAddPhoto, setSummary, isDrawGraph }) {
     });
 
     addContent({
-      logTime: new Date().toISOString(),
+      logTime: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
       buttonName: `${modificationData[0][headerIndex - 1]} 열 삭제`,
       memo: '테이블 열 삭제',
     });
@@ -691,7 +691,9 @@ function ExpertCustomTable({ onAddPhoto, setSummary, isDrawGraph }) {
                         });
 
                         addContent({
-                          logTime: new Date().toISOString(),
+                          logTime: new Date()
+                            .toISOString()
+                            .replace('Z', '+09:00'),
                           buttonName: `${
                             rowIndex + 1
                           }행 ${valueIndex}열 데이터 ${

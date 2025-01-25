@@ -132,7 +132,6 @@ const ExcelDataModal = ({ open, handleClose, data, eclassFlag, onSave }) => {
       alert('데이터가 저장되었습니다.');
 
       // onSave 호출로 상위 컴포넌트에 dataUUID 및 저장된 데이터 전달
-      onSave({ dataUUID: jsonData.dataUUID, data: jsonData });
 
       setShowSaveForm(false); // 저장 폼 닫기
       handleClose(); // 모달 닫기

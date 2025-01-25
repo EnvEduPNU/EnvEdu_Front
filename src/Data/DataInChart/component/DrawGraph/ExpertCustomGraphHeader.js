@@ -47,7 +47,9 @@ function ExpertCustomGraphHeader() {
             onClick={() => {
               changeGraphIndex(0);
               addContent({
-                logTime: new Date().toISOString(),
+                logTime: new Date().toLocaleString('ko-KR', {
+                  timeZone: 'Asia/Seoul',
+                }),
                 buttonName: `Bar Graph 선택`,
                 memo: '그래프 유형 바꿈',
               });
@@ -74,7 +76,9 @@ function ExpertCustomGraphHeader() {
             onClick={() => {
               changeGraphIndex(1);
               addContent({
-                logTime: new Date().toISOString(),
+                logTime: new Date().toLocaleString('ko-KR', {
+                  timeZone: 'Asia/Seoul',
+                }),
                 buttonName: `Line Graph 선택`,
                 memo: '그래프 유형 바꿈',
               });
@@ -101,7 +105,9 @@ function ExpertCustomGraphHeader() {
             onClick={() => {
               changeGraphIndex(2);
               addContent({
-                logTime: new Date().toISOString(),
+                logTime: new Date().toLocaleString('ko-KR', {
+                  timeZone: 'Asia/Seoul',
+                }),
                 buttonName: `Combo Graph 선택`,
                 memo: '그래프 유형 바꿈',
               });
@@ -128,7 +134,9 @@ function ExpertCustomGraphHeader() {
             onClick={() => {
               changeGraphIndex(3);
               addContent({
-                logTime: new Date().toISOString(),
+                logTime: new Date().toLocaleString('ko-KR', {
+                  timeZone: 'Asia/Seoul',
+                }),
                 buttonName: `Doughnut Graph 선택`,
                 memo: '그래프 유형 바꿈',
               });
@@ -155,7 +163,9 @@ function ExpertCustomGraphHeader() {
             onClick={() => {
               changeGraphIndex(4);
               addContent({
-                logTime: new Date().toISOString(),
+                logTime: new Date().toLocaleString('ko-KR', {
+                  timeZone: 'Asia/Seoul',
+                }),
                 buttonName: `Scatter Graph 선택`,
                 memo: '그래프 유형 바꿈',
               });

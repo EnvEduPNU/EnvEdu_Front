@@ -3,10 +3,16 @@ import * as Styled from './Styled';
 import { useGraphDataStore } from '../../../store/graphStore';
 import { sampleDatas } from '../../../data/sampleDatas';
 import { useLogStore } from '../../../../../Log/store/logStore';
+import { useLocation } from 'react-router-dom';
 
 function Dataset({ setModalOpen }) {
   const { setData, setTitle, changeGraphIndex } = useGraphDataStore();
   const { startLog } = useLogStore();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+
+  const eclassUuid = searchParams.get('eclassUuid');
+  const eclassName = searchParams.get('eclassName');
 
   const onClickBtn = (key) => {
     setData(sampleDatas[key], key);
@@ -19,7 +25,12 @@ function Dataset({ setModalOpen }) {
     console.log('데이터 내용 : ' + JSON.stringify(sampleDatas, null, 2));
     console.log('키는? : ' + JSON.stringify(key, null, 2));
     // 전문가 데이터 로그 시작
-    startLog(localStorage.getItem('username'), `expert:${key}`);
+    startLog(
+      localStorage.getItem('username'),
+      `expert:${key}`,
+      eclassUuid,
+      eclassName,
+    );
     changeGraphIndex(-1);
     setModalOpen(false);
   };

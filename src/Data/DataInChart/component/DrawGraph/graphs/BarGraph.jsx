@@ -333,7 +333,7 @@ function BarGraph() {
     if (findedindex !== -1) {
       addSelectedYVariableIndexs(findedindex);
       addContent({
-        logTime: new Date().toISOString(),
+        logTime: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
         buttonName: `Y축 변인 ${variables[findedindex].name} 추가`,
         memo: 'Y축 변인 추가',
       });
@@ -391,7 +391,7 @@ function BarGraph() {
   const debouncedYAddContent = useCallback(
     debounce((newValue) => {
       addContent({
-        logTime: new Date().toISOString(),
+        logTime: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
         buttonName: `Y축 범위 ${newValue[0]},${newValue[1]}으(로) 변경`,
         memo: 'Y축 범위 변경',
       });
@@ -411,7 +411,7 @@ function BarGraph() {
   const debouncedXAddContent = useCallback(
     debounce((newValue) => {
       addContent({
-        logTime: new Date().toISOString(),
+        logTime: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
         buttonName: `X축 범위 ${
           data?.[newValue[0] + 1]?.[selctedXVariableIndex]
         },${data?.[newValue[1] + 1]?.[selctedXVariableIndex]}으(로) 변경`,
