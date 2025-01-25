@@ -21,13 +21,13 @@ import { getAllLog, saveLog } from '../../../../Log/apis/log';
 function ExpertCustomGraph({ onAddPhoto, isDrawGraph }) {
   // onAddPhoto prop을 받아서 상위 컴포넌트로 데이터 전달
   const { graphIdx } = useGraphDataStore();
+  const { addContent } = useLogStore();
   const {
     logUuid,
     username,
     logCollectionStartTime,
-    logCollectionEndTime,
-    graphImage,
-    dataUUID,
+    eclassUuid,
+    eclassName,
     content,
   } = useLogStore((state) => ({
     logUuid: state.logUuid,
@@ -37,6 +37,8 @@ function ExpertCustomGraph({ onAddPhoto, isDrawGraph }) {
     graphImage: state.graphImage,
     dataUUID: state.dataUUID,
     content: state.content,
+    eclassUuid: state.eclassUuid,
+    eclassName: state.eclassName,
   }));
   const { endLog } = useLogStore();
   const [capturedImage, setCapturedImage] = useState(null); // 캡쳐된 이미지를 저장할 상태
@@ -73,13 +75,23 @@ function ExpertCustomGraph({ onAddPhoto, isDrawGraph }) {
       // 로그 데이터 저장 로직 작성
       console.log('이미지 저장');
 
+      content.push({
+        logTime: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
+        buttonName: `로그 수집 종료`,
+        memo: '그래프 저장/캡쳐',
+      });
+
       await saveLog({
         logUuid,
         username,
         logCollectionStartTime,
-        logCollectionEndTime: new Date().toISOString(),
+        logCollectionEndTime: new Date().toLocaleString('ko-KR', {
+          timeZone: 'Asia/Seoul',
+        }),
         graphImage: imgData,
         content,
+        eclassUuid,
+        eclassName,
       });
       console.log('로그 저장 완료');
       const { data } = await getAllLog();

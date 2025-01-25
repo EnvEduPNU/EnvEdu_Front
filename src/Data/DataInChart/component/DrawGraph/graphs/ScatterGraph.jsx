@@ -148,7 +148,7 @@ function ScatterGraph() {
     if (findedindex !== -1) {
       addSelectedYVariableIndexs(findedindex);
       addContent({
-        logTime: new Date().toISOString(),
+        logTime: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
         buttonName: `오른쪽 Y축 변인 ${variables[findedindex].name} 추가`,
         memo: '오른쪽 Y축 변인 추가',
       });

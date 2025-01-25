@@ -23,7 +23,7 @@ function ScatterDropdown({ type, moreStyle, selectedIndex }) {
     addSelectedYVariableIndexs(data.variableIndex);
     setIsOpen(false); //드롭다운 닫기
     addContent({
-      logTime: new Date().toISOString(),
+      logTime: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
       buttonName: `Y축 변인 ${variables[selectedIndex].name}에서 ${data.name}(으)로 변경`,
       memo: 'Y축 변인 변경',
     });
@@ -239,7 +239,9 @@ function ScatterDropdown({ type, moreStyle, selectedIndex }) {
                       setIsOpen(false);
 
                       addContent({
-                        logTime: new Date().toISOString(),
+                        logTime: new Date()
+                          .toISOString()
+                          .replace('Z', '+09:00'),
                         buttonName: `X축 변인 ${variables[selectedIndex].name}에서 ${data.name}(으)로 변경`,
                         memo: 'X축 변인 변경',
                       });

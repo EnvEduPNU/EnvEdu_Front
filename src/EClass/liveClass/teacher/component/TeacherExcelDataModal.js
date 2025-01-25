@@ -136,9 +136,6 @@ const TeacherExcelDataModal = ({
       const response = await customAxios.post('/api/custom/save', jsonData);
       console.log('데이터가 성공적으로 저장되었습니다:', response.data);
 
-      // onSave 호출로 상위 컴포넌트에 dataUUID 및 저장된 데이터 전달
-      onSave({ dataUUID: jsonData.dataUUID, data: jsonData });
-
       setShowSaveForm(false); // 저장 폼 닫기
       handleClose(); // 모달 닫기
     } catch (error) {

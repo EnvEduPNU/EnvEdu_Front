@@ -24,7 +24,7 @@ function Dropdown({ type, moreStyle, selectedIndex }) {
     addSelectedYVariableIndexs(data.variableIndex);
     setIsOpen(false); //드롭다운 닫기
     addContent({
-      logTime: new Date().toISOString(),
+      logTime: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
       buttonName: `Y축 변인 ${variables[selectedIndex].name}에서 ${data.name}(으)로 변경`,
       memo: 'Y축 변인 변경',
     });
@@ -90,7 +90,9 @@ function Dropdown({ type, moreStyle, selectedIndex }) {
               // 삭제 로직을 이곳에 추가
               deleteSelectedYVariableIndexs(selectedIndex);
               addContent({
-                logTime: new Date().toISOString(),
+                logTime: new Date().toLocaleString('ko-KR', {
+                  timeZone: 'Asia/Seoul',
+                }),
                 buttonName: `Y축 변인 ${variables[selectedIndex].name} 삭제`,
                 memo: 'Y축 변인 삭제',
               });
@@ -241,7 +243,9 @@ function Dropdown({ type, moreStyle, selectedIndex }) {
                       setIsOpen(false);
 
                       addContent({
-                        logTime: new Date().toISOString(),
+                        logTime: new Date()
+                          .toISOString()
+                          .replace('Z', '+09:00'),
                         buttonName: `X축 변인 ${variables[selectedIndex].name}에서 ${data.name}(으)로 변경`,
                         memo: 'X축 변인 변경',
                       });

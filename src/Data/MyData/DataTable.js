@@ -75,12 +75,10 @@ const engToKor = (name) => {
 
 const DataTable = ({ type, id, handleMenuToggle }) => {
   const [details, setDetails] = useState([]); // 초기 값을 빈 배열로 설정
-  const [headers, setHeaders] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [isFull, setIsFull] = useState(false);
   const [data, setData] = useState([]);
   const [title, setTitle] = useState('');
-  const navigate = useNavigate();
 
   useEffect(() => {
     console.log('데이터 타입 보기 : ' + type);
@@ -151,39 +149,6 @@ const DataTable = ({ type, id, handleMenuToggle }) => {
           });
           console.log(data);
           setData(data);
-          // // 데이터가 배열이 아닌 경우 배열로 감싸기
-          // let normalizedData = Array.isArray(data) ? data : [data];
-
-          // console.log(
-          //   '커스텀 데이터 조회 : ' + JSON.stringify(normalizedData, null, 2),
-          // );
-
-          // setDetails(normalizedData); // 유효한 배열을 설정
-
-          // // `numericFields`와 `stringFields`를 order에 따라 정렬 후, 테이블 헤더로 추가
-          // const orderedFields = [];
-
-          // normalizedData.forEach((item) => {
-          //   item.numericFields.forEach((field) => {
-          //     Object.keys(field).forEach((key) => {
-          //       orderedFields.push({ key, order: field[key].order });
-          //     });
-          //   });
-          //   item.stringFields.forEach((field) => {
-          //     Object.keys(field).forEach((key) => {
-          //       orderedFields.push({ key, order: field[key].order });
-          //     });
-          //   });
-          // });
-
-          // // order 기준으로 정렬된 헤더 생성
-          // const sortedHeaders = orderedFields
-          //   .sort((a, b) => a.order - b.order)
-          //   .map((field) => field.key);
-
-          // // 중복 제거 후 헤더 설정
-          // const uniqueHeaders = [...new Set(sortedHeaders)];
-          // setHeaders(uniqueHeaders); // 헤더 설정
         } catch (error) {
           console.log('데이터 가져오기 중 오류:', error);
           setDetails([]); // 오류 발생 시 빈 배열로 설정

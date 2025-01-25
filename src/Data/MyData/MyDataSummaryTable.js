@@ -331,6 +331,7 @@ const MyDataSummaryTable = ({ summary, getTable }) => {
                   <IconButton
                     onClick={(e) => {
                       e.stopPropagation();
+                      console.log(item.memo);
                       handleOpen(item.memo);
                     }}
                     aria-label="view memo"
@@ -348,6 +349,7 @@ const MyDataSummaryTable = ({ summary, getTable }) => {
                   <IconButton
                     onClick={(e) => {
                       e.stopPropagation();
+                      console.log(item);
                       if (item.dataLabel === '커스텀 데이터') {
                         handleDelete(item.dataUUID, item.dataLabel);
                         // console.log(

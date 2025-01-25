@@ -610,7 +610,7 @@ function ComboGraph() {
     if (availableIndex !== -1) {
       addSelectedYVariableIndexs(availableIndex);
       addContent({
-        logTime: new Date().toISOString(),
+        logTime: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
         buttonName: `왼쪽 Y축 변인 ${variables[availableIndex].name} 추가`,
         memo: '왼쪽 Y축 변인 추가',
       });
@@ -627,7 +627,7 @@ function ComboGraph() {
     if (availableIndex !== -1) {
       addSelectedMoreYVariableIndexs(availableIndex);
       addContent({
-        logTime: new Date().toISOString(),
+        logTime: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
         buttonName: `오른쪽 Y축 변인 ${variables[availableIndex].name} 추가`,
         memo: '오른쪽 Y축 변인 추가',
       });
@@ -710,7 +710,7 @@ function ComboGraph() {
   const debouncedYAddContent = useCallback(
     debounce((newValue) => {
       addContent({
-        logTime: new Date().toISOString(),
+        logTime: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
         buttonName: `왼쪽 Y축 범위 ${newValue[0]},${newValue[1]}으(로) 변경`,
         memo: '왼쪽 Y축 범위 변경',
       });
@@ -730,7 +730,7 @@ function ComboGraph() {
   const debouncedY2AddContent = useCallback(
     debounce((newValue) => {
       addContent({
-        logTime: new Date().toISOString(),
+        logTime: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
         buttonName: `오른쪽 Y축 범위 ${newValue[0]},${newValue[1]}으(로) 변경`,
         memo: '오른쪽 Y축 범위 변경',
       });
@@ -746,7 +746,7 @@ function ComboGraph() {
   const debouncedXAddContent = useCallback(
     debounce((newValue) => {
       addContent({
-        logTime: new Date().toISOString(),
+        logTime: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
         buttonName: `X축 범위 ${
           data?.[newValue[0] + 1]?.[selctedXVariableIndex]
         },${data?.[newValue[1] + 1]?.[selctedXVariableIndex]}으(로) 변경`,

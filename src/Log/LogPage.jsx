@@ -9,16 +9,223 @@ import { sampleDatas } from '../Data/DataInChart/DataSet/sampleDatas';
 function LogPage() {
   const [logs, setLogs] = useState([]);
   const [selectedLogs, setSelectedLogs] = useState([]); // 선택된 로그 ID 관리
+  const [categoryType, setCategoryType] = useState('none');
+  const [dataOrder, setDataOrder] = useState('up');
 
   useEffect(() => {
     const fetchData = async () => {
       const { data } = await getAllLog();
       setLogs(
-        data.sort((a, b) => a.logCollectionEndTime - b.logCollectionEndTime),
+        data
+          .filter((log) => log.content !== null)
+          .sort((a, b) => {
+            const parseDate = (str) => {
+              const replacedDate = str.split(' ');
+
+              const year = replacedDate[0].slice(0, -1);
+              const month =
+                replacedDate[1].slice(0, -1).length === 1
+                  ? `0${replacedDate[1].slice(0, -1)}`
+                  : replacedDate[1].slice(0, -1);
+              const day =
+                replacedDate[2].slice(0, -1).length === 1
+                  ? `0${replacedDate[2].slice(0, -1)}`
+                  : replacedDate[2].slice(0, -1);
+              const time = replacedDate[4];
+              const hour =
+                time.split(':')[0].length === 1
+                  ? `0${time.split(':')[0]}`
+                  : time.split(':')[0];
+              const minute =
+                time.split(':')[1].length === 1
+                  ? `0${time.split(':')[1]}`
+                  : time.split(':')[1];
+              const second =
+                time.split(':')[2].length === 1
+                  ? `0${time.split(':')[2]}`
+                  : time.split(':')[2];
+
+              return new Date(
+                `${year}-${month}-${day}T${hour}:${month}:${second}Z`,
+              );
+            };
+            return (
+              parseDate(a.logCollectionEndTime) -
+              parseDate(b.logCollectionEndTime)
+            );
+          }),
       );
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    console.log(categoryType, dataOrder);
+    if (categoryType === 'none' && (dataOrder === 'up' || dataOrder === 'down'))
+      setLogs((prev) => {
+        const copiedLogDatas = [...prev].sort((a, b) => {
+          const parseDate = (str) => {
+            const replacedDate = str.split(' ');
+
+            const year = replacedDate[0].slice(0, -1);
+            const month =
+              replacedDate[1].slice(0, -1).length === 1
+                ? `0${replacedDate[1].slice(0, -1)}`
+                : replacedDate[1].slice(0, -1);
+            const day =
+              replacedDate[2].slice(0, -1).length === 1
+                ? `0${replacedDate[2].slice(0, -1)}`
+                : replacedDate[2].slice(0, -1);
+            const time = replacedDate[4];
+            const hour =
+              time.split(':')[0].length === 1
+                ? `0${time.split(':')[0]}`
+                : time.split(':')[0];
+            const minute =
+              time.split(':')[1].length === 1
+                ? `0${time.split(':')[1]}`
+                : time.split(':')[1];
+            const second =
+              time.split(':')[2].length === 1
+                ? `0${time.split(':')[2]}`
+                : time.split(':')[2];
+
+            return new Date(
+              `${year}-${month}-${day}T${hour}:${minute}:${second}Z`,
+            );
+          };
+          return (
+            parseDate(a.logCollectionEndTime) -
+            parseDate(b.logCollectionEndTime)
+          );
+        });
+
+        return copiedLogDatas;
+      });
+    else if (categoryType === 'date' && dataOrder === 'up') {
+      setLogs((prev) => {
+        const copiedLogDatas = [...prev].sort((a, b) => {
+          const parseDate = (str) => {
+            const replacedDate = str.split(' ');
+
+            const year = replacedDate[0].slice(0, -1);
+            const month =
+              replacedDate[1].slice(0, -1).length === 1
+                ? `0${replacedDate[1].slice(0, -1)}`
+                : replacedDate[1].slice(0, -1);
+            const day =
+              replacedDate[2].slice(0, -1).length === 1
+                ? `0${replacedDate[2].slice(0, -1)}`
+                : replacedDate[2].slice(0, -1);
+            const time = replacedDate[4];
+            const hour =
+              time.split(':')[0].length === 1
+                ? `0${time.split(':')[0]}`
+                : time.split(':')[0];
+            const minute =
+              time.split(':')[1].length === 1
+                ? `0${time.split(':')[1]}`
+                : time.split(':')[1];
+            const second =
+              time.split(':')[2].length === 1
+                ? `0${time.split(':')[2]}`
+                : time.split(':')[2];
+
+            return new Date(
+              `${year}-${month}-${day}T${hour}:${minute}:${second}Z`,
+            );
+          };
+          return (
+            parseDate(a.logCollectionEndTime) -
+            parseDate(b.logCollectionEndTime)
+          );
+        });
+
+        return copiedLogDatas;
+      });
+    } else if (categoryType === 'date' && dataOrder === 'down') {
+      setLogs((prev) => {
+        const copiedLogDatas = [...prev].sort((a, b) => {
+          const parseDate = (str) => {
+            const replacedDate = str.split(' ');
+
+            const year = replacedDate[0].slice(0, -1);
+            const month =
+              replacedDate[1].slice(0, -1).length === 1
+                ? `0${replacedDate[1].slice(0, -1)}`
+                : replacedDate[1].slice(0, -1);
+            const day =
+              replacedDate[2].slice(0, -1).length === 1
+                ? `0${replacedDate[2].slice(0, -1)}`
+                : replacedDate[2].slice(0, -1);
+            const time = replacedDate[4];
+            const hour =
+              time.split(':')[0].length === 1
+                ? `0${time.split(':')[0]}`
+                : time.split(':')[0];
+            const minute =
+              time.split(':')[1].length === 1
+                ? `0${time.split(':')[1]}`
+                : time.split(':')[1];
+            const second =
+              time.split(':')[2].length === 1
+                ? `0${time.split(':')[2]}`
+                : time.split(':')[2];
+
+            return new Date(
+              `${year}-${month}-${day}T${hour}:${minute}:${second}Z`,
+            );
+          };
+          return (
+            parseDate(b.logCollectionEndTime) -
+            parseDate(a.logCollectionEndTime)
+          );
+        });
+
+        return copiedLogDatas;
+      });
+    } else if (categoryType === 'studentId' && dataOrder === 'up') {
+      setLogs((prev) => {
+        const copiedLogDatas = [...prev];
+
+        return copiedLogDatas.sort((a, b) => {
+          const strA = b.username || ''; // null을 ""으로 치환
+          const strB = a.username || ''; // null을 ""으로 치환
+          return strA.localeCompare(strB, undefined, { sensitivity: 'base' });
+        });
+      });
+    } else if (categoryType === 'studentId' && dataOrder === 'down') {
+      setLogs((prev) => {
+        const copiedLogDatas = [...prev];
+
+        return copiedLogDatas.sort((a, b) => {
+          const strA = b.username || ''; // null을 ""으로 치환
+          const strB = a.username || ''; // null을 ""으로 치환
+          return strA.localeCompare(strB, undefined, { sensitivity: 'base' });
+        });
+      });
+    } else if (categoryType === 'logType' && dataOrder === 'up') {
+      setLogs((prev) => {
+        const copiedLogDatas = [...prev];
+
+        return copiedLogDatas.sort((a, b) => {
+          const strA = b.eclassName || ''; // null을 ""으로 치환
+          const strB = a.eclassName || ''; // null을 ""으로 치환
+          return strA.localeCompare(strB, undefined, { sensitivity: 'base' });
+        });
+      });
+    } else if (categoryType === 'logType' && dataOrder === 'down') {
+      setLogs((prev) => {
+        const copiedLogDatas = [...prev];
+
+        return copiedLogDatas.sort((a, b) => {
+          const strA = a.eclassName || ''; // null을 ""으로 치환
+          const strB = b.eclassName || ''; // null을 ""으로 치환
+          return strA.localeCompare(strB, undefined, { sensitivity: 'base' });
+        });
+      });
+    }
+  }, [categoryType, dataOrder]);
 
   const handleLogDownload = (logDatas) => {
     // 1. 데이터를 워크시트 형식으로 변환
@@ -168,7 +375,7 @@ function LogPage() {
               });
               return newItem;
             });
-            console.log(transformedData);
+
             let headers = Object.keys(transformedData[0]);
 
             headers = headers.map((header) => engToKor(header));
@@ -176,8 +383,7 @@ function LogPage() {
             const datas = transformedData.map((item) => Object.values(item));
             // 최종 결과 생성 (헤더 + 값)
             const recombined = [headers, ...datas];
-            console.log(recombined);
-            console.log(res);
+
             tableData = recombined;
             title = res.data[0].title;
 
@@ -207,7 +413,7 @@ function LogPage() {
               'ITEMPM25',
               'ITEMSO2VALUE',
             ];
-            console.log(res.data);
+
             // 변환 로직
             const transformedData = res.data.data.map((item) => {
               const newItem = {};
@@ -233,8 +439,6 @@ function LogPage() {
 
             tableData = recombined;
             title = res.data.title;
-            console.log(tableData);
-            console.log(title);
 
             // 1. 데이터를 워크시트 형식으로 변환
             const worksheet = XLSX.utils.json_to_sheet(tableData);
@@ -274,7 +478,7 @@ function LogPage() {
               'ITEMGYEONGNAM',
               'ITEMGYEONGGI',
             ];
-            console.log(res.data);
+
             // 변환 로직
             const transformedData = res.data.data.map((item) => {
               const newItem = {};
@@ -289,7 +493,7 @@ function LogPage() {
               });
               return newItem;
             });
-            console.log(transformedData);
+
             let headers = Object.keys(transformedData[0]);
 
             headers = headers.map((header) => engToKor(header));
@@ -347,11 +551,56 @@ function LogPage() {
       }
       const { data } = await getAllLog();
       setLogs(
-        data.sort((a, b) => a.logCollectionEndTime - b.logCollectionEndTime),
+        data
+          .filter((log) => log.content !== null)
+          .sort((a, b) => {
+            const parseDate = (str) => {
+              const replacedDate = str.split(' ');
+
+              const year = replacedDate[0].slice(0, -1);
+              const month =
+                replacedDate[1].slice(0, -1).length === 1
+                  ? `0${replacedDate[1].slice(0, -1)}`
+                  : replacedDate[1].slice(0, -1);
+              const day =
+                replacedDate[2].slice(0, -1).length === 1
+                  ? `0${replacedDate[2].slice(0, -1)}`
+                  : replacedDate[2].slice(0, -1);
+              const time = replacedDate[4];
+              const hour =
+                time.split(':')[0].length === 1
+                  ? `0${time.split(':')[0]}`
+                  : time.split(':')[0];
+              const minute =
+                time.split(':')[1].length === 1
+                  ? `0${time.split(':')[1]}`
+                  : time.split(':')[1];
+              const second =
+                time.split(':')[2].length === 1
+                  ? `0${time.split(':')[2]}`
+                  : time.split(':')[2];
+
+              return new Date(
+                `${year}-${month}-${day}T${hour}:${month}:${second}Z`,
+              );
+            };
+            return (
+              parseDate(a.logCollectionEndTime) -
+              parseDate(b.logCollectionEndTime)
+            );
+          }),
       );
     } catch (e) {
       console.log(e);
     }
+  };
+
+  const handleFilterChange = (e) => {
+    setCategoryType(e.target.value);
+  };
+
+  const handleDataOrderChange = (e) => {
+    setDataOrder(e.target.value);
   };
 
   return (
@@ -376,6 +625,35 @@ function LogPage() {
       >
         선택 삭제
       </button>
+      <select
+        style={{
+          padding: '8px',
+          border: '1px solid #ddd',
+          borderRadius: '4px',
+          cursor: 'pointer',
+          marginLeft: '20px',
+        }}
+        onChange={handleFilterChange}
+      >
+        <option value="none">정렬 기준</option>
+        <option value="date">날짜</option>
+        <option value="studentId">학생ID</option>
+        <option value="logType">로그 타입</option>
+      </select>
+      <select
+        style={{
+          padding: '8px',
+          border: '1px solid #ddd',
+          borderRadius: '4px',
+          cursor: 'pointer',
+          marginLeft: '5px',
+        }}
+        onChange={handleDataOrderChange}
+      >
+        <option value="up">정렬 순서</option>
+        <option value="up">오름차순</option>
+        <option value="down">내림차순</option>
+      </select>
       <table
         style={{
           width: '100%',
@@ -402,6 +680,33 @@ function LogPage() {
               }}
             >
               로그 번호
+            </th>
+            <th
+              style={{
+                border: '1px solid #ddd',
+                padding: '8px',
+                textAlign: 'center',
+              }}
+            >
+              학생 id
+            </th>
+            <th
+              style={{
+                border: '1px solid #ddd',
+                padding: '8px',
+                textAlign: 'center',
+              }}
+            >
+              로그 시작 시간
+            </th>
+            <th
+              style={{
+                border: '1px solid #ddd',
+                padding: '8px',
+                textAlign: 'center',
+              }}
+            >
+              로그 타입
             </th>
             <th
               style={{
@@ -460,6 +765,15 @@ function LogPage() {
               </td>
               <td style={{ border: '1px solid #ddd', padding: '8px' }}>
                 {index + 1}
+              </td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+                {log.username}
+              </td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+                {log.logCollectionStartTime}
+              </td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+                {log.eclassUuid === null ? 'DataInChart' : log.eclassName}
               </td>
               <td style={{ border: '1px solid #ddd', padding: '8px' }}>
                 {log.content.length}개

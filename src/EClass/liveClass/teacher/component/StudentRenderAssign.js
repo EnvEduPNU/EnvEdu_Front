@@ -231,9 +231,13 @@ function StudentRenderAssign({
     // alert(stepNum);
     localStorage.setItem('stepNum', stepNum);
     if (dataType === null && uuid === null) {
-      navigate(`/data-in-chart?id=${id}`);
+      navigate(
+        `/data-in-chart?id=${id}&eclassUuid=${eClassUuid}&eclassName=${eclassName}`,
+      );
     } else
-      navigate(`/data-in-chart?id=${id}&dataType=${dataType}&uuid=${uuid}`);
+      navigate(
+        `/data-in-chart?id=${id}&dataType=${dataType}&uuid=${uuid}&eclassUuid=${eClassUuid}&eclassName=${eclassName}`,
+      );
   };
 
   useEffect(() => {
