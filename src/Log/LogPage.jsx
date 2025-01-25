@@ -16,42 +16,44 @@ function LogPage() {
     const fetchData = async () => {
       const { data } = await getAllLog();
       setLogs(
-        data.sort((a, b) => {
-          const parseDate = (str) => {
-            const replacedDate = str.split(' ');
+        data
+          .filter((log) => log.content !== null)
+          .sort((a, b) => {
+            const parseDate = (str) => {
+              const replacedDate = str.split(' ');
 
-            const year = replacedDate[0].slice(0, -1);
-            const month =
-              replacedDate[1].slice(0, -1).length === 1
-                ? `0${replacedDate[1].slice(0, -1)}`
-                : replacedDate[1].slice(0, -1);
-            const day =
-              replacedDate[2].slice(0, -1).length === 1
-                ? `0${replacedDate[2].slice(0, -1)}`
-                : replacedDate[2].slice(0, -1);
-            const time = replacedDate[4];
-            const hour =
-              time.split(':')[0].length === 1
-                ? `0${time.split(':')[0]}`
-                : time.split(':')[0];
-            const minute =
-              time.split(':')[1].length === 1
-                ? `0${time.split(':')[1]}`
-                : time.split(':')[1];
-            const second =
-              time.split(':')[2].length === 1
-                ? `0${time.split(':')[2]}`
-                : time.split(':')[2];
+              const year = replacedDate[0].slice(0, -1);
+              const month =
+                replacedDate[1].slice(0, -1).length === 1
+                  ? `0${replacedDate[1].slice(0, -1)}`
+                  : replacedDate[1].slice(0, -1);
+              const day =
+                replacedDate[2].slice(0, -1).length === 1
+                  ? `0${replacedDate[2].slice(0, -1)}`
+                  : replacedDate[2].slice(0, -1);
+              const time = replacedDate[4];
+              const hour =
+                time.split(':')[0].length === 1
+                  ? `0${time.split(':')[0]}`
+                  : time.split(':')[0];
+              const minute =
+                time.split(':')[1].length === 1
+                  ? `0${time.split(':')[1]}`
+                  : time.split(':')[1];
+              const second =
+                time.split(':')[2].length === 1
+                  ? `0${time.split(':')[2]}`
+                  : time.split(':')[2];
 
-            return new Date(
-              `${year}-${month}-${day}T${hour}:${month}:${second}Z`,
+              return new Date(
+                `${year}-${month}-${day}T${hour}:${month}:${second}Z`,
+              );
+            };
+            return (
+              parseDate(a.logCollectionEndTime) -
+              parseDate(b.logCollectionEndTime)
             );
-          };
-          return (
-            parseDate(a.logCollectionEndTime) -
-            parseDate(b.logCollectionEndTime)
-          );
-        }),
+          }),
       );
     };
     fetchData();
@@ -549,7 +551,44 @@ function LogPage() {
       }
       const { data } = await getAllLog();
       setLogs(
-        data.sort((a, b) => a.logCollectionEndTime - b.logCollectionEndTime),
+        data
+          .filter((log) => log.content !== null)
+          .sort((a, b) => {
+            const parseDate = (str) => {
+              const replacedDate = str.split(' ');
+
+              const year = replacedDate[0].slice(0, -1);
+              const month =
+                replacedDate[1].slice(0, -1).length === 1
+                  ? `0${replacedDate[1].slice(0, -1)}`
+                  : replacedDate[1].slice(0, -1);
+              const day =
+                replacedDate[2].slice(0, -1).length === 1
+                  ? `0${replacedDate[2].slice(0, -1)}`
+                  : replacedDate[2].slice(0, -1);
+              const time = replacedDate[4];
+              const hour =
+                time.split(':')[0].length === 1
+                  ? `0${time.split(':')[0]}`
+                  : time.split(':')[0];
+              const minute =
+                time.split(':')[1].length === 1
+                  ? `0${time.split(':')[1]}`
+                  : time.split(':')[1];
+              const second =
+                time.split(':')[2].length === 1
+                  ? `0${time.split(':')[2]}`
+                  : time.split(':')[2];
+
+              return new Date(
+                `${year}-${month}-${day}T${hour}:${month}:${second}Z`,
+              );
+            };
+            return (
+              parseDate(a.logCollectionEndTime) -
+              parseDate(b.logCollectionEndTime)
+            );
+          }),
       );
     } catch (e) {
       console.log(e);

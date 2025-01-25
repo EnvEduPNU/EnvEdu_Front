@@ -75,9 +75,9 @@ function ExpertCustomGraph({ onAddPhoto, isDrawGraph }) {
       // 로그 데이터 저장 로직 작성
       console.log('이미지 저장');
 
-      addContent({
+      content.push({
         logTime: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
-        buttonName: `로그 수집 중료`,
+        buttonName: `로그 수집 종료`,
         memo: '그래프 저장/캡쳐',
       });
 
