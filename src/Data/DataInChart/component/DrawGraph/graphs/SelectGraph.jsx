@@ -1,5 +1,4 @@
 import React from 'react';
-import { AiOutlineArrowUp } from 'react-icons/ai';
 
 function SelectGraph() {
   const graphs = [
@@ -50,26 +49,7 @@ function SelectGraph() {
             flexDirection: 'column',
             alignItems: 'flex-start',
           }}
-        >
-          <AiOutlineArrowUp
-            style={{
-              marginLeft: '30px',
-              fontSize: '32px',
-              color: '#6b7280' /* 회색 화살표 색상 */,
-            }}
-          />
-          <p
-            style={{
-              marginLeft: '30px',
-              marginTop: '12px',
-              fontSize: '24px',
-              color: '#374151' /* 짙은 회색 텍스트 */,
-              fontWeight: 'bold',
-            }}
-          >
-            그래프 유형을 선택해주세요
-          </p>
-        </div>
+        ></div>
       </div>
 
       {/* 가로 및 세로 스크롤 영역 */}

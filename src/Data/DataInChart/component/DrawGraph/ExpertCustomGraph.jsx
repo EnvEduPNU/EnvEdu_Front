@@ -122,7 +122,7 @@ function ExpertCustomGraph({ onAddPhoto, isDrawGraph }) {
   return (
     <div>
       {/* 캡쳐하기 버튼 */}
-      {isDrawGraph ? (
+      {isDrawGraph && graphIdx !== -1 && (
         <button
           onClick={handleCapture}
           style={{
@@ -145,7 +145,8 @@ function ExpertCustomGraph({ onAddPhoto, isDrawGraph }) {
         >
           그래프 캡쳐
         </button>
-      ) : (
+      )}
+      {!isDrawGraph && graphIdx !== -1 && (
         <button
           onClick={handleCapture}
           style={{

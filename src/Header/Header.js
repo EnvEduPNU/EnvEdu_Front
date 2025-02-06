@@ -90,9 +90,9 @@ function Header() {
                 <Nav.Link onClick={() => handleNavLinkClick('/login')}>
                   로그인
                 </Nav.Link>
-                <Nav.Link onClick={() => handleNavLinkClick('/register')}>
+                {/* <Nav.Link onClick={() => handleNavLinkClick('/register')}>
                   회원가입
-                </Nav.Link>
+                </Nav.Link> */}
               </>
             )}
           </Nav>

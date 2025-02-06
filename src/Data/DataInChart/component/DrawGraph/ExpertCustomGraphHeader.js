@@ -11,13 +11,29 @@ function ExpertCustomGraphHeader() {
   const { addContent } = useLogStore();
 
   return (
-    <div>
+    <div
+      className="flex items-center"
+      style={{
+        marginTop: '1rem',
+      }}
+    >
       {/* <Styled.TableHeaderWrapper ref={ref}></Styled.TableHeaderWrapper> */}
+      {graphIdx === -1 && (
+        <p
+          style={{
+            fontSize: '24px',
+            color: '#374151' /* 짙은 회색 텍스트 */,
+            fontWeight: 'bold',
+          }}
+        >
+          그래프 유형을 선택해주세요
+        </p>
+      )}
       <div
         style={{
           display: 'flex',
           justifyContent: 'flex-start',
-          margin: '1rem 0 1rem 1rem',
+          marginLeft: '1rem',
         }}
       >
         <div
