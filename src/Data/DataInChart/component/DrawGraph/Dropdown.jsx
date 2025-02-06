@@ -243,9 +243,9 @@ function Dropdown({ type, moreStyle, selectedIndex }) {
                       setIsOpen(false);
 
                       addContent({
-                        logTime: new Date()
-                          .toISOString()
-                          .replace('Z', '+09:00'),
+                        logTime: new Date().toLocaleString('ko-KR', {
+                          timeZone: 'Asia/Seoul',
+                        }),
                         buttonName: `X축 변인 ${variables[selectedIndex].name}에서 ${data.name}(으)로 변경`,
                         memo: 'X축 변인 변경',
                       });
