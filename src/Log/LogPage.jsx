@@ -773,7 +773,7 @@ function LogPage() {
                 {log.logCollectionStartTime}
               </td>
               <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                {log.eclassUuid === null ? 'DataInChart' : log.eclassName}
+                {log.eclassUuid === null ? 'DataAndChart' : log.eclassName}
               </td>
               <td style={{ border: '1px solid #ddd', padding: '8px' }}>
                 {log.content.length}개

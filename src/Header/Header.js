@@ -74,6 +74,15 @@ function Header() {
           <Nav>
             {username ? (
               <>
+                {userRole === 'ROLE_ADMIN' && (
+                  <button
+                    onClick={() => {
+                      navigate('/userManagement');
+                    }}
+                  >
+                    사이트 전체 계정 관리
+                  </button>
+                )}
                 <Nav.Link onClick={() => handleNavLinkClick('/')}>
                   {username}
                 </Nav.Link>
@@ -180,7 +189,8 @@ function Header() {
                           >
                             My Data
                           </Nav.Link>
-                          {localStorage.getItem('role') === 'ROLE_EDUCATOR' && (
+                          {localStorage.getItem('role') ===
+                            'ROLE_RESEARCHER' && (
                             <Nav.Link
                               onClick={() => handleNavLinkClick('/log')}
                             >
