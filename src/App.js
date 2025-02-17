@@ -44,6 +44,7 @@ import CreateClassPage from './EClass/createClass/CreateClassPage';
 import ClassListPage from './EClass/createClass/ClassListPage';
 import ModifyClassPage from './EClass/createClass/ModifyClassPage';
 import LogPage from './Log/LogPage';
+import UserManagement from './Admin/UserManagement/UserManagement';
 
 function App() {
   const navigate = useNavigate();
@@ -170,6 +171,12 @@ function App() {
           <Route path="/notice" exact={true} element={<Notice />} />{' '}
           {/*Announcement*/}
           <Route path="/board" exact={true} element={<Board />} /> {/*Board*/}
+          <Route
+            path="/userManagement"
+            exact={true}
+            element={<UserManagement />}
+          />{' '}
+          {/*Board*/}
         </Routes>
       </div>
 
