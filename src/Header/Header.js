@@ -189,14 +189,14 @@ function Header() {
                           >
                             My Data
                           </Nav.Link>
-                          {localStorage.getItem('role') ===
-                            'ROLE_RESEARCHER' && (
-                            <Nav.Link
-                              onClick={() => handleNavLinkClick('/log')}
-                            >
-                              Log
-                            </Nav.Link>
-                          )}
+                          {localStorage.getItem('role') === 'ROLE_RESEARCHER' ||
+                            (localStorage.getItem('role') === 'ROLE_ADMIN' && (
+                              <Nav.Link
+                                onClick={() => handleNavLinkClick('/log')}
+                              >
+                                Log
+                              </Nav.Link>
+                            ))}
                         </>
                       );
                     case 'eClass':
